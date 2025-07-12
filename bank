@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banks - Keyquest Mortgage Admin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-menu {
+            padding: 24px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .nav-item.active {
+            background: #e0e7ff;
+            color: #4338ca;
+            border-right: 3px solid #4338ca;
+        }
+
+        .nav-item i {
+            width: 20px;
+            height: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.full-width {
+            margin-left: 0;
+        }
+
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .menu-toggle:hover {
+            background: #f1f5f9;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #4338ca;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3730a3;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        .btn-edit {
+            background: #f0f9ff;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+        }
+
+        .btn-delete {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .user-profile:hover {
+            background: #f1f5f9;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #4338ca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .user-role {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .content-area {
+            padding: 24px;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .search-filter-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4338ca;
+            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            width: 16px;
+            height: 16px;
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .table th {
+            background: #f8fafc;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            vertical-align: top;
+        }
+
+        .table tr:hover {
+            background: #f8fafc;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .bank-name {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .pagination-info {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:hover {
+            background: #f8fafc;
+        }
+
+        .pagination-btn.active {
+            background: #4338ca;
+            color: white;
+            border-color: #4338ca;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .modal-close:hover {
+            background: #f1f5f9;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4338ca;
+            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+        }
+
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 12px 16px;
+            }
+
+            .content-area {
+                padding: 16px;
+            }
+
+            .search-filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .table th,
+            .table td {
+                padding: 12px 8px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .btn-sm {
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .pagination {
+                padding: 12px 16px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .pagination-info {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 20px;
+            }
+
+            .table {
+                min-width: 500px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i data-lucide="building-2"></i>
+                    </div>
+                    <span>KEYQUEST</span>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="rate-packages.html" class="nav-item">
+                    <i data-lucide="package"></i>
+                    <span>Rate Package</span>
+                </a>
+                <a href="rate-types.html" class="nav-item">
+                    <i data-lucide="percent"></i>
+                    <span>Rate Type</span>
+                </a>
+                <a href="banks.html" class="nav-item active">
+                    <i data-lucide="landmark"></i>
+                    <span>Bank</span>
+                </a>
+                <a href="bankers.html" class="nav-item">
+                    <i data-lucide="briefcase"></i>
+                    <span>Bankers</span>
+                </a>
+                <a href="agents.html" class="nav-item">
+                    <i data-lucide="users"></i>
+                    <span>Agents</span>
+                </a>
+                <a href="enquiry.html" class="nav-item">
+                    <i data-lucide="help-circle"></i>
+                    <span>Enquiry</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="header-title">Banks</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openModal('bank-modal')">
+                        <i data-lucide="plus"></i>
+                        <span>Add Bank</span>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name">admin</div>
+                            <div class="user-role">Super Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Search Bar -->
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search banks..." id="searchInput">
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="data-table">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Bank Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="banksTable">
+                                <tr>
+                                    <td class="bank-name">CIMB</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(1, 'CIMB')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(1, 'CIMB')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">OCBC</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(2, 'OCBC')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(2, 'OCBC')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">UOB</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(3, 'UOB')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(3, 'UOB')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">DBS</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(4, 'DBS')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(4, 'DBS')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">Maybank</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(5, 'Maybank')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(5, 'Maybank')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">Standard Chartered</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(6, 'Standard Chartered')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(6, 'Standard Chartered')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">HSBC</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(7, 'HSBC')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(7, 'HSBC')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">SBI</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(8, 'SBI')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(8, 'SBI')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">Bank Of China</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(9, 'Bank Of China')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(9, 'Bank Of China')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bank-name">Hong Leong Finance</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(10, 'Hong Leong Finance')">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(10, 'Hong Leong Finance')">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Showing 1-10 of 14 banks
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" disabled>
+                                <i data-lucide="chevron-left"></i>
+                            </button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Bank Modal -->
+    <div class="modal" id="bank-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Bank</h3>
+                <button class="modal-close" onclick="closeModal('bank-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="bankForm">
+                    <div class="form-group">
+                        <label class="form-label">Bank Name</label>
+                        <input type="text" class="form-input" id="bankName" placeholder="Enter bank name" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('bank-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveBank()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        let editingBankId = null;
+
+        // Mobile sidebar functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const mainContent = document.getElementById('mainContent');
+            
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
+        }
+
+        // Modal functionality
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+            // Reset form
+            document.getElementById('bankForm').reset();
+            document.querySelector('.modal-title').textContent = 'Add Bank';
+            editingBankId = null;
+        }
+
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
+
+        // Edit bank function
+        function editBank(id, name) {
+            editingBankId = id;
+            document.querySelector('.modal-title').textContent = 'Edit Bank';
+            document.getElementById('bankName').value = name;
+            openModal('bank-modal');
+        }
+
+        // Delete bank function
+        function deleteBank(id, name) {
+            if (confirm(`Are you sure you want to delete ${name}?`)) {
+                // Here you would implement the delete functionality
+                console.log('Deleting bank:', id, name);
+                
+                // Remove the row from the table (for demo purposes)
+                const rows = document.querySelectorAll('#banksTable tr');
+                rows.forEach(row => {
+                    const editBtn = row.querySelector(`button[onclick*="editBank(${id}"]`);
+                    if (editBtn) {
+                        row.remove();
+                        showNotification(`${name} has been deleted successfully`, 'success');
+                    }
+                });
+            }
+        }
+
+        // Save bank function
+        function saveBank() {
+            const name = document.getElementById('bankName').value.trim();
+            
+            if (!name) {
+                showNotification('Please enter a bank name', 'error');
+                return;
+            }
+
+            if (editingBankId) {
+                // Update existing bank
+                console.log('Updating bank:', editingBankId, name);
+                
+                // Update the table row (for demo purposes)
+                const rows = document.querySelectorAll('#banksTable tr');
+                rows.forEach(row => {
+                    const editBtn = row.querySelector(`button[onclick*="editBank(${editingBankId}"]`);
+                    if (editBtn) {
+                        row.cells[0].textContent = name;
+                        // Update button onclick attributes
+                        const editButton = row.querySelector('.btn-edit');
+                        const deleteButton = row.querySelector('.btn-delete');
+                        editButton.setAttribute('onclick', `editBank(${editingBankId}, '${name}')`);
+                        deleteButton.setAttribute('onclick', `deleteBank(${editingBankId}, '${name}')`);
+                    }
+                });
+                showNotification('Bank updated successfully', 'success');
+            } else {
+                // Add new bank
+                console.log('Adding new bank:', name);
+                
+                // Add new row to table (for demo purposes)
+                const tableBody = document.getElementById('banksTable');
+                const newId = Date.now(); // Simple ID generation for demo
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <td class="bank-name">${name}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-edit" onclick="editBank(${newId}, '${name}')">Edit</button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteBank(${newId}, '${name}')">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(newRow);
+                showNotification('Bank added successfully', 'success');
+            }
+            
+            closeModal('bank-modal');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#banksTable tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('bankForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveBank();
+        });
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existing = document.querySelectorAll('.notification');
+            existing.forEach(n => n.remove());
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            const colors = {
+                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
+                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
+                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8' }
+            };
+
+            const color = colors[type] || colors.info;
+
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${color.bg};
+                    border: 1px solid ${color.border};
+                    color: ${color.text};
+                    padding: 16px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    z-index: 10000;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    font-size: 14px;
+                    font-weight: 500;
+                    max-width: 400px;
+                    animation: slideIn 0.3s ease-out;
+                ">
+                    ${message}
+                </div>
+                <style>
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                </style>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 4000);
+        }
+
+        // Handle responsive design
+        function handleResize() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-focus search on desktop
+            if (window.innerWidth > 768) {
+                document.getElementById('searchInput').focus();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Escape key to close modals
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal.active');
+                if (activeModal) {
+                    closeModal(activeModal.id);
+                }
+            }
+            
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+        });
+    </script>
+</body>
+</html>
