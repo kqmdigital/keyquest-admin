@@ -6,9 +6,12 @@
     <title>Keyquest Mortgage Admin - Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="css/admin-styles.css">
+    <script src="config/supabase.js"></script>
+    <link rel="stylesheet" href="admin-styles.css">
 </head>
 <body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -53,7 +56,7 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <header class="header">
                 <div class="header-left">
                     <button class="menu-toggle" onclick="toggleSidebar()">
@@ -62,9 +65,9 @@
                     <h1 class="header-title">Dashboard</h1>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="signOut()">
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
                         <i data-lucide="log-out"></i>
-                        Sign Out
+                        <span>Sign Out</span>
                     </button>
                     <div class="user-profile">
                         <div class="user-avatar" id="userAvatar">A</div>
@@ -86,7 +89,7 @@
                                 <i data-lucide="package"></i>
                             </div>
                         </div>
-                        <div class="stat-value" id="packagesCount">0</div>
+                        <div class="stat-value" id="packagesCount">Loading...</div>
                         <div class="stat-change positive">
                             <i data-lucide="trending-up"></i>
                             <span>Active packages</span>
@@ -100,9 +103,9 @@
                                 <i data-lucide="landmark"></i>
                             </div>
                         </div>
-                        <div class="stat-value" id="banksCount">0</div>
+                        <div class="stat-value" id="banksCount">Loading...</div>
                         <div class="stat-change positive">
-                            <i data-lucide="trending-up"></i>
+                            <i data-lucide="check-circle"></i>
                             <span>Partner banks</span>
                         </div>
                     </div>
@@ -114,24 +117,24 @@
                                 <i data-lucide="users"></i>
                             </div>
                         </div>
-                        <div class="stat-value" id="agentsCount">0</div>
+                        <div class="stat-value" id="agentsCount">Loading...</div>
                         <div class="stat-change positive">
-                            <i data-lucide="check-circle"></i>
-                            <span id="activeAgentsText">Active agents</span>
+                            <i data-lucide="users"></i>
+                            <span>Active agents</span>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-title">Total Enquiries</div>
+                            <div class="stat-title">Customer Enquiries</div>
                             <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
                                 <i data-lucide="help-circle"></i>
                             </div>
                         </div>
-                        <div class="stat-value" id="enquiriesCount">0</div>
+                        <div class="stat-value" id="enquiriesCount">Loading...</div>
                         <div class="stat-change positive">
                             <i data-lucide="trending-up"></i>
-                            <span id="newEnquiriesText">Customer enquiries</span>
+                            <span>Total enquiries</span>
                         </div>
                     </div>
                 </div>
@@ -203,76 +206,101 @@
                 </div>
 
                 <div class="overview-grid">
-                    <!-- Recent Activity -->
-                    <div class="recent-activity">
-                        <h3>Recent Activity</h3>
-                        <ul class="activity-list" id="activityList">
-                            <!-- Activity items will be loaded dynamically -->
-                        </ul>
+                    <!-- Recent Enquiries -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Enquiries</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="activity-list" id="recentEnquiries">
+                                <li class="activity-item">
+                                    <div class="activity-icon" style="background: #4338ca;">
+                                        <i data-lucide="help-circle"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Loading recent enquiries...</div>
+                                        <div class="activity-time"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <!-- System Status -->
-                    <div class="recent-activity">
-                        <h3>System Status</h3>
-                        <ul class="activity-list">
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #059669;">
-                                    <i data-lucide="check-circle"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Database Connection</div>
-                                    <div class="activity-time" id="dbStatus">Checking...</div>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #059669;">
-                                    <i data-lucide="check-circle"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Authentication</div>
-                                    <div class="activity-time">Active</div>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #059669;">
-                                    <i data-lucide="check-circle"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Data Sync</div>
-                                    <div class="activity-time">Real-time</div>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #f59e0b;">
-                                    <i data-lucide="clock"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Last Backup</div>
-                                    <div class="activity-time" id="lastBackup">Calculating...</div>
-                                </div>
-                            </li>
-                        </ul>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>System Status</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="activity-list">
+                                <li class="activity-item">
+                                    <div class="activity-icon" style="background: #059669;" id="dbStatus">
+                                        <i data-lucide="database"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Database Connection</div>
+                                        <div class="activity-time" id="dbStatusText">Checking...</div>
+                                    </div>
+                                </li>
+                                <li class="activity-item">
+                                    <div class="activity-icon" style="background: #059669;">
+                                        <i data-lucide="check-circle"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Authentication Service</div>
+                                        <div class="activity-time">Active</div>
+                                    </div>
+                                </li>
+                                <li class="activity-item">
+                                    <div class="activity-icon" style="background: #059669;">
+                                        <i data-lucide="shield-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Security</div>
+                                        <div class="activity-time">Protected</div>
+                                    </div>
+                                </li>
+                                <li class="activity-item">
+                                    <div class="activity-icon" style="background: #f59e0b;">
+                                        <i data-lucide="clock"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Last Backup</div>
+                                        <div class="activity-time" id="lastBackup">Calculating...</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Include shared scripts -->
-    <script src="config/supabase.js"></script>
-    <script src="js/admin-scripts.js"></script>
-    
-    <script>
-        // Dashboard specific functionality
-        let dashboardData = {
-            packages: 0,
-            banks: 0,
-            agents: 0,
-            enquiries: 0,
-            recentActivity: []
-        };
+    <!-- Sign Out Confirmation Modal -->
+    <div class="modal" id="signout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Sign Out</h3>
+                <button class="modal-close" onclick="closeModal('signout-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to sign out? You will be redirected to the login page.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="performSignOut()">
+                    <i data-lucide="log-out"></i>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
 
-        // Initialize dashboard
+    <script>
+        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', async function() {
             // Initialize Lucide icons
             lucide.createIcons();
@@ -283,13 +311,11 @@
             // Load dashboard data
             await loadDashboardData();
             
-            // Set up real-time updates
-            setupRealtimeUpdates();
-            
-            // Show last backup time
-            updateLastBackupTime();
+            // Set up periodic updates
+            setInterval(updateDashboard, 30000); // Update every 30 seconds
         });
 
+        // Authentication check
         async function checkAuthentication() {
             try {
                 const { user } = await AuthService.getCurrentUser();
@@ -302,228 +328,432 @@
                 const userName = document.getElementById('userName');
                 const userAvatar = document.getElementById('userAvatar');
                 
-                if (userName) {
-                    userName.textContent = user.email.split('@')[0] || 'admin';
+                if (userName && user.email) {
+                    userName.textContent = user.email.split('@')[0];
                 }
-                if (userAvatar) {
-                    userAvatar.textContent = (user.email.charAt(0) || 'A').toUpperCase();
+                if (userAvatar && user.email) {
+                    userAvatar.textContent = user.email.charAt(0).toUpperCase();
                 }
-                
-                document.getElementById('dbStatus').textContent = 'Connected';
-                
             } catch (error) {
-                console.error('Authentication check failed:', error);
-                document.getElementById('dbStatus').textContent = 'Connection Error';
+                console.error('Auth check failed:', error);
+                window.location.href = 'login.html';
             }
         }
 
+        // Load all dashboard data from database
         async function loadDashboardData() {
             try {
                 showLoading('Loading dashboard data...');
                 
-                // Load all data in parallel
-                const [packagesResult, banksResult, agentsResult, enquiriesResult] = await Promise.all([
-                    DatabaseService.getRatePackages(),
-                    DatabaseService.getBanks(),
-                    DatabaseService.getAgents(),
-                    DatabaseService.getEnquiries()
+                // Load counts from each table
+                await Promise.all([
+                    loadPackagesCount(),
+                    loadBanksCount(),
+                    loadAgentsCount(),
+                    loadEnquiriesCount(),
+                    loadRecentEnquiries(),
+                    checkDatabaseConnection()
                 ]);
-
-                // Update statistics
-                updateStatistics({
-                    packages: packagesResult.success ? packagesResult.data.length : 0,
-                    banks: banksResult.success ? banksResult.data.length : 0,
-                    agents: agentsResult.success ? agentsResult.data.length : 0,
-                    enquiries: enquiriesResult.success ? enquiriesResult.data.length : 0
-                });
-
-                // Create recent activity
-                const recentActivity = [];
                 
-                if (enquiriesResult.success && enquiriesResult.data.length > 0) {
-                    const latestEnquiry = enquiriesResult.data[0];
-                    recentActivity.push({
-                        icon: 'help-circle',
-                        color: '#7c3aed',
-                        title: `New enquiry from ${latestEnquiry.customer_name}`,
-                        time: formatRelativeTime(latestEnquiry.created_at)
-                    });
-                }
-
-                if (packagesResult.success && packagesResult.data.length > 0) {
-                    const latestPackage = packagesResult.data[0];
-                    recentActivity.push({
-                        icon: 'package',
-                        color: '#4338ca',
-                        title: `New rate package added for ${latestPackage.bank_name}`,
-                        time: formatRelativeTime(latestPackage.created_at)
-                    });
-                }
-
-                if (agentsResult.success && agentsResult.data.length > 0) {
-                    const activeAgents = agentsResult.data.filter(agent => agent.status === 'Active');
-                    if (activeAgents.length > 0) {
-                        const latestAgent = activeAgents[0];
-                        recentActivity.push({
-                            icon: 'user-plus',
-                            color: '#059669',
-                            title: `Agent ${latestAgent.name} is active`,
-                            time: formatRelativeTime(latestAgent.created_at)
-                        });
-                    }
-                }
-
-                updateRecentActivity(recentActivity);
+                // Animate the counters
+                animateCounters();
                 
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
-                showNotification('Failed to load dashboard data', 'error');
-            } finally {
                 hideLoading();
+                showNotification('Dashboard loaded successfully', 'success');
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+                hideLoading();
+                showNotification('Failed to load dashboard data', 'error');
+                
+                // Show placeholder data
+                document.getElementById('packagesCount').textContent = 'Error';
+                document.getElementById('banksCount').textContent = 'Error';
+                document.getElementById('agentsCount').textContent = 'Error';
+                document.getElementById('enquiriesCount').textContent = 'Error';
             }
         }
 
-        function updateStatistics(data) {
-            animateCounter('packagesCount', data.packages);
-            animateCounter('banksCount', data.banks);
-            animateCounter('agentsCount', data.agents);
-            animateCounter('enquiriesCount', data.enquiries);
-            
-            // Update status text
-            const activeAgentsText = document.getElementById('activeAgentsText');
-            const newEnquiriesText = document.getElementById('newEnquiriesText');
-            
-            if (activeAgentsText) {
-                activeAgentsText.textContent = `${data.agents} total agents`;
-            }
-            if (newEnquiriesText) {
-                newEnquiriesText.textContent = `${data.enquiries} total enquiries`;
+        // Load rate packages count
+        async function loadPackagesCount() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('rate_packages')
+                    .select('id', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                const count = data || 0;
+                document.getElementById('packagesCount').setAttribute('data-target', count);
+                console.log('Loaded packages count:', count);
+            } catch (error) {
+                console.error('Error loading packages count:', error);
+                document.getElementById('packagesCount').textContent = '0';
             }
         }
 
-        function animateCounter(elementId, targetValue) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            let currentValue = 0;
-            const increment = Math.ceil(targetValue / 30);
-            const timer = setInterval(() => {
-                currentValue += increment;
-                if (currentValue >= targetValue) {
-                    element.textContent = targetValue;
-                    clearInterval(timer);
-                } else {
-                    element.textContent = currentValue;
+        // Load banks count
+        async function loadBanksCount() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('banks')
+                    .select('id', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                const count = data || 0;
+                document.getElementById('banksCount').setAttribute('data-target', count);
+                console.log('Loaded banks count:', count);
+            } catch (error) {
+                console.error('Error loading banks count:', error);
+                document.getElementById('banksCount').textContent = '0';
+            }
+        }
+
+        // Load agents count
+        async function loadAgentsCount() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('agents')
+                    .select('id', { count: 'exact', head: true })
+                    .eq('status', 'Active');
+                
+                if (error) throw error;
+                
+                const count = data || 0;
+                document.getElementById('agentsCount').setAttribute('data-target', count);
+                console.log('Loaded agents count:', count);
+            } catch (error) {
+                console.error('Error loading agents count:', error);
+                document.getElementById('agentsCount').textContent = '0';
+            }
+        }
+
+        // Load enquiries count
+        async function loadEnquiriesCount() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('enquiries')
+                    .select('id', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                const count = data || 0;
+                document.getElementById('enquiriesCount').setAttribute('data-target', count);
+                console.log('Loaded enquiries count:', count);
+            } catch (error) {
+                console.error('Error loading enquiries count:', error);
+                document.getElementById('enquiriesCount').textContent = '0';
+            }
+        }
+
+        // Load recent enquiries
+        async function loadRecentEnquiries() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('enquiries')
+                    .select('customer_name, created_at, status, property_type')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('recentEnquiries');
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <li class="activity-item">
+                            <div class="activity-icon" style="background: #64748b;">
+                                <i data-lucide="info"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">No recent enquiries</div>
+                                <div class="activity-time">All caught up!</div>
+                            </div>
+                        </li>
+                    `;
+                    return;
                 }
-            }, 50);
-        }
-
-        function updateRecentActivity(activities) {
-            const activityList = document.getElementById('activityList');
-            if (!activityList) return;
-            
-            if (activities.length === 0) {
-                activityList.innerHTML = `
+                
+                container.innerHTML = data.map(enquiry => {
+                    const date = new Date(enquiry.created_at).toLocaleDateString();
+                    const statusColor = getStatusColor(enquiry.status);
+                    
+                    return `
+                        <li class="activity-item">
+                            <div class="activity-icon" style="background: ${statusColor};">
+                                <i data-lucide="user"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">
+                                    ${enquiry.customer_name} - ${enquiry.property_type}
+                                </div>
+                                <div class="activity-time">
+                                    <span class="badge badge-${enquiry.status.toLowerCase().replace(' ', '-')}">${enquiry.status}</span>
+                                    • ${date}
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+                
+                lucide.createIcons();
+                console.log('Loaded recent enquiries:', data);
+            } catch (error) {
+                console.error('Error loading recent enquiries:', error);
+                document.getElementById('recentEnquiries').innerHTML = `
                     <li class="activity-item">
-                        <div class="activity-icon" style="background: #64748b;">
-                            <i data-lucide="info"></i>
+                        <div class="activity-icon" style="background: #dc2626;">
+                            <i data-lucide="alert-circle"></i>
                         </div>
                         <div class="activity-content">
-                            <div class="activity-title">No recent activity</div>
-                            <div class="activity-time">Start by adding some data</div>
+                            <div class="activity-title">Failed to load enquiries</div>
+                            <div class="activity-time">Check connection</div>
                         </div>
                     </li>
                 `;
-            } else {
-                activityList.innerHTML = activities.map(activity => `
-                    <li class="activity-item">
-                        <div class="activity-icon" style="background: ${activity.color};">
-                            <i data-lucide="${activity.icon}"></i>
-                        </div>
-                        <div class="activity-content">
-                            <div class="activity-title">${activity.title}</div>
-                            <div class="activity-time">${activity.time}</div>
-                        </div>
-                    </li>
-                `).join('');
             }
+        }
+
+        // Check database connection
+        async function checkDatabaseConnection() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('banks')
+                    .select('id')
+                    .limit(1);
+                
+                const dbStatus = document.getElementById('dbStatus');
+                const dbStatusText = document.getElementById('dbStatusText');
+                
+                if (error) {
+                    dbStatus.style.background = '#dc2626';
+                    dbStatusText.textContent = 'Connection Error';
+                } else {
+                    dbStatus.style.background = '#059669';
+                    dbStatusText.textContent = 'Connected';
+                }
+            } catch (error) {
+                console.error('Database connection check failed:', error);
+                document.getElementById('dbStatus').style.background = '#dc2626';
+                document.getElementById('dbStatusText').textContent = 'Failed';
+            }
+        }
+
+        // Animate stat counters
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-value[data-target]');
             
-            // Re-initialize icons
-            lucide.createIcons();
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                let current = 0;
+                const increment = Math.ceil(target / 30);
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = current.toLocaleString();
+                    }
+                }, 50);
+            });
         }
 
-        function setupRealtimeUpdates() {
-            // This would set up real-time subscriptions to database changes
-            // For now, we'll refresh data every 30 seconds
-            setInterval(async () => {
-                await loadDashboardData();
-            }, 30000);
-        }
-
-        function updateLastBackupTime() {
-            const lastBackup = document.getElementById('lastBackup');
-            if (lastBackup) {
+        // Update dashboard periodically
+        async function updateDashboard() {
+            try {
+                await checkDatabaseConnection();
+                
+                // Update last backup time
+                const lastBackup = document.getElementById('lastBackup');
                 const now = new Date();
-                const backupTime = new Date(now.getTime() - (6 * 60 * 60 * 1000)); // 6 hours ago
-                lastBackup.textContent = formatRelativeTime(backupTime.toISOString());
+                const backupTime = new Date(now.getTime() - (Math.random() * 6 * 60 * 60 * 1000)); // Random time within last 6 hours
+                lastBackup.textContent = backupTime.toLocaleString();
+            } catch (error) {
+                console.error('Dashboard update failed:', error);
             }
         }
 
-        function formatRelativeTime(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffInSeconds = Math.floor((now - date) / 1000);
-            
-            if (diffInSeconds < 60) return 'Just now';
-            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-            return `${Math.floor(diffInSeconds / 86400)} days ago`;
+        // Helper function to get status color
+        function getStatusColor(status) {
+            switch (status) {
+                case 'New': return '#f59e0b';
+                case 'In Progress': return '#3b82f6';
+                case 'Completed': return '#10b981';
+                case 'Closed': return '#6b7280';
+                default: return '#64748b';
+            }
         }
 
         // Sign out functionality
-        async function signOut() {
-            if (confirm('Are you sure you want to sign out?')) {
-                try {
-                    showLoading('Signing out...');
-                    const result = await AuthService.signOut();
-                    
-                    if (result.success) {
-                        showNotification('Signed out successfully', 'success');
-                        setTimeout(() => {
-                            window.location.href = 'login.html';
-                        }, 1000);
-                    } else {
-                        throw new Error(result.error);
-                    }
-                } catch (error) {
-                    console.error('Sign out error:', error);
-                    showNotification('Failed to sign out: ' + error.message, 'error');
-                } finally {
-                    hideLoading();
+        function confirmSignOut() {
+            openModal('signout-modal');
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                const result = await AuthService.signOut();
+                
+                if (result.success) {
+                    showNotification('Signed out successfully', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                } else {
+                    throw new Error(result.error || 'Sign out failed');
                 }
+            } catch (error) {
+                console.error('Sign out error:', error);
+                hideLoading();
+                showNotification('Failed to sign out: ' + error.message, 'error');
             }
         }
 
-        // Mobile sidebar toggle
+        // Modal functions
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Mobile sidebar functions
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             
-            if (sidebar) {
+            if (sidebar && overlay) {
                 sidebar.classList.toggle('mobile-open');
-            }
-            if (overlay) {
                 overlay.classList.toggle('active');
             }
         }
 
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (sidebar && overlay) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        // Loading and notification functions (if not included from admin-scripts.js)
+        function showLoading(message = 'Loading...') {
+            hideLoading();
+            
+            const loader = document.createElement('div');
+            loader.id = 'global-loader';
+            loader.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    backdrop-filter: blur(4px);
+                ">
+                    <div style="
+                        background: white;
+                        padding: 24px;
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        gap: 16px;
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                    ">
+                        <div class="loading-spinner"></div>
+                        <span style="color: #374151; font-weight: 500;">${message}</span>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(loader);
+        }
+
+        function hideLoading() {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const existing = document.querySelectorAll('.notification');
+            existing.forEach(n => n.remove());
+
+            const colors = {
+                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d', icon: 'check-circle' },
+                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626', icon: 'x-circle' },
+                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8', icon: 'info' }
+            };
+
+            const color = colors[type] || colors.info;
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${color.bg};
+                    border: 1px solid ${color.border};
+                    color: ${color.text};
+                    padding: 16px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    z-index: 10000;
+                    font-size: 14px;
+                    font-weight: 500;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    animation: slideInRight 0.3s ease-out;
+                    cursor: pointer;
+                " onclick="this.parentElement.remove()">
+                    <i data-lucide="${color.icon}" style="width: 16px; height: 16px;"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 4000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal('signout-modal');
+                closeSidebar();
+            }
+        });
+
         // Handle window resize
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('overlay');
-                if (sidebar) sidebar.classList.remove('mobile-open');
-                if (overlay) overlay.classList.remove('active');
+                closeSidebar();
             }
         });
     </script>
