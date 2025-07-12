@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keyquest Mortgage Admin - Dashboard</title>
     
-    <!-- CSS Connection - Fixed path to css folder -->
+    <!-- Standardized CSS Link -->
     <link rel="stylesheet" href="css/admin-styles.css">
     
-    <!-- External Scripts - Fixed paths to match your directory structure -->
+    <!-- External Scripts in proper order -->
     <script src="js/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config/supabase.js"></script>
@@ -87,10 +87,10 @@
             <div class="content-area">
                 <!-- Statistics Overview -->
                 <div class="stats-grid">
-                    <div class="stat-card">
+                    <div class="stat-card packages-card">
                         <div class="stat-header">
                             <div class="stat-title">Total Rate Packages</div>
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="stat-icon packages-icon">
                                 <i data-lucide="package"></i>
                             </div>
                         </div>
@@ -101,10 +101,24 @@
                         </div>
                     </div>
 
-                    <div class="stat-card">
+                    <div class="stat-card rate-types-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Rate Types</div>
+                            <div class="stat-icon rate-types-icon">
+                                <i data-lucide="percent"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="rateTypesCount">0</div>
+                        <div class="stat-change positive">
+                            <i data-lucide="trending-up"></i>
+                            <span>Interest types</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card banks-card">
                         <div class="stat-header">
                             <div class="stat-title">Active Banks</div>
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <div class="stat-icon banks-icon">
                                 <i data-lucide="landmark"></i>
                             </div>
                         </div>
@@ -115,10 +129,24 @@
                         </div>
                     </div>
 
-                    <div class="stat-card">
+                    <div class="stat-card bankers-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Total Bankers</div>
+                            <div class="stat-icon bankers-icon">
+                                <i data-lucide="briefcase"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="bankersCount">0</div>
+                        <div class="stat-change positive">
+                            <i data-lucide="users"></i>
+                            <span>Active bankers</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card agents-card">
                         <div class="stat-header">
                             <div class="stat-title">Total Agents</div>
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <div class="stat-icon agents-icon">
                                 <i data-lucide="users"></i>
                             </div>
                         </div>
@@ -129,10 +157,10 @@
                         </div>
                     </div>
 
-                    <div class="stat-card">
+                    <div class="stat-card enquiries-card">
                         <div class="stat-header">
                             <div class="stat-title">Recent Enquiries</div>
-                            <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                            <div class="stat-icon enquiries-icon">
                                 <i data-lucide="help-circle"></i>
                             </div>
                         </div>
@@ -148,8 +176,8 @@
                 <div class="quick-actions">
                     <h3>Quick Actions</h3>
                     <div class="action-grid">
-                        <a href="rate-packages.html" class="action-card">
-                            <div class="action-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <a href="rate-packages.html" class="action-card packages-action">
+                            <div class="action-icon packages-icon">
                                 <i data-lucide="plus"></i>
                             </div>
                             <div class="action-content">
@@ -157,8 +185,17 @@
                                 <p>Create new loan package</p>
                             </div>
                         </a>
-                        <a href="banks.html" class="action-card">
-                            <div class="action-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <a href="rate-types.html" class="action-card rate-types-action">
+                            <div class="action-icon rate-types-icon">
+                                <i data-lucide="percent"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Manage Rate Types</h4>
+                                <p>Configure interest rates</p>
+                            </div>
+                        </a>
+                        <a href="banks.html" class="action-card banks-action">
+                            <div class="action-icon banks-icon">
                                 <i data-lucide="landmark"></i>
                             </div>
                             <div class="action-content">
@@ -166,8 +203,17 @@
                                 <p>View bank directory</p>
                             </div>
                         </a>
-                        <a href="agents.html" class="action-card">
-                            <div class="action-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <a href="bankers.html" class="action-card bankers-action">
+                            <div class="action-icon bankers-icon">
+                                <i data-lucide="briefcase"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Manage Bankers</h4>
+                                <p>Configure banker access</p>
+                            </div>
+                        </a>
+                        <a href="agents.html" class="action-card agents-action">
+                            <div class="action-icon agents-icon">
                                 <i data-lucide="users"></i>
                             </div>
                             <div class="action-content">
@@ -175,8 +221,8 @@
                                 <p>Check agent status</p>
                             </div>
                         </a>
-                        <a href="enquiry.html" class="action-card">
-                            <div class="action-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <a href="enquiry.html" class="action-card enquiries-action">
+                            <div class="action-icon enquiries-icon">
                                 <i data-lucide="help-circle"></i>
                             </div>
                             <div class="action-content">
@@ -193,7 +239,7 @@
     <script>
         // ===================================
         // DASHBOARD-SPECIFIC FUNCTIONALITY
-        // Uses admin-scripts.js for shared functionality
+        // Clean dashboard code using standardized admin-scripts.js
         // ===================================
 
         // Initialize dashboard
@@ -213,14 +259,16 @@
                 // Set up automatic updates
                 setInterval(updateDashboard, 30000);
                 
-                // Silent backup system - runs 1 second after load
+                // Silent backup system
                 setTimeout(ensureCountersAreCorrect, 1000);
                 
                 console.log('Dashboard ready');
                 
             } catch (error) {
                 console.error('Dashboard initialization error:', error.message);
-                showNotification('Dashboard initialization failed', 'error');
+                if (typeof showNotification !== 'undefined') {
+                    showNotification('Dashboard initialization failed', 'error');
+                }
             }
         });
 
@@ -255,21 +303,23 @@
         }
 
         // ===================================
-        // DATA LOADING - CLEAN & RELIABLE
+        // DATA LOADING
         // ===================================
         async function loadDashboardData() {
             try {
-                // Load counts using reliable query format
-                const [packages, banks, agents, enquiries] = await Promise.all([
+                const [packages, rateTypes, banks, bankers, agents, enquiries] = await Promise.all([
                     countRecords('rate_packages'),
+                    countRecords('rate_types'), 
                     countRecords('banks'),
+                    countRecords('bankers'),
                     countRecords('agents'),
                     countRecords('enquiries')
                 ]);
 
-                // Update counters
                 updateCounter('packagesCount', packages);
+                updateCounter('rateTypesCount', rateTypes);
                 updateCounter('banksCount', banks);
+                updateCounter('bankersCount', bankers);
                 updateCounter('agentsCount', agents);
                 updateCounter('enquiriesCount', enquiries);
 
@@ -278,7 +328,6 @@
             }
         }
 
-        // Count records using reliable method
         async function countRecords(tableName) {
             try {
                 const { data, error } = await supabaseClient
@@ -286,7 +335,6 @@
                     .select('id');
 
                 if (error) throw error;
-                
                 return data ? data.length : 0;
                 
             } catch (error) {
@@ -295,7 +343,6 @@
             }
         }
 
-        // Update counter display
         function updateCounter(elementId, count) {
             const element = document.getElementById(elementId);
             if (element) {
@@ -304,15 +351,15 @@
         }
 
         // ===================================
-        // SILENT BACKUP SYSTEM
-        // Runs automatically, no debug spam
+        // BACKUP SYSTEM
         // ===================================
         async function ensureCountersAreCorrect() {
             try {
-                // Check if any counters show 0 when data exists
                 const counters = [
                     { id: 'packagesCount', table: 'rate_packages' },
+                    { id: 'rateTypesCount', table: 'rate_types' },
                     { id: 'banksCount', table: 'banks' },
+                    { id: 'bankersCount', table: 'bankers' },
                     { id: 'agentsCount', table: 'agents' },
                     { id: 'enquiriesCount', table: 'enquiries' }
                 ];
@@ -326,24 +373,15 @@
                         }
                     }
                 }
-
             } catch (error) {
-                // Silent error handling - no spam
+                // Silent error handling
             }
         }
 
-        // ===================================
-        // DASHBOARD UPDATES
-        // ===================================
         async function updateDashboard() {
             await loadDashboardData();
         }
 
-        // ===================================
-        // SIGN OUT FUNCTION
-        // Note: UI functions like toggleSidebar(), closeSidebar() 
-        // are now handled by admin-scripts.js
-        // ===================================
         async function confirmSignOut() {
             if (confirm('Are you sure you want to sign out?')) {
                 try {
@@ -351,7 +389,9 @@
                     window.location.href = 'login.html';
                 } catch (error) {
                     console.error('Sign out error:', error.message);
-                    showNotification('Sign out failed', 'error');
+                    if (typeof showNotification !== 'undefined') {
+                        showNotification('Sign out failed', 'error');
+                    }
                 }
             }
         }
