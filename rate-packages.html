@@ -82,7 +82,7 @@
             </header>
 
             <div class="content-area">
-                <!-- Search and Filter Bar (Matching Original Design) -->
+                <!-- Fixed Search and Filter Bar (Matching Original Design) -->
                 <div class="search-filter-bar">
                     <div class="search-box">
                         <i data-lucide="search" class="search-icon"></i>
@@ -170,6 +170,11 @@
                         <option value="Citibank">Citibank</option>
                     </select>
 
+                    <button class="btn btn-secondary" onclick="clearAllFilters()" id="clearFiltersBtn">
+                        <i data-lucide="x"></i>
+                        <span>Clear</span>
+                    </button>
+                    
                     <button class="btn btn-secondary" onclick="exportToCSV('rate-packages.csv')">
                         <i data-lucide="download"></i>
                         <span>Export</span>
@@ -207,7 +212,7 @@
                     </div>
                 </div>
 
-                <!-- Pagination -->
+                <!-- Enhanced Pagination -->
                 <div class="pagination">
                     <div class="pagination-info">
                         <span id="paginationInfo">Showing 0 of 0</span>
@@ -228,7 +233,7 @@
         </div>
     </div>
 
-    <!-- Add/Edit Rate Package Modal -->
+    <!-- Complete Add/Edit Rate Package Modal -->
     <div class="modal" id="package-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -262,6 +267,7 @@
                                     <option value="SIF">SIF</option>
                                     <option value="Citibank">Citibank</option>
                                 </select>
+                                <small style="color: #6b7280; font-size: 12px;">Hide bank name for this rate package</small>
                             </div>
 
                             <div class="form-group half">
@@ -307,11 +313,136 @@
 
                             <div class="form-group half">
                                 <label class="form-label">Rate type category</label>
-                                <select class="form-select" name="rate_type_category" required>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="rate_type_category" value="Fixed" required>
+                                        <span>Fixed</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="rate_type_category" value="Floating" required>
+                                        <span>Floating</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Reference rate</label>
+                                <input type="text" class="form-input" name="reference_rate" placeholder="Enter reference rate">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interest Rate Information -->
+                    <div class="form-section">
+                        <h4>Interest Rate Information</h4>
+                        
+                        <!-- Year 1 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 1</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year1_rate_type" style="flex: 2;">
                                     <option value="">Select rate type</option>
-                                    <option value="Fixed">Fixed</option>
-                                    <option value="Floating">Floating</option>
                                 </select>
+                                <select class="form-select" name="year1_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year1_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Year 2 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 2</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year2_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year2_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year2_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Year 3 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 3</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year3_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year3_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year3_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Year 4 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 4</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year4_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year4_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year4_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Year 5 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 5</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year5_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year5_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year5_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Thereafter -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Thereafter</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="thereafter_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="thereafter_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="thereafter_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Information -->
+                    <div class="form-section">
+                        <h4>Other Information</h4>
+                        <div class="form-grid">
+                            <div class="form-group half">
+                                <label class="form-label">Minimum loan size</label>
+                                <div class="input-group">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" class="form-input" name="minimum_loan_size" placeholder="0">
+                                </div>
                             </div>
 
                             <div class="form-group half">
@@ -354,10 +485,76 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Reference rate</label>
-                                <input type="text" class="form-input" name="reference_rate" placeholder="Enter reference rate">
+                            <div class="form-group half">
+                                <label class="form-label">Partially pay penalty</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" name="partial_pay_penalty" step="0.01" placeholder="1.5">
+                                    <span class="input-suffix">%</span>
+                                </div>
                             </div>
+
+                            <div class="form-group half">
+                                <label class="form-label">Full redeem penalty</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" name="full_redeem_penalty" step="0.01" placeholder="1.5">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group half">
+                                <label class="form-label">Cancellation penalty</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" name="cancellation_penalty" step="0.01" placeholder="1.5">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="legal_fee_subsidy">
+                                        <span>Legal fee subsidy / Cash Rebate</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="valuation_subsidy">
+                                        <span>Valuation Subsidy</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="partial_repayment">
+                                        <span>Partial repayment</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="waiver_due_to_sales">
+                                        <span>Waiver due to sales</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="free_package_conversion_12m">
+                                        <span>Free package conversion 12 Months</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="free_package_conversion_24m">
+                                        <span>Free package conversion 24 Months</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="free_package_conversion_36m">
+                                        <span>Free package conversion 36 Months</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Remarks -->
+                    <div class="form-section">
+                        <h4>Remarks</h4>
+                        <div class="form-group">
+                            <textarea class="form-textarea" name="remarks" rows="4" placeholder="Enter any additional remarks or notes..." style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; resize: vertical;"></textarea>
                         </div>
                     </div>
 
@@ -393,7 +590,7 @@
     <script src="js/admin-scripts.js"></script>
     
     <script>
-        // Rate Packages JavaScript
+        // Enhanced Rate Packages JavaScript with Full Functionality
         let packages = [];
         let filteredPackages = [];
         let currentPage = 1;
@@ -402,7 +599,7 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Initializing Rate Packages page...');
+            console.log('🚀 Initializing Enhanced Rate Packages page...');
             
             // Check if Supabase is loaded
             if (typeof supabaseClient === 'undefined') {
@@ -413,6 +610,7 @@
             
             console.log('✅ Supabase client loaded successfully');
             loadPackages();
+            loadRateTypes();
             setupEventListeners();
             updateRecentActions();
         });
@@ -482,7 +680,33 @@
             }
         }
 
-        // Display packages in table
+        // Load rate types for dropdown
+        async function loadRateTypes() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('rate_types')
+                    .select('rate_type, rate_value')
+                    .order('rate_type');
+
+                if (error) throw error;
+
+                // Populate rate type selects
+                const rateTypeSelects = document.querySelectorAll('select[name$="_rate_type"]');
+                
+                const rateTypeOptions = (data || []).map(rateType => 
+                    `<option value="${rateType.rate_type}">${rateType.rate_type} (${rateType.rate_value}%)</option>`
+                ).join('');
+
+                rateTypeSelects.forEach(select => {
+                    select.innerHTML = '<option value="">Select rate type</option>' + rateTypeOptions;
+                });
+
+            } catch (error) {
+                console.error('Error loading rate types:', error.message);
+            }
+        }
+
+        // Display packages in table with enhanced pagination
         function displayPackages() {
             const tbody = document.getElementById('packagesTable');
             if (!tbody) return;
@@ -525,16 +749,16 @@
                     <td>${calculateInterestY1(pkg)}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-sm btn-info" onclick="duplicatePackage('${pkg.id}')" title="Duplicate">
+                            <button class="btn btn-sm btn-info" onclick="duplicatePackage('${pkg.id}')" title="Duplicate" style="background: #f59e0b; color: white; border: none;">
                                 <i data-lucide="copy"></i>
                             </button>
-                            <button class="btn btn-sm btn-view" onclick="viewPackage('${pkg.id}')" title="View">
+                            <button class="btn btn-sm btn-view" onclick="viewPackage('${pkg.id}')" title="View" style="background: #8b5cf6; color: white; border: none;">
                                 <i data-lucide="eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-edit" onclick="editPackage('${pkg.id}')" title="Edit">
+                            <button class="btn btn-sm btn-edit" onclick="editPackage('${pkg.id}')" title="Edit" style="background: #3b82f6; color: white; border: none;">
                                 <i data-lucide="edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-delete" onclick="deletePackage('${pkg.id}')" title="Delete">
+                            <button class="btn btn-sm btn-delete" onclick="deletePackage('${pkg.id}')" title="Delete" style="background: #ef4444; color: white; border: none;">
                                 <i data-lucide="trash-2"></i>
                             </button>
                         </div>
@@ -548,7 +772,7 @@
             }
         }
 
-        // Filter packages
+        // Enhanced filter packages function
         function filterPackages() {
             const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
             const propertyType = document.getElementById('propertyTypeFilter')?.value || '';
@@ -585,7 +809,7 @@
             console.log(`🔍 Filtered ${filteredPackages.length}/${packages.length} packages`);
         }
 
-        // Clear all filters
+        // Clear all filters with visual feedback
         function clearAllFilters() {
             document.getElementById('searchInput').value = '';
             document.querySelectorAll('.filter-select').forEach(select => {
@@ -595,7 +819,208 @@
             currentPage = 1;
             displayPackages();
             updatePagination();
-            showNotification('All filters cleared', 'info');
+            showNotification('All filters cleared - showing all packages', 'info');
+        }
+
+        // Enhanced CRUD Operations with Full Functionality
+        async function duplicatePackage(id) {
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return;
+
+            try {
+                // Prepare duplicate data (remove id and timestamps)
+                const duplicateData = { ...pkg };
+                delete duplicateData.id;
+                delete duplicateData.created_at;
+                delete duplicateData.updated_at;
+                
+                // Add "Copy" to bank name to distinguish
+                duplicateData.bank_name = `${duplicateData.bank_name} (Copy)`;
+
+                const { data, error } = await supabaseClient
+                    .from('rate_packages')
+                    .insert([duplicateData])
+                    .select();
+
+                if (error) throw error;
+
+                addRecentAction('duplicate', `Duplicated package: ${pkg.bank_name} - ${pkg.property_type}`);
+                showNotification('Package duplicated successfully', 'success');
+                loadPackages(); // Reload data
+                
+            } catch (error) {
+                console.error('Error duplicating package:', error);
+                showNotification('Failed to duplicate package: ' + error.message, 'error');
+            }
+        }
+
+        function viewPackage(id) {
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return;
+
+            const content = generateViewContent(pkg);
+            document.getElementById('viewPackageContent').innerHTML = content;
+            openModal('view-package-modal');
+            
+            addRecentAction('view', `Viewed package: ${pkg.bank_name} - ${pkg.property_type}`);
+        }
+
+        function editPackage(id) {
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return;
+
+            // Populate form with package data
+            populateForm(pkg);
+            AdminApp.editingItemId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Rate Package';
+            openModal('package-modal');
+            
+            addRecentAction('edit', `Started editing package: ${pkg.bank_name} - ${pkg.property_type}`);
+        }
+
+        async function deletePackage(id) {
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return;
+
+            if (!confirm(`Are you sure you want to delete the rate package for ${pkg.bank_name}?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('rate_packages')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                addRecentAction('delete', `Deleted package: ${pkg.bank_name} - ${pkg.property_type}`);
+                showNotification('Package deleted successfully', 'success');
+                loadPackages(); // Reload data
+                
+            } catch (error) {
+                console.error('Error deleting package:', error);
+                showNotification('Failed to delete package: ' + error.message, 'error');
+            }
+        }
+
+        // Enhanced form handling
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const packageData = {};
+            
+            // Process form data
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('_penalty') || key.includes('_value') || key === 'loan_amount' || key === 'minimum_loan_size') {
+                    packageData[key] = value ? parseFloat(value) : null;
+                } else {
+                    packageData[key] = value || null;
+                }
+            }
+
+            // Handle checkboxes
+            const checkboxFields = [
+                'legal_fee_subsidy', 'valuation_subsidy', 'partial_repayment', 
+                'waiver_due_to_sales', 'free_package_conversion_12m', 
+                'free_package_conversion_24m', 'free_package_conversion_36m'
+            ];
+            
+            checkboxFields.forEach(field => {
+                packageData[field] = formData.has(field);
+            });
+
+            try {
+                if (AdminApp.editingItemId) {
+                    // Update existing package
+                    const { error } = await supabaseClient
+                        .from('rate_packages')
+                        .update(packageData)
+                        .eq('id', AdminApp.editingItemId);
+                    
+                    if (error) throw error;
+                    
+                    addRecentAction('edit', `Updated package for ${packageData.bank_name}`);
+                    showNotification('Package updated successfully', 'success');
+                } else {
+                    // Create new package
+                    const { error } = await supabaseClient
+                        .from('rate_packages')
+                        .insert([packageData]);
+                    
+                    if (error) throw error;
+                    
+                    addRecentAction('create', `Created package for ${packageData.bank_name}`);
+                    showNotification('Package created successfully', 'success');
+                }
+
+                closeModal('package-modal');
+                loadPackages();
+                e.target.reset();
+                AdminApp.editingItemId = null;
+
+            } catch (error) {
+                console.error('Error saving package:', error);
+                showNotification('Failed to save package: ' + error.message, 'error');
+            }
+        }
+
+        // Enhanced pagination with proper controls
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
+            const paginationInfo = document.getElementById('paginationInfo');
+            const paginationControls = document.getElementById('paginationControls');
+            
+            if (paginationInfo) {
+                const start = Math.min((currentPage - 1) * itemsPerPage + 1, filteredPackages.length);
+                const end = Math.min(currentPage * itemsPerPage, filteredPackages.length);
+                paginationInfo.textContent = `Showing ${start} to ${end} of ${filteredPackages.length}`;
+            }
+
+            if (paginationControls && totalPages > 1) {
+                let controls = '';
+                
+                // Previous button
+                controls += `<button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i data-lucide="chevron-left"></i> Previous
+                </button>`;
+                
+                // Page numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === currentPage || i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        controls += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        controls += '<span class="pagination-ellipsis">...</span>';
+                    }
+                }
+                
+                // Next button
+                controls += `<button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Next <i data-lucide="chevron-right"></i>
+                </button>`;
+
+                paginationControls.innerHTML = controls;
+                
+                // Reinitialize icons
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } else if (paginationControls) {
+                paginationControls.innerHTML = '';
+            }
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                displayPackages();
+                updatePagination();
+                
+                // Scroll to top of table
+                document.querySelector('.data-table').scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         // Helper functions
@@ -630,46 +1055,54 @@
             };
         }
 
-        // CRUD Operations
-        function duplicatePackage(id) {
-            const pkg = packages.find(p => p.id === id);
-            if (pkg) {
-                addRecentAction('duplicate', `Duplicated package: ${pkg.bank_name} - ${pkg.property_type}`);
-                showNotification('Duplicate functionality - to be implemented', 'info');
-            }
+        function populateForm(pkg) {
+            const form = document.getElementById('packageForm');
+            Object.keys(pkg).forEach(key => {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'checkbox') {
+                        input.checked = pkg[key];
+                    } else if (input.type === 'radio') {
+                        if (input.value === pkg[key]) {
+                            input.checked = true;
+                        }
+                    } else {
+                        input.value = pkg[key] || '';
+                    }
+                }
+            });
         }
 
-        function viewPackage(id) {
-            const pkg = packages.find(p => p.id === id);
-            if (pkg) {
-                addRecentAction('view', `Viewed package: ${pkg.bank_name} - ${pkg.property_type}`);
-                showNotification('View functionality - to be implemented', 'info');
-            }
+        function generateViewContent(pkg) {
+            return `
+                <div class="view-content">
+                    <div class="view-section">
+                        <h4>Basic Information</h4>
+                        <div class="view-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="view-item"><strong>Bank Name:</strong> ${pkg.bank_name || 'N/A'}</div>
+                            <div class="view-item"><strong>Property Type:</strong> ${pkg.property_type || 'N/A'}</div>
+                            <div class="view-item"><strong>Buy Under:</strong> ${pkg.buy_under || 'N/A'}</div>
+                            <div class="view-item"><strong>Loan Type:</strong> ${pkg.loan_type || 'N/A'}</div>
+                            <div class="view-item"><strong>Property Status:</strong> ${pkg.property_status || 'N/A'}</div>
+                            <div class="view-item"><strong>Rate Type:</strong> ${pkg.rate_type_category || 'N/A'}</div>
+                        </div>
+                    </div>
+                    <div class="view-section">
+                        <h4>Financial Details</h4>
+                        <div class="view-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="view-item"><strong>Loan Amount:</strong> ${formatNumber(pkg.loan_amount)}</div>
+                            <div class="view-item"><strong>Lock Period:</strong> ${pkg.lock_period || 'N/A'}</div>
+                            <div class="view-item"><strong>Reference Rate:</strong> ${pkg.reference_rate || 'N/A'}</div>
+                            <div class="view-item"><strong>Minimum Loan Size:</strong> ${formatNumber(pkg.minimum_loan_size)}</div>
+                            <div class="view-item"><strong>Interest Y1:</strong> ${calculateInterestY1(pkg)}</div>
+                        </div>
+                    </div>
+                    ${pkg.remarks ? `<div class="view-section"><h4>Remarks</h4><p>${pkg.remarks}</p></div>` : ''}
+                </div>
+            `;
         }
 
-        function editPackage(id) {
-            const pkg = packages.find(p => p.id === id);
-            if (pkg) {
-                addRecentAction('edit', `Edited package: ${pkg.bank_name} - ${pkg.property_type}`);
-                showNotification('Edit functionality - to be implemented', 'info');
-            }
-        }
-
-        function deletePackage(id) {
-            const pkg = packages.find(p => p.id === id);
-            if (pkg && confirm(`Are you sure you want to delete the rate package for ${pkg.bank_name}?`)) {
-                addRecentAction('delete', `Deleted package: ${pkg.bank_name} - ${pkg.property_type}`);
-                showNotification('Delete functionality - to be implemented', 'info');
-            }
-        }
-
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            addRecentAction('create', 'Created new rate package');
-            showNotification('Form submission - to be implemented', 'info');
-        }
-
-        // Recent actions
+        // Recent actions management
         function addRecentAction(type, description) {
             const action = {
                 type,
@@ -717,26 +1150,17 @@
             }
         }
 
-        // Pagination
-        function updatePagination() {
-            const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
-            const paginationInfo = document.getElementById('paginationInfo');
-            
-            if (paginationInfo) {
-                const start = Math.min((currentPage - 1) * itemsPerPage + 1, filteredPackages.length);
-                const end = Math.min(currentPage * itemsPerPage, filteredPackages.length);
-                paginationInfo.textContent = `Showing ${start} to ${end} of ${filteredPackages.length}`;
-            }
-        }
-
-        // Initialize Lucide icons
+        // Initialize when page loads
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
+
+        // Global variables for admin scripts compatibility
+        window.AdminApp = window.AdminApp || { editingItemId: null };
     </script>
 
     <style>
-        /* Ensure filter bar matches original design */
+        /* Fixed filter bar styling to match original design */
         .search-filter-bar {
             display: flex;
             gap: 12px;
@@ -747,6 +1171,7 @@
             background: white;
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
         }
 
         .search-box {
@@ -761,6 +1186,7 @@
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             font-size: 14px;
+            background: white;
         }
 
         .search-icon {
@@ -778,59 +1204,179 @@
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             font-size: 14px;
-            min-width: 150px;
+            min-width: 140px;
             background: white;
         }
 
-        .recent-actions-section {
-            margin-top: 32px;
-            padding: 24px;
+        /* Enhanced pagination styling */
+        .pagination-btn {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .no-actions {
-            text-align: center;
-            color: #6b7280;
-            font-style: italic;
-            padding: 20px;
+        .pagination-btn:hover:not(:disabled) {
+            background: #f8fafc;
+            border-color: #cbd5e1;
         }
 
-        /* Action buttons styling */
+        .pagination-btn.active {
+            background: #4338ca;
+            color: white;
+            border-color: #4338ca;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-ellipsis {
+            padding: 8px 4px;
+            color: #64748b;
+        }
+
+        /* Action buttons enhanced styling */
         .action-buttons {
             display: flex;
-            gap: 6px;
+            gap: 4px;
+            justify-content: center;
         }
 
         .btn-sm {
-            padding: 6px 8px;
-            border: none;
+            width: 32px;
+            height: 32px;
+            padding: 6px;
             border-radius: 6px;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
-            transition: all 0.2s;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-
-        .btn-info { background: #f59e0b; color: white; }
-        .btn-view { background: #8b5cf6; color: white; }
-        .btn-edit { background: #3b82f6; color: white; }
-        .btn-delete { background: #ef4444; color: white; }
 
         .btn-sm:hover {
             transform: translateY(-1px);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        .btn-sm i {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Form enhancements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group.half {
+            grid-column: span 1;
+        }
+
+        .form-group {
+            grid-column: span 2;
+        }
+
+        .rate-year-row {
+            margin-bottom: 16px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-prefix, .input-suffix {
+            padding: 10px 12px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-prefix {
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .input-suffix {
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .input-group .form-input {
+            border-radius: 0;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-option:hover {
+            background: #e0e7ff;
+            border-color: #c7d2fe;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .radio-option:hover {
+            background: #e0e7ff;
+            border-color: #c7d2fe;
+        }
+
+        /* Status badge improvements */
         .status-badge {
             padding: 4px 12px;
             border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
+            text-transform: uppercase;
         }
 
         .status-completed {
@@ -848,20 +1394,42 @@
             color: #374151;
         }
 
-        /* Loading spinner */
-        .loading-spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid #f3f4f6;
-            border-top: 3px solid #4338ca;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .search-filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            .search-box {
+                min-width: auto;
+            }
+
+            .filter-select {
+                min-width: auto;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.half {
+                grid-column: span 1;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+            }
         }
     </style>
 </body>
