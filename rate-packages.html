@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Packages - Keyquest Mortgage</title>
+    <title>Rate Packages - Keyquest Mortgage Admin</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <style>
         * {
@@ -27,11 +27,15 @@
             width: 280px;
             background: white;
             border-right: 1px solid #e2e8f0;
-            padding: 0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
             z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
         }
 
         .sidebar-header {
@@ -72,12 +76,8 @@
             color: #64748b;
             cursor: pointer;
             transition: all 0.2s;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            font-size: 14px;
             text-decoration: none;
+            font-size: 14px;
         }
 
         .nav-item:hover {
@@ -99,16 +99,43 @@
         .main-content {
             flex: 1;
             margin-left: 280px;
-            padding: 0;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.full-width {
+            margin-left: 0;
         }
 
         .header {
             background: white;
             border-bottom: 1px solid #e2e8f0;
-            padding: 16px 32px;
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .menu-toggle:hover {
+            background: #f1f5f9;
         }
 
         .header-title {
@@ -178,7 +205,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px;
+            padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
         }
@@ -215,12 +242,14 @@
         }
 
         .content-area {
-            padding: 32px;
+            padding: 24px;
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .search-filter-bar {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             margin-bottom: 24px;
             align-items: center;
             flex-wrap: wrap;
@@ -229,7 +258,8 @@
         .search-box {
             position: relative;
             flex: 1;
-            min-width: 300px;
+            min-width: 200px;
+            max-width: 300px;
         }
 
         .search-input {
@@ -258,12 +288,13 @@
         }
 
         .filter-select {
-            padding: 10px 16px;
+            padding: 8px 12px;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             font-size: 14px;
             background: white;
-            min-width: 140px;
+            min-width: 120px;
+            white-space: nowrap;
         }
 
         .filter-select:focus {
@@ -280,27 +311,37 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1200px; /* Ensures all columns are visible */
         }
 
         .table th {
             background: #f8fafc;
-            padding: 16px;
+            padding: 12px 8px;
             text-align: left;
             font-weight: 600;
             color: #475569;
             border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
+            font-size: 13px;
             white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .table td {
-            padding: 16px;
+            padding: 12px 8px;
             border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
+            font-size: 13px;
             vertical-align: top;
+            white-space: nowrap;
         }
 
         .table tr:hover {
@@ -312,9 +353,9 @@
         }
 
         .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: 500;
             white-space: nowrap;
         }
@@ -329,14 +370,26 @@
             color: #d97706;
         }
 
-        .status-active {
-            background: #dcfce7;
-            color: #166534;
+        .loan-type {
+            font-size: 11px;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 8px;
+        .property-info {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.3;
+            max-width: 120px;
+        }
+
+        .rate-info {
+            font-weight: 500;
+            color: #059669;
+            font-size: 12px;
         }
 
         .loan-amount {
@@ -344,24 +397,10 @@
             color: #1e293b;
         }
 
-        .loan-type {
-            font-size: 13px;
-            color: #64748b;
-            background: #f1f5f9;
-            padding: 2px 8px;
-            border-radius: 4px;
+        .action-buttons {
+            display: flex;
+            gap: 4px;
             white-space: nowrap;
-        }
-
-        .property-info {
-            font-size: 13px;
-            color: #64748b;
-            line-height: 1.4;
-        }
-
-        .rate-info {
-            font-weight: 500;
-            color: #059669;
         }
 
         .pagination {
@@ -408,7 +447,7 @@
             cursor: not-allowed;
         }
 
-        .modal {
+        .overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -416,170 +455,21 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            z-index: 50;
         }
 
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .modal-close:hover {
-            background: #f1f5f9;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            grid-column: span 2;
-        }
-
-        .form-group.half {
-            grid-column: span 1;
-        }
-
-        .form-label {
+        .overlay.active {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #374151;
-            font-size: 14px;
         }
 
-        .form-input {
-            width: 100%;
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .form-select:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .radio-group {
-            display: flex;
-            gap: 16px;
-            margin-top: 8px;
-        }
-
-        .radio-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            gap: 16px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-footer {
-            padding: 24px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        .rate-breakdown {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 16px;
-        }
-
-        .rate-breakdown h4 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #1e293b;
-        }
-
-        .rate-year {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 12px;
-            align-items: end;
-        }
-
-        .rate-year:last-child {
-            margin-bottom: 0;
-        }
-
+        /* Mobile Responsive Styles */
         @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
             .sidebar {
                 transform: translateX(-100%);
-                transition: transform 0.3s;
             }
 
             .sidebar.mobile-open {
@@ -590,45 +480,97 @@
                 margin-left: 0;
             }
 
+            .header {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 20px;
+            }
+
+            .content-area {
+                padding: 16px;
+            }
+
             .search-filter-bar {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 8px;
             }
 
             .search-box {
                 min-width: 100%;
+                max-width: none;
             }
 
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.half {
-                grid-column: span 1;
-            }
-
-            .table {
-                font-size: 12px;
+            .filter-select {
+                min-width: 100%;
             }
 
             .table th,
             .table td {
-                padding: 8px;
+                padding: 8px 6px;
+                font-size: 12px;
             }
 
             .action-buttons {
                 flex-direction: column;
-                gap: 4px;
+                gap: 2px;
             }
 
-            .rate-year {
-                grid-template-columns: 1fr;
-                gap: 8px;
+            .btn-sm {
+                font-size: 11px;
+                padding: 4px 6px;
             }
+
+            .user-info {
+                display: none;
+            }
+
+            .pagination {
+                padding: 12px 16px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .pagination-info {
+                text-align: center;
+            }
+
+            .property-info {
+                max-width: 80px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 18px;
+            }
+
+            .table {
+                min-width: 800px;
+            }
+
+            .btn {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
+
+        /* Loading and notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
         }
     </style>
 </head>
 <body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -673,13 +615,18 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <header class="header">
-                <h1 class="header-title">Rate Package</h1>
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="header-title">Rate Package</h1>
+                </div>
                 <div class="header-actions">
-                    <button class="btn btn-primary" onclick="openModal('package-modal')">
+                    <button class="btn btn-primary" onclick="window.location.href='rate-packages.html?action=add'">
                         <i data-lucide="plus"></i>
-                        Add Rate Package
+                        <span>Add Rate Package</span>
                     </button>
                     <div class="user-profile">
                         <div class="user-avatar">A</div>
@@ -733,124 +680,132 @@
                         <option value="2 Years">2 Years</option>
                         <option value="3 Years">3 Years</option>
                     </select>
-                    <button class="btn btn-secondary" onclick="clearFilters()">
+                    <button class="btn btn-secondary" onclick="applyFilters()">
+                        <i data-lucide="filter"></i>
                         Filter
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearFilters()">
+                        <i data-lucide="x"></i>
+                        Clear
                     </button>
                 </div>
 
                 <!-- Data Table -->
                 <div class="data-table">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Bank name</th>
-                                <th>Property Type</th>
-                                <th>Buy under</th>
-                                <th>Reference Rate</th>
-                                <th>Property Status</th>
-                                <th>Rate Type</th>
-                                <th>Loan amount</th>
-                                <th>Loan type</th>
-                                <th>Lock in Period</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="packagesTable">
-                            <tr>
-                                <td>Bank Of China</td>
-                                <td>
-                                    <div class="property-info">Private Property, EC</div>
-                                </td>
-                                <td>2 Years Fixed Rate</td>
-                                <td class="rate-info">2 Years Fixed Rate</td>
-                                <td><span class="status-badge status-completed">Completed</span></td>
-                                <td>Fixed</td>
-                                <td class="loan-amount">1000000</td>
-                                <td><span class="loan-type">Refinancing Home Loan</span></td>
-                                <td>2 Year</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editPackage(1)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deletePackage(1)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bank Of China</td>
-                                <td>
-                                    <div class="property-info">Private Property, EC</div>
-                                </td>
-                                <td>2 Years Fixed Rate</td>
-                                <td class="rate-info">2 Years Fixed Rate</td>
-                                <td><span class="status-badge status-completed">Completed</span></td>
-                                <td>Fixed</td>
-                                <td class="loan-amount">1000000</td>
-                                <td><span class="loan-type">New Home Loan</span></td>
-                                <td>2 Year</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editPackage(2)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deletePackage(2)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Bank Of China</td>
-                                <td>
-                                    <div class="property-info">Private Property, EC</div>
-                                </td>
-                                <td>3M SORA</td>
-                                <td class="rate-info">3M SORA</td>
-                                <td><span class="status-badge status-construction">Under Construction</span></td>
-                                <td>Floating</td>
-                                <td class="loan-amount">800000</td>
-                                <td><span class="loan-type">New Home Loan</span></td>
-                                <td>0 Year</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editPackage(3)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deletePackage(3)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>CIMB</td>
-                                <td>
-                                    <div class="property-info">Private Property, EC</div>
-                                </td>
-                                <td>3M SORA Rate</td>
-                                <td class="rate-info">3M SORA Rate</td>
-                                <td><span class="status-badge status-construction">Under Construction</span></td>
-                                <td>Floating</td>
-                                <td class="loan-amount">800000</td>
-                                <td><span class="loan-type">New Home Loan</span></td>
-                                <td>0 Year</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editPackage(4)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deletePackage(4)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Bank name</th>
+                                    <th>Property Type</th>
+                                    <th>Buy under</th>
+                                    <th>Reference Rate</th>
+                                    <th>Property Status</th>
+                                    <th>Rate Type</th>
+                                    <th>Loan amount</th>
+                                    <th>Loan type</th>
+                                    <th>Lock in Period</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="packagesTable">
+                                <tr>
+                                    <td>Bank Of China</td>
+                                    <td>
+                                        <div class="property-info">Private Property, EC</div>
+                                    </td>
+                                    <td>2 Years Fixed Rate</td>
+                                    <td class="rate-info">2 Years Fixed Rate</td>
+                                    <td><span class="status-badge status-completed">Completed</span></td>
+                                    <td>Fixed</td>
+                                    <td class="loan-amount">1,000,000</td>
+                                    <td><span class="loan-type">Refinancing Home Loan</span></td>
+                                    <td>2 Year</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editPackage(1)">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deletePackage(1)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Bank Of China</td>
+                                    <td>
+                                        <div class="property-info">Private Property, EC</div>
+                                    </td>
+                                    <td>2 Years Fixed Rate</td>
+                                    <td class="rate-info">2 Years Fixed Rate</td>
+                                    <td><span class="status-badge status-completed">Completed</span></td>
+                                    <td>Fixed</td>
+                                    <td class="loan-amount">1,000,000</td>
+                                    <td><span class="loan-type">New Home Loan</span></td>
+                                    <td>2 Year</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editPackage(2)">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deletePackage(2)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Bank Of China</td>
+                                    <td>
+                                        <div class="property-info">Private Property, EC</div>
+                                    </td>
+                                    <td>3M SORA</td>
+                                    <td class="rate-info">3M SORA</td>
+                                    <td><span class="status-badge status-construction">Under Construction</span></td>
+                                    <td>Floating</td>
+                                    <td class="loan-amount">800,000</td>
+                                    <td><span class="loan-type">New Home Loan</span></td>
+                                    <td>0 Year</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editPackage(3)">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deletePackage(3)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>CIMB</td>
+                                    <td>
+                                        <div class="property-info">Private Property, EC</div>
+                                    </td>
+                                    <td>3M SORA Rate</td>
+                                    <td class="rate-info">3M SORA Rate</td>
+                                    <td><span class="status-badge status-construction">Under Construction</span></td>
+                                    <td>Floating</td>
+                                    <td class="loan-amount">800,000</td>
+                                    <td><span class="loan-type">New Home Loan</span></td>
+                                    <td>0 Year</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-edit" onclick="editPackage(4)">Edit</button>
+                                            <button class="btn btn-sm btn-delete" onclick="deletePackage(4)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <!-- Pagination -->
                     <div class="pagination">
                         <div class="pagination-info">
-                            Showing 1 of 10
+                            Showing 1-4 of 58 packages
                         </div>
                         <div class="pagination-controls">
                             <button class="pagination-btn" disabled>
                                 <i data-lucide="chevron-left"></i>
                             </button>
                             <button class="pagination-btn active">1</button>
-                            <button class="pagination-btn">2</button>
-                            <button class="pagination-btn">3</button>
-                            <button class="pagination-btn">4</button>
-                            <button class="pagination-btn">5</button>
-                            <button class="pagination-btn">58</button>
-                            <button class="pagination-btn">
+                            <button class="pagination-btn" onclick="loadPage(2)">2</button>
+                            <button class="pagination-btn" onclick="loadPage(3)">3</button>
+                            <button class="pagination-btn" onclick="loadPage(4)">4</button>
+                            <button class="pagination-btn" onclick="loadPage(5)">5</button>
+                            <span class="pagination-btn">...</span>
+                            <button class="pagination-btn" onclick="loadPage(15)">15</button>
+                            <button class="pagination-btn" onclick="loadPage(2)">
                                 <i data-lucide="chevron-right"></i>
                             </button>
                         </div>
@@ -860,347 +815,45 @@
         </div>
     </div>
 
-    <!-- Add/Edit Rate Package Modal -->
-    <div class="modal" id="package-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Add Rate Package</h3>
-                <button class="modal-close" onclick="closeModal('package-modal')">
-                    <i data-lucide="x"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="packageForm">
-                    <div class="form-group">
-                        <h4 style="margin-bottom: 16px; color: #1e293b;">Basic Information</h4>
-                    </div>
-                    
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Bank name</label>
-                            <select class="form-select" required>
-                                <option value="">Select bank</option>
-                                <option value="Bank Of China">Bank Of China</option>
-                                <option value="CIMB">CIMB</option>
-                                <option value="OCBC">OCBC</option>
-                                <option value="UOB">UOB</option>
-                                <option value="DBS">DBS</option>
-                                <option value="Maybank">Maybank</option>
-                            </select>
-                            <div style="margin-top: 8px;">
-                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
-                                    <input type="checkbox">
-                                    <span>Hide bank name for this rate package</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group half">
-                            <label class="form-label">Loan type</label>
-                            <select class="form-select" required>
-                                <option value="">Select loan type</option>
-                                <option value="New Home Loan">New Home Loan</option>
-                                <option value="Refinancing Home Loan">Refinancing Home Loan</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group half">
-                            <label class="form-label">Property type</label>
-                            <select class="form-select" required>
-                                <option value="">Select property type</option>
-                                <option value="Private Property">Private Property</option>
-                                <option value="HDB">HDB</option>
-                                <option value="EC">EC</option>
-                                <option value="Private Property, EC">Private Property, EC</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group half">
-                            <label class="form-label">Property status</label>
-                            <select class="form-select" required>
-                                <option value="">Select property status</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Under Construction">Under Construction</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group half">
-                            <label class="form-label">Rate type category</label>
-                            <div class="radio-group">
-                                <label class="radio-item">
-                                    <input type="radio" name="rateCategory" value="Fixed" required>
-                                    <span>Fixed</span>
-                                </label>
-                                <label class="radio-item">
-                                    <input type="radio" name="rateCategory" value="Floating" required>
-                                    <span>Floating</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Reference rate</label>
-                            <input type="text" class="form-input" placeholder="Enter reference rate" required>
-                        </div>
-                    </div>
-
-                    <!-- Interest Rate Information -->
-                    <div class="rate-breakdown">
-                        <h4>Interest Rate Information</h4>
-                        
-                        <div class="rate-year">
-                            <div>
-                                <label class="form-label">Year 1</label>
-                                <select class="form-select">
-                                    <option>Select rate type</option>
-                                    <option>FIXED(0.00%)</option>
-                                    <option>3M SORA(2.00%)</option>
-                                    <option>FHR6(2.15%)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="form-label">Value</label>
-                                <div style="display: flex; gap: 8px;">
-                                    <select class="form-select" style="width: 60px;">
-                                        <option>+</option>
-                                        <option>-</option>
-                                    </select>
-                                    <input type="number" class="form-input" step="0.01" placeholder="0" style="flex: 1;">
-                                    <span style="display: flex; align-items: center; padding: 0 8px; background: #f1f5f9; border-radius: 4px;">%</span>
-                                </div>
-                            </div>
-                            <div></div>
-                        </div>
-
-                        <div class="rate-year">
-                            <div>
-                                <label class="form-label">Year 2</label>
-                                <select class="form-select">
-                                    <option>Select rate type</option>
-                                    <option>FIXED(0.00%)</option>
-                                    <option>3M SORA(2.00%)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="form-label">Value</label>
-                                <div style="display: flex; gap: 8px;">
-                                    <select class="form-select" style="width: 60px;">
-                                        <option>+</option>
-                                        <option>-</option>
-                                    </select>
-                                    <input type="number" class="form-input" step="0.01" placeholder="0" style="flex: 1;">
-                                    <span style="display: flex; align-items: center; padding: 0 8px; background: #f1f5f9; border-radius: 4px;">%</span>
-                                </div>
-                            </div>
-                            <div></div>
-                        </div>
-
-                        <div class="rate-year">
-                            <div>
-                                <label class="form-label">Thereafter</label>
-                                <select class="form-select">
-                                    <option>Select rate type</option>
-                                    <option>3M SORA(2.00%)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="form-label">Value</label>
-                                <div style="display: flex; gap: 8px;">
-                                    <select class="form-select" style="width: 60px;">
-                                        <option>+</option>
-                                        <option>-</option>
-                                    </select>
-                                    <input type="number" class="form-input" step="0.01" placeholder="0" style="flex: 1;">
-                                    <span style="display: flex; align-items: center; padding: 0 8px; background: #f1f5f9; border-radius: 4px;">%</span>
-                                </div>
-                            </div>
-                            <div></div>
-                        </div>
-                    </div>
-
-                    <!-- Other Information -->
-                    <div style="margin-top: 24px;">
-                        <h4 style="margin-bottom: 16px; color: #1e293b;">Other Information</h4>
-                        
-                        <div class="form-grid">
-                            <div class="form-group half">
-                                <label class="form-label">Minimum loan size</label>
-                                <div style="position: relative;">
-                                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #64748b;">$</span>
-                                    <input type="number" class="form-input" style="padding-left: 28px;" placeholder="1000000">
-                                </div>
-                            </div>
-
-                            <div class="form-group half">
-                                <label class="form-label">Lock in</label>
-                                <select class="form-select">
-                                    <option>2 Years</option>
-                                    <option>3 Years</option>
-                                    <option>5 Years</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Legal fee subsidy / Cash Rebate</label>
-                                <div class="radio-group">
-                                    <label class="radio-item">
-                                        <input type="radio" name="legalFee" value="Yes">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="radio-item">
-                                        <input type="radio" name="legalFee" value="No">
-                                        <span>No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Valuation Subsidy</label>
-                                <div class="radio-group">
-                                    <label class="radio-item">
-                                        <input type="radio" name="valuationSubsidy" value="Yes">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="radio-item">
-                                        <input type="radio" name="valuationSubsidy" value="No">
-                                        <span>No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Partial repayment</label>
-                                <div class="radio-group">
-                                    <label class="radio-item">
-                                        <input type="radio" name="partialRepayment" value="Yes">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="radio-item">
-                                        <input type="radio" name="partialRepayment" value="No">
-                                        <span>No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Waiver due to sales</label>
-                                <div class="radio-group">
-                                    <label class="radio-item">
-                                        <input type="radio" name="waiverSales" value="Yes">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="radio-item">
-                                        <input type="radio" name="waiverSales" value="No">
-                                        <span>No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Free package conversion 12 Months</label>
-                                <div class="radio-group">
-                                    <label class="radio-item">
-                                        <input type="radio" name="freeConversion12" value="Yes">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="radio-item">
-                                        <input type="radio" name="freeConversion12" value="No">
-                                        <span>No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Free package conversion 24 Months</label>
-                                <div class="radio-group">
-                                    <label class="radio-item">
-                                        <input type="radio" name="freeConversion24" value="Yes">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="radio-item">
-                                        <input type="radio" name="freeConversion24" value="No">
-                                        <span>No</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Free package conversion 36 Months</label>
-                                <div class="radio-group">
-                                    <label class="radio-item">
-                                        <input type="radio" name="freeConversion36" value="Yes">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="radio-item">
-                                        <input type="radio" name="freeConversion36" value="No">
-                                        <span>No</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Remarks -->
-                    <div style="margin-top: 24px;">
-                        <div class="form-group">
-                            <label class="form-label">Remarks</label>
-                            <textarea class="form-input" rows="4" placeholder="Enter any additional remarks or notes..."></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('package-modal')">Cancel</button>
-                <button class="btn btn-primary" onclick="savePackage()">Save</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
 
-        // Modal functionality
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            document.body.style.overflow = 'hidden';
+        // Mobile sidebar functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('active');
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            document.body.style.overflow = 'auto';
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.remove('mobile-open');
+            overlay.classList.remove('active');
         }
-
-        // Close modal when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
-        });
 
         // Edit package function
         function editPackage(id) {
-            // Here you would typically load the package data and populate the form
-            document.querySelector('.modal-title').textContent = 'Edit Rate Package';
-            openModal('package-modal');
+            showNotification(`Opening edit form for package ${id}`, 'info');
+            // Here you would open the edit modal or navigate to edit page
+            console.log('Edit package:', id);
         }
 
         // Delete package function
         function deletePackage(id) {
             if (confirm('Are you sure you want to delete this rate package?')) {
-                // Here you would implement the delete functionality
-                console.log('Deleting package:', id);
+                showNotification('Rate package deleted successfully', 'success');
+                // Remove the row from the table (for demo purposes)
+                const row = event.target.closest('tr');
+                if (row) {
+                    row.remove();
+                }
+                console.log('Delete package:', id);
             }
-        }
-
-        // Save package function
-        function savePackage() {
-            // Here you would implement the save functionality
-            const formData = new FormData(document.getElementById('packageForm'));
-            console.log('Saving package:', Object.fromEntries(formData));
-            closeModal('package-modal');
         }
 
         // Search functionality
@@ -1214,54 +867,164 @@
             });
         });
 
-        // Filter functionality
+        // Filter functions
+        function applyFilters() {
+            const bank = document.getElementById('bankFilter').value;
+            const property = document.getElementById('propertyFilter').value;
+            const buy = document.getElementById('buyFilter').value;
+            const loan = document.getElementById('loanFilter').value;
+            const rate = document.getElementById('rateFilter').value;
+            const lock = document.getElementById('lockFilter').value;
+
+            const rows = document.querySelectorAll('#packagesTable tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const cells = row.cells;
+                let show = true;
+
+                if (bank && !cells[0].textContent.includes(bank)) show = false;
+                if (property && !cells[1].textContent.includes(property)) show = false;
+                if (buy && !cells[2].textContent.includes(buy)) show = false;
+                if (loan && !cells[7].textContent.includes(loan)) show = false;
+                if (rate && !cells[5].textContent.includes(rate)) show = false;
+                if (lock && !cells[8].textContent.includes(lock)) show = false;
+
+                row.style.display = show ? '' : 'none';
+                if (show) visibleCount++;
+            });
+
+            showNotification(`Filter applied. Showing ${visibleCount} packages.`, 'info');
+        }
+
         function clearFilters() {
-            document.getElementById('searchInput').value = '';
             document.getElementById('bankFilter').value = '';
             document.getElementById('propertyFilter').value = '';
             document.getElementById('buyFilter').value = '';
             document.getElementById('loanFilter').value = '';
             document.getElementById('rateFilter').value = '';
             document.getElementById('lockFilter').value = '';
-            
+            document.getElementById('searchInput').value = '';
+
             // Show all rows
             document.querySelectorAll('#packagesTable tr').forEach(row => {
                 row.style.display = '';
             });
+
+            showNotification('All filters cleared', 'info');
         }
 
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('mobile-open');
+        // Pagination
+        function loadPage(pageNumber) {
+            showNotification(`Loading page ${pageNumber}...`, 'info');
+            // Here you would implement actual pagination logic
+            console.log('Load page:', pageNumber);
+            
+            // Update active page button
+            document.querySelectorAll('.pagination-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
         }
 
-        // Add mobile menu button for responsive design
-        if (window.innerWidth <= 768) {
-            const headerActions = document.querySelector('.header-actions');
-            const menuButton = document.createElement('button');
-            menuButton.className = 'btn btn-secondary';
-            menuButton.innerHTML = '<i data-lucide="menu"></i>';
-            menuButton.onclick = toggleSidebar;
-            headerActions.prepend(menuButton);
-            lucide.createIcons();
-        }
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existing = document.querySelectorAll('.notification');
+            existing.forEach(n => n.remove());
 
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                if (!sidebar.contains(e.target) && !e.target.closest('.btn-secondary')) {
-                    sidebar.classList.remove('mobile-open');
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            const colors = {
+                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
+                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
+                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8' }
+            };
+
+            const color = colors[type] || colors.info;
+
+            notification.innerHTML = `
+                <div style="
+                    background: ${color.bg};
+                    border: 1px solid ${color.border};
+                    color: ${color.text};
+                    padding: 16px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    font-size: 14px;
+                    font-weight: 500;
+                    animation: slideIn 0.3s ease-out;
+                ">
+                    ${message}
+                </div>
+                <style>
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                </style>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
                 }
+            }, 4000);
+        }
+
+        // Handle responsive design
+        function handleResize() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
             }
         });
 
-        // URL parameter handling for opening modal
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('action') === 'add') {
-            openModal('package-modal');
-        }
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-focus search on desktop
+            if (window.innerWidth > 768) {
+                document.getElementById('searchInput').focus();
+            }
+            
+            // Show welcome message
+            setTimeout(() => {
+                showNotification('Rate packages loaded successfully', 'success');
+            }, 500);
+        });
+
+        // Format numbers in loan amounts
+        document.querySelectorAll('.loan-amount').forEach(cell => {
+            const amount = parseInt(cell.textContent.replace(/,/g, ''));
+            if (!isNaN(amount)) {
+                cell.textContent = amount.toLocaleString();
+            }
+        });
     </script>
 </body>
 </html>
