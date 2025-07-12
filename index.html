@@ -6,419 +6,7 @@
     <title>Keyquest Mortgage Admin - Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config/supabase.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #334155;
-        }
-
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: white;
-            border-right: 1px solid #e2e8f0;
-            padding: 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 20px;
-            font-weight: 700;
-            color: #1e293b;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .nav-menu {
-            padding: 24px 0;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        .nav-item:hover {
-            background: #f1f5f9;
-            color: #334155;
-        }
-
-        .nav-item.active {
-            background: #e0e7ff;
-            color: #4338ca;
-            border-right: 3px solid #4338ca;
-        }
-
-        .nav-item i {
-            width: 20px;
-            height: 20px;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 0;
-        }
-
-        .header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .user-profile:hover {
-            background: #f1f5f9;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #4338ca;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .user-role {
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        .content-area {
-            padding: 32px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .stat-title {
-            color: #64748b;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 8px;
-        }
-
-        .stat-change {
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .stat-change.positive {
-            color: #059669;
-        }
-
-        .stat-change.negative {
-            color: #dc2626;
-        }
-
-        .quick-actions {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            padding: 24px;
-            margin-bottom: 32px;
-        }
-
-        .quick-actions h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 16px;
-        }
-
-        .action-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .action-card {
-            padding: 20px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .action-card:hover {
-            background: #f8fafc;
-            border-color: #4338ca;
-            transform: translateY(-1px);
-        }
-
-        .action-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .action-content h4 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .action-content p {
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .recent-activity {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            padding: 24px;
-        }
-
-        .recent-activity h3 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 16px;
-        }
-
-        .activity-list {
-            list-style: none;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: white;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-size: 14px;
-            color: #334155;
-            margin-bottom: 2px;
-        }
-
-        .activity-time {
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        .overview-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-            margin-top: 24px;
-        }
-
-        @media (max-width: 1024px) {
-            .overview-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .action-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: #4338ca;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #3730a3;
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-    </style>
+    <link rel="stylesheet" href="css/admin-styles.css">
 </head>
 <body>
     <div class="admin-container">
@@ -467,7 +55,12 @@
         <!-- Main Content -->
         <div class="main-content">
             <header class="header">
-                <h1 class="header-title">Dashboard</h1>
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="header-title">Dashboard</h1>
+                </div>
                 <div class="header-actions">
                     <button class="btn btn-secondary" onclick="signOut()">
                         <i data-lucide="log-out"></i>
@@ -493,10 +86,10 @@
                                 <i data-lucide="package"></i>
                             </div>
                         </div>
-                        <div class="stat-value" data-target="58" data-stat="packages">0</div>
+                        <div class="stat-value" id="packagesCount">0</div>
                         <div class="stat-change positive">
                             <i data-lucide="trending-up"></i>
-                            <span>+12% this month</span>
+                            <span>Active packages</span>
                         </div>
                     </div>
 
@@ -507,10 +100,10 @@
                                 <i data-lucide="landmark"></i>
                             </div>
                         </div>
-                        <div class="stat-value" data-target="15" data-stat="banks">0</div>
+                        <div class="stat-value" id="banksCount">0</div>
                         <div class="stat-change positive">
                             <i data-lucide="trending-up"></i>
-                            <span>+3 new banks</span>
+                            <span>Partner banks</span>
                         </div>
                     </div>
 
@@ -521,24 +114,24 @@
                                 <i data-lucide="users"></i>
                             </div>
                         </div>
-                        <div class="stat-value" data-target="7" data-stat="agents">0</div>
+                        <div class="stat-value" id="agentsCount">0</div>
                         <div class="stat-change positive">
                             <i data-lucide="check-circle"></i>
-                            <span>All active</span>
+                            <span id="activeAgentsText">Active agents</span>
                         </div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-title">Active Bankers</div>
+                            <div class="stat-title">Total Enquiries</div>
                             <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-                                <i data-lucide="briefcase"></i>
+                                <i data-lucide="help-circle"></i>
                             </div>
                         </div>
-                        <div class="stat-value" data-target="12" data-stat="bankers">0</div>
+                        <div class="stat-value" id="enquiriesCount">0</div>
                         <div class="stat-change positive">
                             <i data-lucide="trending-up"></i>
-                            <span>+4 this week</span>
+                            <span id="newEnquiriesText">Customer enquiries</span>
                         </div>
                     </div>
                 </div>
@@ -613,52 +206,8 @@
                     <!-- Recent Activity -->
                     <div class="recent-activity">
                         <h3>Recent Activity</h3>
-                        <ul class="activity-list">
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #4338ca;">
-                                    <i data-lucide="package"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">New rate package added for Bank Of China</div>
-                                    <div class="activity-time">2 hours ago</div>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #059669;">
-                                    <i data-lucide="user-plus"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">New banker registered: Timo Lim</div>
-                                    <div class="activity-time">4 hours ago</div>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #dc2626;">
-                                    <i data-lucide="percent"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">FHR6 rate updated to 2.15%</div>
-                                    <div class="activity-time">1 day ago</div>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #7c3aed;">
-                                    <i data-lucide="help-circle"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">New enquiry received from John Doe</div>
-                                    <div class="activity-time">1 day ago</div>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #ea580c;">
-                                    <i data-lucide="landmark"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Maybank added to system</div>
-                                    <div class="activity-time">2 days ago</div>
-                                </div>
-                            </li>
+                        <ul class="activity-list" id="activityList">
+                            <!-- Activity items will be loaded dynamically -->
                         </ul>
                     </div>
 
@@ -672,7 +221,7 @@
                                 </div>
                                 <div class="activity-content">
                                     <div class="activity-title">Database Connection</div>
-                                    <div class="activity-time">Healthy</div>
+                                    <div class="activity-time" id="dbStatus">Checking...</div>
                                 </div>
                             </li>
                             <li class="activity-item">
@@ -680,26 +229,26 @@
                                     <i data-lucide="check-circle"></i>
                                 </div>
                                 <div class="activity-content">
-                                    <div class="activity-title">API Services</div>
-                                    <div class="activity-time">Running</div>
-                                </div>
-                            </li>
-                            <li class="activity-item">
-                                <div class="activity-icon" style="background: #059669;">
-                                    <i data-lucide="check-circle"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <div class="activity-title">Email Notifications</div>
+                                    <div class="activity-title">Authentication</div>
                                     <div class="activity-time">Active</div>
                                 </div>
                             </li>
                             <li class="activity-item">
-                                <div class="activity-icon" style="background: #f59e0b;">
-                                    <i data-lucide="alert-triangle"></i>
+                                <div class="activity-icon" style="background: #059669;">
+                                    <i data-lucide="check-circle"></i>
                                 </div>
                                 <div class="activity-content">
-                                    <div class="activity-title">Backup Status</div>
-                                    <div class="activity-time">Last: 6 hours ago</div>
+                                    <div class="activity-title">Data Sync</div>
+                                    <div class="activity-time">Real-time</div>
+                                </div>
+                            </li>
+                            <li class="activity-item">
+                                <div class="activity-icon" style="background: #f59e0b;">
+                                    <i data-lucide="clock"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Last Backup</div>
+                                    <div class="activity-time" id="lastBackup">Calculating...</div>
                                 </div>
                             </li>
                         </ul>
@@ -709,59 +258,272 @@
         </div>
     </div>
 
+    <!-- Include shared scripts -->
+    <script src="config/supabase.js"></script>
+    <script src="js/admin-scripts.js"></script>
+    
     <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
+        // Dashboard specific functionality
+        let dashboardData = {
+            packages: 0,
+            banks: 0,
+            agents: 0,
+            enquiries: 0,
+            recentActivity: []
+        };
 
-        // Animate statistics counters
-        function animateStats() {
-            const statValues = document.querySelectorAll('.stat-value');
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize Lucide icons
+            lucide.createIcons();
             
-            statValues.forEach(stat => {
-                const target = parseInt(stat.getAttribute('data-target'));
-                let current = 0;
-                const increment = target / 50;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        stat.textContent = target;
-                        clearInterval(timer);
-                    } else {
-                        stat.textContent = Math.floor(current);
+            // Check authentication
+            await checkAuthentication();
+            
+            // Load dashboard data
+            await loadDashboardData();
+            
+            // Set up real-time updates
+            setupRealtimeUpdates();
+            
+            // Show last backup time
+            updateLastBackupTime();
+        });
+
+        async function checkAuthentication() {
+            try {
+                const { user } = await AuthService.getCurrentUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Update user info in header
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName) {
+                    userName.textContent = user.email.split('@')[0] || 'admin';
+                }
+                if (userAvatar) {
+                    userAvatar.textContent = (user.email.charAt(0) || 'A').toUpperCase();
+                }
+                
+                document.getElementById('dbStatus').textContent = 'Connected';
+                
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                document.getElementById('dbStatus').textContent = 'Connection Error';
+            }
+        }
+
+        async function loadDashboardData() {
+            try {
+                showLoading('Loading dashboard data...');
+                
+                // Load all data in parallel
+                const [packagesResult, banksResult, agentsResult, enquiriesResult] = await Promise.all([
+                    DatabaseService.getRatePackages(),
+                    DatabaseService.getBanks(),
+                    DatabaseService.getAgents(),
+                    DatabaseService.getEnquiries()
+                ]);
+
+                // Update statistics
+                updateStatistics({
+                    packages: packagesResult.success ? packagesResult.data.length : 0,
+                    banks: banksResult.success ? banksResult.data.length : 0,
+                    agents: agentsResult.success ? agentsResult.data.length : 0,
+                    enquiries: enquiriesResult.success ? enquiriesResult.data.length : 0
+                });
+
+                // Create recent activity
+                const recentActivity = [];
+                
+                if (enquiriesResult.success && enquiriesResult.data.length > 0) {
+                    const latestEnquiry = enquiriesResult.data[0];
+                    recentActivity.push({
+                        icon: 'help-circle',
+                        color: '#7c3aed',
+                        title: `New enquiry from ${latestEnquiry.customer_name}`,
+                        time: formatRelativeTime(latestEnquiry.created_at)
+                    });
+                }
+
+                if (packagesResult.success && packagesResult.data.length > 0) {
+                    const latestPackage = packagesResult.data[0];
+                    recentActivity.push({
+                        icon: 'package',
+                        color: '#4338ca',
+                        title: `New rate package added for ${latestPackage.bank_name}`,
+                        time: formatRelativeTime(latestPackage.created_at)
+                    });
+                }
+
+                if (agentsResult.success && agentsResult.data.length > 0) {
+                    const activeAgents = agentsResult.data.filter(agent => agent.status === 'Active');
+                    if (activeAgents.length > 0) {
+                        const latestAgent = activeAgents[0];
+                        recentActivity.push({
+                            icon: 'user-plus',
+                            color: '#059669',
+                            title: `Agent ${latestAgent.name} is active`,
+                            time: formatRelativeTime(latestAgent.created_at)
+                        });
                     }
-                }, 30);
-            });
+                }
+
+                updateRecentActivity(recentActivity);
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showNotification('Failed to load dashboard data', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updateStatistics(data) {
+            animateCounter('packagesCount', data.packages);
+            animateCounter('banksCount', data.banks);
+            animateCounter('agentsCount', data.agents);
+            animateCounter('enquiriesCount', data.enquiries);
+            
+            // Update status text
+            const activeAgentsText = document.getElementById('activeAgentsText');
+            const newEnquiriesText = document.getElementById('newEnquiriesText');
+            
+            if (activeAgentsText) {
+                activeAgentsText.textContent = `${data.agents} total agents`;
+            }
+            if (newEnquiriesText) {
+                newEnquiriesText.textContent = `${data.enquiries} total enquiries`;
+            }
+        }
+
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let currentValue = 0;
+            const increment = Math.ceil(targetValue / 30);
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    element.textContent = targetValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = currentValue;
+                }
+            }, 50);
+        }
+
+        function updateRecentActivity(activities) {
+            const activityList = document.getElementById('activityList');
+            if (!activityList) return;
+            
+            if (activities.length === 0) {
+                activityList.innerHTML = `
+                    <li class="activity-item">
+                        <div class="activity-icon" style="background: #64748b;">
+                            <i data-lucide="info"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">No recent activity</div>
+                            <div class="activity-time">Start by adding some data</div>
+                        </div>
+                    </li>
+                `;
+            } else {
+                activityList.innerHTML = activities.map(activity => `
+                    <li class="activity-item">
+                        <div class="activity-icon" style="background: ${activity.color};">
+                            <i data-lucide="${activity.icon}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">${activity.title}</div>
+                            <div class="activity-time">${activity.time}</div>
+                        </div>
+                    </li>
+                `).join('');
+            }
+            
+            // Re-initialize icons
+            lucide.createIcons();
+        }
+
+        function setupRealtimeUpdates() {
+            // This would set up real-time subscriptions to database changes
+            // For now, we'll refresh data every 30 seconds
+            setInterval(async () => {
+                await loadDashboardData();
+            }, 30000);
+        }
+
+        function updateLastBackupTime() {
+            const lastBackup = document.getElementById('lastBackup');
+            if (lastBackup) {
+                const now = new Date();
+                const backupTime = new Date(now.getTime() - (6 * 60 * 60 * 1000)); // 6 hours ago
+                lastBackup.textContent = formatRelativeTime(backupTime.toISOString());
+            }
+        }
+
+        function formatRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+            return `${Math.floor(diffInSeconds / 86400)} days ago`;
+        }
+
+        // Sign out functionality
+        async function signOut() {
+            if (confirm('Are you sure you want to sign out?')) {
+                try {
+                    showLoading('Signing out...');
+                    const result = await AuthService.signOut();
+                    
+                    if (result.success) {
+                        showNotification('Signed out successfully', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1000);
+                    } else {
+                        throw new Error(result.error);
+                    }
+                } catch (error) {
+                    console.error('Sign out error:', error);
+                    showNotification('Failed to sign out: ' + error.message, 'error');
+                } finally {
+                    hideLoading();
+                }
+            }
         }
 
         // Mobile sidebar toggle
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('mobile-open');
+            const overlay = document.getElementById('overlay');
+            
+            if (sidebar) {
+                sidebar.classList.toggle('mobile-open');
+            }
+            if (overlay) {
+                overlay.classList.toggle('active');
+            }
         }
 
-        // Add mobile menu button for responsive design
-        if (window.innerWidth <= 768) {
-            const headerActions = document.querySelector('.header-actions');
-            const menuButton = document.createElement('button');
-            menuButton.className = 'btn btn-secondary';
-            menuButton.innerHTML = '<i data-lucide="menu"></i>';
-            menuButton.onclick = toggleSidebar;
-            headerActions.prepend(menuButton);
-            lucide.createIcons();
-        }
-
-        // Initialize animations when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(animateStats, 500);
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
                 const sidebar = document.getElementById('sidebar');
-                if (!sidebar.contains(e.target) && !e.target.closest('.btn-secondary')) {
-                    sidebar.classList.remove('mobile-open');
-                }
+                const overlay = document.getElementById('overlay');
+                if (sidebar) sidebar.classList.remove('mobile-open');
+                if (overlay) overlay.classList.remove('active');
             }
         });
     </script>
