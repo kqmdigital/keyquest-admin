@@ -27,7 +27,6 @@
             width: 280px;
             background: white;
             border-right: 1px solid #e2e8f0;
-            padding: 0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
@@ -35,13 +34,10 @@
             transition: transform 0.3s ease;
         }
 
-        .sidebar.mobile-hidden {
-            transform: translateX(-100%);
-        }
-
         .sidebar-header {
             padding: 24px;
             border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .logo {
@@ -50,14 +46,14 @@
             gap: 12px;
             font-size: 20px;
             font-weight: 700;
-            color: #1e293b;
+            color: white;
             text-decoration: none;
         }
 
         .logo-icon {
             width: 32px;
             height: 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -77,12 +73,8 @@
             color: #64748b;
             cursor: pointer;
             transition: all 0.2s;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            font-size: 14px;
             text-decoration: none;
+            font-size: 14px;
         }
 
         .nav-item:hover {
@@ -104,18 +96,13 @@
         .main-content {
             flex: 1;
             margin-left: 280px;
-            padding: 0;
             transition: margin-left 0.3s ease;
-        }
-
-        .main-content.full-width {
-            margin-left: 0;
         }
 
         .header {
             background: white;
             border-bottom: 1px solid #e2e8f0;
-            padding: 16px 32px;
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -249,22 +236,19 @@
 
         .content-area {
             padding: 24px;
-            max-width: 100%;
-            overflow-x: auto;
         }
 
-        .search-filter-bar {
+        .search-bar {
             display: flex;
             gap: 16px;
             margin-bottom: 24px;
             align-items: center;
-            flex-wrap: wrap;
         }
 
         .search-box {
             position: relative;
             flex: 1;
-            min-width: 250px;
+            max-width: 400px;
         }
 
         .search-input {
@@ -318,14 +302,12 @@
             color: #475569;
             border-bottom: 1px solid #e2e8f0;
             font-size: 14px;
-            white-space: nowrap;
         }
 
         .table td {
             padding: 16px;
             border-bottom: 1px solid #f1f5f9;
             font-size: 14px;
-            vertical-align: top;
         }
 
         .table tr:hover {
@@ -337,58 +319,13 @@
         }
 
         .bank-name {
-            font-weight: 500;
+            font-weight: 600;
             color: #1e293b;
         }
 
         .action-buttons {
             display: flex;
             gap: 8px;
-            white-space: nowrap;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .pagination-info {
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .pagination-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .pagination-btn {
-            padding: 8px 12px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .pagination-btn:hover {
-            background: #f8fafc;
-        }
-
-        .pagination-btn.active {
-            background: #4338ca;
-            color: white;
-            border-color: #4338ca;
-        }
-
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .modal {
@@ -522,13 +459,13 @@
                 padding: 16px;
             }
 
-            .search-filter-bar {
+            .search-bar {
                 flex-direction: column;
                 align-items: stretch;
             }
 
             .search-box {
-                min-width: 100%;
+                max-width: none;
             }
 
             .table th,
@@ -541,38 +478,8 @@
                 gap: 4px;
             }
 
-            .btn-sm {
-                font-size: 11px;
-                padding: 6px 8px;
-            }
-
             .user-info {
                 display: none;
-            }
-
-            .pagination {
-                padding: 12px 16px;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .pagination-info {
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header-title {
-                font-size: 20px;
-            }
-
-            .table {
-                min-width: 500px;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 20px;
             }
         }
     </style>
@@ -627,13 +534,13 @@
         <div class="main-content" id="mainContent">
             <header class="header">
                 <div class="header-left">
-                    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
                         <i data-lucide="menu"></i>
                     </button>
                     <h1 class="header-title">Banks</h1>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-primary" onclick="openModal('bank-modal')">
+                    <button class="btn btn-primary" onclick="openModal()">
                         <i data-lucide="plus"></i>
                         <span>Add Bank</span>
                     </button>
@@ -649,7 +556,7 @@
 
             <div class="content-area">
                 <!-- Search Bar -->
-                <div class="search-filter-bar">
+                <div class="search-bar">
                     <div class="search-box">
                         <i data-lucide="search" class="search-icon"></i>
                         <input type="text" class="search-input" placeholder="Search banks..." id="searchInput">
@@ -671,8 +578,12 @@
                                     <td class="bank-name">CIMB</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(1, 'CIMB')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(1, 'CIMB')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'CIMB')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'CIMB')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -680,8 +591,12 @@
                                     <td class="bank-name">OCBC</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(2, 'OCBC')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(2, 'OCBC')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'OCBC')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'OCBC')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -689,8 +604,12 @@
                                     <td class="bank-name">UOB</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(3, 'UOB')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(3, 'UOB')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'UOB')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'UOB')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -698,8 +617,12 @@
                                     <td class="bank-name">DBS</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(4, 'DBS')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(4, 'DBS')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'DBS')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'DBS')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -707,8 +630,12 @@
                                     <td class="bank-name">Maybank</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(5, 'Maybank')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(5, 'Maybank')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'Maybank')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'Maybank')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -716,8 +643,12 @@
                                     <td class="bank-name">Standard Chartered</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(6, 'Standard Chartered')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(6, 'Standard Chartered')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'Standard Chartered')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'Standard Chartered')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -725,8 +656,12 @@
                                     <td class="bank-name">HSBC</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(7, 'HSBC')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(7, 'HSBC')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'HSBC')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'HSBC')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -734,8 +669,12 @@
                                     <td class="bank-name">SBI</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(8, 'SBI')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(8, 'SBI')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'SBI')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'SBI')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -743,8 +682,12 @@
                                     <td class="bank-name">Bank Of China</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(9, 'Bank Of China')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(9, 'Bank Of China')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'Bank Of China')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'Bank Of China')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -752,30 +695,17 @@
                                     <td class="bank-name">Hong Leong Finance</td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(10, 'Hong Leong Finance')">Edit</button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(10, 'Hong Leong Finance')">Delete</button>
+                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'Hong Leong Finance')">
+                                                <i data-lucide="edit"></i> Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'Hong Leong Finance')">
+                                                <i data-lucide="trash-2"></i> Delete
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <div class="pagination">
-                        <div class="pagination-info">
-                            Showing 1-10 of 14 banks
-                        </div>
-                        <div class="pagination-controls">
-                            <button class="pagination-btn" disabled>
-                                <i data-lucide="chevron-left"></i>
-                            </button>
-                            <button class="pagination-btn active">1</button>
-                            <button class="pagination-btn">2</button>
-                            <button class="pagination-btn">
-                                <i data-lucide="chevron-right"></i>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -787,7 +717,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Add Bank</h3>
-                <button class="modal-close" onclick="closeModal('bank-modal')">
+                <button class="modal-close" onclick="closeModal()">
                     <i data-lucide="x"></i>
                 </button>
             </div>
@@ -800,7 +730,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('bank-modal')">Cancel</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                 <button class="btn btn-primary" onclick="saveBank()">Save</button>
             </div>
         </div>
@@ -810,13 +740,12 @@
         // Initialize Lucide icons
         lucide.createIcons();
 
-        let editingBankId = null;
+        let editingRow = null;
 
-        // Mobile sidebar functionality
+        // Mobile sidebar
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
-            const mainContent = document.getElementById('mainContent');
             
             sidebar.classList.toggle('mobile-open');
             overlay.classList.toggle('active');
@@ -830,57 +759,36 @@
             overlay.classList.remove('active');
         }
 
-        // Modal functionality
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
+        // Modal functions
+        function openModal() {
+            document.getElementById('bank-modal').classList.add('active');
             document.body.style.overflow = 'hidden';
+            document.getElementById('bankName').focus();
         }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
+        function closeModal() {
+            document.getElementById('bank-modal').classList.remove('active');
             document.body.style.overflow = 'auto';
-            // Reset form
             document.getElementById('bankForm').reset();
             document.querySelector('.modal-title').textContent = 'Add Bank';
-            editingBankId = null;
+            editingRow = null;
         }
 
-        // Close modal when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
-        });
-
-        // Edit bank function
-        function editBank(id, name) {
-            editingBankId = id;
+        // CRUD functions
+        function editBank(button, currentName) {
+            editingRow = button.closest('tr');
             document.querySelector('.modal-title').textContent = 'Edit Bank';
-            document.getElementById('bankName').value = name;
-            openModal('bank-modal');
+            document.getElementById('bankName').value = currentName;
+            openModal();
         }
 
-        // Delete bank function
-        function deleteBank(id, name) {
-            if (confirm(`Are you sure you want to delete ${name}?`)) {
-                // Here you would implement the delete functionality
-                console.log('Deleting bank:', id, name);
-                
-                // Remove the row from the table (for demo purposes)
-                const rows = document.querySelectorAll('#banksTable tr');
-                rows.forEach(row => {
-                    const editBtn = row.querySelector(`button[onclick*="editBank(${id}"]`);
-                    if (editBtn) {
-                        row.remove();
-                        showNotification(`${name} has been deleted successfully`, 'success');
-                    }
-                });
+        function deleteBank(button, bankName) {
+            if (confirm(`Are you sure you want to delete ${bankName}?`)) {
+                button.closest('tr').remove();
+                showNotification(`${bankName} deleted successfully`, 'success');
             }
         }
 
-        // Save bank function
         function saveBank() {
             const name = document.getElementById('bankName').value.trim();
             
@@ -889,46 +797,43 @@
                 return;
             }
 
-            if (editingBankId) {
+            if (editingRow) {
                 // Update existing bank
-                console.log('Updating bank:', editingBankId, name);
+                editingRow.cells[0].textContent = name;
                 
-                // Update the table row (for demo purposes)
-                const rows = document.querySelectorAll('#banksTable tr');
-                rows.forEach(row => {
-                    const editBtn = row.querySelector(`button[onclick*="editBank(${editingBankId}"]`);
-                    if (editBtn) {
-                        row.cells[0].textContent = name;
-                        // Update button onclick attributes
-                        const editButton = row.querySelector('.btn-edit');
-                        const deleteButton = row.querySelector('.btn-delete');
-                        editButton.setAttribute('onclick', `editBank(${editingBankId}, '${name}')`);
-                        deleteButton.setAttribute('onclick', `deleteBank(${editingBankId}, '${name}')`);
-                    }
-                });
-                showNotification('Bank updated successfully', 'success');
+                // Update button onclick attributes
+                const editBtn = editingRow.querySelector('.btn-edit');
+                const deleteBtn = editingRow.querySelector('.btn-delete');
+                editBtn.setAttribute('onclick', `editBank(this, '${name}')`);
+                deleteBtn.setAttribute('onclick', `deleteBank(this, '${name}')`);
+                
+                showNotification(`Bank updated to "${name}"`, 'success');
             } else {
                 // Add new bank
-                console.log('Adding new bank:', name);
-                
-                // Add new row to table (for demo purposes)
                 const tableBody = document.getElementById('banksTable');
-                const newId = Date.now(); // Simple ID generation for demo
                 const newRow = document.createElement('tr');
                 newRow.innerHTML = `
                     <td class="bank-name">${name}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn btn-sm btn-edit" onclick="editBank(${newId}, '${name}')">Edit</button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteBank(${newId}, '${name}')">Delete</button>
+                            <button class="btn btn-sm btn-edit" onclick="editBank(this, '${name}')">
+                                <i data-lucide="edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, '${name}')">
+                                <i data-lucide="trash-2"></i> Delete
+                            </button>
                         </div>
                     </td>
                 `;
                 tableBody.appendChild(newRow);
-                showNotification('Bank added successfully', 'success');
+                
+                // Re-initialize icons
+                lucide.createIcons();
+                
+                showNotification(`Bank "${name}" added successfully`, 'success');
             }
             
-            closeModal('bank-modal');
+            closeModal();
         }
 
         // Search functionality
@@ -937,15 +842,33 @@
             const rows = document.querySelectorAll('#banksTable tr');
             
             rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                const bankName = row.cells[0].textContent.toLowerCase();
+                row.style.display = bankName.includes(searchTerm) ? '' : 'none';
             });
         });
 
-        // Handle form submission
+        // Form submission
         document.getElementById('bankForm').addEventListener('submit', function(e) {
             e.preventDefault();
             saveBank();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('bank-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close sidebar when clicking overlay
+        document.getElementById('overlay').addEventListener('click', closeSidebar);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeSidebar();
+            }
         });
 
         // Notification system
@@ -954,9 +877,6 @@
             const existing = document.querySelectorAll('.notification');
             existing.forEach(n => n.remove());
 
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            
             const colors = {
                 success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
                 error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
@@ -965,6 +885,8 @@
 
             const color = colors[type] || colors.info;
 
+            const notification = document.createElement('div');
+            notification.className = 'notification';
             notification.innerHTML = `
                 <div style="
                     position: fixed;
@@ -977,31 +899,22 @@
                     border-radius: 8px;
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                     z-index: 10000;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                     font-size: 14px;
                     font-weight: 500;
-                    max-width: 400px;
                     animation: slideIn 0.3s ease-out;
                 ">
                     ${message}
                 </div>
                 <style>
                     @keyframes slideIn {
-                        from {
-                            transform: translateX(100%);
-                            opacity: 0;
-                        }
-                        to {
-                            transform: translateX(0);
-                            opacity: 1;
-                        }
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
                     }
                 </style>
             `;
 
             document.body.appendChild(notification);
 
-            // Auto remove after 4 seconds
             setTimeout(() => {
                 if (notification.parentNode) {
                     notification.remove();
@@ -1009,41 +922,10 @@
             }, 4000);
         }
 
-        // Handle responsive design
-        function handleResize() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
+        // Handle window resize
+        window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
-                sidebar.classList.remove('mobile-open');
-                overlay.classList.remove('active');
-            }
-        }
-
-        window.addEventListener('resize', handleResize);
-
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-focus search on desktop
-            if (window.innerWidth > 768) {
-                document.getElementById('searchInput').focus();
-            }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // Escape key to close modals
-            if (e.key === 'Escape') {
-                const activeModal = document.querySelector('.modal.active');
-                if (activeModal) {
-                    closeModal(activeModal.id);
-                }
-            }
-            
-            // Ctrl/Cmd + K to focus search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                document.getElementById('searchInput').focus();
+                closeSidebar();
             }
         });
     </script>
