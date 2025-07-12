@@ -23,28 +23,73 @@
                 console.log('✅ Dashboard initialization complete');
                 
                 // Manual test to debug the counting issue
-                console.log('🧪 Running manual count tests...');
+                console.log('🧪 Running manual count tests in 2 seconds...');
                 setTimeout(async () => {
                     try {
+                        console.log('🔬 Manual Testing Started...');
+                        
                         // Test each table manually
                         const banksTest = await supabaseClient.from('banks').select('id');
                         console.log('🏦 Manual banks test:', banksTest);
+                        console.log('🏦 Banks data length:', banksTest.data?.length);
                         
                         const packagesTest = await supabaseClient.from('rate_packages').select('id');
                         console.log('📦 Manual packages test:', packagesTest);
+                        console.log('📦 Packages data length:', packagesTest.data?.length);
                         
                         const agentsTest = await supabaseClient.from('agents').select('id, status');
                         console.log('👥 Manual agents test:', agentsTest);
+                        console.log('👥 Agents data length:', agentsTest.data?.length);
                         
                         const enquiriesTest = await supabaseClient.from('enquiries').select('id');
                         console.log('📋 Manual enquiries test:', enquiriesTest);
+                        console.log('📋 Enquiries data length:', enquiriesTest.data?.length);
                         
                         // Count them
-                        console.log('📊 Manual counts:');
+                        console.log('📊 Manual counts calculated:');
                         console.log('  - Banks:', banksTest.data?.length || 0);
                         console.log('  - Packages:', packagesTest.data?.length || 0);
                         console.log('  - Agents:', agentsTest.data?.length || 0);
                         console.log('  - Enquiries:', enquiriesTest.data?.length || 0);
+                        
+                        // Now manually set the counters if they're still 0
+                        if (banksTest.data?.length > 0) {
+                            const banksCounter = document.getElementById('banksCount');
+                            if (banksCounter.getAttribute('data-target') === '0') {
+                                console.log('🔧 Manually fixing banks counter...');
+                                banksCounter.setAttribute('data-target', banksTest.data.length);
+                                banksCounter.textContent = banksTest.data.length;
+                            }
+                        }
+                        
+                        if (packagesTest.data?.length > 0) {
+                            const packagesCounter = document.getElementById('packagesCount');
+                            if (packagesCounter.getAttribute('data-target') === '0') {
+                                console.log('🔧 Manually fixing packages counter...');
+                                packagesCounter.setAttribute('data-target', packagesTest.data.length);
+                                packagesCounter.textContent = packagesTest.data.length;
+                            }
+                        }
+                        
+                        if (agentsTest.data?.length > 0) {
+                            const agentsCounter = document.getElementById('agentsCount');
+                            if (agentsCounter.getAttribute('data-target') === '0') {
+                                console.log('🔧 Manually fixing agents counter...');
+                                agentsCounter.setAttribute('data-target', agentsTest.data.length);
+                                agentsCounter.textContent = agentsTest.data.length;
+                            }
+                        }
+                        
+                        if (enquiriesTest.data?.length > 0) {
+                            const enquiriesCounter = document.getElementById('enquiriesCount');
+                            if (enquiriesCounter.getAttribute('data-target') === '0') {
+                                console.log('🔧 Manually fixing enquiries counter...');
+                                enquiriesCounter.setAttribute('data-target', enquiriesTest.data.length);
+                                enquiriesCounter.textContent = enquiriesTest.data.length;
+                            }
+                        }
+                        
+                        console.log('🎯 Manual test completed!');
                         
                     } catch (error) {
                         console.error('🚨 Manual test failed:', error);
@@ -101,21 +146,21 @@
                     return;
                 }
                 
-                console.log('Starting to load dashboard data...');
+                console.log('🚀 Starting to load dashboard data...');
                 
                 // Test basic connection first
-                console.log('Testing database connection...');
+                console.log('🔗 Testing database connection...');
                 const { data: testData, error: testError } = await supabaseClient
                     .from('banks')
-                    .select('count')
+                    .select('id')
                     .limit(1);
                 
                 if (testError) {
-                    console.error('Database test failed:', testError);
+                    console.error('❌ Database test failed:', testError);
                     throw new Error(`Database connection failed: ${testError.message}`);
                 }
                 
-                console.log('Database connection successful, loading data...');
+                console.log('✅ Database connection successful, loading data...');
                 
                 // Load counts from each table with individual error handling
                 const results = await Promise.allSettled([
@@ -131,45 +176,47 @@
                 results.forEach((result, index) => {
                     const names = ['Packages', 'Banks', 'Agents', 'Enquiries', 'Recent Enquiries', 'DB Check'];
                     if (result.status === 'rejected') {
-                        console.error(`Failed to load ${names[index]}:`, result.reason);
+                        console.error(`❌ Failed to load ${names[index]}:`, result.reason);
                     } else {
-                        console.log(`Successfully loaded ${names[index]}`);
+                        console.log(`✅ Successfully loaded ${names[index]}`);
                     }
                 });
                 
-                // Check if any data was loaded
-                const packages = document.getElementById('packagesCount').getAttribute('data-target');
-                const banks = document.getElementById('banksCount').getAttribute('data-target');
-                const agents = document.getElementById('agentsCount').getAttribute('data-target');
-                const enquiries = document.getElementById('enquiriesCount').getAttribute('data-target');
-                
-                console.log('Final counts:', { packages, banks, agents, enquiries });
-                
-                // Animate the counters
-                animateCounters();
+                // Check if any data was loaded and animate counters
+                setTimeout(() => {
+                    const packages = document.getElementById('packagesCount').getAttribute('data-target');
+                    const banks = document.getElementById('banksCount').getAttribute('data-target');
+                    const agents = document.getElementById('agentsCount').getAttribute('data-target');
+                    const enquiries = document.getElementById('enquiriesCount').getAttribute('data-target');
+                    
+                    console.log('📊 Final counts set:', { packages, banks, agents, enquiries });
+                    
+                    // Animate the counters
+                    animateCounters();
+                    
+                    // Show success message with data summary
+                    const totalRecords = parseInt(packages || 0) + parseInt(banks || 0) + parseInt(agents || 0) + parseInt(enquiries || 0);
+                    if (totalRecords > 0) {
+                        showNotification(`Dashboard loaded successfully! Found ${totalRecords} total records.`, 'success');
+                    } else {
+                        showNotification('Dashboard loaded but no data found. Check if tables have data.', 'warning');
+                    }
+                }, 1000);
                 
                 hideLoading();
                 
-                // Show success message with data summary
-                const totalRecords = parseInt(packages || 0) + parseInt(banks || 0) + parseInt(agents || 0) + parseInt(enquiries || 0);
-                if (totalRecords > 0) {
-                    showNotification(`Dashboard loaded successfully! Found ${totalRecords} total records.`, 'success');
-                } else {
-                    showNotification('Dashboard loaded but no data found. Check if tables have data.', 'warning');
-                }
-                
             } catch (error) {
-                console.error('Failed to load dashboard data:', error);
+                console.error('💥 Failed to load dashboard data:', error);
                 hideLoading();
                 
                 // Try loading demo data as fallback
-                console.log('Loading demo data as fallback...');
+                console.log('🔄 Loading demo data as fallback...');
                 loadDemoData();
                 
                 showNotification(`Dashboard error: ${error.message}. Using demo data.`, 'error');
                 
                 // Log detailed error info
-                console.error('Detailed error:', {
+                console.error('🔍 Detailed error:', {
                     message: error.message,
                     stack: error.stack,
                     supabaseAvailable: typeof supabaseClient !== 'undefined',
