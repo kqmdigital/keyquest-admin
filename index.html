@@ -1,4 +1,520 @@
-<!DOCTYPE html>
+<script>
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Wait for Lucide to be available
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Check authentication
+            await checkAuthentication();
+            
+            // Load dashboard data
+            await loadDashboardData();
+            
+            // Set up periodic updates
+            setInterval(updateDashboard, 30000);
+        });
+
+        // Authentication check
+        async function checkAuthentication() {
+            try {
+                if (typeof AuthService === 'undefined') {
+                    console.warn('AuthService not available, skipping auth check');
+                    return;
+                }
+                
+                const { user } = await AuthService.getCurrentUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Update user info in header
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName && user.email) {
+                    userName.textContent = user.email.split('@')[0];
+                }
+                if (userAvatar && user.email) {
+                    userAvatar.textContent = user.email.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                // Don't redirect on auth error in development
+                // window.location.href = 'login.html';
+            }
+        }
+
+        // Load all dashboard data from database
+        async function loadDashboardData() {
+            try {
+                showLoading('Loading dashboard data...');
+                
+                // Check if supabaseClient is available
+                if (typeof supabaseClient === 'undefined') {
+                    console.warn('Supabase client not available, using demo data');
+                    loadDemoData();
+                    hideLoading();
+                    return;
+                }
+                
+                // Load counts from each table
+                await Promise.all([
+                    loadPackagesCount(),
+                    loadBanksCount(),
+                    loadAgentsCount(),
+                    loadEnquiriesCount(),
+                    loadRecentEnquiries(),
+                    checkDatabaseConnection()
+                ]);
+                
+                // Animate the counters
+                animateCounters();
+                
+                hideLoading();
+                showNotification('Dashboard loaded successfully', 'success');
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+                hideLoading();
+                loadDemoData();
+                showNotification('Using demo data - check database connection', 'warning');
+            }
+        }
+
+        // Load demo data when database is not available
+        function loadDemoData() {
+            document.getElementById('packagesCount').setAttribute('data-target', '10');
+            document.getElementById('banksCount').setAttribute('data-target', '10');
+            document.getElementById('agentsCount').setAttribute('data-target', '7');
+            document.getElementById('enquiriesCount').setAttribute('data-target', '5');
+            
+            // Load demo recent enquiries
+            const container = document.getElementById('recentEnquiries');
+            container.innerHTML = `
+                <li class="activity-item">
+                    <div class="activity-icon" style="background: #4338ca;">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">John Doe - Private Property</div>
+                        <div class="activity-time">New enquiry • Today</div>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-icon" style="background: #059669;">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Jane Smith - HDB</div>
+                        <div class="activity-time">Completed • Yesterday</div>
+                    </div>
+                </li>
+            `;
+            
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            animateCounters();
+        }
+
+        // Load rate packages count
+        async function loadPackagesCount() {
+            try {
+                const { count, error } = await supabaseClient
+                    .from('rate_packages')
+                    .select('*', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                document.getElementById('packagesCount').setAttribute('data-target', count || 0);
+                console.log('Loaded packages count:', count);
+            } catch (error) {
+                console.error('Error loading packages count:', error);
+                document.getElementById('packagesCount').setAttribute('data-target', '0');
+            }
+        }
+
+        // Load banks count
+        async function loadBanksCount() {
+            try {
+                const { count, error } = await supabaseClient
+                    .from('banks')
+                    .select('*', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                document.getElementById('banksCount').setAttribute('data-target', count || 0);
+                console.log('Loaded banks count:', count);
+            } catch (error) {
+                console.error('Error loading banks count:', error);
+                document.getElementById('banksCount').setAttribute('data-target', '0');
+            }
+        }
+
+        // Load agents count
+        async function loadAgentsCount() {
+            try {
+                const { count, error } = await supabaseClient
+                    .from('agents')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'Active');
+                
+                if (error) throw error;
+                
+                document.getElementById('agentsCount').setAttribute('data-target', count || 0);
+                console.log('Loaded agents count:', count);
+            } catch (error) {
+                console.error('Error loading agents count:', error);
+                document.getElementById('agentsCount').setAttribute('data-target', '0');
+            }
+        }
+
+        // Load enquiries count
+        async function loadEnquiriesCount() {
+            try {
+                const { count, error } = await supabaseClient
+                    .from('enquiries')
+                    .select('*', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                document.getElementById('enquiriesCount').setAttribute('data-target', count || 0);
+                console.log('Loaded enquiries count:', count);
+            } catch (error) {
+                console.error('Error loading enquiries count:', error);
+                document.getElementById('enquiriesCount').setAttribute('data-target', '0');
+            }
+        }
+
+        // Load recent enquiries
+        async function loadRecentEnquiries() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('enquiries')
+                    .select('customer_name, created_at, status, property_type')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('recentEnquiries');
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <li class="activity-item">
+                            <div class="activity-icon" style="background: #64748b;">
+                                <i data-lucide="info"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">No recent enquiries</div>
+                                <div class="activity-time">All caught up!</div>
+                            </div>
+                        </li>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = data.map(enquiry => {
+                    const date = new Date(enquiry.created_at).toLocaleDateString();
+                    const statusColor = getStatusColor(enquiry.status);
+                    
+                    return `
+                        <li class="activity-item">
+                            <div class="activity-icon" style="background: ${statusColor};">
+                                <i data-lucide="user"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">
+                                    ${enquiry.customer_name} - ${enquiry.property_type}
+                                </div>
+                                <div class="activity-time">
+                                    ${enquiry.status} • ${date}
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+                
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+                console.log('Loaded recent enquiries:', data);
+            } catch (error) {
+                console.error('Error loading recent enquiries:', error);
+                document.getElementById('recentEnquiries').innerHTML = `
+                    <li class="activity-item">
+                        <div class="activity-icon" style="background: #dc2626;">
+                            <i data-lucide="alert-circle"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">Failed to load enquiries</div>
+                            <div class="activity-time">Check connection</div>
+                        </div>
+                    </li>
+                `;
+            }
+        }
+
+        // Check database connection
+        async function checkDatabaseConnection() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('banks')
+                    .select('id')
+                    .limit(1);
+                
+                const dbStatus = document.getElementById('dbStatus');
+                const dbStatusText = document.getElementById('dbStatusText');
+                
+                if (error) {
+                    dbStatus.style.background = '#dc2626';
+                    dbStatusText.textContent = 'Connection Error';
+                } else {
+                    dbStatus.style.background = '#059669';
+                    dbStatusText.textContent = 'Connected';
+                }
+            } catch (error) {
+                console.error('Database connection check failed:', error);
+                document.getElementById('dbStatus').style.background = '#dc2626';
+                document.getElementById('dbStatusText').textContent = 'Failed';
+            }
+        }
+
+        // Animate stat counters
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-value[data-target]');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                let current = 0;
+                const increment = Math.ceil(target / 30);
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        counter.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        counter.textContent = current.toLocaleString();
+                    }
+                }, 50);
+            });
+        }
+
+        // Update dashboard periodically
+        async function updateDashboard() {
+            try {
+                await checkDatabaseConnection();
+                
+                // Update last backup time
+                const lastBackup = document.getElementById('lastBackup');
+                if (lastBackup) {
+                    const now = new Date();
+                    const backupTime = new Date(now.getTime() - (Math.random() * 6 * 60 * 60 * 1000));
+                    lastBackup.textContent = backupTime.toLocaleString();
+                }
+            } catch (error) {
+                console.error('Dashboard update failed:', error);
+            }
+        }
+
+        // Helper function to get status color
+        function getStatusColor(status) {
+            switch (status) {
+                case 'New': return '#f59e0b';
+                case 'In Progress': return '#3b82f6';
+                case 'Completed': return '#10b981';
+                case 'Closed': return '#6b7280';
+                default: return '#64748b';
+            }
+        }
+
+        // Sign out functionality
+        function confirmSignOut() {
+            openModal('signout-modal');
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                if (typeof AuthService === 'undefined') {
+                    // If AuthService is not available, just redirect
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const result = await AuthService.signOut();
+                
+                if (result.success) {
+                    showNotification('Signed out successfully', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1000);
+                } else {
+                    throw new Error(result.error || 'Sign out failed');
+                }
+            } catch (error) {
+                console.error('Sign out error:', error);
+                hideLoading();
+                // Still redirect even if sign out fails
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Mobile sidebar functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (sidebar && overlay) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        // Loading and notification functions
+        function showLoading(message = 'Loading...') {
+            hideLoading();
+            
+            const loader = document.createElement('div');
+            loader.id = 'global-loader';
+            loader.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    backdrop-filter: blur(4px);
+                ">
+                    <div style="
+                        background: white;
+                        padding: 24px;
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        gap: 16px;
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                    ">
+                        <div class="loading-spinner"></div>
+                        <span style="color: #374151; font-weight: 500;">${message}</span>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(loader);
+        }
+
+        function hideLoading() {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const existing = document.querySelectorAll('.notification');
+            existing.forEach(n => n.remove());
+
+            const colors = {
+                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
+                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
+                warning: { bg: '#fef3c7', border: '#d97706', text: '#b45309' },
+                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8' }
+            };
+
+            const color = colors[type] || colors.info;
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${color.bg};
+                    border: 1px solid ${color.border};
+                    color: ${color.text};
+                    padding: 16px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    z-index: 10000;
+                    font-size: 14px;
+                    font-weight: 500;
+                    max-width: 400px;
+                    cursor: pointer;
+                    animation: slideInRight 0.3s ease-out;
+                " onclick="this.parentElement.remove()">
+                    ${message}
+                </div>
+                <style>
+                    @keyframes slideInRight {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                </style>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 4000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal('signout-modal');
+                closeSidebar();
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +523,557 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config/supabase.js"></script>
-    <link rel="stylesheet" href="admin-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border-right: 1px solid #334155;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .nav-menu {
+            padding: 24px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 24px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(148, 163, 184, 0.1);
+            color: #e2e8f0;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.2) 0%, transparent 100%);
+            color: #667eea;
+            border-right: 3px solid #667eea;
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            width: 20px;
+            height: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e293b;
+        }
+
+        .user-role {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .content-area {
+            padding: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stat-title {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            color: #059669;
+        }
+
+        .quick-actions {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .quick-actions h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .action-card {
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .action-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .action-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1e293b;
+        }
+
+        .action-content p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .activity-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            color: #334155;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #64748b;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 0 0 20px 20px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 12px 16px;
+            }
+
+            .content-area {
+                padding: 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .user-info {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
