@@ -428,14 +428,14 @@
 
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label class="form-label">Legal Fee Subsidy / Cash Rebate</label>
+                                    <label class="form-label">Legal Fee Subsidy</label>
                                     <div class="radio-group">
                                         <label class="radio-label">
                                             <input type="radio" name="legal_fee_subsidy" value="true">
                                             <span>Yes</span>
                                         </label>
                                         <label class="radio-label">
-                                            <input type="radio" name="legal_fee_subsidy" value="false">
+                                            <input type="radio" name="legal_fee_subsidy" value="false" checked>
                                             <span>No</span>
                                         </label>
                                     </div>
@@ -448,79 +448,10 @@
                                             <span>Yes</span>
                                         </label>
                                         <label class="radio-label">
-                                            <input type="radio" name="valuation_subsidy" value="false">
+                                            <input type="radio" name="valuation_subsidy" value="false" checked>
                                             <span>No</span>
                                         </label>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Partial Repayment</label>
-                                    <div class="radio-group">
-                                        <label class="radio-label">
-                                            <input type="radio" name="partial_repayment" value="true">
-                                            <span>Yes</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="partial_repayment" value="false">
-                                            <span>No</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Waiver due to sales</label>
-                                    <div class="radio-group">
-                                        <label class="radio-label">
-                                            <input type="radio" name="waiver_due_to_sales" value="true">
-                                            <span>Yes</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="waiver_due_to_sales" value="false">
-                                            <span>No</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Free package conversion 12 Months</label>
-                                    <div class="radio-group">
-                                        <label class="radio-label">
-                                            <input type="radio" name="free_package_conversion_12m" value="true">
-                                            <span>Yes</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="free_package_conversion_12m" value="false">
-                                            <span>No</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Free package conversion 24 Months</label>
-                                    <div class="radio-group">
-                                        <label class="radio-label">
-                                            <input type="radio" name="free_package_conversion_24m" value="true">
-                                            <span>Yes</span>
-                                        </label>
-                                        <label class="radio-label">
-                                            <input type="radio" name="free_package_conversion_24m" value="false">
-                                            <span>No</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Free package conversion 36 Months</label>
-                                <div class="radio-group">
-                                    <label class="radio-label">
-                                        <input type="radio" name="free_package_conversion_36m" value="true">
-                                        <span>Yes</span>
-                                    </label>
-                                    <label class="radio-label">
-                                        <input type="radio" name="free_package_conversion_36m" value="false">
-                                        <span>No</span>
-                                    </label>
                                 </div>
                             </div>
 
@@ -573,9 +504,15 @@
 
         async function initializePage() {
             try {
+                // Check if supabaseClient is available
+                if (typeof supabaseClient === 'undefined') {
+                    throw new Error('Supabase client not loaded. Please check your config/supabase.js file.');
+                }
+
                 // Check authentication
                 const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
                 if (authError || !user) {
+                    console.log('Authentication required, redirecting to login...');
                     window.location.href = 'login.html';
                     return;
                 }
@@ -597,7 +534,7 @@
 
             } catch (error) {
                 console.error('Error initializing page:', error);
-                showNotification('Failed to load page data', 'error');
+                showNotification('Failed to load page: ' + error.message, 'error');
             }
         }
 
@@ -625,15 +562,20 @@
         // ===================================
         async function loadPackages() {
             try {
-                showLoading();
+                showLoading('Loading packages...');
                 
+                console.log('Loading packages from database...');
                 const { data, error } = await supabaseClient
                     .from('rate_packages')
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase error loading packages:', error);
+                    throw error;
+                }
 
+                console.log('Loaded packages:', data);
                 currentPackages = data || [];
                 filteredPackages = [...currentPackages];
                 displayPackages();
@@ -642,6 +584,10 @@
             } catch (error) {
                 console.error('Error loading packages:', error);
                 showNotification('Failed to load rate packages: ' + error.message, 'error');
+                // Show empty state
+                currentPackages = [];
+                filteredPackages = [];
+                displayPackages();
             } finally {
                 hideLoading();
             }
@@ -877,11 +823,33 @@
         // CRUD OPERATIONS
         // ===================================
         function openAddPackageModal() {
-            editingPackageId = null;
-            document.getElementById('packageModalTitle').textContent = 'Add Rate Package';
-            document.getElementById('saveButtonText').textContent = 'Save';
-            document.getElementById('packageForm').reset();
-            openModal('package-modal');
+            try {
+                console.log('Opening add package modal...');
+                editingPackageId = null;
+                document.getElementById('packageModalTitle').textContent = 'Add Rate Package';
+                document.getElementById('saveButtonText').textContent = 'Save';
+                
+                // Reset form
+                const form = document.getElementById('packageForm');
+                form.reset();
+                
+                // Uncheck all radio buttons
+                const radioButtons = form.querySelectorAll('input[type="radio"]');
+                for (var i = 0; i < radioButtons.length; i++) {
+                    radioButtons[i].checked = false;
+                }
+                
+                // Set default values for boolean fields
+                const defaultNoRadios = form.querySelectorAll('input[type="radio"][value="false"]');
+                for (var j = 0; j < defaultNoRadios.length; j++) {
+                    defaultNoRadios[j].checked = true;
+                }
+                
+                openModal('package-modal');
+            } catch (error) {
+                console.error('Error opening add modal:', error);
+                showNotification('Failed to open add form: ' + error.message, 'error');
+            }
         }
 
         async function editPackage(id) {
@@ -927,15 +895,20 @@
             }
 
             try {
-                showLoading();
+                showLoading('Deleting package...');
+                console.log('Deleting package with ID:', id);
 
                 const { error } = await supabaseClient
                     .from('rate_packages')
                     .delete()
                     .eq('id', id);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase error deleting package:', error);
+                    throw error;
+                }
 
+                console.log('Package deleted successfully');
                 showNotification('Rate package deleted successfully', 'success');
                 await loadPackages(); // Reload the data
 
@@ -959,9 +932,8 @@
                 // Process form data
                 for (let [key, value] of formData.entries()) {
                     if (value !== '') {
-                        // Handle boolean fields
-                        if (['legal_fee_subsidy', 'valuation_subsidy', 'partial_repayment', 'waiver_due_to_sales', 
-                             'free_package_conversion_12m', 'free_package_conversion_24m', 'free_package_conversion_36m'].includes(key)) {
+                        // Handle boolean fields (only the ones that exist in schema)
+                        if (['legal_fee_subsidy', 'valuation_subsidy'].includes(key)) {
                             packageData[key] = value === 'true';
                         }
                         // Handle numeric fields
@@ -983,6 +955,11 @@
                 // Remove the id field for create operations
                 if (!editingPackageId) {
                     delete packageData.id;
+                }
+
+                // Set default status for new packages
+                if (!editingPackageId && !packageData.status) {
+                    packageData.status = 'active';
                 }
 
                 let result;
@@ -1030,6 +1007,100 @@
         // ===================================
         // UTILITY FUNCTIONS
         // ===================================
+        function showNotification(message, type = 'info') {
+            console.log(type.toUpperCase() + ': ' + message);
+            
+            // Create notification if container exists
+            let container = document.getElementById('notificationContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'notificationContainer';
+                container.className = 'notification-container';
+                container.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    max-width: 400px;
+                `;
+                document.body.appendChild(container);
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification notification-' + type;
+            notification.style.cssText = `
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 12px 16px;
+                border-radius: 6px;
+                margin-bottom: 10px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            
+            container.appendChild(notification);
+            
+            // Auto remove after 4 seconds
+            setTimeout(function() {
+                if (notification.parentNode) {
+                    notification.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(function() {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 4000);
+        }
+
+        function showLoading(message = 'Loading...') {
+            let overlay = document.getElementById('loadingOverlay');
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'loadingOverlay';
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    color: white;
+                    font-size: 16px;
+                `;
+                overlay.innerHTML = '<div>' + message + '</div>';
+                document.body.appendChild(overlay);
+            }
+            overlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
         function getStatusClass(status) {
             switch (status) {
                 case 'Completed':
@@ -1117,6 +1188,13 @@
         window.exportPackages = exportPackages;
         window.confirmSignOut = confirmSignOut;
         window.changePage = changePage;
+        window.showNotification = showNotification;
+        window.showLoading = showLoading;
+        window.hideLoading = hideLoading;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+
+        console.log('Rate packages page initialized successfully');
     </script>
 
     <style>
@@ -1224,6 +1302,189 @@
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-dialog {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-ghost:hover {
+            background: #f8fafc;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Form Styles */
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        /* Status Badge Styles */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
         }
 
         .loading-overlay {
