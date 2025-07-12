@@ -188,13 +188,13 @@
         // Load rate packages count
         async function loadPackagesCount() {
             try {
-                // First try with count
-                const { data, count, error } = await supabaseClient
+                // Use select with count instead of separate count query
+                const { data, error, count } = await supabaseClient
                     .from('rate_packages')
                     .select('*', { count: 'exact' });
                 
                 if (error) {
-                    console.warn('Count query failed, trying select:', error);
+                    console.warn('Packages count query failed, trying fallback:', error);
                     // Fallback: get all data and count manually
                     const { data: fallbackData, error: fallbackError } = await supabaseClient
                         .from('rate_packages')
@@ -206,8 +206,10 @@
                     document.getElementById('packagesCount').setAttribute('data-target', packageCount);
                     console.log('Loaded packages count (fallback):', packageCount);
                 } else {
-                    document.getElementById('packagesCount').setAttribute('data-target', count || 0);
-                    console.log('Loaded packages count:', count);
+                    // Use count if available, otherwise use data length
+                    const finalCount = count !== null ? count : (data ? data.length : 0);
+                    document.getElementById('packagesCount').setAttribute('data-target', finalCount);
+                    console.log('Loaded packages count:', finalCount);
                 }
             } catch (error) {
                 console.error('Error loading packages count:', error);
@@ -218,13 +220,13 @@
         // Load banks count
         async function loadBanksCount() {
             try {
-                // First try with count
-                const { data, count, error } = await supabaseClient
+                // Use select with count instead of separate count query
+                const { data, error, count } = await supabaseClient
                     .from('banks')
                     .select('*', { count: 'exact' });
                 
                 if (error) {
-                    console.warn('Count query failed, trying select:', error);
+                    console.warn('Banks count query failed, trying fallback:', error);
                     // Fallback: get all data and count manually
                     const { data: fallbackData, error: fallbackError } = await supabaseClient
                         .from('banks')
@@ -236,8 +238,10 @@
                     document.getElementById('banksCount').setAttribute('data-target', bankCount);
                     console.log('Loaded banks count (fallback):', bankCount);
                 } else {
-                    document.getElementById('banksCount').setAttribute('data-target', count || 0);
-                    console.log('Loaded banks count:', count);
+                    // Use count if available, otherwise use data length
+                    const finalCount = count !== null ? count : (data ? data.length : 0);
+                    document.getElementById('banksCount').setAttribute('data-target', finalCount);
+                    console.log('Loaded banks count:', finalCount);
                 }
             } catch (error) {
                 console.error('Error loading banks count:', error);
@@ -248,14 +252,14 @@
         // Load agents count
         async function loadAgentsCount() {
             try {
-                // First try with count
-                const { data, count, error } = await supabaseClient
+                // Use select with count instead of separate count query
+                const { data, error, count } = await supabaseClient
                     .from('agents')
                     .select('*', { count: 'exact' })
                     .eq('status', 'Active');
                 
                 if (error) {
-                    console.warn('Count query failed, trying select:', error);
+                    console.warn('Agents count query failed, trying fallback:', error);
                     // Fallback: get all data and count manually
                     const { data: fallbackData, error: fallbackError } = await supabaseClient
                         .from('agents')
@@ -268,8 +272,10 @@
                     document.getElementById('agentsCount').setAttribute('data-target', agentCount);
                     console.log('Loaded agents count (fallback):', agentCount);
                 } else {
-                    document.getElementById('agentsCount').setAttribute('data-target', count || 0);
-                    console.log('Loaded agents count:', count);
+                    // Use count if available, otherwise use data length
+                    const finalCount = count !== null ? count : (data ? data.length : 0);
+                    document.getElementById('agentsCount').setAttribute('data-target', finalCount);
+                    console.log('Loaded agents count:', finalCount);
                 }
             } catch (error) {
                 console.error('Error loading agents count:', error);
@@ -280,13 +286,13 @@
         // Load enquiries count
         async function loadEnquiriesCount() {
             try {
-                // First try with count
-                const { data, count, error } = await supabaseClient
+                // Use select with count instead of separate count query
+                const { data, error, count } = await supabaseClient
                     .from('enquiries')
                     .select('*', { count: 'exact' });
                 
                 if (error) {
-                    console.warn('Count query failed, trying select:', error);
+                    console.warn('Enquiries count query failed, trying fallback:', error);
                     // Fallback: get all data and count manually
                     const { data: fallbackData, error: fallbackError } = await supabaseClient
                         .from('enquiries')
@@ -298,8 +304,10 @@
                     document.getElementById('enquiriesCount').setAttribute('data-target', enquiryCount);
                     console.log('Loaded enquiries count (fallback):', enquiryCount);
                 } else {
-                    document.getElementById('enquiriesCount').setAttribute('data-target', count || 0);
-                    console.log('Loaded enquiries count:', count);
+                    // Use count if available, otherwise use data length
+                    const finalCount = count !== null ? count : (data ? data.length : 0);
+                    document.getElementById('enquiriesCount').setAttribute('data-target', finalCount);
+                    console.log('Loaded enquiries count:', finalCount);
                 }
             } catch (error) {
                 console.error('Error loading enquiries count:', error);
