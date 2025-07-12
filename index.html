@@ -21,6 +21,36 @@
                 setInterval(updateDashboard, 30000);
                 
                 console.log('✅ Dashboard initialization complete');
+                
+                // Manual test to debug the counting issue
+                console.log('🧪 Running manual count tests...');
+                setTimeout(async () => {
+                    try {
+                        // Test each table manually
+                        const banksTest = await supabaseClient.from('banks').select('id');
+                        console.log('🏦 Manual banks test:', banksTest);
+                        
+                        const packagesTest = await supabaseClient.from('rate_packages').select('id');
+                        console.log('📦 Manual packages test:', packagesTest);
+                        
+                        const agentsTest = await supabaseClient.from('agents').select('id, status');
+                        console.log('👥 Manual agents test:', agentsTest);
+                        
+                        const enquiriesTest = await supabaseClient.from('enquiries').select('id');
+                        console.log('📋 Manual enquiries test:', enquiriesTest);
+                        
+                        // Count them
+                        console.log('📊 Manual counts:');
+                        console.log('  - Banks:', banksTest.data?.length || 0);
+                        console.log('  - Packages:', packagesTest.data?.length || 0);
+                        console.log('  - Agents:', agentsTest.data?.length || 0);
+                        console.log('  - Enquiries:', enquiriesTest.data?.length || 0);
+                        
+                    } catch (error) {
+                        console.error('🚨 Manual test failed:', error);
+                    }
+                }, 2000);
+                
             } catch (error) {
                 console.error('❌ Dashboard initialization error:', error);
                 // Continue anyway - don't let icon issues break the app
@@ -188,18 +218,24 @@
         // Load rate packages count
         async function loadPackagesCount() {
             try {
-                console.log('Loading packages count...');
-                const { data, error } = await supabaseClient
+                console.log('🔍 Loading packages count...');
+                const result = await supabaseClient
                     .from('rate_packages')
                     .select('id');
                 
-                if (error) throw error;
+                console.log('📦 Packages query result:', result);
                 
-                const packageCount = data ? data.length : 0;
+                if (result.error) {
+                    console.error('❌ Packages query error:', result.error);
+                    throw result.error;
+                }
+                
+                const packageCount = result.data ? result.data.length : 0;
+                console.log('✅ Packages count calculated:', packageCount);
                 document.getElementById('packagesCount').setAttribute('data-target', packageCount);
-                console.log('Loaded packages count:', packageCount);
+                
             } catch (error) {
-                console.error('Error loading packages count:', error);
+                console.error('💥 Error loading packages count:', error);
                 document.getElementById('packagesCount').setAttribute('data-target', '0');
             }
         }
@@ -207,18 +243,24 @@
         // Load banks count
         async function loadBanksCount() {
             try {
-                console.log('Loading banks count...');
-                const { data, error } = await supabaseClient
+                console.log('🔍 Loading banks count...');
+                const result = await supabaseClient
                     .from('banks')
                     .select('id');
                 
-                if (error) throw error;
+                console.log('🏦 Banks query result:', result);
                 
-                const bankCount = data ? data.length : 0;
+                if (result.error) {
+                    console.error('❌ Banks query error:', result.error);
+                    throw result.error;
+                }
+                
+                const bankCount = result.data ? result.data.length : 0;
+                console.log('✅ Banks count calculated:', bankCount);
                 document.getElementById('banksCount').setAttribute('data-target', bankCount);
-                console.log('Loaded banks count:', bankCount);
+                
             } catch (error) {
-                console.error('Error loading banks count:', error);
+                console.error('💥 Error loading banks count:', error);
                 document.getElementById('banksCount').setAttribute('data-target', '0');
             }
         }
@@ -226,19 +268,25 @@
         // Load agents count
         async function loadAgentsCount() {
             try {
-                console.log('Loading agents count...');
-                const { data, error } = await supabaseClient
+                console.log('🔍 Loading agents count...');
+                const result = await supabaseClient
                     .from('agents')
                     .select('id, status')
                     .eq('status', 'Active');
                 
-                if (error) throw error;
+                console.log('👥 Agents query result:', result);
                 
-                const agentCount = data ? data.length : 0;
+                if (result.error) {
+                    console.error('❌ Agents query error:', result.error);
+                    throw result.error;
+                }
+                
+                const agentCount = result.data ? result.data.length : 0;
+                console.log('✅ Agents count calculated:', agentCount);
                 document.getElementById('agentsCount').setAttribute('data-target', agentCount);
-                console.log('Loaded agents count:', agentCount);
+                
             } catch (error) {
-                console.error('Error loading agents count:', error);
+                console.error('💥 Error loading agents count:', error);
                 document.getElementById('agentsCount').setAttribute('data-target', '0');
             }
         }
@@ -246,18 +294,24 @@
         // Load enquiries count
         async function loadEnquiriesCount() {
             try {
-                console.log('Loading enquiries count...');
-                const { data, error } = await supabaseClient
+                console.log('🔍 Loading enquiries count...');
+                const result = await supabaseClient
                     .from('enquiries')
                     .select('id');
                 
-                if (error) throw error;
+                console.log('📋 Enquiries query result:', result);
                 
-                const enquiryCount = data ? data.length : 0;
+                if (result.error) {
+                    console.error('❌ Enquiries query error:', result.error);
+                    throw result.error;
+                }
+                
+                const enquiryCount = result.data ? result.data.length : 0;
+                console.log('✅ Enquiries count calculated:', enquiryCount);
                 document.getElementById('enquiriesCount').setAttribute('data-target', enquiryCount);
-                console.log('Loaded enquiries count:', enquiryCount);
+                
             } catch (error) {
-                console.error('Error loading enquiries count:', error);
+                console.error('💥 Error loading enquiries count:', error);
                 document.getElementById('enquiriesCount').setAttribute('data-target', '0');
             }
         }
