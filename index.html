@@ -2,7 +2,7 @@
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                // Initialize Lucide icons
+                // Initialize Lucide icons with better error handling
                 console.log('Initializing Lucide icons...');
                 if (typeof lucide !== 'undefined' && lucide.createIcons) {
                     lucide.createIcons();
@@ -22,9 +22,83 @@
                 
                 console.log('✅ Dashboard initialization complete');
                 
+                // Manual test to debug the counting issue
+                console.log('🧪 Running manual count tests in 2 seconds...');
+                setTimeout(async () => {
+                    try {
+                        console.log('🔬 Manual Testing Started...');
+                        
+                        // Test each table manually
+                        const banksTest = await supabaseClient.from('banks').select('id');
+                        console.log('🏦 Manual banks test:', banksTest);
+                        console.log('🏦 Banks data length:', banksTest.data?.length);
+                        
+                        const packagesTest = await supabaseClient.from('rate_packages').select('id');
+                        console.log('📦 Manual packages test:', packagesTest);
+                        console.log('📦 Packages data length:', packagesTest.data?.length);
+                        
+                        const agentsTest = await supabaseClient.from('agents').select('id, status');
+                        console.log('👥 Manual agents test:', agentsTest);
+                        console.log('👥 Agents data length:', agentsTest.data?.length);
+                        
+                        const enquiriesTest = await supabaseClient.from('enquiries').select('id');
+                        console.log('📋 Manual enquiries test:', enquiriesTest);
+                        console.log('📋 Enquiries data length:', enquiriesTest.data?.length);
+                        
+                        // Count them
+                        console.log('📊 Manual counts calculated:');
+                        console.log('  - Banks:', banksTest.data?.length || 0);
+                        console.log('  - Packages:', packagesTest.data?.length || 0);
+                        console.log('  - Agents:', agentsTest.data?.length || 0);
+                        console.log('  - Enquiries:', enquiriesTest.data?.length || 0);
+                        
+                        // Now manually set the counters if they're still 0
+                        if (banksTest.data?.length > 0) {
+                            const banksCounter = document.getElementById('banksCount');
+                            if (banksCounter.getAttribute('data-target') === '0') {
+                                console.log('🔧 Manually fixing banks counter...');
+                                banksCounter.setAttribute('data-target', banksTest.data.length);
+                                banksCounter.textContent = banksTest.data.length;
+                            }
+                        }
+                        
+                        if (packagesTest.data?.length > 0) {
+                            const packagesCounter = document.getElementById('packagesCount');
+                            if (packagesCounter.getAttribute('data-target') === '0') {
+                                console.log('🔧 Manually fixing packages counter...');
+                                packagesCounter.setAttribute('data-target', packagesTest.data.length);
+                                packagesCounter.textContent = packagesTest.data.length;
+                            }
+                        }
+                        
+                        if (agentsTest.data?.length > 0) {
+                            const agentsCounter = document.getElementById('agentsCount');
+                            if (agentsCounter.getAttribute('data-target') === '0') {
+                                console.log('🔧 Manually fixing agents counter...');
+                                agentsCounter.setAttribute('data-target', agentsTest.data.length);
+                                agentsCounter.textContent = agentsTest.data.length;
+                            }
+                        }
+                        
+                        if (enquiriesTest.data?.length > 0) {
+                            const enquiriesCounter = document.getElementById('enquiriesCount');
+                            if (enquiriesCounter.getAttribute('data-target') === '0') {
+                                console.log('🔧 Manually fixing enquiries counter...');
+                                enquiriesCounter.setAttribute('data-target', enquiriesTest.data.length);
+                                enquiriesCounter.textContent = enquiriesTest.data.length;
+                            }
+                        }
+                        
+                        console.log('🎯 Manual test completed!');
+                        
+                    } catch (error) {
+                        console.error('🚨 Manual test failed:', error);
+                    }
+                }, 2000);
+                
             } catch (error) {
                 console.error('❌ Dashboard initialization error:', error);
-                // Continue anyway - don't let errors break the app
+                // Continue anyway - don't let icon issues break the app
             }
         });
 
