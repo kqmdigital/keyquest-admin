@@ -2,12 +2,13 @@
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', async function() {
             try {
-                // Wait for Lucide to be available (but don't depend on it)
-                if (typeof lucide !== 'undefined') {
+                // Initialize Lucide icons with better error handling
+                console.log('Initializing Lucide icons...');
+                if (typeof lucide !== 'undefined' && lucide.createIcons) {
                     lucide.createIcons();
-                    console.log('Lucide icons initialized');
+                    console.log('✅ Lucide icons initialized successfully');
                 } else {
-                    console.warn('Lucide not available, using fallback icons');
+                    console.warn('⚠️ Lucide not available, icons may not display');
                 }
                 
                 // Check authentication
@@ -19,10 +20,10 @@
                 // Set up periodic updates
                 setInterval(updateDashboard, 30000);
                 
-                console.log('Dashboard initialization complete');
+                console.log('✅ Dashboard initialization complete');
             } catch (error) {
-                console.error('Dashboard initialization error:', error);
-                // Continue anyway
+                console.error('❌ Dashboard initialization error:', error);
+                // Continue anyway - don't let icon issues break the app
             }
         });
 
@@ -513,51 +514,6 @@
             }
         }
 
-        // Modal functions
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                
-                // Focus the confirm button for better UX
-                setTimeout(() => {
-                    const confirmButton = modal.querySelector('.btn-primary');
-                    if (confirmButton) {
-                        confirmButton.focus();
-                    }
-                }, 100);
-            }
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        // Alternative simple sign out without modal (backup function)
-        function simpleSignOut() {
-            if (confirm('Are you sure you want to sign out?')) {
-                try {
-                    if (typeof AuthService !== 'undefined') {
-                        AuthService.signOut().then(() => {
-                            window.location.href = 'login.html';
-                        }).catch(() => {
-                            window.location.href = 'login.html';
-                        });
-                    } else {
-                        window.location.href = 'login.html';
-                    }
-                } catch (error) {
-                    console.error('Simple sign out error:', error);
-                    window.location.href = 'login.html';
-                }
-            }
-        }
-
         // Mobile sidebar functions
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -697,7 +653,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Keyquest Mortgage Admin - Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <script src="js/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config/supabase.js"></script>
     <style>
@@ -1308,8 +1264,8 @@
                     <h1 class="header-title">Dashboard</h1>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="performSignOut()" title="Sign Out">
-                        <span>⚠️</span>
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
                         <span>Sign Out</span>
                     </button>
                     <div class="user-profile">
@@ -1525,8 +1481,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Confirm Sign Out</h3>
-                <button class="modal-close" onclick="closeModal('signout-modal')" title="Close">
-                    <span>✕</span>
+                <button class="modal-close" onclick="closeModal('signout-modal')">
+                    <i data-lucide="x"></i>
                 </button>
             </div>
             <div class="modal-body">
@@ -1534,8 +1490,8 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
-                <button class="btn btn-primary" onclick="performSignOut()" title="Confirm Sign Out">
-                    <span>🚪</span>
+                <button class="btn btn-primary" onclick="performSignOut()">
+                    <i data-lucide="log-out"></i>
                     Sign Out
                 </button>
             </div>
