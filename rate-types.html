@@ -66,46 +66,30 @@
                 <div class="header-left">
                     <button class="menu-toggle" onclick="toggleSidebar()">
                         <i data-lucide="menu"></i>
-                    </button>
-                    <h1>Rate Type</h1>
+                        </button>
+                    <h1 class="header-title">Rate Type</h1>
                 </div>
+                        
                 <div class="header-right">
                     <button class="btn btn-primary" onclick="openAddRateTypeModal()">
                         <i data-lucide="plus"></i>
                         <span>Add Rate Type</span>
                     </button>
-                    <div class="user-menu">
-                        <button class="user-button" onclick="toggleUserMenu()">
-                            <div class="user-avatar">A</div>
-                            <div class="user-info">
-                                <div class="user-name">admin</div>
-                                <div class="user-role">Super Admin</div>
-                            </div>
-                            <i data-lucide="chevron-down"></i>
-                        </button>
-                        <div class="user-dropdown" id="userDropdown">
-                            <a href="#" class="dropdown-item">
-                                <i data-lucide="user"></i>
-                                <span>Profile</span>
-                            </a>
-                            <a href="#" class="dropdown-item">
-                                <i data-lucide="settings"></i>
-                                <span>Settings</span>
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item" onclick="logout()">
-                                <i data-lucide="log-out"></i>
-                                <span>Sign Out</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="success-message" id="successMessage">
-                        Operation completed successfully
-                    </div>
-                </div>
-            </header>
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+            <i data-lucide="log-out"></i>
+            <span>Sign Out</span>
+        </button>
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div class="user-info">
+                <div class="user-name" id="userName">admin</div>
+                <div class="user-role">Super Admin</div>
+            </div>
+        </div>
+    </div>
+</header>
 
-            <main class="main-section">
+            <div class="content-area">
                 <!-- Search and Filter Bar -->
                 <div class="search-filter-bar">
                     <div class="search-box">
@@ -145,15 +129,15 @@
                                 <th>Rate Type</th>
                                 <th>Rate Value</th>
                                 <th>Bank Name</th>
-                                <th style="width: 140px; text-align: center;">Actions</th>
+                                <th>ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody id="rateTypesTable">
                             <tr>
-                                <td colspan="4" style="text-align: center; padding: 40px;">
-                                    <div class="loading-spinner"></div>
-                                    <div style="margin-top: 10px;">Loading rate types...</div>
-                                </td>
+                               <td colspan="11" style="text-align: center; padding: 40px;">
+                                        <div class="loading-spinner"></div>
+                                        <div style="margin-top: 10px;">Loading rate packages...</div>
+                                    </td>
                             </tr>
                         </tbody>
                     </table>
@@ -168,7 +152,7 @@
                         <!-- Pagination buttons will be generated here -->
                     </div>
                 </div>
-            </main>
+        
         </div>
     </div>
 
