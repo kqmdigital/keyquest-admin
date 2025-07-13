@@ -60,6 +60,11 @@ function initializeApp() {
     if (AdminApp.currentPage === 'rate-packages') {
         initializeEnhancedFiltering();
     }
+
+    // Initialize rate types specific functionality
+    if (AdminApp.currentPage === 'rate-types') {
+        initRateTypesPage();
+    }
     
     // Show welcome message
     setTimeout(() => {
@@ -89,11 +94,11 @@ function setActiveNavigation() {
 }
 
 // ===================================
-// ENHANCED FILTERING SYSTEM
+// ENHANCED FILTERING SYSTEM (RATE PACKAGES)
 // ===================================
 
 function initializeEnhancedFiltering() {
-    // Setup multi-select filter listeners
+    // Setup multi-select filter listeners for rate packages
     setupMultiSelectFilters();
     
     // Setup search input listener
@@ -125,22 +130,6 @@ function setupMultiSelectFilters() {
             handleFilterChange(this);
         });
     });
-}
-
-function toggleMultiSelect(filterId) {
-    const filter = document.getElementById(filterId);
-    if (!filter) return;
-    
-    const dropdown = filter.querySelector('.multi-select-dropdown');
-    if (!dropdown) return;
-    
-    // Close all other dropdowns
-    document.querySelectorAll('.multi-select-dropdown').forEach(d => {
-        if (d !== dropdown) d.style.display = 'none';
-    });
-    
-    // Toggle current dropdown
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
 }
 
 function handleFilterChange(checkbox) {
@@ -220,6 +209,52 @@ function getAllSelectedFilters() {
     };
 }
 
+// ===================================
+// MULTI-SELECT FOR RATE TYPES & GENERAL USE
+// ===================================
+
+function toggleMultiSelect(eventOrFilterId) {
+    // Handle both event-based calls (rate types) and filterId-based calls (rate packages)
+    if (typeof eventOrFilterId === 'string') {
+        // Rate packages style call
+        const filter = document.getElementById(eventOrFilterId);
+        if (!filter) return;
+        
+        const dropdown = filter.querySelector('.multi-select-dropdown');
+        if (!dropdown) return;
+        
+        // Close all other dropdowns
+        document.querySelectorAll('.multi-select-dropdown').forEach(d => {
+            if (d !== dropdown) d.style.display = 'none';
+        });
+        
+        // Toggle current dropdown
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    } else {
+        // Rate types style call (event-based)
+        const event = eventOrFilterId;
+        event.stopPropagation();
+        const dropdown = event.currentTarget;
+        const options = dropdown.querySelector('.multiselect-options');
+        const arrow = dropdown.querySelector('.multiselect-arrow');
+        
+        // Close other open dropdowns
+        document.querySelectorAll('.multiselect-options.show').forEach(openOptions => {
+            if (openOptions !== options) {
+                openOptions.classList.remove('show');
+                const openArrow = openOptions.parentElement.querySelector('.multiselect-arrow');
+                if (openArrow) openArrow.style.transform = 'rotate(0deg)';
+            }
+        });
+        
+        // Toggle current dropdown
+        options.classList.toggle('show');
+        if (arrow) {
+            arrow.style.transform = options.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+    }
+}
+
 function clearAllFilters() {
     // Clear search input
     const searchInput = document.getElementById('searchInput');
@@ -227,12 +262,12 @@ function clearAllFilters() {
         searchInput.value = '';
     }
     
-    // Reset all checkboxes
+    // Reset all checkboxes for rate packages
     document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(checkbox => {
         checkbox.checked = checkbox.value.includes('All');
     });
     
-    // Update all filter button texts
+    // Update all filter button texts for rate packages
     document.querySelectorAll('.multi-select-filter').forEach(filter => {
         updateFilterButtonText(filter);
     });
@@ -775,92 +810,11 @@ function logPerformance(action) {
 }
 
 // ===================================
-// INITIALIZATION ON PAGE LOAD
-// ===================================
-
-// Load recent actions on page load
-loadRecentActions();
-
-// ===================================
-// EXPORT FOR GLOBAL USE
-// ===================================
-
-// Make functions globally available
-window.AdminApp = AdminApp;
-window.showNotification = showNotification;
-window.showLoading = showLoading;
-window.hideLoading = hideLoading;
-window.withLoading = withLoading;
-window.openModal = openModal;
-window.closeModal = closeModal;
-window.toggleSidebar = toggleSidebar;
-window.closeSidebar = closeSidebar;
-window.toggleMultiSelect = toggleMultiSelect;
-window.clearAllFilters = clearAllFilters;
-window.exportToCSV = exportToCSV;
-window.printTable = printTable;
-window.confirmSignOut = confirmSignOut;
-window.addRecentAction = addRecentAction;
-
-console.log('Enhanced Admin JavaScript framework loaded successfully');
-
-// Add these functions to your existing admin-scripts.js file
-
-// ===================================
 // RATE TYPES SPECIFIC FUNCTIONS
 // ===================================
 
-// Enhanced search functionality for rate types
-function performRateTypeSearch(searchTerm) {
-    const term = searchTerm.toLowerCase().trim();
-    const tableBody = document.getElementById('rateTypesTable');
-    if (!tableBody) return;
-    
-    const rows = tableBody.querySelectorAll('tr:not(.no-data)');
-    let visibleCount = 0;
-    
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length === 0) return;
-        
-        const text = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
-        const shouldShow = !term || text.includes(term);
-        row.style.display = shouldShow ? '' : 'none';
-        if (shouldShow) visibleCount++;
-    });
-    
-    // Update pagination info if exists
-    const paginationInfo = document.querySelector('.pagination-info');
-    if (paginationInfo && term) {
-        paginationInfo.textContent = `Showing ${visibleCount} results for "${searchTerm}"`;
-    }
-}
-
-// Enhanced multi-select functionality
-window.toggleMultiSelect = function(event) {
-    event.stopPropagation();
-    const dropdown = event.currentTarget;
-    const options = dropdown.querySelector('.multiselect-options');
-    const arrow = dropdown.querySelector('.multiselect-arrow');
-    
-    // Close other open dropdowns
-    document.querySelectorAll('.multiselect-options.show').forEach(openOptions => {
-        if (openOptions !== options) {
-            openOptions.classList.remove('show');
-            const openArrow = openOptions.parentElement.querySelector('.multiselect-arrow');
-            if (openArrow) openArrow.style.transform = 'rotate(0deg)';
-        }
-    });
-    
-    // Toggle current dropdown
-    options.classList.toggle('show');
-    if (arrow) {
-        arrow.style.transform = options.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
-    }
-};
-
-// Bank selection management
-window.updateBankSelection = function(optionsId, displayId) {
+// Bank selection management for rate types
+function updateBankSelection(optionsId, displayId) {
     const options = document.getElementById(optionsId);
     const display = document.getElementById(displayId);
     
@@ -879,10 +833,10 @@ window.updateBankSelection = function(optionsId, displayId) {
         display.textContent = `${selectedValues.slice(0, 2).join(', ')} +${selectedValues.length - 2} more`;
         display.style.color = '#374151';
     }
-};
+}
 
-// Validation functions
-window.validateRateTypeForm = function(formData, selectedBanks) {
+// Validation functions for rate types
+function validateRateTypeForm(formData, selectedBanks) {
     const errors = [];
     
     // Validate rate type
@@ -909,16 +863,16 @@ window.validateRateTypeForm = function(formData, selectedBanks) {
     }
     
     return errors;
-};
+}
 
 // Format rate value for display
-window.formatRateValue = function(value) {
+function formatRateValue(value) {
     if (value === null || value === undefined) return 'N/A';
     return parseFloat(value).toFixed(3) + '%';
-};
+}
 
 // Format bank names for table display
-window.formatBankDisplay = function(bankNames, maxDisplay = 3) {
+function formatBankDisplay(bankNames, maxDisplay = 3) {
     if (!bankNames || !Array.isArray(bankNames) || bankNames.length === 0) {
         return '<span style="color: #9ca3af; font-style: italic;">No banks assigned</span>';
     }
@@ -931,10 +885,10 @@ window.formatBankDisplay = function(bankNames, maxDisplay = 3) {
         return displayed.map(bank => `<span class="bank-tag">${escapeHtml(bank)}</span>`).join('') + 
                `<span class="bank-tag more">+${remaining} more</span>`;
     }
-};
+}
 
 // Enhanced error handling for rate types
-window.handleRateTypeError = function(error, operation = 'operation') {
+function handleRateTypeError(error, operation = 'operation') {
     console.error(`Rate type ${operation} error:`, error);
     
     let message = `Failed to ${operation} rate type`;
@@ -951,10 +905,10 @@ window.handleRateTypeError = function(error, operation = 'operation') {
     }
     
     showNotification(message, 'error');
-};
+}
 
-// Enhanced loading states
-window.setRateTypeLoading = function(isLoading, element = null) {
+// Enhanced loading states for rate types
+function setRateTypeLoading(isLoading, element = null) {
     if (element) {
         if (isLoading) {
             element.disabled = true;
@@ -975,10 +929,10 @@ window.setRateTypeLoading = function(isLoading, element = null) {
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
-};
+}
 
 // Rate type data export
-window.exportRateTypes = function(rateTypes, filename = 'rate-types.csv') {
+function exportRateTypes(rateTypes, filename = 'rate-types.csv') {
     if (!rateTypes || rateTypes.length === 0) {
         showNotification('No data to export', 'warning');
         return;
@@ -1006,10 +960,10 @@ window.exportRateTypes = function(rateTypes, filename = 'rate-types.csv') {
     document.body.removeChild(link);
     
     showNotification('Rate types exported successfully', 'success');
-};
+}
 
 // Keyboard shortcuts for rate types page
-window.initRateTypeKeyboardShortcuts = function() {
+function initRateTypeKeyboardShortcuts() {
     document.addEventListener('keydown', function(e) {
         // Only apply on rate types page
         if (!window.location.pathname.includes('rate-types')) return;
@@ -1024,7 +978,7 @@ window.initRateTypeKeyboardShortcuts = function() {
         
         // Escape to close modals
         if (e.key === 'Escape') {
-            const openModals = document.querySelectorAll('.modal.show');
+            const openModals = document.querySelectorAll('.modal:not([style*="display: none"])');
             openModals.forEach(modal => {
                 const modalId = modal.id;
                 if (typeof closeModal === 'function') {
@@ -1033,10 +987,10 @@ window.initRateTypeKeyboardShortcuts = function() {
             });
         }
     });
-};
+}
 
 // Initialize rate types specific functionality
-window.initRateTypesPage = function() {
+function initRateTypesPage() {
     // Initialize keyboard shortcuts
     initRateTypeKeyboardShortcuts();
     
@@ -1210,13 +1164,45 @@ window.initRateTypesPage = function() {
     document.head.appendChild(style);
     
     console.log('Rate types page functionality initialized');
-};
-
-// Auto-initialize if on rate types page
-if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', function() {
-        if (window.location.pathname.includes('rate-types')) {
-            initRateTypesPage();
-        }
-    });
 }
+
+// ===================================
+// INITIALIZATION ON PAGE LOAD
+// ===================================
+
+// Load recent actions on page load
+loadRecentActions();
+
+// ===================================
+// EXPORT FOR GLOBAL USE
+// ===================================
+
+// Make functions globally available
+window.AdminApp = AdminApp;
+window.showNotification = showNotification;
+window.showLoading = showLoading;
+window.hideLoading = hideLoading;
+window.withLoading = withLoading;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.toggleSidebar = toggleSidebar;
+window.closeSidebar = closeSidebar;
+window.toggleMultiSelect = toggleMultiSelect;
+window.clearAllFilters = clearAllFilters;
+window.exportToCSV = exportToCSV;
+window.printTable = printTable;
+window.confirmSignOut = confirmSignOut;
+window.addRecentAction = addRecentAction;
+
+// Rate types specific functions
+window.updateBankSelection = updateBankSelection;
+window.validateRateTypeForm = validateRateTypeForm;
+window.formatRateValue = formatRateValue;
+window.formatBankDisplay = formatBankDisplay;
+window.handleRateTypeError = handleRateTypeError;
+window.setRateTypeLoading = setRateTypeLoading;
+window.exportRateTypes = exportRateTypes;
+window.initRateTypeKeyboardShortcuts = initRateTypeKeyboardShortcuts;
+window.initRateTypesPage = initRateTypesPage;
+
+console.log('Enhanced Admin JavaScript framework loaded successfully');
