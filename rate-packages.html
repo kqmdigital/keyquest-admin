@@ -55,7 +55,6 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Fixed Header Structure - matching dashboard exactly -->
             <header class="main-header">
                 <div class="header-left">
                     <button class="sidebar-toggle mobile-only" onclick="toggleSidebar()">
@@ -63,7 +62,7 @@
                     </button>
                     <h1 class="header-title">Rate Packages</h1>
                 </div>
-                <div class="header-right">
+                <div class="header-actions">
                     <button class="btn btn-primary" onclick="openModal('package-modal')">
                         <i data-lucide="plus"></i>
                         <span>Add Rate Package</span>
@@ -115,760 +114,632 @@
 
                     <select class="filter-select" id="rateTypeFilter">
                         <option value="">Select Rate Type</option>
-                        <option value="FIXED">Fixed</option>
-                        <option value="FLOATING">Floating</option>
+                        <option value="Fixed">Fixed</option>
+                        <option value="Floating">Floating</option>
                     </select>
 
                     <select class="filter-select" id="lockPeriodFilter">
-                        <option value="">Select Lock In Period</option>
+                        <option value="">Select Lock in Period</option>
                         <option value="0 Year">0 Year</option>
                         <option value="1 Year">1 Year</option>
                         <option value="2 Years">2 Years</option>
                         <option value="3 Years">3 Years</option>
                         <option value="4 Years">4 Years</option>
                         <option value="5 Years">5 Years</option>
+                        <option value="6 Years">6 Years</option>
+                        <option value="7 Years">7 Years</option>
+                        <option value="8 Years">8 Years</option>
+                        <option value="9 Years">9 Years</option>
+                        <option value="10 Years">10 Years</option>
                     </select>
 
                     <select class="filter-select" id="loanAmountFilter">
                         <option value="">Select Loan Amount</option>
-                        <option value="100000">$100,000</option>
-                        <option value="200000">$200,000</option>
-                        <option value="250000">$250,000</option>
-                        <option value="300000">$300,000</option>
-                        <option value="400000">$400,000</option>
-                        <option value="500000">$500,000</option>
-                        <option value="600000">$600,000</option>
-                        <option value="700000">$700,000</option>
-                        <option value="750000">$750,000</option>
-                        <option value="800000">$800,000</option>
-                        <option value="900000">$900,000</option>
-                        <option value="1000000">$1,000,000</option>
-                        <option value="1200000">$1,200,000</option>
-                        <option value="1500000">$1,500,000</option>
-                        <option value="2000000">$2,000,000</option>
+                        <option value="100000">100,000</option>
+                        <option value="200000">200,000</option>
+                        <option value="250000">250,000</option>
+                        <option value="300000">300,000</option>
+                        <option value="400000">400,000</option>
+                        <option value="500000">500,000</option>
+                        <option value="600000">600,000</option>
+                        <option value="700000">700,000</option>
+                        <option value="750000">750,000</option>
+                        <option value="800000">800,000</option>
+                        <option value="900000">900,000</option>
+                        <option value="1000000">1,000,000</option>
+                        <option value="1200000">1,200,000</option>
+                        <option value="1500000">1,500,000</option>
+                        <option value="2000000">2,000,000</option>
                     </select>
 
                     <select class="filter-select" id="bankFilter">
                         <option value="">Select Bank</option>
-                        <!-- Banks will be populated dynamically -->
+                        <option value="CIMB">CIMB</option>
+                        <option value="OCBC">OCBC</option>
+                        <option value="UOB">UOB</option>
+                        <option value="DBS">DBS</option>
+                        <option value="MMB">MMB</option>
+                        <option value="SCB">SCB</option>
+                        <option value="HSBC">HSBC</option>
+                        <option value="SBI">SBI</option>
+                        <option value="BOC">BOC</option>
+                        <option value="HLF">HLF</option>
+                        <option value="SF">SF</option>
+                        <option value="RHB">RHB</option>
+                        <option value="SIF">SIF</option>
+                        <option value="Citibank">Citibank</option>
                     </select>
 
-                    <button class="btn btn-secondary" onclick="clearAllFilters()" title="Clear all filters">
-                        <i data-lucide="filter"></i>
+                    <button class="btn btn-secondary" onclick="clearAllFilters()" id="clearFiltersBtn">
+                        <i data-lucide="x"></i>
                         <span>Clear</span>
                     </button>
-
-                    <button class="btn btn-secondary" onclick="exportData()" title="Export data">
+                    
+                    <button class="btn btn-secondary" onclick="exportToCSV('rate-packages.csv')">
                         <i data-lucide="download"></i>
                         <span>Export</span>
                     </button>
                 </div>
 
-                <!-- Enhanced Table -->
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Bank Name</th>
-                                <th>Property Type</th>
-                                <th>Buy Under</th>
-                                <th>Reference Rate</th>
-                                <th>Property Status</th>
-                                <th>Rate Type</th>
-                                <th>Loan Amount</th>
-                                <th>Loan Type</th>
-                                <th>Lock In Period</th>
-                                <th>Interest Y1</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="packagesTableBody">
-                            <tr>
-                                <td colspan="11" class="loading-row">
-                                    <div class="loading-spinner"></div>
-                                    Loading rate packages...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Data Table -->
+                <div class="data-table">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>BANK NAME</th>
+                                    <th>PROPERTY TYPE</th>
+                                    <th>BUY UNDER</th>
+                                    <th>REFERENCE RATE</th>
+                                    <th>PROPERTY STATUS</th>
+                                    <th>RATE TYPE</th>
+                                    <th>LOAN AMOUNT</th>
+                                    <th>LOAN TYPE</th>
+                                    <th>LOCK IN PERIOD</th>
+                                    <th>INTEREST Y1</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="packagesTable">
+                                <tr>
+                                    <td colspan="11" style="text-align: center; padding: 40px;">
+                                        <div class="loading-spinner"></div>
+                                        <div style="margin-top: 10px;">Loading rate packages...</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Enhanced Pagination -->
-                <div class="pagination" id="pagination">
+                <div class="pagination">
                     <div class="pagination-info">
-                        Showing <span id="paginationInfo">0-0 of 0</span>
+                        <span id="paginationInfo">Showing 0 of 0</span>
                     </div>
                     <div class="pagination-controls" id="paginationControls">
                         <!-- Pagination buttons will be generated here -->
                     </div>
                 </div>
+
+                <!-- Recent Actions Section -->
+                <div class="recent-actions-section">
+                    <h3>📋 Recent Actions</h3>
+                    <div class="recent-actions-list" id="recentActionsList">
+                        <div class="no-actions">No recent actions</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Overlay for mobile sidebar -->
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-
-    <!-- Rate Package Modal -->
+    <!-- Complete Add/Edit Rate Package Modal -->
     <div class="modal" id="package-modal">
-        <div class="modal-content large">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">Add Rate Package</h3>
+                <h3 class="modal-title" id="modalTitle">Add Rate Package</h3>
                 <button class="modal-close" onclick="closeModal('package-modal')">
                     <i data-lucide="x"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="packageForm" class="package-form">
-                    <div class="form-grid">
-                        <!-- Basic Information -->
-                        <div class="form-group">
-                            <label for="bank_name">Bank Name *</label>
-                            <select id="bank_name" name="bank_name" class="form-input" required>
-                                <option value="">Select Bank</option>
-                                <!-- Banks will be populated dynamically -->
-                            </select>
-                        </div>
+                <form id="packageForm">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h4>Basic Information</h4>
+                        <div class="form-grid">
+                            <div class="form-group half">
+                                <label class="form-label">Bank name</label>
+                                <select class="form-select" name="bank_name" required>
+                                    <option value="">Select bank name</option>
+                                    <option value="CIMB">CIMB</option>
+                                    <option value="OCBC">OCBC</option>
+                                    <option value="UOB">UOB</option>
+                                    <option value="DBS">DBS</option>
+                                    <option value="MMB">MMB</option>
+                                    <option value="SCB">SCB</option>
+                                    <option value="HSBC">HSBC</option>
+                                    <option value="SBI">SBI</option>
+                                    <option value="BOC">BOC</option>
+                                    <option value="HLF">HLF</option>
+                                    <option value="SF">SF</option>
+                                    <option value="RHB">RHB</option>
+                                    <option value="SIF">SIF</option>
+                                    <option value="Citibank">Citibank</option>
+                                </select>
+                                <small style="color: #6b7280; font-size: 12px;">Hide bank name for this rate package</small>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="property_type">Property Type *</label>
-                            <select id="property_type" name="property_type" class="form-input" required>
-                                <option value="">Select Property Type</option>
-                                <option value="HDB">HDB</option>
-                                <option value="Private Property">Private Property</option>
-                                <option value="EC">EC</option>
-                                <option value="Commercial">Commercial</option>
-                                <option value="Industrial">Industrial</option>
-                            </select>
-                        </div>
+                            <div class="form-group half">
+                                <label class="form-label">Loan type</label>
+                                <select class="form-select" name="loan_type" required>
+                                    <option value="">Select loan type</option>
+                                    <option value="New Home Loan">New Home Loan</option>
+                                    <option value="Refinancing Home Loan">Refinancing Home Loan</option>
+                                    <option value="Commercial/Industrial">Commercial/Industrial</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="buy_under">Buy Under *</label>
-                            <select id="buy_under" name="buy_under" class="form-input" required>
-                                <option value="">Select Buy Under</option>
-                                <option value="Company Operating">Company Operating</option>
-                                <option value="Company Investment Holding">Company Investment Holding</option>
-                                <option value="Individual Name">Individual Name</option>
-                            </select>
-                        </div>
+                            <div class="form-group half">
+                                <label class="form-label">Property type</label>
+                                <select class="form-select" name="property_type" required>
+                                    <option value="">Select property type</option>
+                                    <option value="HDB">HDB</option>
+                                    <option value="Private Property">Private Property</option>
+                                    <option value="EC">EC</option>
+                                    <option value="Commercial">Commercial</option>
+                                    <option value="Industrial">Industrial</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="reference_rate">Reference Rate *</label>
-                            <input type="text" id="reference_rate" name="reference_rate" class="form-input" required placeholder="e.g., 3M SORA, 6M SORA, etc.">
-                        </div>
+                            <div class="form-group half">
+                                <label class="form-label">Buy Under</label>
+                                <select class="form-select" name="buy_under" required>
+                                    <option value="">Select buy under</option>
+                                    <option value="Company Operating">Company Operating</option>
+                                    <option value="Company Investment Holding">Company Investment Holding</option>
+                                    <option value="Individual Name">Individual Name</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="property_status">Property Status *</label>
-                            <select id="property_status" name="property_status" class="form-input" required>
-                                <option value="">Select Property Status</option>
-                                <option value="COMPLETED">Completed</option>
-                                <option value="UNDER CONSTRUCTION">Under Construction</option>
-                            </select>
-                        </div>
+                            <div class="form-group half">
+                                <label class="form-label">Property status</label>
+                                <select class="form-select" name="property_status" required>
+                                    <option value="">Select property status</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Under Construction">Under Construction</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="rate_type_category">Rate Type *</label>
-                            <div class="radio-group">
-                                <div class="radio-option">
-                                    <input type="radio" id="rate_fixed" name="rate_type_category" value="FIXED">
-                                    <label for="rate_fixed">Fixed</label>
-                                </div>
-                                <div class="radio-option">
-                                    <input type="radio" id="rate_floating" name="rate_type_category" value="FLOATING">
-                                    <label for="rate_floating">Floating</label>
+                            <div class="form-group half">
+                                <label class="form-label">Rate type category</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="rate_type_category" value="Fixed" required>
+                                        <span>Fixed</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="rate_type_category" value="Floating" required>
+                                        <span>Floating</span>
+                                    </label>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <label for="loan_amount">Loan Amount *</label>
-                            <select id="loan_amount" name="loan_amount" class="form-input" required>
-                                <option value="">Select Loan Amount</option>
-                                <option value="100000">$100,000</option>
-                                <option value="200000">$200,000</option>
-                                <option value="250000">$250,000</option>
-                                <option value="300000">$300,000</option>
-                                <option value="400000">$400,000</option>
-                                <option value="500000">$500,000</option>
-                                <option value="600000">$600,000</option>
-                                <option value="700000">$700,000</option>
-                                <option value="750000">$750,000</option>
-                                <option value="800000">$800,000</option>
-                                <option value="900000">$900,000</option>
-                                <option value="1000000">$1,000,000</option>
-                                <option value="1200000">$1,200,000</option>
-                                <option value="1500000">$1,500,000</option>
-                                <option value="2000000">$2,000,000</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="loan_type">Loan Type *</label>
-                            <select id="loan_type" name="loan_type" class="form-input" required>
-                                <option value="">Select Loan Type</option>
-                                <option value="New Home Loan">New Home Loan</option>
-                                <option value="Refinancing Home Loan">Refinancing Home Loan</option>
-                                <option value="Commercial/Industrial">Commercial/Industrial</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="lock_period">Lock In Period *</label>
-                            <select id="lock_period" name="lock_period" class="form-input" required>
-                                <option value="">Select Lock Period</option>
-                                <option value="0 Year">0 Year</option>
-                                <option value="1 Year">1 Year</option>
-                                <option value="2 Years">2 Years</option>
-                                <option value="3 Years">3 Years</option>
-                                <option value="4 Years">4 Years</option>
-                                <option value="5 Years">5 Years</option>
-                                <option value="6 Years">6 Years</option>
-                                <option value="7 Years">7 Years</option>
-                                <option value="8 Years">8 Years</option>
-                                <option value="9 Years">9 Years</option>
-                                <option value="10 Years">10 Years</option>
-                            </select>
-                        </div>
-
-                        <!-- Interest Rate Information -->
-                        <div class="form-group" style="grid-column: span 2;">
-                            <h4 style="margin-bottom: 16px; color: #1e293b;">Interest Rate Information</h4>
-                            <div id="rateYearInputs">
-                                <!-- Year 1 -->
-                                <div class="rate-year-row">
-                                    <h5>Year 1 *</h5>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                        <div>
-                                            <label for="year1_rate_type">Rate Type</label>
-                                            <select id="year1_rate_type" name="year1_rate_type" class="form-input" required>
-                                                <option value="">Select Rate Type</option>
-                                                <!-- Will be populated from rate_types table -->
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="year1_rate_value">Rate Value (%)</label>
-                                            <div class="input-group">
-                                                <input type="number" id="year1_rate_value" name="year1_rate_value" 
-                                                       class="form-input" step="0.01" min="0" max="100" required>
-                                                <span class="input-suffix">%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Year 2 -->
-                                <div class="rate-year-row">
-                                    <h5>Year 2</h5>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                        <div>
-                                            <label for="year2_rate_type">Rate Type</label>
-                                            <select id="year2_rate_type" name="year2_rate_type" class="form-input">
-                                                <option value="">Select Rate Type</option>
-                                                <!-- Will be populated from rate_types table -->
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="year2_rate_value">Rate Value (%)</label>
-                                            <div class="input-group">
-                                                <input type="number" id="year2_rate_value" name="year2_rate_value" 
-                                                       class="form-input" step="0.01" min="0" max="100">
-                                                <span class="input-suffix">%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Year 3 -->
-                                <div class="rate-year-row">
-                                    <h5>Year 3</h5>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                        <div>
-                                            <label for="year3_rate_type">Rate Type</label>
-                                            <select id="year3_rate_type" name="year3_rate_type" class="form-input">
-                                                <option value="">Select Rate Type</option>
-                                                <!-- Will be populated from rate_types table -->
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="year3_rate_value">Rate Value (%)</label>
-                                            <div class="input-group">
-                                                <input type="number" id="year3_rate_value" name="year3_rate_value" 
-                                                       class="form-input" step="0.01" min="0" max="100">
-                                                <span class="input-suffix">%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Year 4 -->
-                                <div class="rate-year-row">
-                                    <h5>Year 4</h5>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                        <div>
-                                            <label for="year4_rate_type">Rate Type</label>
-                                            <select id="year4_rate_type" name="year4_rate_type" class="form-input">
-                                                <option value="">Select Rate Type</option>
-                                                <!-- Will be populated from rate_types table -->
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="year4_rate_value">Rate Value (%)</label>
-                                            <div class="input-group">
-                                                <input type="number" id="year4_rate_value" name="year4_rate_value" 
-                                                       class="form-input" step="0.01" min="0" max="100">
-                                                <span class="input-suffix">%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Year 5 -->
-                                <div class="rate-year-row">
-                                    <h5>Year 5</h5>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                        <div>
-                                            <label for="year5_rate_type">Rate Type</label>
-                                            <select id="year5_rate_type" name="year5_rate_type" class="form-input">
-                                                <option value="">Select Rate Type</option>
-                                                <!-- Will be populated from rate_types table -->
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="year5_rate_value">Rate Value (%)</label>
-                                            <div class="input-group">
-                                                <input type="number" id="year5_rate_value" name="year5_rate_value" 
-                                                       class="form-input" step="0.01" min="0" max="100">
-                                                <span class="input-suffix">%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Thereafter -->
-                                <div class="rate-year-row">
-                                    <h5>Thereafter</h5>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                        <div>
-                                            <label for="thereafter_rate_type">Rate Type</label>
-                                            <select id="thereafter_rate_type" name="thereafter_rate_type" class="form-input">
-                                                <option value="">Select Rate Type</option>
-                                                <!-- Will be populated from rate_types table -->
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="thereafter_rate_value">Rate Value (%)</label>
-                                            <div class="input-group">
-                                                <input type="number" id="thereafter_rate_value" name="thereafter_rate_value" 
-                                                       class="form-input" step="0.01" min="0" max="100">
-                                                <span class="input-suffix">%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label class="form-label">Reference rate</label>
+                                <input type="text" class="form-input" name="reference_rate" placeholder="Enter reference rate">
                             </div>
-                        </div>
-
-                        <!-- Additional Information -->
-                        <div class="form-group" style="grid-column: span 2;">
-                            <h4 style="margin-bottom: 16px; color: #1e293b;">Package Features</h4>
-                            <div class="checkbox-group">
-                                <div class="checkbox-option">
-                                    <input type="checkbox" id="legal_fee_subsidy" name="legal_fee_subsidy">
-                                    <label for="legal_fee_subsidy">Legal Fee Subsidy</label>
-                                </div>
-                                <div class="checkbox-option">
-                                    <input type="checkbox" id="valuation_subsidy" name="valuation_subsidy">
-                                    <label for="valuation_subsidy">Valuation Subsidy</label>
-                                </div>
-                                <div class="checkbox-option">
-                                    <input type="checkbox" id="partial_repayment" name="partial_repayment">
-                                    <label for="partial_repayment">Partial Repayment</label>
-                                </div>
-                                <div class="checkbox-option">
-                                    <input type="checkbox" id="waiver_due_to_sales" name="waiver_due_to_sales">
-                                    <label for="waiver_due_to_sales">Waiver Due to Sales</label>
-                                </div>
-                                <div class="checkbox-option">
-                                    <input type="checkbox" id="free_package_conversion_12m" name="free_package_conversion_12m">
-                                    <label for="free_package_conversion_12m">Free Package Conversion (12 Months)</label>
-                                </div>
-                                <div class="checkbox-option">
-                                    <input type="checkbox" id="free_package_conversion_24m" name="free_package_conversion_24m">
-                                    <label for="free_package_conversion_24m">Free Package Conversion (24 Months)</label>
-                                </div>
-                                <div class="checkbox-option">
-                                    <input type="checkbox" id="free_package_conversion_36m" name="free_package_conversion_36m">
-                                    <label for="free_package_conversion_36m">Free Package Conversion (36 Months)</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Remarks -->
-                        <div class="form-group" style="grid-column: span 2;">
-                            <label for="remarks">Remarks</label>
-                            <textarea id="remarks" name="remarks" class="form-input" rows="3" placeholder="Additional notes or remarks..."></textarea>
                         </div>
                     </div>
+
+                    <!-- Interest Rate Information -->
+                    <div class="form-section">
+                        <h4>Interest Rate Information</h4>
+                        
+                        <!-- Year 1 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 1</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year1_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year1_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year1_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Year 2 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 2</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year2_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year2_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year2_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Year 3 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 3</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year3_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year3_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year3_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Year 4 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 4</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year4_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year4_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year4_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Year 5 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 5</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="year5_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year5_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year5_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+
+                        <!-- Thereafter -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Thereafter</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select" name="thereafter_rate_type" style="flex: 2;">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="thereafter_operator" style="width: 60px;">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="thereafter_value" step="0.001" placeholder="0.000" style="flex: 1;">
+                                <span style="padding: 0 8px;">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Information -->
+                    <div class="form-section">
+                        <h4>Other Information</h4>
+                        <div class="form-grid">
+                            <div class="form-group half">
+                                <label class="form-label">Minimum loan size</label>
+                                <div class="input-group">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" class="form-input" name="minimum_loan_size" placeholder="0">
+                                </div>
+                            </div>
+
+                            <div class="form-group half">
+                                <label class="form-label">Loan Amount</label>
+                                <select class="form-select" name="loan_amount" required>
+                                    <option value="">Select loan amount</option>
+                                    <option value="100000">100,000</option>
+                                    <option value="200000">200,000</option>
+                                    <option value="250000">250,000</option>
+                                    <option value="300000">300,000</option>
+                                    <option value="400000">400,000</option>
+                                    <option value="500000">500,000</option>
+                                    <option value="600000">600,000</option>
+                                    <option value="700000">700,000</option>
+                                    <option value="750000">750,000</option>
+                                    <option value="800000">800,000</option>
+                                    <option value="900000">900,000</option>
+                                    <option value="1000000">1,000,000</option>
+                                    <option value="1200000">1,200,000</option>
+                                    <option value="1500000">1,500,000</option>
+                                    <option value="2000000">2,000,000</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group half">
+                                <label class="form-label">Lock in Period</label>
+                                <select class="form-select" name="lock_period" required>
+                                    <option value="">Select lock in period</option>
+                                    <option value="0 Year">0 Year</option>
+                                    <option value="1 Year">1 Year</option>
+                                    <option value="2 Years">2 Years</option>
+                                    <option value="3 Years">3 Years</option>
+                                    <option value="4 Years">4 Years</option>
+                                    <option value="5 Years">5 Years</option>
+                                    <option value="6 Years">6 Years</option>
+                                    <option value="7 Years">7 Years</option>
+                                    <option value="8 Years">8 Years</option>
+                                    <option value="9 Years">9 Years</option>
+                                    <option value="10 Years">10 Years</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group half">
+                                <label class="form-label">Partially pay penalty</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" name="partial_pay_penalty" step="0.01" placeholder="1.5">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group half">
+                                <label class="form-label">Full redeem penalty</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" name="full_redeem_penalty" step="0.01" placeholder="1.5">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group half">
+                                <label class="form-label">Cancellation penalty</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-input" name="cancellation_penalty" step="0.01" placeholder="1.5">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="legal_fee_subsidy">
+                                        <span>Legal fee subsidy / Cash Rebate</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="valuation_subsidy">
+                                        <span>Valuation Subsidy</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="partial_repayment">
+                                        <span>Partial repayment</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="waiver_due_to_sales">
+                                        <span>Waiver due to sales</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="free_package_conversion_12m">
+                                        <span>Free package conversion 12 Months</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="free_package_conversion_24m">
+                                        <span>Free package conversion 24 Months</span>
+                                    </label>
+                                    
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="free_package_conversion_36m">
+                                        <span>Free package conversion 36 Months</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Remarks -->
+                    <div class="form-section">
+                        <h4>Remarks</h4>
+                        <div class="form-group">
+                            <textarea class="form-textarea" name="remarks" rows="4" placeholder="Enter any additional remarks or notes..." style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; resize: vertical;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('package-modal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('package-modal')">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="savePackage()">
-                    <span id="saveButtonText">Save Package</span>
-                    <div id="saveButtonSpinner" class="loading-spinner" style="display: none;"></div>
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- Confirmation Modal -->
-    <div class="modal" id="signout-modal">
+    <!-- View Package Modal -->
+    <div class="modal" id="view-package-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Confirm Sign Out</h3>
-                <button class="modal-close" onclick="closeModal('signout-modal')">
+                <h3 class="modal-title">View Rate Package</h3>
+                <button class="modal-close" onclick="closeModal('view-package-modal')">
                     <i data-lucide="x"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to sign out? You will be redirected to the login page.</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
-                <button class="btn btn-primary" onclick="performSignOut()">
-                    <i data-lucide="log-out"></i>
-                    Sign Out
-                </button>
+                <div id="viewPackageContent">
+                    <!-- Package details will be loaded here -->
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Load configuration and scripts -->
+    <!-- Load Scripts in Correct Order -->
     <script src="config/supabase.js"></script>
-    <script src="js/admin-scripts.js"></script>
     <script src="js/lucide.min.js"></script>
+    <script src="js/admin-scripts.js"></script>
     
     <script>
-        console.log('🚀 Initializing Enhanced Rate Packages page...');
-        
-        // Enhanced global variables
+        // Enhanced Rate Packages JavaScript with Full Functionality
+        let packages = [];
+        let filteredPackages = [];
         let currentPage = 1;
         let itemsPerPage = 10;
-        let allPackages = [];
-        let filteredPackages = [];
-        let allBanks = [];
-        let allRateTypes = [];
-        let isLoading = false;
+        let recentActions = JSON.parse(localStorage.getItem('admin_recent_actions') || '[]');
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', async function() {
-            console.log('✅ Supabase client loaded successfully');
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Enhanced Rate Packages page...');
             
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            // Check if Supabase is loaded
+            if (typeof supabaseClient === 'undefined') {
+                console.error('❌ supabaseClient not found. Check script loading order.');
+                showNotification('Supabase connection failed', 'error');
+                return;
             }
-
-            // Check authentication
-            await checkAuthentication();
             
-            // Load initial data
-            await loadInitialData();
-            
-            // Setup event listeners
+            console.log('✅ Supabase client loaded successfully');
+            loadPackages();
+            loadRateTypes();
             setupEventListeners();
+            updateRecentActions();
         });
 
-        // Check authentication
-        async function checkAuthentication() {
-            try {
-                console.log('🔄 Loading packages from Supabase...');
-                const { user } = await AuthService.getCurrentUser();
-                if (!user) {
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                // Update user info in header
-                const userName = document.getElementById('userName');
-                const userAvatar = document.getElementById('userAvatar');
-                
-                if (userName && user.email) {
-                    userName.textContent = user.email.split('@')[0];
-                }
-                if (userAvatar && user.email) {
-                    userAvatar.textContent = user.email.charAt(0).toUpperCase();
-                }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                window.location.href = 'login.html';
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search input
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(filterPackages, 300));
             }
-        }
+            
+            // Filter dropdowns
+            document.querySelectorAll('.filter-select').forEach(select => {
+                select.addEventListener('change', filterPackages);
+            });
 
-        // Load initial data
-        async function loadInitialData() {
-            try {
-                showLoading(true);
-                
-                // Load packages, banks, and rate types in parallel
-                await Promise.all([
-                    loadPackages(),
-                    loadBanks(),
-                    loadRateTypes()
-                ]);
-                
-                // Apply initial filters and render
-                applyFilters();
-                
-            } catch (error) {
-                console.error('Failed to load initial data:', error);
-                showNotification('Failed to load data. Please refresh the page.', 'error');
-            } finally {
-                showLoading(false);
+            // Form submission
+            const form = document.getElementById('packageForm');
+            if (form) {
+                form.addEventListener('submit', handleFormSubmit);
             }
         }
 
         // Load packages from Supabase
         async function loadPackages() {
             try {
+                console.log('🔄 Loading packages from Supabase...');
+                
                 const { data, error } = await supabaseClient
                     .from('rate_packages')
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Supabase error:', error);
+                    throw error;
+                }
 
-                allPackages = data || [];
-                console.log('✅ Loaded packages:', allPackages.length, 'records');
+                console.log('✅ Loaded packages:', data?.length || 0, 'records');
+                packages = data || [];
+                filteredPackages = packages;
+                displayPackages();
+                updatePagination();
                 
+                showNotification(`Loaded ${packages.length} rate packages successfully`, 'success');
+
             } catch (error) {
-                console.error('Error loading packages:', error);
-                throw error;
+                console.error('❌ Error loading packages:', error);
+                showNotification('Failed to load rate packages: ' + error.message, 'error');
+                
+                // Show error state
+                const tbody = document.getElementById('packagesTable');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="11" style="text-align: center; padding: 40px; color: #ef4444;">
+                                <div style="margin-bottom: 12px;">Failed to load data</div>
+                                <div style="font-size: 12px; color: #6b7280;">${error.message}</div>
+                                <button onclick="loadPackages()" style="margin-top: 12px; padding: 8px 16px; background: #4338ca; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                    Try Again
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }
             }
         }
 
-        // Load banks for filters and forms
-        async function loadBanks() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('banks')
-                    .select('*')
-                    .order('name');
-
-                if (error) throw error;
-
-                allBanks = data || [];
-                populateBankSelects();
-                
-            } catch (error) {
-                console.error('Error loading banks:', error);
-            }
-        }
-
-        // Load rate types for forms
+        // Load rate types for dropdown
         async function loadRateTypes() {
             try {
                 const { data, error } = await supabaseClient
                     .from('rate_types')
-                    .select('*')
+                    .select('rate_type, rate_value')
                     .order('rate_type');
 
                 if (error) throw error;
 
-                allRateTypes = data || [];
-                populateRateTypeSelects();
+                // Populate rate type selects
+                const rateTypeSelects = document.querySelectorAll('select[name$="_rate_type"]');
                 
-            } catch (error) {
-                console.error('Error loading rate types:', error);
-            }
-        }
+                const rateTypeOptions = (data || []).map(rateType => 
+                    `<option value="${rateType.rate_type}">${rateType.rate_type} (${rateType.rate_value}%)</option>`
+                ).join('');
 
-        // Populate bank select elements
-        function populateBankSelects() {
-            const bankSelects = ['bankFilter', 'bank_name'];
-            
-            bankSelects.forEach(selectId => {
-                const select = document.getElementById(selectId);
-                if (select) {
-                    // Clear existing options (except first one)
-                    const firstOption = select.firstElementChild;
-                    select.innerHTML = '';
-                    select.appendChild(firstOption);
-                    
-                    // Add bank options
-                    allBanks.forEach(bank => {
-                        const option = document.createElement('option');
-                        option.value = bank.name;
-                        option.textContent = bank.name;
-                        select.appendChild(option);
-                    });
-                }
-            });
-        }
-
-        // Populate rate type select elements
-        function populateRateTypeSelects() {
-            const rateTypeSelects = [
-                'year1_rate_type', 'year2_rate_type', 'year3_rate_type', 
-                'year4_rate_type', 'year5_rate_type', 'thereafter_rate_type'
-            ];
-            
-            rateTypeSelects.forEach(selectId => {
-                const select = document.getElementById(selectId);
-                if (select) {
-                    // Clear existing options (except first one)
-                    const firstOption = select.firstElementChild;
-                    select.innerHTML = '';
-                    select.appendChild(firstOption);
-                    
-                    // Add rate type options
-                    allRateTypes.forEach(rateType => {
-                        const option = document.createElement('option');
-                        option.value = rateType.rate_type;
-                        option.textContent = rateType.rate_type;
-                        select.appendChild(option);
-                    });
-                }
-            });
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Search input with debounce
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                let searchTimeout;
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        applyFilters();
-                    }, 300);
+                rateTypeSelects.forEach(select => {
+                    select.innerHTML = '<option value="">Select rate type</option>' + rateTypeOptions;
                 });
+
+            } catch (error) {
+                console.error('Error loading rate types:', error.message);
             }
-
-            // Filter selects
-            const filterIds = [
-                'propertyTypeFilter', 'buyUnderFilter', 'loanTypeFilter', 
-                'rateTypeFilter', 'lockPeriodFilter', 'loanAmountFilter', 'bankFilter'
-            ];
-            
-            filterIds.forEach(filterId => {
-                const element = document.getElementById(filterId);
-                if (element) {
-                    element.addEventListener('change', applyFilters);
-                }
-            });
         }
 
-        // Apply filters and search
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-            const propertyType = document.getElementById('propertyTypeFilter')?.value || '';
-            const buyUnder = document.getElementById('buyUnderFilter')?.value || '';
-            const loanType = document.getElementById('loanTypeFilter')?.value || '';
-            const rateType = document.getElementById('rateTypeFilter')?.value || '';
-            const lockPeriod = document.getElementById('lockPeriodFilter')?.value || '';
-            const loanAmount = document.getElementById('loanAmountFilter')?.value || '';
-            const bank = document.getElementById('bankFilter')?.value || '';
-
-            filteredPackages = allPackages.filter(pkg => {
-                // Search term filter
-                if (searchTerm) {
-                    const searchableText = `
-                        ${pkg.bank_name || ''} 
-                        ${pkg.property_type || ''} 
-                        ${pkg.buy_under || ''} 
-                        ${pkg.reference_rate || ''} 
-                        ${pkg.loan_type || ''}
-                    `.toLowerCase();
-                    
-                    if (!searchableText.includes(searchTerm)) {
-                        return false;
-                    }
-                }
-
-                // Individual filters
-                if (propertyType && pkg.property_type !== propertyType) return false;
-                if (buyUnder && pkg.buy_under !== buyUnder) return false;
-                if (loanType && pkg.loan_type !== loanType) return false;
-                if (rateType && pkg.rate_type_category !== rateType) return false;
-                if (lockPeriod && pkg.lock_period !== lockPeriod) return false;
-                if (loanAmount && pkg.loan_amount !== parseInt(loanAmount)) return false;
-                if (bank && pkg.bank_name !== bank) return false;
-
-                return true;
-            });
-
-            // Reset to first page and render
-            currentPage = 1;
-            renderTable();
-            renderPagination();
-        }
-
-        // Clear all filters
-        function clearAllFilters() {
-            // Clear search input
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) searchInput.value = '';
-
-            // Clear all filter selects
-            const filterIds = [
-                'propertyTypeFilter', 'buyUnderFilter', 'loanTypeFilter', 
-                'rateTypeFilter', 'lockPeriodFilter', 'loanAmountFilter', 'bankFilter'
-            ];
-            
-            filterIds.forEach(filterId => {
-                const element = document.getElementById(filterId);
-                if (element) element.value = '';
-            });
-
-            // Reapply filters (will show all packages)
-            applyFilters();
-        }
-
-        // Render table with current page data
-        function renderTable() {
-            const tbody = document.getElementById('packagesTableBody');
+        // Display packages in table with enhanced pagination
+        function displayPackages() {
+            const tbody = document.getElementById('packagesTable');
             if (!tbody) return;
 
-            if (filteredPackages.length === 0) {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pagePackages = filteredPackages.slice(startIndex, endIndex);
+
+            if (pagePackages.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="11" class="no-data">
-                            <div style="text-align: center; padding: 40px; color: #64748b;">
-                                <i data-lucide="package" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
-                                <p>No rate packages found</p>
-                                <p style="font-size: 14px;">Try adjusting your search criteria or add a new package.</p>
-                            </div>
+                        <td colspan="11" style="text-align: center; padding: 40px; color: #64748b;">
+                            ${filteredPackages.length === 0 ? 'No rate packages found' : 'No packages match your filters'}
+                            ${filteredPackages.length === 0 ? '' : '<br><button onclick="clearAllFilters()" style="margin-top: 8px; padding: 6px 12px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear Filters</button>'}
                         </td>
                     </tr>
                 `;
-                // Recreate icons for the empty state
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
                 return;
             }
 
-            // Calculate pagination
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageData = filteredPackages.slice(startIndex, endIndex);
-
-            // Render table rows
-            tbody.innerHTML = pageData.map(pkg => `
+            tbody.innerHTML = pagePackages.map((pkg, index) => `
                 <tr>
-                    <td>${pkg.bank_name || 'N/A'}</td>
+                    <td><strong>${pkg.bank_name || 'N/A'}</strong></td>
                     <td>${pkg.property_type || 'N/A'}</td>
                     <td>${pkg.buy_under || 'N/A'}</td>
                     <td>${pkg.reference_rate || 'N/A'}</td>
                     <td>
-                        <span class="status-badge ${pkg.property_status === 'COMPLETED' ? 'status-completed' : 'status-pending'}">
+                        <span class="status-badge ${getStatusClass(pkg.property_status)}">
                             ${pkg.property_status || 'N/A'}
                         </span>
                     </td>
                     <td>
-                        <span class="status-badge ${pkg.rate_type_category === 'FIXED' ? 'status-completed' : 'status-pending'}">
+                        <span class="status-badge ${pkg.rate_type_category === 'Fixed' ? 'status-completed' : 'status-pending'}">
                             ${pkg.rate_type_category || 'N/A'}
                         </span>
                     </td>
@@ -901,517 +772,385 @@
             }
         }
 
-        // Render pagination controls
-        function renderPagination() {
-            const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
-            const paginationInfo = document.getElementById('paginationInfo');
-            const paginationControls = document.getElementById('paginationControls');
+        // Enhanced filter packages function
+        function filterPackages() {
+            const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+            const propertyType = document.getElementById('propertyTypeFilter')?.value || '';
+            const buyUnder = document.getElementById('buyUnderFilter')?.value || '';
+            const loanType = document.getElementById('loanTypeFilter')?.value || '';
+            const rateType = document.getElementById('rateTypeFilter')?.value || '';
+            const lockPeriod = document.getElementById('lockPeriodFilter')?.value || '';
+            const loanAmount = document.getElementById('loanAmountFilter')?.value || '';
+            const bank = document.getElementById('bankFilter')?.value || '';
 
-            if (!paginationInfo || !paginationControls) return;
+            filteredPackages = packages.filter(pkg => {
+                const matchesSearch = !searchTerm || 
+                    Object.values(pkg).some(value => 
+                        value && value.toString().toLowerCase().includes(searchTerm)
+                    );
 
-            // Update info
-            const startItem = filteredPackages.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
-            const endItem = Math.min(currentPage * itemsPerPage, filteredPackages.length);
-            paginationInfo.textContent = `${startItem}-${endItem} of ${filteredPackages.length}`;
+                const matchesProperty = !propertyType || pkg.property_type === propertyType;
+                const matchesBuyUnder = !buyUnder || pkg.buy_under === buyUnder;
+                const matchesLoanType = !loanType || pkg.loan_type === loanType;
+                const matchesRateType = !rateType || pkg.rate_type_category === rateType;
+                const matchesLockPeriod = !lockPeriod || pkg.lock_period === lockPeriod;
+                const matchesLoanAmount = !loanAmount || pkg.loan_amount?.toString() === loanAmount;
+                const matchesBank = !bank || pkg.bank_name === bank;
 
-            // Generate pagination controls
-            if (totalPages <= 1) {
-                paginationControls.innerHTML = '';
-                return;
-            }
+                return matchesSearch && matchesProperty && matchesBuyUnder && 
+                       matchesLoanType && matchesRateType && matchesLockPeriod && 
+                       matchesLoanAmount && matchesBank;
+            });
 
-            let paginationHTML = '';
-
-            // Previous button
-            paginationHTML += `
-                <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} 
-                        onclick="changePage(${currentPage - 1})">
-                    <i data-lucide="chevron-left"></i>
-                    Previous
-                </button>
-            `;
-
-            // Page numbers
-            const maxVisiblePages = 5;
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-            if (endPage - startPage < maxVisiblePages - 1) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-            }
-
-            if (startPage > 1) {
-                paginationHTML += `<button class="pagination-btn" onclick="changePage(1)">1</button>`;
-                if (startPage > 2) {
-                    paginationHTML += `<span class="pagination-ellipsis">...</span>`;
-                }
-            }
-
-            for (let i = startPage; i <= endPage; i++) {
-                paginationHTML += `
-                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
-                            onclick="changePage(${i})">${i}</button>
-                `;
-            }
-
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    paginationHTML += `<span class="pagination-ellipsis">...</span>`;
-                }
-                paginationHTML += `<button class="pagination-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
-            }
-
-            // Next button
-            paginationHTML += `
-                <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} 
-                        onclick="changePage(${currentPage + 1})">
-                    Next
-                    <i data-lucide="chevron-right"></i>
-                </button>
-            `;
-
-            paginationControls.innerHTML = paginationHTML;
-
-            // Reinitialize icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            currentPage = 1;
+            displayPackages();
+            updatePagination();
+            
+            console.log(`🔍 Filtered ${filteredPackages.length}/${packages.length} packages`);
         }
 
-        // Change page
-        function changePage(page) {
-            const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
-            if (page >= 1 && page <= totalPages) {
-                currentPage = page;
-                renderTable();
-                renderPagination();
-            }
+        // Clear all filters with visual feedback
+        function clearAllFilters() {
+            document.getElementById('searchInput').value = '';
+            document.querySelectorAll('.filter-select').forEach(select => {
+                select.value = '';
+            });
+            filteredPackages = packages;
+            currentPage = 1;
+            displayPackages();
+            updatePagination();
+            showNotification('All filters cleared - showing all packages', 'info');
         }
 
-        // Calculate Interest Y1
-        function calculateInterestY1(pkg) {
-            if (pkg.year1_rate_value) {
-                return `${pkg.year1_rate_value}%`;
-            }
-            return 'N/A';
-        }
+        // Enhanced CRUD Operations with Full Functionality
+        async function duplicatePackage(id) {
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return;
 
-        // Format number as currency
-        function formatNumber(amount) {
-            if (!amount) return 'N/A';
-            return new Intl.NumberFormat('en-SG', {
-                style: 'currency',
-                currency: 'SGD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
-        }
+            try {
+                // Prepare duplicate data (remove id and timestamps)
+                const duplicateData = { ...pkg };
+                delete duplicateData.id;
+                delete duplicateData.created_at;
+                delete duplicateData.updated_at;
+                
+                // Add "Copy" to bank name to distinguish
+                duplicateData.bank_name = `${duplicateData.bank_name} (Copy)`;
 
-        // Package management functions
-        function duplicatePackage(id) {
-            const pkg = allPackages.find(p => p.id === id);
-            if (pkg) {
-                // Open modal with package data (excluding id and timestamps)
-                openPackageModal(null, { ...pkg, id: null });
+                const { data, error } = await supabaseClient
+                    .from('rate_packages')
+                    .insert([duplicateData])
+                    .select();
+
+                if (error) throw error;
+
+                addRecentAction('duplicate', `Duplicated package: ${pkg.bank_name} - ${pkg.property_type}`);
+                showNotification('Package duplicated successfully', 'success');
+                loadPackages(); // Reload data
+                
+            } catch (error) {
+                console.error('Error duplicating package:', error);
+                showNotification('Failed to duplicate package: ' + error.message, 'error');
             }
         }
 
         function viewPackage(id) {
-            const pkg = allPackages.find(p => p.id === id);
-            if (pkg) {
-                // Open modal in view-only mode
-                openPackageModal(id, pkg, true);
-            }
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return;
+
+            const content = generateViewContent(pkg);
+            document.getElementById('viewPackageContent').innerHTML = content;
+            openModal('view-package-modal');
+            
+            addRecentAction('view', `Viewed package: ${pkg.bank_name} - ${pkg.property_type}`);
         }
 
         function editPackage(id) {
-            const pkg = allPackages.find(p => p.id === id);
-            if (pkg) {
-                openPackageModal(id, pkg);
-            }
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return;
+
+            // Populate form with package data
+            populateForm(pkg);
+            AdminApp.editingItemId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Rate Package';
+            openModal('package-modal');
+            
+            addRecentAction('edit', `Started editing package: ${pkg.bank_name} - ${pkg.property_type}`);
         }
 
         async function deletePackage(id) {
-            if (confirm('Are you sure you want to delete this rate package?')) {
-                try {
-                    showLoading(true);
-                    
+            const pkg = packages.find(p => p.id === id);
+            if (!pkg) return;
+
+            if (!confirm(`Are you sure you want to delete the rate package for ${pkg.bank_name}?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('rate_packages')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                addRecentAction('delete', `Deleted package: ${pkg.bank_name} - ${pkg.property_type}`);
+                showNotification('Package deleted successfully', 'success');
+                loadPackages(); // Reload data
+                
+            } catch (error) {
+                console.error('Error deleting package:', error);
+                showNotification('Failed to delete package: ' + error.message, 'error');
+            }
+        }
+
+        // Enhanced form handling
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const packageData = {};
+            
+            // Process form data
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('_penalty') || key.includes('_value') || key === 'loan_amount' || key === 'minimum_loan_size') {
+                    packageData[key] = value ? parseFloat(value) : null;
+                } else {
+                    packageData[key] = value || null;
+                }
+            }
+
+            // Handle checkboxes
+            const checkboxFields = [
+                'legal_fee_subsidy', 'valuation_subsidy', 'partial_repayment', 
+                'waiver_due_to_sales', 'free_package_conversion_12m', 
+                'free_package_conversion_24m', 'free_package_conversion_36m'
+            ];
+            
+            checkboxFields.forEach(field => {
+                packageData[field] = formData.has(field);
+            });
+
+            try {
+                if (AdminApp.editingItemId) {
+                    // Update existing package
                     const { error } = await supabaseClient
                         .from('rate_packages')
-                        .delete()
-                        .eq('id', id);
-
-                    if (error) throw error;
-
-                    showNotification('Package deleted successfully', 'success');
-                    await loadPackages();
-                    applyFilters();
-                    
-                } catch (error) {
-                    console.error('Error deleting package:', error);
-                    showNotification('Failed to delete package', 'error');
-                } finally {
-                    showLoading(false);
-                }
-            }
-        }
-
-        // Modal functions
-        function openModal(modalId) {
-            if (modalId === 'package-modal') {
-                openPackageModal();
-            } else {
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.style.display = 'flex';
-                }
-            }
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
-                
-                if (modalId === 'package-modal') {
-                    resetPackageForm();
-                }
-            }
-        }
-
-        function openPackageModal(packageId = null, packageData = null, viewOnly = false) {
-            const modal = document.getElementById('package-modal');
-            const modalTitle = document.getElementById('modalTitle');
-            const form = document.getElementById('packageForm');
-            
-            if (!modal || !modalTitle || !form) return;
-
-            // Set editing state
-            window.AdminApp = window.AdminApp || {};
-            window.AdminApp.editingItemId = packageId;
-
-            // Update modal title
-            if (viewOnly) {
-                modalTitle.textContent = 'View Rate Package';
-            } else if (packageId) {
-                modalTitle.textContent = 'Edit Rate Package';
-            } else {
-                modalTitle.textContent = 'Add Rate Package';
-            }
-
-            // Reset form first
-            resetPackageForm();
-
-            // Populate form if editing/viewing
-            if (packageData) {
-                populatePackageForm(packageData);
-            }
-
-            // Disable form if view-only
-            if (viewOnly) {
-                const inputs = form.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => input.disabled = true);
-                
-                const saveButton = document.querySelector('#package-modal .btn-primary');
-                if (saveButton) saveButton.style.display = 'none';
-            } else {
-                const inputs = form.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => input.disabled = false);
-                
-                const saveButton = document.querySelector('#package-modal .btn-primary');
-                if (saveButton) saveButton.style.display = 'inline-flex';
-            }
-
-            modal.style.display = 'flex';
-        }
-
-        function resetPackageForm() {
-            const form = document.getElementById('packageForm');
-            if (form) {
-                form.reset();
-                
-                // Clear specific fields that might not reset properly
-                const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(cb => cb.checked = false);
-                
-                const radios = form.querySelectorAll('input[type="radio"]');
-                radios.forEach(radio => radio.checked = false);
-            }
-        }
-
-        function populatePackageForm(data) {
-            const form = document.getElementById('packageForm');
-            if (!form || !data) return;
-
-            Object.keys(data).forEach(key => {
-                const element = form.querySelector(`[name="${key}"]`);
-                if (element) {
-                    if (element.type === 'checkbox') {
-                        element.checked = Boolean(data[key]);
-                    } else if (element.type === 'radio') {
-                        if (element.value === data[key]) {
-                            element.checked = true;
-                        }
-                    } else {
-                        element.value = data[key] || '';
-                    }
-                }
-            });
-        }
-
-        async function savePackage() {
-            const form = document.getElementById('packageForm');
-            if (!form) return;
-
-            try {
-                showSaveLoading(true);
-
-                // Get form data
-                const formData = new FormData(form);
-                const packageData = {};
-                
-                // Convert FormData to object
-                for (let [key, value] of formData.entries()) {
-                    packageData[key] = value;
-                }
-
-                // Handle checkboxes (they won't be in FormData if unchecked)
-                const checkboxes = form.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(cb => {
-                    packageData[cb.name] = cb.checked;
-                });
-
-                // Convert numeric fields
-                if (packageData.loan_amount) {
-                    packageData.loan_amount = parseInt(packageData.loan_amount);
-                }
-
-                // Convert rate values to numbers
-                ['year1_rate_value', 'year2_rate_value', 'year3_rate_value', 
-                 'year4_rate_value', 'year5_rate_value', 'thereafter_rate_value'].forEach(field => {
-                    if (packageData[field]) {
-                        packageData[field] = parseFloat(packageData[field]);
-                    }
-                });
-
-                // Validate required fields
-                const requiredFields = ['bank_name', 'property_type', 'buy_under', 'reference_rate', 
-                                      'property_status', 'rate_type_category', 'loan_amount', 
-                                      'loan_type', 'lock_period', 'year1_rate_type', 'year1_rate_value'];
-                
-                for (let field of requiredFields) {
-                    if (!packageData[field] && packageData[field] !== 0) {
-                        throw new Error(`${field.replace('_', ' ')} is required`);
-                    }
-                }
-
-                let result;
-                if (window.AdminApp.editingItemId) {
-                    // Update existing package
-                    result = await supabaseClient
-                        .from('rate_packages')
                         .update(packageData)
-                        .eq('id', window.AdminApp.editingItemId);
+                        .eq('id', AdminApp.editingItemId);
+                    
+                    if (error) throw error;
+                    
+                    addRecentAction('edit', `Updated package for ${packageData.bank_name}`);
+                    showNotification('Package updated successfully', 'success');
                 } else {
                     // Create new package
-                    result = await supabaseClient
+                    const { error } = await supabaseClient
                         .from('rate_packages')
                         .insert([packageData]);
+                    
+                    if (error) throw error;
+                    
+                    addRecentAction('create', `Created package for ${packageData.bank_name}`);
+                    showNotification('Package created successfully', 'success');
                 }
 
-                if (result.error) throw result.error;
-
-                showNotification(
-                    window.AdminApp.editingItemId ? 'Package updated successfully' : 'Package created successfully', 
-                    'success'
-                );
-                
                 closeModal('package-modal');
-                await loadPackages();
-                applyFilters();
-                
+                loadPackages();
+                e.target.reset();
+                AdminApp.editingItemId = null;
+
             } catch (error) {
                 console.error('Error saving package:', error);
-                showNotification(error.message || 'Failed to save package', 'error');
-            } finally {
-                showSaveLoading(false);
+                showNotification('Failed to save package: ' + error.message, 'error');
             }
         }
 
-        // UI helper functions
-        function showLoading(show) {
-            const tbody = document.getElementById('packagesTableBody');
-            if (!tbody) return;
-
-            if (show) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="11" class="loading-row">
-                            <div class="loading-spinner"></div>
-                            Loading rate packages...
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        function showSaveLoading(show) {
-            const saveButtonText = document.getElementById('saveButtonText');
-            const saveButtonSpinner = document.getElementById('saveButtonSpinner');
-            const saveButton = document.querySelector('#package-modal .btn-primary');
+        // Enhanced pagination with proper controls
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
+            const paginationInfo = document.getElementById('paginationInfo');
+            const paginationControls = document.getElementById('paginationControls');
             
-            if (saveButton) saveButton.disabled = show;
-            if (saveButtonText) saveButtonText.style.display = show ? 'none' : 'inline';
-            if (saveButtonSpinner) saveButtonSpinner.style.display = show ? 'block' : 'none';
+            if (paginationInfo) {
+                const start = Math.min((currentPage - 1) * itemsPerPage + 1, filteredPackages.length);
+                const end = Math.min(currentPage * itemsPerPage, filteredPackages.length);
+                paginationInfo.textContent = `Showing ${start} to ${end} of ${filteredPackages.length}`;
+            }
+
+            if (paginationControls && totalPages > 1) {
+                let controls = '';
+                
+                // Previous button
+                controls += `<button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    <i data-lucide="chevron-left"></i> Previous
+                </button>`;
+                
+                // Page numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === currentPage || i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        controls += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        controls += '<span class="pagination-ellipsis">...</span>';
+                    }
+                }
+                
+                // Next button
+                controls += `<button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Next <i data-lucide="chevron-right"></i>
+                </button>`;
+
+                paginationControls.innerHTML = controls;
+                
+                // Reinitialize icons
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } else if (paginationControls) {
+                paginationControls.innerHTML = '';
+            }
         }
 
-        function showNotification(message, type = 'info') {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <span>${message}</span>
-                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
-                        <i data-lucide="x"></i>
-                    </button>
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                displayPackages();
+                updatePagination();
+                
+                // Scroll to top of table
+                document.querySelector('.data-table').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Helper functions
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Completed': return 'status-completed';
+                case 'Under Construction': return 'status-pending';
+                default: return 'status-inactive';
+            }
+        }
+
+        function formatNumber(num) {
+            if (!num) return 'N/A';
+            return new Intl.NumberFormat('en-US').format(num);
+        }
+
+        function calculateInterestY1(pkg) {
+            if (!pkg.year1_value) return 'N/A';
+            const operator = pkg.year1_operator === '-' ? '-' : '+';
+            return `${operator}${pkg.year1_value}%`;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function populateForm(pkg) {
+            const form = document.getElementById('packageForm');
+            Object.keys(pkg).forEach(key => {
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.type === 'checkbox') {
+                        input.checked = pkg[key];
+                    } else if (input.type === 'radio') {
+                        if (input.value === pkg[key]) {
+                            input.checked = true;
+                        }
+                    } else {
+                        input.value = pkg[key] || '';
+                    }
+                }
+            });
+        }
+
+        function generateViewContent(pkg) {
+            return `
+                <div class="view-content">
+                    <div class="view-section">
+                        <h4>Basic Information</h4>
+                        <div class="view-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="view-item"><strong>Bank Name:</strong> ${pkg.bank_name || 'N/A'}</div>
+                            <div class="view-item"><strong>Property Type:</strong> ${pkg.property_type || 'N/A'}</div>
+                            <div class="view-item"><strong>Buy Under:</strong> ${pkg.buy_under || 'N/A'}</div>
+                            <div class="view-item"><strong>Loan Type:</strong> ${pkg.loan_type || 'N/A'}</div>
+                            <div class="view-item"><strong>Property Status:</strong> ${pkg.property_status || 'N/A'}</div>
+                            <div class="view-item"><strong>Rate Type:</strong> ${pkg.rate_type_category || 'N/A'}</div>
+                        </div>
+                    </div>
+                    <div class="view-section">
+                        <h4>Financial Details</h4>
+                        <div class="view-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="view-item"><strong>Loan Amount:</strong> ${formatNumber(pkg.loan_amount)}</div>
+                            <div class="view-item"><strong>Lock Period:</strong> ${pkg.lock_period || 'N/A'}</div>
+                            <div class="view-item"><strong>Reference Rate:</strong> ${pkg.reference_rate || 'N/A'}</div>
+                            <div class="view-item"><strong>Minimum Loan Size:</strong> ${formatNumber(pkg.minimum_loan_size)}</div>
+                            <div class="view-item"><strong>Interest Y1:</strong> ${calculateInterestY1(pkg)}</div>
+                        </div>
+                    </div>
+                    ${pkg.remarks ? `<div class="view-section"><h4>Remarks</h4><p>${pkg.remarks}</p></div>` : ''}
                 </div>
             `;
+        }
+
+        // Recent actions management
+        function addRecentAction(type, description) {
+            const action = {
+                type,
+                description,
+                timestamp: new Date().toISOString()
+            };
             
-            // Add to page
-            document.body.appendChild(notification);
-            
-            // Initialize icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            recentActions.unshift(action);
+            if (recentActions.length > 10) {
+                recentActions = recentActions.slice(0, 10);
             }
             
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 5000);
+            localStorage.setItem('admin_recent_actions', JSON.stringify(recentActions));
+            updateRecentActions();
         }
 
-        // Export functionality
-        function exportData() {
-            try {
-                const csvContent = generateCSV(filteredPackages);
-                downloadCSV(csvContent, 'rate-packages.csv');
-                showNotification('Data exported successfully', 'success');
-            } catch (error) {
-                console.error('Export error:', error);
-                showNotification('Failed to export data', 'error');
-            }
-        }
+        function updateRecentActions() {
+            const container = document.getElementById('recentActionsList');
+            if (!container) return;
 
-        function generateCSV(data) {
-            if (!data || data.length === 0) return '';
-
-            const headers = [
-                'Bank Name', 'Property Type', 'Buy Under', 'Reference Rate', 
-                'Property Status', 'Rate Type', 'Loan Amount', 'Loan Type', 
-                'Lock Period', 'Year 1 Rate', 'Year 2 Rate', 'Year 3 Rate',
-                'Year 4 Rate', 'Year 5 Rate', 'Thereafter Rate'
-            ];
-
-            const csvRows = [headers.join(',')];
-
-            data.forEach(pkg => {
-                const row = [
-                    `"${pkg.bank_name || ''}"`,
-                    `"${pkg.property_type || ''}"`,
-                    `"${pkg.buy_under || ''}"`,
-                    `"${pkg.reference_rate || ''}"`,
-                    `"${pkg.property_status || ''}"`,
-                    `"${pkg.rate_type_category || ''}"`,
-                    pkg.loan_amount || '',
-                    `"${pkg.loan_type || ''}"`,
-                    `"${pkg.lock_period || ''}"`,
-                    pkg.year1_rate_value || '',
-                    pkg.year2_rate_value || '',
-                    pkg.year3_rate_value || '',
-                    pkg.year4_rate_value || '',
-                    pkg.year5_rate_value || '',
-                    pkg.thereafter_rate_value || ''
-                ];
-                csvRows.push(row.join(','));
-            });
-
-            return csvRows.join('\n');
-        }
-
-        function downloadCSV(csvContent, filename) {
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            
-            if (link.download !== undefined) {
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', filename);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            if (recentActions.length === 0) {
+                container.innerHTML = '<div class="no-actions">No recent actions</div>';
+            } else {
+                container.innerHTML = recentActions.slice(0, 5).map(action => `
+                    <div class="recent-action-item" style="padding: 12px; margin-bottom: 8px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #4338ca;">
+                        <div class="action-description" style="font-weight: 500; color: #1f2937; margin-bottom: 4px;">
+                            ${getActionIcon(action.type)} ${action.description}
+                        </div>
+                        <div class="action-timestamp" style="font-size: 12px; color: #6b7280;">
+                            ${new Date(action.timestamp).toLocaleString()}
+                        </div>
+                    </div>
+                `).join('');
             }
         }
 
-        // Sign out functionality
-        function confirmSignOut() {
-            openModal('signout-modal');
-        }
-
-        async function performSignOut() {
-            try {
-                showLoading(true);
-                closeModal('signout-modal');
-                
-                const result = await AuthService.signOut();
-                console.log('Sign out result:', result);
-                
-                if (result.success) {
-                    showNotification('Signed out successfully', 'success');
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1000);
-                } else {
-                    console.warn('Sign out failed, but redirecting anyway:', result.error);
-                    window.location.href = 'login.html';
-                }
-            } catch (error) {
-                console.error('Sign out error:', error);
-                showNotification('Sign out completed, redirecting...', 'warning');
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
-            } finally {
-                showLoading(false);
+        function getActionIcon(type) {
+            switch (type) {
+                case 'create': return '➕';
+                case 'edit': return '✏️';
+                case 'delete': return '🗑️';
+                case 'view': return '👁️';
+                case 'duplicate': return '📋';
+                default: return '📝';
             }
         }
 
-        // Mobile sidebar functions
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            if (sidebar && overlay) {
-                sidebar.classList.toggle('mobile-open');
-                overlay.classList.toggle('active');
-            }
-        }
-
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            if (sidebar && overlay) {
-                sidebar.classList.remove('mobile-open');
-                overlay.classList.remove('active');
-            }
-        }
-
-        // Initialize Lucide icons globally
+        // Initialize when page loads
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
@@ -1653,84 +1392,6 @@
         .status-inactive {
             background: #f3f4f6;
             color: #374151;
-        }
-
-        /* Notification styles */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 10000;
-            max-width: 400px;
-            animation: slideIn 0.3s ease;
-        }
-
-        .notification-success {
-            border-left: 4px solid #10b981;
-        }
-
-        .notification-error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .notification-warning {
-            border-left: 4px solid #f59e0b;
-        }
-
-        .notification-info {
-            border-left: 4px solid #3b82f6;
-        }
-
-        .notification-content {
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #6b7280;
-            padding: 4px;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Loading spinner */
-        .loading-spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f4f6;
-            border-top: 2px solid #4338ca;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-row {
-            text-align: center;
-            padding: 40px;
-            color: #64748b;
         }
 
         /* Responsive design */
