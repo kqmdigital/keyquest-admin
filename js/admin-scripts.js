@@ -803,3 +803,420 @@ window.confirmSignOut = confirmSignOut;
 window.addRecentAction = addRecentAction;
 
 console.log('Enhanced Admin JavaScript framework loaded successfully');
+
+// Add these functions to your existing admin-scripts.js file
+
+// ===================================
+// RATE TYPES SPECIFIC FUNCTIONS
+// ===================================
+
+// Enhanced search functionality for rate types
+function performRateTypeSearch(searchTerm) {
+    const term = searchTerm.toLowerCase().trim();
+    const tableBody = document.getElementById('rateTypesTable');
+    if (!tableBody) return;
+    
+    const rows = tableBody.querySelectorAll('tr:not(.no-data)');
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length === 0) return;
+        
+        const text = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+        const shouldShow = !term || text.includes(term);
+        row.style.display = shouldShow ? '' : 'none';
+        if (shouldShow) visibleCount++;
+    });
+    
+    // Update pagination info if exists
+    const paginationInfo = document.querySelector('.pagination-info');
+    if (paginationInfo && term) {
+        paginationInfo.textContent = `Showing ${visibleCount} results for "${searchTerm}"`;
+    }
+}
+
+// Enhanced multi-select functionality
+window.toggleMultiSelect = function(event) {
+    event.stopPropagation();
+    const dropdown = event.currentTarget;
+    const options = dropdown.querySelector('.multiselect-options');
+    const arrow = dropdown.querySelector('.multiselect-arrow');
+    
+    // Close other open dropdowns
+    document.querySelectorAll('.multiselect-options.show').forEach(openOptions => {
+        if (openOptions !== options) {
+            openOptions.classList.remove('show');
+            const openArrow = openOptions.parentElement.querySelector('.multiselect-arrow');
+            if (openArrow) openArrow.style.transform = 'rotate(0deg)';
+        }
+    });
+    
+    // Toggle current dropdown
+    options.classList.toggle('show');
+    if (arrow) {
+        arrow.style.transform = options.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+};
+
+// Bank selection management
+window.updateBankSelection = function(optionsId, displayId) {
+    const options = document.getElementById(optionsId);
+    const display = document.getElementById(displayId);
+    
+    if (!options || !display) return;
+    
+    const checkedBoxes = options.querySelectorAll('input[type="checkbox"]:checked');
+    const selectedValues = Array.from(checkedBoxes).map(cb => cb.value);
+    
+    if (selectedValues.length === 0) {
+        display.textContent = 'Select banks';
+        display.style.color = '#9ca3af';
+    } else if (selectedValues.length <= 2) {
+        display.textContent = selectedValues.join(', ');
+        display.style.color = '#374151';
+    } else {
+        display.textContent = `${selectedValues.slice(0, 2).join(', ')} +${selectedValues.length - 2} more`;
+        display.style.color = '#374151';
+    }
+};
+
+// Validation functions
+window.validateRateTypeForm = function(formData, selectedBanks) {
+    const errors = [];
+    
+    // Validate rate type
+    const rateType = formData.get('rate_type')?.trim();
+    if (!rateType) {
+        errors.push('Rate type is required');
+    } else if (rateType.length < 2) {
+        errors.push('Rate type must be at least 2 characters');
+    }
+    
+    // Validate rate value
+    const rateValue = parseFloat(formData.get('rate_value'));
+    if (isNaN(rateValue)) {
+        errors.push('Rate value is required and must be a number');
+    } else if (rateValue < 0) {
+        errors.push('Rate value must be positive');
+    } else if (rateValue > 100) {
+        errors.push('Rate value cannot exceed 100%');
+    }
+    
+    // Validate bank selection
+    if (!selectedBanks || selectedBanks.length === 0) {
+        errors.push('At least one bank must be selected');
+    }
+    
+    return errors;
+};
+
+// Format rate value for display
+window.formatRateValue = function(value) {
+    if (value === null || value === undefined) return 'N/A';
+    return parseFloat(value).toFixed(3) + '%';
+};
+
+// Format bank names for table display
+window.formatBankDisplay = function(bankNames, maxDisplay = 3) {
+    if (!bankNames || !Array.isArray(bankNames) || bankNames.length === 0) {
+        return '<span style="color: #9ca3af; font-style: italic;">No banks assigned</span>';
+    }
+    
+    if (bankNames.length <= maxDisplay) {
+        return bankNames.map(bank => `<span class="bank-tag">${escapeHtml(bank)}</span>`).join('');
+    } else {
+        const displayed = bankNames.slice(0, maxDisplay);
+        const remaining = bankNames.length - maxDisplay;
+        return displayed.map(bank => `<span class="bank-tag">${escapeHtml(bank)}</span>`).join('') + 
+               `<span class="bank-tag more">+${remaining} more</span>`;
+    }
+};
+
+// Enhanced error handling for rate types
+window.handleRateTypeError = function(error, operation = 'operation') {
+    console.error(`Rate type ${operation} error:`, error);
+    
+    let message = `Failed to ${operation} rate type`;
+    
+    // Handle specific error types
+    if (typeof error === 'string') {
+        if (error.includes('duplicate') || error.includes('unique')) {
+            message = 'A rate type with this name and value already exists';
+        } else if (error.includes('network') || error.includes('fetch')) {
+            message = 'Network error. Please check your connection and try again';
+        } else if (error.includes('permission') || error.includes('auth')) {
+            message = 'You do not have permission to perform this action';
+        }
+    }
+    
+    showNotification(message, 'error');
+};
+
+// Enhanced loading states
+window.setRateTypeLoading = function(isLoading, element = null) {
+    if (element) {
+        if (isLoading) {
+            element.disabled = true;
+            element.innerHTML = '<i data-lucide="loader-2" class="spinner"></i> Loading...';
+        } else {
+            element.disabled = false;
+            // Restore original content
+        }
+    } else {
+        if (isLoading) {
+            showLoading();
+        } else {
+            hideLoading();
+        }
+    }
+    
+    // Re-initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+};
+
+// Rate type data export
+window.exportRateTypes = function(rateTypes, filename = 'rate-types.csv') {
+    if (!rateTypes || rateTypes.length === 0) {
+        showNotification('No data to export', 'warning');
+        return;
+    }
+    
+    const headers = ['Rate Type', 'Rate Value (%)', 'Bank Names', 'Created Date'];
+    const csvContent = [
+        headers.join(','),
+        ...rateTypes.map(rt => [
+            `"${(rt.rate_type || '').replace(/"/g, '""')}"`,
+            rt.rate_value || '',
+            `"${(rt.bank_names || []).join(', ').replace(/"/g, '""')}"`,
+            rt.created_at ? new Date(rt.created_at).toLocaleDateString() : ''
+        ].join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.style.display = 'none';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showNotification('Rate types exported successfully', 'success');
+};
+
+// Keyboard shortcuts for rate types page
+window.initRateTypeKeyboardShortcuts = function() {
+    document.addEventListener('keydown', function(e) {
+        // Only apply on rate types page
+        if (!window.location.pathname.includes('rate-types')) return;
+        
+        // Ctrl/Cmd + N for new rate type
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+            e.preventDefault();
+            if (typeof openAddRateTypeModal === 'function') {
+                openAddRateTypeModal();
+            }
+        }
+        
+        // Escape to close modals
+        if (e.key === 'Escape') {
+            const openModals = document.querySelectorAll('.modal.show');
+            openModals.forEach(modal => {
+                const modalId = modal.id;
+                if (typeof closeModal === 'function') {
+                    closeModal(modalId);
+                }
+            });
+        }
+    });
+};
+
+// Initialize rate types specific functionality
+window.initRateTypesPage = function() {
+    // Initialize keyboard shortcuts
+    initRateTypeKeyboardShortcuts();
+    
+    // Add CSS for enhanced styling
+    const style = document.createElement('style');
+    style.textContent = `
+        .bank-tag {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 1px;
+            border: 1px solid #bae6fd;
+        }
+        
+        .bank-tag.more {
+            background: #f3f4f6;
+            color: #6b7280;
+            border-color: #d1d5db;
+        }
+        
+        .multiselect-dropdown {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .multiselect-selected {
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 20px;
+        }
+        
+        .multiselect-selected:hover {
+            border-color: #cbd5e1;
+        }
+        
+        .multiselect-arrow {
+            transition: transform 0.2s ease;
+            width: 16px;
+            height: 16px;
+            color: #6b7280;
+        }
+        
+        .multiselect-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .multiselect-options.show {
+            display: block;
+        }
+        
+        .multiselect-option {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .multiselect-option:hover {
+            background-color: #f8fafc;
+        }
+        
+        .multiselect-option input[type="checkbox"] {
+            margin-right: 8px;
+            margin-top: 0;
+        }
+        
+        .multiselect-option label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .rate-value {
+            font-weight: 600;
+            color: #059669;
+            font-size: 14px;
+        }
+        
+        .rate-type-name {
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .bank-list {
+            font-size: 12px;
+            line-height: 1.4;
+            max-width: 300px;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .input-suffix {
+            position: absolute;
+            right: 12px;
+            color: #6b7280;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        
+        .input-group .form-input {
+            padding-right: 30px;
+        }
+        
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .delete-info {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+        
+        .delete-info strong {
+            color: #991b1b;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .no-data i {
+            display: block;
+            margin: 0 auto 16px;
+        }
+        
+        .no-data h3 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .no-data p {
+            margin: 0;
+            font-size: 14px;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    console.log('Rate types page functionality initialized');
+};
+
+// Auto-initialize if on rate types page
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.pathname.includes('rate-types')) {
+            initRateTypesPage();
+        }
+    });
+}
