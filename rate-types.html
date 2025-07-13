@@ -66,38 +66,47 @@
                 <div class="header-left">
                     <button class="menu-toggle" onclick="toggleSidebar()">
                         <i data-lucide="menu"></i>
-                        </button>
+                    </button>
                     <h1 class="header-title">Rate Type</h1>
                 </div>
-                        
-                <div class="header-right">
-                    <button class="btn btn-primary" onclick="openAddRateTypeModal()">
-                        <i data-lucide="plus"></i>
-                        <span>Add Rate Type</span>
-                    </button>
+                <div class="header-actions">
                     <button class="btn btn-secondary" onclick="confirmSignOut()">
-            <i data-lucide="log-out"></i>
-            <span>Sign Out</span>
-        </button>
-        <div class="user-profile">
-            <div class="user-avatar" id="userAvatar">A</div>
-            <div class="user-info">
-                <div class="user-name" id="userName">admin</div>
-                <div class="user-role">Super Admin</div>
-            </div>
-        </div>
-    </div>
-</header>
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">admin</div>
+                            <div class="user-role">Super Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
 
             <div class="content-area">
+                <!-- Content Header -->
+                <div class="content-header">
+                    <div class="content-title">
+                        <h2>Rate Type Management</h2>
+                        <p>Manage interest rate types and their values</p>
+                    </div>
+                    <div class="content-actions">
+                        <button class="btn btn-primary" onclick="openAddRateTypeModal()">
+                            <i data-lucide="plus"></i>
+                            Add Rate Type
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Search and Filter Bar -->
                 <div class="search-filter-bar">
                     <div class="search-box">
                         <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" id="searchInput" class="search-input" placeholder="Search rate types...">
+                        <input type="text" placeholder="Search rate types..." id="searchInput">
                     </div>
-                    
-                    <select id="bankFilter" class="filter-select">
+
+                    <select class="filter-select" id="bankFilter">
                         <option value="">All Banks</option>
                         <option value="DBS">DBS</option>
                         <option value="OCBC">OCBC</option>
@@ -115,7 +124,7 @@
                         <option value="Citibank">Citibank</option>
                     </select>
 
-                    <button class="btn btn-secondary" onclick="clearAllFilters()" id="clearFiltersBtn">
+                    <button class="btn btn-secondary" onclick="clearFilters()" id="clearFiltersBtn">
                         <i data-lucide="x"></i>
                         <span>Clear</span>
                     </button>
@@ -130,14 +139,14 @@
                                 <th>Rate Type</th>
                                 <th>Rate Value</th>
                                 <th>Bank Name</th>
-                                <th>ACTIONS</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="rateTypesTable">
                             <tr>
-                               <td colspan="11" style="text-align: center; padding: 40px;">
+                               <td colspan="4" style="text-align: center; padding: 40px;">
                                         <div class="loading-spinner"></div>
-                                        <div style="margin-top: 10px;">Loading rate packages...</div>
+                                        <div style="margin-top: 10px;">Loading rate types...</div>
                                     </td>
                             </tr>
                         </tbody>
@@ -162,75 +171,112 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Add Rate Type</h3>
+                    <h3 class="modal-title">Add Rate Type</h3>
                     <button class="modal-close" onclick="closeModal('add-rate-type-modal')">
                         <i data-lucide="x"></i>
                     </button>
                 </div>
                 <form id="addRateTypeForm" onsubmit="handleFormSubmit(event)">
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label class="form-label" for="rateType">Rate Type</label>
-                            <input type="text" id="rateType" name="rate_type" class="form-input" required placeholder="e.g., FIXED, PPR, PLR">
-                        </div>
+                        <div class="form-section">
+                            <h4>Rate Type Information</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="rateType">Rate Type</label>
+                                    <input type="text" id="rateType" name="rate_type" class="form-input" required placeholder="e.g., FIXED, PPR, PLR">
+                                </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="rateValue">Rate Value (%)</label>
-                            <div class="input-group">
-                                <input type="number" id="rateValue" name="rate_value" class="form-input" 
-                                       step="0.001" min="0" max="100" required placeholder="0.000">
-                                <span class="input-suffix">%</span>
+                                <div class="form-group">
+                                    <label class="form-label" for="rateValue">Rate Value (%)</label>
+                                    <div class="input-group">
+                                        <input type="number" id="rateValue" name="rate_value" class="form-input" 
+                                               step="0.001" min="0" max="100" required placeholder="0.000">
+                                        <span class="input-suffix">%</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Select Banks</label>
-                            <div class="checkbox-group" id="bankCheckboxes">
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="DBS"> DBS
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="OCBC"> OCBC
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="UOB"> UOB
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="CIMB"> CIMB
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Maybank"> Maybank
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Standard Chartered"> Standard Chartered
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="HSBC"> HSBC
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="SBI"> SBI
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Bank Of China"> Bank Of China
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Hong Leong Finance"> Hong Leong Finance
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Singapura Finance"> Singapura Finance
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="RHB Bank"> RHB Bank
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Sing Investments & Finance"> Sing Investments & Finance
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Citibank"> Citibank
-                                </label>
+                        <div class="form-section">
+                            <h4>Bank Selection</h4>
+                            <div class="form-group">
+                                <label class="form-label">Select Banks</label>
+                                <div class="checkbox-group" id="bankCheckboxes">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="DBS"> 
+                                        <span class="checkmark"></span>
+                                        <span>DBS</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="OCBC"> 
+                                        <span class="checkmark"></span>
+                                        <span>OCBC</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="UOB"> 
+                                        <span class="checkmark"></span>
+                                        <span>UOB</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="CIMB"> 
+                                        <span class="checkmark"></span>
+                                        <span>CIMB</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Maybank"> 
+                                        <span class="checkmark"></span>
+                                        <span>Maybank</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Standard Chartered"> 
+                                        <span class="checkmark"></span>
+                                        <span>Standard Chartered</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="HSBC"> 
+                                        <span class="checkmark"></span>
+                                        <span>HSBC</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="SBI"> 
+                                        <span class="checkmark"></span>
+                                        <span>SBI</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Bank Of China"> 
+                                        <span class="checkmark"></span>
+                                        <span>Bank Of China</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Hong Leong Finance"> 
+                                        <span class="checkmark"></span>
+                                        <span>Hong Leong Finance</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Singapura Finance"> 
+                                        <span class="checkmark"></span>
+                                        <span>Singapura Finance</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="RHB Bank"> 
+                                        <span class="checkmark"></span>
+                                        <span>RHB Bank</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Sing Investments & Finance"> 
+                                        <span class="checkmark"></span>
+                                        <span>Sing Investments & Finance</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Citibank"> 
+                                        <span class="checkmark"></span>
+                                        <span>Citibank</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" onclick="closeModal('add-rate-type-modal')">Cancel</button>
                         <button type="submit" class="btn btn-primary">Save</button>
@@ -245,77 +291,113 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Edit Rate Type</h3>
+                    <h3 class="modal-title">Edit Rate Type</h3>
                     <button class="modal-close" onclick="closeModal('edit-rate-type-modal')">
                         <i data-lucide="x"></i>
                     </button>
                 </div>
                 <form id="editRateTypeForm" onsubmit="handleEditFormSubmit(event)">
+                    <input type="hidden" id="editRateTypeId" name="id">
                     <div class="modal-body">
-                        <input type="hidden" id="editRateTypeId">
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="editRateType">Rate Type</label>
-                            <input type="text" id="editRateType" name="rate_type" class="form-input" required>
-                        </div>
+                        <div class="form-section">
+                            <h4>Rate Type Information</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="editRateType">Rate Type</label>
+                                    <input type="text" id="editRateType" name="rate_type" class="form-input" required placeholder="e.g., FIXED, PPR, PLR">
+                                </div>
 
-                        <div class="form-group">
-                            <label class="form-label" for="editRateValue">Rate Value (%)</label>
-                            <div class="input-group">
-                                <input type="number" id="editRateValue" name="rate_value" class="form-input" 
-                                       step="0.001" min="0" max="100" required>
-                                <span class="input-suffix">%</span>
+                                <div class="form-group">
+                                    <label class="form-label" for="editRateValue">Rate Value (%)</label>
+                                    <div class="input-group">
+                                        <input type="number" id="editRateValue" name="rate_value" class="form-input" 
+                                               step="0.001" min="0" max="100" required placeholder="0.000">
+                                        <span class="input-suffix">%</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Select Banks</label>
-                            <div class="checkbox-group" id="editBankCheckboxes">
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="DBS"> DBS
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="OCBC"> OCBC
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="UOB"> UOB
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="CIMB"> CIMB
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Maybank"> Maybank
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Standard Chartered"> Standard Chartered
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="HSBC"> HSBC
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="SBI"> SBI
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Bank Of China"> Bank Of China
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Hong Leong Finance"> Hong Leong Finance
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Singapura Finance"> Singapura Finance
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="RHB Bank"> RHB Bank
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Sing Investments & Finance"> Sing Investments & Finance
-                                </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" name="bank_names" value="Citibank"> Citibank
-                                </label>
+                        <div class="form-section">
+                            <h4>Bank Selection</h4>
+                            <div class="form-group">
+                                <label class="form-label">Select Banks</label>
+                                <div class="checkbox-group" id="editBankCheckboxes">
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="DBS"> 
+                                        <span class="checkmark"></span>
+                                        <span>DBS</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="OCBC"> 
+                                        <span class="checkmark"></span>
+                                        <span>OCBC</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="UOB"> 
+                                        <span class="checkmark"></span>
+                                        <span>UOB</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="CIMB"> 
+                                        <span class="checkmark"></span>
+                                        <span>CIMB</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Maybank"> 
+                                        <span class="checkmark"></span>
+                                        <span>Maybank</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Standard Chartered"> 
+                                        <span class="checkmark"></span>
+                                        <span>Standard Chartered</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="HSBC"> 
+                                        <span class="checkmark"></span>
+                                        <span>HSBC</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="SBI"> 
+                                        <span class="checkmark"></span>
+                                        <span>SBI</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Bank Of China"> 
+                                        <span class="checkmark"></span>
+                                        <span>Bank Of China</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Hong Leong Finance"> 
+                                        <span class="checkmark"></span>
+                                        <span>Hong Leong Finance</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Singapura Finance"> 
+                                        <span class="checkmark"></span>
+                                        <span>Singapura Finance</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="RHB Bank"> 
+                                        <span class="checkmark"></span>
+                                        <span>RHB Bank</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Sing Investments & Finance"> 
+                                        <span class="checkmark"></span>
+                                        <span>Sing Investments & Finance</span>
+                                    </label>
+                                    <label class="checkbox-option">
+                                        <input type="checkbox" name="bank_names" value="Citibank"> 
+                                        <span class="checkmark"></span>
+                                        <span>Citibank</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" onclick="closeModal('edit-rate-type-modal')">Cancel</button>
                         <button type="submit" class="btn btn-primary">Update</button>
@@ -325,263 +407,103 @@
         </div>
     </div>
 
-    <!-- Success/Error Notification -->
-    <div class="notification-container" id="notificationContainer"></div>
-
-    <style>
-        /* Search and filter bar styling */
-        .search-filter-bar {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-bottom: 24px;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 16px 10px 40px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            width: 16px;
-            height: 16px;
-        }
-
-        .filter-select {
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-            min-width: 140px;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        /* Additional styling for checkboxes */
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 16px;
-        }
-
-        .checkbox-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .checkbox-option:hover {
-            background-color: #f8fafc;
-        }
-
-        .checkbox-option input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-        }
-
-        .input-group {
-            display: flex;
-            align-items: center;
-        }
-
-        .input-suffix {
-            padding: 10px 12px;
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-left: none;
-            border-radius: 0 8px 8px 0;
-            color: #6b7280;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .input-group .form-input {
-            border-radius: 8px 0 0 8px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid;
-        }
-
-        .btn-edit {
-            background: #f0f9ff;
-            color: #0369a1;
-            border-color: #bae6fd;
-        }
-
-        .btn-edit:hover {
-            background: #0369a1;
-            color: white;
-        }
-
-        .btn-delete {
-            background: #fef2f2;
-            color: #dc2626;
-            border-color: #fecaca;
-        }
-
-        .btn-delete:hover {
-            background: #dc2626;
-            color: white;
-        }
-
-        .rate-value {
-            font-weight: 600;
-            color: #059669;
-            font-size: 16px;
-        }
-
-        .bank-list {
-            font-size: 12px;
-            color: #64748b;
-            line-height: 1.4;
-            max-width: 300px;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .search-filter-bar {
-                flex-direction: column;
-                gap: 12px;
-            }
-            
-            .search-box {
-                min-width: unset;
-                width: 100%;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .checkbox-group {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <!-- Sign Out Modal -->
+    <div class="modal" id="signout-modal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Confirm Sign Out</h3>
+                    <button class="modal-close" onclick="closeModal('signout-modal')">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to sign out? You will be redirected to the login page.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="performSignOut()">
+                        <i data-lucide="log-out"></i>
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Rate Types Management - Following exact pattern as rate-packages.html
+        // Rate Types Management Script - Enhanced
         let rateTypes = [];
         let filteredRateTypes = [];
         let currentPage = 1;
         let itemsPerPage = 10;
         let editingItemId = null;
 
-        // Initialize page - Following exact pattern from working rate-packages.html
+        // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initializing Rate Types page...');
             
-            // Initialize Lucide icons first
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-
-            // Check if Supabase is loaded - exact same pattern as rate-packages.html
-            if (typeof supabaseClient === 'undefined') {
-                console.error('❌ supabaseClient not found. Check script loading order.');
-                showNotification('Supabase connection failed', 'error');
-                return;
-            }
+            // Initialize Lucide icons
+            lucide.createIcons();
             
-            console.log('✅ Supabase client loaded successfully');
+            // Check authentication
+            checkAuthentication();
             
-            // Load data and setup page - exact same pattern as rate-packages.html
+            // Load rate types
             loadRateTypes();
-            setupEventListeners();
+            
+            // Set up search functionality
+            setupSearch();
+            
+            // Set up filter functionality
+            setupFilters();
         });
 
-        // Setup event listeners
-        function setupEventListeners() {
-            // Search input
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.addEventListener('input', debounce(applyFilters, 300));
-            }
-            
-            // Filter dropdowns
-            const bankFilter = document.getElementById('bankFilter');
-            if (bankFilter) {
-                bankFilter.addEventListener('change', applyFilters);
+        // Authentication check - following index.html pattern
+        async function checkAuthentication() {
+            try {
+                const { data: { user }, error } = await supabaseClient.auth.getUser();
+                if (error || !user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Update user info in header
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName && user.email) {
+                    userName.textContent = user.email.split('@')[0];
+                }
+                if (userAvatar && user.email) {
+                    userAvatar.textContent = user.email.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = 'login.html';
             }
         }
 
-        // Load rate types from Supabase - Following exact pattern as rate-packages.html
+        // Load rate types from database
         async function loadRateTypes() {
             try {
-                console.log('🔄 Loading rate types from Supabase...');
+                showLoading('Loading rate types...');
                 
                 const { data, error } = await supabaseClient
                     .from('rate_types')
                     .select('*')
-                    .order('created_at', { ascending: false });
+                    .order('rate_type');
+                
+                if (error) throw error;
 
-                if (error) {
-                    console.error('❌ Supabase error:', error);
-                    throw error;
-                }
-
-                console.log('✅ Rate types loaded successfully:', data?.length || 0, 'records');
+                console.log('✅ Loaded rate types:', data?.length || 0, 'records');
                 rateTypes = data || [];
-                filteredRateTypes = [...rateTypes];
+                filteredRateTypes = rateTypes;
                 displayRateTypes();
                 updatePagination();
                 
                 showNotification(`Loaded ${rateTypes.length} rate types successfully`, 'success');
-                
+
             } catch (error) {
                 console.error('❌ Error loading rate types:', error);
                 showNotification('Failed to load rate types: ' + error.message, 'error');
@@ -601,26 +523,28 @@
                         </tr>
                     `;
                 }
+            } finally {
+                hideLoading();
             }
         }
 
         // Display rate types in table
         function displayRateTypes() {
-            const tableBody = document.getElementById('rateTypesTable');
-            if (!tableBody) return;
-
+            const tbody = document.getElementById('rateTypesTable');
+            
             if (filteredRateTypes.length === 0) {
-                tableBody.innerHTML = `
+                tbody.innerHTML = `
                     <tr>
-                        <td colspan="4" style="text-align: center; padding: 40px;">
-                            <div class="no-data">
-                                <i data-lucide="inbox" style="width: 48px; height: 48px; color: #9ca3af; margin-bottom: 16px;"></i>
-                                <h3 style="color: #6b7280; margin-bottom: 8px;">No rate types found</h3>
-                                <p style="color: #9ca3af;">Try adjusting your search or filters</p>
+                        <td colspan="4" style="text-align: center; padding: 40px; color: #6b7280;">
+                            <div class="empty-state">
+                                <i data-lucide="search" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                                <div style="font-size: 16px; margin-bottom: 8px;">No rate types found</div>
+                                <div style="font-size: 14px;">Try adjusting your search or filter criteria</div>
                             </div>
                         </td>
                     </tr>
                 `;
+                lucide.createIcons();
                 return;
             }
 
@@ -628,30 +552,27 @@
             const endIndex = startIndex + itemsPerPage;
             const paginatedRateTypes = filteredRateTypes.slice(startIndex, endIndex);
 
-            tableBody.innerHTML = paginatedRateTypes.map(rateType => {
-                // Handle bank_names array
+            tbody.innerHTML = paginatedRateTypes.map(rateType => {
                 const bankNames = Array.isArray(rateType.bank_names) 
                     ? rateType.bank_names.join(', ') 
-                    : (rateType.bank_names || 'N/A');
+                    : rateType.bank_names || '';
 
                 return `
                     <tr>
-                        <td>
-                            <div class="rate-type-name"><strong>${escapeHtml(rateType.rate_type || 'N/A')}</strong></div>
-                        </td>
-                        <td>
-                            <div class="rate-value">${rateType.rate_value ? rateType.rate_value + '%' : 'N/A'}</div>
-                        </td>
+                        <td><strong>${escapeHtml(rateType.rate_type || '')}</strong></td>
+                        <td class="rate-value">${rateType.rate_value || '0.00'}%</td>
                         <td>
                             <div class="bank-list">${escapeHtml(bankNames)}</div>
                         </td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn btn-sm btn-edit" onclick="editRateType('${rateType.id}')">
-                                    <i data-lucide="edit-2"></i> Edit
+                                <button class="btn btn-sm btn-edit" onclick="editRateType(${rateType.id})">
+                                    <i data-lucide="edit"></i>
+                                    Edit
                                 </button>
-                                <button class="btn btn-sm btn-delete" onclick="deleteRateType('${rateType.id}')">
-                                    <i data-lucide="trash-2"></i> Delete
+                                <button class="btn btn-sm btn-delete" onclick="deleteRateType(${rateType.id})">
+                                    <i data-lucide="trash-2"></i>
+                                    Delete
                                 </button>
                             </div>
                         </td>
@@ -659,68 +580,48 @@
                 `;
             }).join('');
 
+            // Update pagination info
+            updatePaginationInfo();
+            
             // Re-initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            lucide.createIcons();
         }
 
-        // Apply filters and search
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
-            const bankFilter = document.getElementById('bankFilter')?.value || '';
-
-            filteredRateTypes = rateTypes.filter(rateType => {
-                const matchesSearch = !searchTerm || 
-                    (rateType.rate_type || '').toLowerCase().includes(searchTerm) ||
-                    (Array.isArray(rateType.bank_names) ? rateType.bank_names.join(' ') : rateType.bank_names || '').toLowerCase().includes(searchTerm);
-
-                const matchesBank = !bankFilter || 
-                    (Array.isArray(rateType.bank_names) && rateType.bank_names.includes(bankFilter));
-
-                return matchesSearch && matchesBank;
-            });
-
-            currentPage = 1;
-            displayRateTypes();
-            updatePagination();
+        // Update pagination info
+        function updatePaginationInfo() {
+            const totalItems = filteredRateTypes.length;
+            const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+            const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+            
+            document.getElementById('paginationInfo').textContent = 
+                `Showing ${startIndex} to ${endIndex} of ${totalItems} entries`;
         }
 
-        // Update pagination
+        // Update pagination controls
         function updatePagination() {
             const totalPages = Math.ceil(filteredRateTypes.length / itemsPerPage);
-            const paginationInfo = document.getElementById('paginationInfo');
             const paginationControls = document.getElementById('paginationControls');
-
-            if (paginationInfo) {
-                const startItem = filteredRateTypes.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
-                const endItem = Math.min(currentPage * itemsPerPage, filteredRateTypes.length);
-                paginationInfo.textContent = `Showing ${startItem} to ${endItem} of ${filteredRateTypes.length}`;
-            }
-
-            if (paginationControls && totalPages > 1) {
-                let paginationHTML = '';
-                
-                // Previous button
-                paginationHTML += `
+            
+            if (totalPages > 1) {
+                let paginationHTML = `
                     <button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
                             onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
                         <i data-lucide="chevron-left"></i>
                     </button>
                 `;
 
-                // Page numbers
+                // Add page numbers
                 for (let i = 1; i <= totalPages; i++) {
-                    if (i === currentPage) {
-                        paginationHTML += `<button class="pagination-btn active">${i}</button>`;
-                    } else if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                        paginationHTML += `<button class="pagination-btn" onclick="changePage(${i})">${i}</button>`;
-                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                        paginationHTML += `
+                            <button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                                    onclick="changePage(${i})">${i}</button>
+                        `;
+                    } else if (i === currentPage - 3 || i === currentPage + 3) {
                         paginationHTML += `<span class="pagination-ellipsis">...</span>`;
                     }
                 }
 
-                // Next button
                 paginationHTML += `
                     <button class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
                             onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
@@ -731,10 +632,8 @@
                 paginationControls.innerHTML = paginationHTML;
                 
                 // Re-initialize Lucide icons
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-            } else if (paginationControls) {
+                lucide.createIcons();
+            } else {
                 paginationControls.innerHTML = '';
             }
         }
@@ -749,12 +648,62 @@
             }
         }
 
+        // Setup search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', debounce(performSearch, 300));
+        }
+
+        // Perform search
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const bankFilter = document.getElementById('bankFilter').value.toLowerCase();
+            
+            filteredRateTypes = rateTypes.filter(rateType => {
+                const matchesSearch = !searchTerm || 
+                    (rateType.rate_type || '').toLowerCase().includes(searchTerm) ||
+                    (rateType.rate_value || '').toString().includes(searchTerm) ||
+                    (Array.isArray(rateType.bank_names) ? rateType.bank_names.join(' ') : rateType.bank_names || '').toLowerCase().includes(searchTerm);
+                
+                const matchesBank = !bankFilter || 
+                    (Array.isArray(rateType.bank_names) ? rateType.bank_names.some(bank => bank.toLowerCase().includes(bankFilter)) : 
+                     (rateType.bank_names || '').toLowerCase().includes(bankFilter));
+                
+                return matchesSearch && matchesBank;
+            });
+            
+            currentPage = 1;
+            displayRateTypes();
+            updatePagination();
+        }
+
+        // Setup filters
+        function setupFilters() {
+            const bankFilter = document.getElementById('bankFilter');
+            bankFilter.addEventListener('change', performSearch);
+        }
+
+        // Clear filters - FIXED VERSION
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('bankFilter').value = '';
+            
+            // Reset filtered data to show all
+            filteredRateTypes = rateTypes;
+            currentPage = 1;
+            
+            // Refresh display
+            displayRateTypes();
+            updatePagination();
+            
+            showNotification('Filters cleared', 'info');
+        }
+
         // Modal functions
         function openAddRateTypeModal() {
             const modal = document.getElementById('add-rate-type-modal');
             if (modal) {
                 modal.style.display = 'flex';
-                // Reset form
                 document.getElementById('addRateTypeForm').reset();
                 editingItemId = null;
             }
@@ -767,14 +716,12 @@
             }
         }
 
-        // Handle form submission - Following rate-packages.html pattern
+        // Handle form submission
         async function handleFormSubmit(e) {
             e.preventDefault();
             
             try {
                 const formData = new FormData(e.target);
-                
-                // Get selected bank names
                 const selectedBanks = Array.from(formData.getAll('bank_names'));
                 
                 if (selectedBanks.length === 0) {
@@ -787,8 +734,6 @@
                     bank_names: selectedBanks
                 };
 
-                console.log('Creating rate type:', rateTypeData);
-
                 const { data, error } = await supabaseClient
                     .from('rate_types')
                     .insert([rateTypeData])
@@ -796,13 +741,13 @@
                 
                 if (error) throw error;
 
-                showNotification('Rate type created successfully', 'success');
+                showNotification('Rate type added successfully', 'success');
                 closeModal('add-rate-type-modal');
-                loadRateTypes(); // Reload data
+                loadRateTypes();
                 
             } catch (error) {
-                console.error('Error creating rate type:', error);
-                showNotification('Failed to create rate type: ' + error.message, 'error');
+                console.error('Error adding rate type:', error);
+                showNotification('Failed to add rate type: ' + error.message, 'error');
             }
         }
 
@@ -812,23 +757,18 @@
             
             try {
                 const formData = new FormData(e.target);
-                const id = document.getElementById('editRateTypeId').value;
-                
-                // Get selected bank names
                 const selectedBanks = Array.from(formData.getAll('bank_names'));
                 
                 if (selectedBanks.length === 0) {
                     throw new Error('Please select at least one bank');
                 }
 
+                const id = formData.get('id');
                 const rateTypeData = {
                     rate_type: formData.get('rate_type'),
                     rate_value: parseFloat(formData.get('rate_value')),
-                    bank_names: selectedBanks,
-                    updated_at: new Date()
+                    bank_names: selectedBanks
                 };
-
-                console.log('Updating rate type:', id, rateTypeData);
 
                 const { data, error } = await supabaseClient
                     .from('rate_types')
@@ -840,7 +780,7 @@
 
                 showNotification('Rate type updated successfully', 'success');
                 closeModal('edit-rate-type-modal');
-                loadRateTypes(); // Reload data
+                loadRateTypes();
                 
             } catch (error) {
                 console.error('Error updating rate type:', error);
@@ -873,11 +813,10 @@
             }
 
             editingItemId = id;
-            // Show modal
             document.getElementById('edit-rate-type-modal').style.display = 'flex';
         }
 
-        // Delete rate type - Following rate-packages.html pattern
+        // Delete rate type
         async function deleteRateType(id) {
             const rateType = rateTypes.find(rt => rt.id === id);
             if (!rateType) return;
@@ -895,11 +834,39 @@
                 if (error) throw error;
 
                 showNotification('Rate type deleted successfully', 'success');
-                loadRateTypes(); // Reload data
+                loadRateTypes();
                 
             } catch (error) {
                 console.error('Error deleting rate type:', error);
                 showNotification('Failed to delete rate type: ' + error.message, 'error');
+            }
+        }
+
+        // Sign Out Functions - Following index.html pattern
+        function confirmSignOut() {
+            document.getElementById('signout-modal').style.display = 'flex';
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                // Clear any stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login
+                window.location.href = 'login.html';
+                
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showNotification('Sign out failed: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                closeModal('signout-modal');
             }
         }
 
@@ -922,32 +889,129 @@
             };
         }
 
-        // Simplified notification function
-        function showNotification(message, type = 'info') {
-            console.log(`${type.toUpperCase()}: ${message}`);
-            
-            // Create simple notification
-            const notification = document.createElement('div');
-            notification.textContent = message;
-            notification.style.cssText = `
-                position: fixed; 
-                top: 20px; 
-                right: 20px; 
-                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'}; 
-                color: white; 
-                padding: 12px 24px; 
-                border-radius: 8px; 
-                z-index: 10000;
-                font-size: 14px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        // Loading functions - Following index.html pattern
+        function showLoading(message = 'Loading...') {
+            const loader = document.createElement('div');
+            loader.id = 'global-loader';
+            loader.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 24px;
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        gap: 16px;
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                    ">
+                        <div style="
+                            width: 20px;
+                            height: 20px;
+                            border: 2px solid #e2e8f0;
+                            border-top: 2px solid #4338ca;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                        "></div>
+                        <span style="color: #374151; font-weight: 500;">${message}</span>
+                    </div>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
             `;
+            document.body.appendChild(loader);
+        }
+
+        function hideLoading() {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        // Notification function - Following index.html pattern
+        function showNotification(message, type = 'info') {
+            const existing = document.querySelectorAll('.notification');
+            existing.forEach(n => n.remove());
+
+            const colors = {
+                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
+                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
+                warning: { bg: '#fef3c7', border: '#d97706', text: '#b45309' },
+                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8' }
+            };
+
+            const color = colors[type] || colors.info;
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${color.bg};
+                    border: 1px solid ${color.border};
+                    color: ${color.text};
+                    padding: 16px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    z-index: 10000;
+                    font-size: 14px;
+                    font-weight: 500;
+                    max-width: 400px;
+                    cursor: pointer;
+                    animation: slideInRight 0.3s ease-out;
+                " onclick="this.parentElement.remove()">
+                    ${message}
+                </div>
+                <style>
+                    @keyframes slideInRight {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                </style>
+            `;
+
             document.body.appendChild(notification);
-            
+
             setTimeout(() => {
                 if (notification.parentNode) {
-                    document.body.removeChild(notification);
+                    notification.remove();
                 }
             }, 4000);
+        }
+
+        // Sidebar functions
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.toggle('sidebar-open');
+            overlay.classList.toggle('overlay-active');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('overlay-active');
         }
 
         // Close modals when clicking outside
@@ -958,6 +1022,17 @@
                     modal.style.display = 'none';
                 }
             });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal:not([style*="display: none"])');
+                openModals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                closeSidebar();
+            }
         });
 
         // Global variables for admin scripts compatibility
