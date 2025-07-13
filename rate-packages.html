@@ -4,29 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rate Packages - Keyquest Admin</title>
+    
+    <!-- Standardized CSS Link -->
     <link rel="stylesheet" href="css/admin-styles.css">
-    <!-- CRITICAL: Load Supabase library BEFORE config -->
+    
+    <!-- External Scripts in proper order -->
+    <script src="js/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config/supabase.js"></script>
+    <script src="js/admin-scripts.js"></script>
 </head>
-<body class="page-rate-packages">
+<body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    
     <div class="admin-container">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <h2>Keyquest</h2>
-                </div>
-                <button class="sidebar-toggle" onclick="closeSidebar()">
-                    <i data-lucide="x"></i>
-                </button>
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i data-lucide="building-2"></i>
+                    </div>
+                    <span>KEYQUEST</span>
+                </a>
             </div>
-            
-            <nav class="sidebar-nav">
-                <a href="index.html" class="nav-item">
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item active">
                     <i data-lucide="layout-dashboard"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="rate-packages.html" class="nav-item active">
+                <a href="rate-packages.html" class="nav-item">
                     <i data-lucide="package"></i>
                     <span>Rate Package</span>
                 </a>
@@ -39,29 +46,30 @@
                     <span>Bank</span>
                 </a>
                 <a href="bankers.html" class="nav-item">
-                    <i data-lucide="users"></i>
+                    <i data-lucide="briefcase"></i>
                     <span>Bankers</span>
                 </a>
                 <a href="agents.html" class="nav-item">
-                    <i data-lucide="user-check"></i>
+                    <i data-lucide="users"></i>
                     <span>Agents</span>
                 </a>
                 <a href="enquiry.html" class="nav-item">
-                    <i data-lucide="message-circle"></i>
+                    <i data-lucide="help-circle"></i>
                     <span>Enquiry</span>
                 </a>
             </nav>
-        </aside>
+        </div>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <header class="main-header">
-    <div class="header-left">
-        <button class="sidebar-toggle mobile-only" onclick="toggleSidebar()">
-            <i data-lucide="menu"></i>
-        </button>
-        <h1 class="header-title">Rate Packages</h1>
-    </div>
+         <div class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="header-title">Rate Packages</h1>
+                </div>
+                
     <div class="header-right">
         <button class="btn btn-primary" onclick="openModal('package-modal')">
             <i data-lucide="plus"></i>
