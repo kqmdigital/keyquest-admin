@@ -3,486 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banks - Keyquest Mortgage Admin</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #334155;
-        }
-
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: white;
-            border-right: 1px solid #e2e8f0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 20px;
-            font-weight: 700;
-            color: white;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .nav-menu {
-            padding: 24px 0;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .nav-item:hover {
-            background: #f1f5f9;
-            color: #334155;
-        }
-
-        .nav-item.active {
-            background: #e0e7ff;
-            color: #4338ca;
-            border-right: 3px solid #4338ca;
-        }
-
-        .nav-item i {
-            width: 20px;
-            height: 20px;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 90;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .menu-toggle:hover {
-            background: #f1f5f9;
-        }
-
-        .header-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: #4338ca;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #3730a3;
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-sm {
-            padding: 4px 8px;
-            font-size: 12px;
-            border-radius: 6px;
-        }
-
-        .btn-edit {
-            background: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-        }
-
-        .btn-delete {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .user-profile:hover {
-            background: #f1f5f9;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #4338ca;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .user-role {
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        .content-area {
-            padding: 24px;
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            align-items: center;
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 400px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 16px 10px 40px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            width: 16px;
-            height: 16px;
-        }
-
-        .data-table {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-
-        .table th {
-            background: #f8fafc;
-            padding: 16px;
-            text-align: left;
-            font-weight: 600;
-            color: #475569;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
-        }
-
-        .table td {
-            padding: 16px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-        }
-
-        .table tr:hover {
-            background: #f8fafc;
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .bank-name {
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .modal-close:hover {
-            background: #f1f5f9;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #374151;
-            font-size: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .modal-footer {
-            padding: 24px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 50;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        /* Mobile Styles */
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .header {
-                padding: 12px 16px;
-            }
-
-            .content-area {
-                padding: 16px;
-            }
-
-            .search-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-box {
-                max-width: none;
-            }
-
-            .table th,
-            .table td {
-                padding: 12px 8px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .user-info {
-                display: none;
-            }
-        }
-    </style>
+    <title>Banks - Keyquest Admin</title>
+    
+    <!-- Standardized CSS Link -->
+    <link rel="stylesheet" href="css/admin-styles.css">
+    
+    <!-- External Scripts in proper order -->
+    <script src="js/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config/supabase.js"></script>
+    <script src="js/admin-scripts.js"></script>
 </head>
 <body>
     <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
@@ -540,14 +70,18 @@
                     <h1 class="header-title">Banks</h1>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-primary" onclick="openModal()">
+                    <button class="btn btn-primary" onclick="openModal('bank-modal')">
                         <i data-lucide="plus"></i>
                         <span>Add Bank</span>
                     </button>
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </button>
                     <div class="user-profile">
-                        <div class="user-avatar">A</div>
+                        <div class="user-avatar" id="userAvatar">A</div>
                         <div class="user-info">
-                            <div class="user-name">admin</div>
+                            <div class="user-name" id="userName">admin</div>
                             <div class="user-role">Super Admin</div>
                         </div>
                     </div>
@@ -555,11 +89,21 @@
             </header>
 
             <div class="content-area">
-                <!-- Search Bar -->
-                <div class="search-bar">
+                <!-- Enhanced Search and Filter Bar -->
+                <div class="search-filter-bar">
                     <div class="search-box">
                         <i data-lucide="search" class="search-icon"></i>
                         <input type="text" class="search-input" placeholder="Search banks..." id="searchInput">
+                    </div>
+                    <div class="filter-controls">
+                        <button class="btn btn-secondary" onclick="clearFilters()">
+                            <i data-lucide="x"></i>
+                            Clear
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportToCSV()">
+                            <i data-lucide="download"></i>
+                            Export
+                        </button>
                     </div>
                 </div>
 
@@ -570,142 +114,47 @@
                             <thead>
                                 <tr>
                                     <th>Bank Name</th>
+                                    <th>Created At</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="banksTable">
-                                <tr>
-                                    <td class="bank-name">CIMB</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'CIMB')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'CIMB')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">OCBC</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'OCBC')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'OCBC')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">UOB</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'UOB')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'UOB')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">DBS</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'DBS')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'DBS')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">Maybank</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'Maybank')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'Maybank')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">Standard Chartered</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'Standard Chartered')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'Standard Chartered')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">HSBC</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'HSBC')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'HSBC')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">SBI</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'SBI')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'SBI')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">Bank Of China</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'Bank Of China')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'Bank Of China')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="bank-name">Hong Leong Finance</td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn btn-sm btn-edit" onclick="editBank(this, 'Hong Leong Finance')">
-                                                <i data-lucide="edit"></i> Edit
-                                            </button>
-                                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, 'Hong Leong Finance')">
-                                                <i data-lucide="trash-2"></i> Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                            <tbody id="banksTableBody">
+                                <!-- Data will be loaded here -->
                             </tbody>
                         </table>
+                        
+                        <!-- Loading State -->
+                        <div id="loadingState" class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Loading banks...</p>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <i data-lucide="landmark"></i>
+                            <h3>No banks found</h3>
+                            <p>Start by adding your first bank.</p>
+                            <button class="btn btn-primary" onclick="openModal('bank-modal')">
+                                <i data-lucide="plus"></i>
+                                Add Bank
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination" id="pagination">
+                        <div class="pagination-info">
+                            <span id="paginationInfo">Showing 0 of 0</span>
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+                                <i data-lucide="chevron-left"></i>
+                            </button>
+                            <span id="pageNumbers"></span>
+                            <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -716,217 +165,603 @@
     <div class="modal" id="bank-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Add Bank</h3>
-                <button class="modal-close" onclick="closeModal()">
+                <h3 class="modal-title" id="bankModalTitle">Add Bank</h3>
+                <button class="modal-close" onclick="closeModal('bank-modal')">
                     <i data-lucide="x"></i>
                 </button>
             </div>
             <div class="modal-body">
                 <form id="bankForm">
-                    <div class="form-group">
-                        <label class="form-label">Bank Name</label>
-                        <input type="text" class="form-input" id="bankName" placeholder="Enter bank name" required>
+                    <div class="form-grid">
+                        <div class="form-group form-group-full">
+                            <label for="bankName">Bank Name *</label>
+                            <input type="text" id="bankName" name="name" required placeholder="Enter bank name...">
+                            <small class="form-help">Enter the full name of the bank (e.g., CIMB Bank, OCBC Bank)</small>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveBank()">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('bank-modal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveBank()">
+                    <span id="saveButtonText">Save Bank</span>
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Sign Out Confirmation Modal -->
+    <div class="modal" id="signout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Sign Out</h3>
+                <button class="modal-close" onclick="closeModal('signout-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-message">
+                    <i data-lucide="log-out"></i>
+                    <p>Are you sure you want to sign out?<br>
+                    You will be redirected to the login page.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="performSignOut()">
+                    <i data-lucide="log-out"></i>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessage">Please wait...</p>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
     <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
+        // Enhanced Banks Management Script
+        let banks = [];
+        let filteredBanks = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let editingBankId = null;
 
-        let editingRow = null;
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Enhanced Banks page...');
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Show page loaded notification
+            showNotification('Page loaded successfully', 'success');
+            
+            // Check authentication
+            checkAuthentication();
+            
+            // Check if Supabase is loaded
+            if (typeof supabaseClient === 'undefined') {
+                console.error('❌ supabaseClient not found. Check script loading order.');
+                showNotification('Supabase connection failed', 'error');
+                return;
+            }
+            
+            console.log('✅ Supabase client loaded successfully');
+            loadBanks();
+            setupEventListeners();
+        });
 
-        // Mobile sidebar
+        // ===================================
+        // AUTHENTICATION - FIXED VERSION
+        // ===================================
+        async function checkAuthentication() {
+            try {
+                const { data: { user }, error } = await supabaseClient.auth.getUser();
+                
+                if (error || !user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Update user info in header
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName && user.email) {
+                    userName.textContent = user.email.split('@')[0];
+                }
+                if (userAvatar && user.email) {
+                    userAvatar.textContent = user.email.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ===================================
+        // SIGN OUT FUNCTIONS - FIXED VERSION
+        // ===================================
+        function confirmSignOut() {
+            document.getElementById('signout-modal').style.display = 'flex';
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                // Clear any stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login
+                window.location.href = 'login.html';
+                
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showNotification('Sign out failed: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                closeModal('signout-modal');
+            }
+        }
+
+        // ===================================
+        // DATABASE OPERATIONS - SUPABASE
+        // ===================================
+        async function loadBanks() {
+            try {
+                showLoading('Loading banks...');
+                
+                const { data, error } = await supabaseClient
+                    .from('banks')
+                    .select('*')
+                    .order('name', { ascending: true });
+
+                if (error) throw error;
+
+                banks = data || [];
+                filteredBanks = [...banks];
+                renderBanksTable();
+                updatePagination();
+                
+                showNotification(`Loaded ${banks.length} banks successfully`, 'success');
+                
+            } catch (error) {
+                console.error('Error loading banks:', error);
+                showNotification('Failed to load banks: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function saveBank() {
+            try {
+                const form = document.getElementById('bankForm');
+                const formData = new FormData(form);
+                
+                const bankData = {
+                    name: formData.get('name').trim()
+                };
+
+                // Validation
+                if (!bankData.name) {
+                    showNotification('Please enter a bank name', 'error');
+                    return;
+                }
+
+                // Check for duplicate names (case insensitive)
+                const existingBank = banks.find(bank => 
+                    bank.name.toLowerCase() === bankData.name.toLowerCase() && 
+                    bank.id !== editingBankId
+                );
+                
+                if (existingBank) {
+                    showNotification('A bank with this name already exists', 'error');
+                    return;
+                }
+
+                showLoading(editingBankId ? 'Updating bank...' : 'Creating bank...');
+
+                let result;
+                if (editingBankId) {
+                    // Update existing bank
+                    result = await supabaseClient
+                        .from('banks')
+                        .update(bankData)
+                        .eq('id', editingBankId);
+                } else {
+                    // Create new bank
+                    result = await supabaseClient
+                        .from('banks')
+                        .insert([bankData]);
+                }
+
+                if (result.error) throw result.error;
+
+                showNotification(
+                    editingBankId ? 'Bank updated successfully' : 'Bank created successfully', 
+                    'success'
+                );
+                
+                closeModal('bank-modal');
+                loadBanks();
+                resetForm();
+
+            } catch (error) {
+                console.error('Error saving bank:', error);
+                if (error.code === '23505') {
+                    showNotification('A bank with this name already exists', 'error');
+                } else {
+                    showNotification('Failed to save bank: ' + error.message, 'error');
+                }
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function deleteBank(id) {
+            const bank = banks.find(b => b.id === id);
+            if (!bank) return;
+
+            if (!confirm(`Are you sure you want to delete "${bank.name}"? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                showLoading('Deleting bank...');
+
+                const { error } = await supabaseClient
+                    .from('banks')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showNotification('Bank deleted successfully', 'success');
+                loadBanks();
+
+            } catch (error) {
+                console.error('Error deleting bank:', error);
+                if (error.code === '23503') {
+                    showNotification('Cannot delete bank - it is being used by other records', 'error');
+                } else {
+                    showNotification('Failed to delete bank: ' + error.message, 'error');
+                }
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ===================================
+        // UI FUNCTIONS
+        // ===================================
+        function renderBanksTable() {
+            const tbody = document.getElementById('banksTableBody');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+
+            // Hide loading state
+            loadingState.style.display = 'none';
+
+            if (filteredBanks.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedBanks = filteredBanks.slice(startIndex, endIndex);
+
+            tbody.innerHTML = paginatedBanks.map(bank => `
+                <tr>
+                    <td class="bank-name">${escapeHtml(bank.name)}</td>
+                    <td>${formatDate(bank.created_at)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-edit" onclick="editBank('${bank.id}')">
+                                <i data-lucide="edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteBank('${bank.id}')">
+                                <i data-lucide="trash-2"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Reinitialize icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function editBank(id) {
+            const bank = banks.find(b => b.id === id);
+            if (!bank) return;
+
+            editingBankId = id;
+            
+            document.getElementById('bankModalTitle').textContent = 'Edit Bank';
+            document.getElementById('saveButtonText').textContent = 'Update Bank';
+            
+            // Populate form
+            document.getElementById('bankName').value = bank.name;
+            
+            openModal('bank-modal');
+        }
+
+        function resetForm() {
+            editingBankId = null;
+            document.getElementById('bankForm').reset();
+            document.getElementById('bankModalTitle').textContent = 'Add Bank';
+            document.getElementById('saveButtonText').textContent = 'Save Bank';
+        }
+
+        // ===================================
+        // UTILITY FUNCTIONS
+        // ===================================
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filteredBanks = banks.filter(bank => 
+                    bank.name.toLowerCase().includes(searchTerm)
+                );
+                currentPage = 1;
+                renderBanksTable();
+                updatePagination();
+            });
+
+            // Modal form submission
+            document.getElementById('bankForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveBank();
+            });
+
+            // Escape key to close modals
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modals = document.querySelectorAll('.modal[style*="flex"]');
+                    modals.forEach(modal => {
+                        closeModal(modal.id);
+                    });
+                }
+            });
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            filteredBanks = [...banks];
+            currentPage = 1;
+            renderBanksTable();
+            updatePagination();
+        }
+
+        function exportToCSV() {
+            if (filteredBanks.length === 0) {
+                showNotification('No data to export', 'warning');
+                return;
+            }
+
+            const headers = ['Bank Name', 'Created At'];
+            const csvData = [
+                headers.join(','),
+                ...filteredBanks.map(bank => [
+                    `"${bank.name}"`,
+                    `"${formatDate(bank.created_at)}"`
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `banks-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            showNotification('Banks data exported successfully', 'success');
+        }
+
+        // ===================================
+        // MODAL FUNCTIONS
+        // ===================================
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                
+                // Focus first input in forms
+                const firstInput = modal.querySelector('input, select, textarea');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                // Reset form if it's the bank modal
+                if (modalId === 'bank-modal') {
+                    resetForm();
+                }
+            }
+        }
+
+        // ===================================
+        // PAGINATION FUNCTIONS
+        // ===================================
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredBanks.length / itemsPerPage);
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, filteredBanks.length);
+
+            // Update pagination info
+            document.getElementById('paginationInfo').textContent = 
+                `Showing ${startItem} to ${endItem} of ${filteredBanks.length}`;
+
+            // Update pagination controls
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+
+            // Update page numbers
+            const pageNumbers = document.getElementById('pageNumbers');
+            pageNumbers.innerHTML = '';
+            
+            if (totalPages > 0) {
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        const pageBtn = document.createElement('button');
+                        pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                        pageBtn.textContent = i;
+                        pageBtn.onclick = () => {
+                            currentPage = i;
+                            renderBanksTable();
+                            updatePagination();
+                        };
+                        pageNumbers.appendChild(pageBtn);
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.className = 'pagination-ellipsis';
+                        pageNumbers.appendChild(ellipsis);
+                    }
+                }
+            }
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredBanks.length / itemsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderBanksTable();
+                updatePagination();
+            }
+        }
+
+        // ===================================
+        // UTILITY FUNCTIONS
+        // ===================================
+        function showLoading(message = 'Loading...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const messageEl = document.getElementById('loadingMessage');
+            if (overlay && messageEl) {
+                messageEl.textContent = message;
+                overlay.style.display = 'flex';
+            }
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-message">${escapeHtml(message)}</div>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            // Initialize icons for the close button
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+
+            // Add animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+        }
+
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             
-            sidebar.classList.toggle('mobile-open');
-            overlay.classList.toggle('active');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
         }
 
         function closeSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
             
-            sidebar.classList.remove('mobile-open');
-            overlay.classList.remove('active');
-        }
-
-        // Modal functions
-        function openModal() {
-            document.getElementById('bank-modal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            document.getElementById('bankName').focus();
-        }
-
-        function closeModal() {
-            document.getElementById('bank-modal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-            document.getElementById('bankForm').reset();
-            document.querySelector('.modal-title').textContent = 'Add Bank';
-            editingRow = null;
-        }
-
-        // CRUD functions
-        function editBank(button, currentName) {
-            editingRow = button.closest('tr');
-            document.querySelector('.modal-title').textContent = 'Edit Bank';
-            document.getElementById('bankName').value = currentName;
-            openModal();
-        }
-
-        function deleteBank(button, bankName) {
-            if (confirm(`Are you sure you want to delete ${bankName}?`)) {
-                button.closest('tr').remove();
-                showNotification(`${bankName} deleted successfully`, 'success');
+            if (sidebar && overlay) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
             }
         }
 
-        function saveBank() {
-            const name = document.getElementById('bankName').value.trim();
-            
-            if (!name) {
-                showNotification('Please enter a bank name', 'error');
-                return;
-            }
-
-            if (editingRow) {
-                // Update existing bank
-                editingRow.cells[0].textContent = name;
-                
-                // Update button onclick attributes
-                const editBtn = editingRow.querySelector('.btn-edit');
-                const deleteBtn = editingRow.querySelector('.btn-delete');
-                editBtn.setAttribute('onclick', `editBank(this, '${name}')`);
-                deleteBtn.setAttribute('onclick', `deleteBank(this, '${name}')`);
-                
-                showNotification(`Bank updated to "${name}"`, 'success');
-            } else {
-                // Add new bank
-                const tableBody = document.getElementById('banksTable');
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td class="bank-name">${name}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-sm btn-edit" onclick="editBank(this, '${name}')">
-                                <i data-lucide="edit"></i> Edit
-                            </button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteBank(this, '${name}')">
-                                <i data-lucide="trash-2"></i> Delete
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(newRow);
-                
-                // Re-initialize icons
-                lucide.createIcons();
-                
-                showNotification(`Bank "${name}" added successfully`, 'success');
-            }
-            
-            closeModal();
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#banksTable tr');
-            
-            rows.forEach(row => {
-                const bankName = row.cells[0].textContent.toLowerCase();
-                row.style.display = bankName.includes(searchTerm) ? '' : 'none';
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-SG', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
-        });
-
-        // Form submission
-        document.getElementById('bankForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveBank();
-        });
-
-        // Close modal when clicking outside
-        document.getElementById('bank-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-
-        // Close sidebar when clicking overlay
-        document.getElementById('overlay').addEventListener('click', closeSidebar);
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-                closeSidebar();
-            }
-        });
-
-        // Notification system
-        function showNotification(message, type = 'info') {
-            // Remove existing notifications
-            const existing = document.querySelectorAll('.notification');
-            existing.forEach(n => n.remove());
-
-            const colors = {
-                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
-                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
-                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8' }
-            };
-
-            const color = colors[type] || colors.info;
-
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.innerHTML = `
-                <div style="
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: ${color.bg};
-                    border: 1px solid ${color.border};
-                    color: ${color.text};
-                    padding: 16px 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                    z-index: 10000;
-                    font-size: 14px;
-                    font-weight: 500;
-                    animation: slideIn 0.3s ease-out;
-                ">
-                    ${message}
-                </div>
-                <style>
-                    @keyframes slideIn {
-                        from { transform: translateX(100%); opacity: 0; }
-                        to { transform: translateX(0); opacity: 1; }
-                    }
-                </style>
-            `;
-
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 4000);
         }
 
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                closeSidebar();
-            }
+        // Initialize everything when page loads
+        window.addEventListener('load', function() {
+            console.log('✅ Banks page fully loaded and initialized');
         });
     </script>
 </body>
