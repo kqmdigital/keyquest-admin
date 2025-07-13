@@ -67,33 +67,27 @@
                     <button class="menu-toggle" onclick="toggleSidebar()">
                         <i data-lucide="menu"></i>
                     </button>
-                    <h1 class="page-title">Rate Type</h1>
+                     <h1 class="header-title">Rate Type</h1>
                 </div>
-                <div class="header-right">
-                    <div class="user-info">
-                        <div class="user-avatar">
-                            <i data-lucide="user"></i>
-                        </div>
-                        <div class="user-details">
-                            <span class="user-name">admin</span>
-                            <span class="user-role">Super Admin</span>
-                        </div>
-                        <button class="btn-icon" onclick="confirmSignOut()">
-                            <i data-lucide="log-out"></i>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <main class="content">
-                <div class="content-header">
-                    <div class="actions">
-                        <button class="btn btn-primary" onclick="openAddRateTypeModal()">
-                            <i data-lucide="plus"></i>
-                            <span>Add Rate Type</span>
-                        </button>
-                    </div>
-                </div>
+                
+        <div class="header-right">
+            <button class="btn btn-primary" onclick="openAddRateTypeModal()">
+                    <i data-lucide="plus"></i>
+                    <span>Add Rate Type</span>
+            </button>
+        <button class="btn btn-secondary" onclick="confirmSignOut()">
+            <i data-lucide="log-out"></i>
+            <span>Sign Out</span>
+        </button>
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div class="user-info">
+                <div class="user-name" id="userName">admin</div>
+                <div class="user-role">Super Admin</div>
+            </div>
+        </div>
+    </div>
+</header>
 
                 <!-- Search and Filters -->
                 <div class="filters">
