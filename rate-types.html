@@ -182,7 +182,7 @@
                         <i data-lucide="x"></i>
                     </button>
                 </div>
-                <form id="addRateTypeForm" onsubmit="submitRateType(event)">
+                <form id="addRateTypeForm" onsubmit="handleFormSubmit(event)">
                     <div class="modal-body">
                         <div class="form-group">
                             <label class="form-label" for="rateType">Rate Type</label>
@@ -265,7 +265,7 @@
                         <i data-lucide="x"></i>
                     </button>
                 </div>
-                <form id="editRateTypeForm" onsubmit="updateRateType(event)">
+                <form id="editRateTypeForm" onsubmit="handleEditFormSubmit(event)">
                     <div class="modal-body">
                         <input type="hidden" id="editRateTypeId">
                         
@@ -350,6 +350,66 @@
     <div class="notification-container" id="notificationContainer"></div>
 
     <style>
+        /* Search and filter bar styling */
+        .search-filter-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4338ca;
+            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            width: 16px;
+            height: 16px;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            min-width: 140px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #4338ca;
+            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+        }
+
         /* Additional styling for checkboxes */
         .checkbox-group {
             display: grid;
@@ -450,83 +510,93 @@
             line-height: 1.4;
             max-width: 300px;
         }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .search-filter-bar {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .search-box {
+                min-width: unset;
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 
     <script>
-        // Rate Types Management
+        // Rate Types Management - Following exact pattern as rate-packages.html
         let rateTypes = [];
         let filteredRateTypes = [];
         let currentPage = 1;
         let itemsPerPage = 10;
+        let editingItemId = null;
 
-        // Initialize page when DOM is loaded
+        // Initialize page - Following exact pattern from working rate-packages.html
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Rate Types page initializing...');
+            console.log('🚀 Initializing Rate Types page...');
             
-            // Initialize Lucide icons
+            // Initialize Lucide icons first
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
 
-            // Check authentication and load data
-            checkAuthentication();
+            // Check if Supabase is loaded - exact same pattern as rate-packages.html
+            if (typeof supabaseClient === 'undefined') {
+                console.error('❌ supabaseClient not found. Check script loading order.');
+                showNotification('Supabase connection failed', 'error');
+                return;
+            }
             
-            console.log('✅ Rate Types page initialization complete');
+            console.log('✅ Supabase client loaded successfully');
+            
+            // Load data and setup page - exact same pattern as rate-packages.html
+            loadRateTypes();
+            setupEventListeners();
         });
 
-        // Authentication check - Following exact pattern from other pages
-        async function checkAuthentication() {
-            try {
-                if (typeof AuthService === 'undefined') {
-                    console.warn('AuthService not available, redirecting to login');
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                const result = await AuthService.getCurrentUser();
-                if (!result.success || !result.user) {
-                    console.log('No authenticated user, redirecting to login');
-                    window.location.href = 'login.html';
-                    return;
-                }
-                
-                console.log('✅ User authenticated:', result.user.email);
-                
-                // Update user info in header if elements exist
-                const userName = document.querySelector('.user-name');
-                if (userName && result.user.email) {
-                    userName.textContent = result.user.email.split('@')[0];
-                }
-                
-                // Load rate types after authentication
-                await loadRateTypes();
-                initializeSearchAndFilters();
-                
-            } catch (error) {
-                console.error('Authentication check failed:', error);
-                window.location.href = 'login.html';
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search input
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(applyFilters, 300));
+            }
+            
+            // Filter dropdowns
+            const bankFilter = document.getElementById('bankFilter');
+            if (bankFilter) {
+                bankFilter.addEventListener('change', applyFilters);
             }
         }
 
-        // Load rate types from database
+        // Load rate types from Supabase - Following exact pattern as rate-packages.html
         async function loadRateTypes() {
             try {
-                console.log('📊 Loading rate types...');
-                showLoading();
+                console.log('🔄 Loading rate types from Supabase...');
                 
-                // Check if SupabaseService is available
-                if (typeof SupabaseService === 'undefined') {
-                    throw new Error('SupabaseService not available');
+                const { data, error } = await supabaseClient
+                    .from('rate_types')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('❌ Supabase error:', error);
+                    throw error;
                 }
-                
-                const result = await SupabaseService.getRateTypes();
-                
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to load rate types');
-                }
-                
-                console.log('✅ Loaded rate types:', result.data?.length || 0, 'records');
-                rateTypes = result.data || [];
+
+                console.log('✅ Rate types loaded successfully:', data?.length || 0, 'records');
+                rateTypes = data || [];
                 filteredRateTypes = [...rateTypes];
                 displayRateTypes();
                 updatePagination();
@@ -552,8 +622,6 @@
                         </tr>
                     `;
                 }
-            } finally {
-                hideLoading();
             }
         }
 
@@ -618,20 +686,6 @@
             }
         }
 
-        // Initialize search and filters
-        function initializeSearchAndFilters() {
-            const searchInput = document.getElementById('searchInput');
-            const bankFilter = document.getElementById('bankFilter');
-
-            if (searchInput) {
-                searchInput.addEventListener('input', debounce(applyFilters, 300));
-            }
-
-            if (bankFilter) {
-                bankFilter.addEventListener('change', applyFilters);
-            }
-        }
-
         // Apply filters and search
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
@@ -665,37 +719,35 @@
                 paginationInfo.textContent = `Showing ${startItem} to ${endItem} of ${filteredRateTypes.length}`;
             }
 
-            if (paginationControls) {
+            if (paginationControls && totalPages > 1) {
                 let paginationHTML = '';
                 
-                if (totalPages > 1) {
-                    // Previous button
-                    paginationHTML += `
-                        <button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
-                                onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                            <i data-lucide="chevron-left"></i>
-                        </button>
-                    `;
+                // Previous button
+                paginationHTML += `
+                    <button class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}" 
+                            onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+                `;
 
-                    // Page numbers
-                    for (let i = 1; i <= totalPages; i++) {
-                        if (i === currentPage) {
-                            paginationHTML += `<button class="pagination-btn active">${i}</button>`;
-                        } else if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                            paginationHTML += `<button class="pagination-btn" onclick="changePage(${i})">${i}</button>`;
-                        } else if (i === currentPage - 2 || i === currentPage + 2) {
-                            paginationHTML += `<span class="pagination-ellipsis">...</span>`;
-                        }
+                // Page numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === currentPage) {
+                        paginationHTML += `<button class="pagination-btn active">${i}</button>`;
+                    } else if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        paginationHTML += `<button class="pagination-btn" onclick="changePage(${i})">${i}</button>`;
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        paginationHTML += `<span class="pagination-ellipsis">...</span>`;
                     }
-
-                    // Next button
-                    paginationHTML += `
-                        <button class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
-                                onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                            <i data-lucide="chevron-right"></i>
-                        </button>
-                    `;
                 }
+
+                // Next button
+                paginationHTML += `
+                    <button class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}" 
+                            onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                `;
 
                 paginationControls.innerHTML = paginationHTML;
                 
@@ -703,6 +755,8 @@
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
+            } else if (paginationControls) {
+                paginationControls.innerHTML = '';
             }
         }
 
@@ -723,6 +777,7 @@
                 modal.style.display = 'flex';
                 // Reset form
                 document.getElementById('addRateTypeForm').reset();
+                editingItemId = null;
             }
         }
 
@@ -733,14 +788,12 @@
             }
         }
 
-        // Submit new rate type
-        async function submitRateType(event) {
-            event.preventDefault();
+        // Handle form submission - Following rate-packages.html pattern
+        async function handleFormSubmit(e) {
+            e.preventDefault();
             
             try {
-                showLoading();
-                
-                const formData = new FormData(event.target);
+                const formData = new FormData(e.target);
                 
                 // Get selected bank names
                 const selectedBanks = Array.from(formData.getAll('bank_names'));
@@ -755,21 +808,64 @@
                     bank_names: selectedBanks
                 };
 
-                const result = await SupabaseService.createRateType(rateTypeData);
+                console.log('Creating rate type:', rateTypeData);
+
+                const { data, error } = await supabaseClient
+                    .from('rate_types')
+                    .insert([rateTypeData])
+                    .select();
                 
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to create rate type');
-                }
+                if (error) throw error;
 
                 showNotification('Rate type created successfully', 'success');
                 closeModal('add-rate-type-modal');
-                await loadRateTypes();
+                loadRateTypes(); // Reload data
                 
             } catch (error) {
                 console.error('Error creating rate type:', error);
                 showNotification('Failed to create rate type: ' + error.message, 'error');
-            } finally {
-                hideLoading();
+            }
+        }
+
+        // Handle edit form submission
+        async function handleEditFormSubmit(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(e.target);
+                const id = document.getElementById('editRateTypeId').value;
+                
+                // Get selected bank names
+                const selectedBanks = Array.from(formData.getAll('bank_names'));
+                
+                if (selectedBanks.length === 0) {
+                    throw new Error('Please select at least one bank');
+                }
+
+                const rateTypeData = {
+                    rate_type: formData.get('rate_type'),
+                    rate_value: parseFloat(formData.get('rate_value')),
+                    bank_names: selectedBanks,
+                    updated_at: new Date()
+                };
+
+                console.log('Updating rate type:', id, rateTypeData);
+
+                const { data, error } = await supabaseClient
+                    .from('rate_types')
+                    .update(rateTypeData)
+                    .eq('id', id)
+                    .select();
+                
+                if (error) throw error;
+
+                showNotification('Rate type updated successfully', 'success');
+                closeModal('edit-rate-type-modal');
+                loadRateTypes(); // Reload data
+                
+            } catch (error) {
+                console.error('Error updating rate type:', error);
+                showNotification('Failed to update rate type: ' + error.message, 'error');
             }
         }
 
@@ -797,77 +893,34 @@
                 });
             }
 
+            editingItemId = id;
             // Show modal
             document.getElementById('edit-rate-type-modal').style.display = 'flex';
         }
 
-        // Update rate type
-        async function updateRateType(event) {
-            event.preventDefault();
-            
-            try {
-                showLoading();
-                
-                const formData = new FormData(event.target);
-                const id = document.getElementById('editRateTypeId').value;
-                
-                // Get selected bank names
-                const selectedBanks = Array.from(formData.getAll('bank_names'));
-                
-                if (selectedBanks.length === 0) {
-                    throw new Error('Please select at least one bank');
-                }
-
-                const rateTypeData = {
-                    rate_type: formData.get('rate_type'),
-                    rate_value: parseFloat(formData.get('rate_value')),
-                    bank_names: selectedBanks
-                };
-
-                const result = await SupabaseService.updateRateType(id, rateTypeData);
-                
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to update rate type');
-                }
-
-                showNotification('Rate type updated successfully', 'success');
-                closeModal('edit-rate-type-modal');
-                await loadRateTypes();
-                
-            } catch (error) {
-                console.error('Error updating rate type:', error);
-                showNotification('Failed to update rate type: ' + error.message, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Delete rate type
+        // Delete rate type - Following rate-packages.html pattern
         async function deleteRateType(id) {
             const rateType = rateTypes.find(rt => rt.id === id);
             if (!rateType) return;
 
-            if (!confirm(`Are you sure you want to delete "${rateType.rate_type}" (${rateType.rate_value}%)?`)) {
+            if (!confirm(`Are you sure you want to delete "${rateType.rate_type}" (${rateType.rate_value}%)?\n\nThis action cannot be undone.`)) {
                 return;
             }
 
             try {
-                showLoading();
+                const { error } = await supabaseClient
+                    .from('rate_types')
+                    .delete()
+                    .eq('id', id);
                 
-                const result = await SupabaseService.deleteRateType(id);
-                
-                if (!result.success) {
-                    throw new Error(result.error || 'Failed to delete rate type');
-                }
+                if (error) throw error;
 
                 showNotification('Rate type deleted successfully', 'success');
-                await loadRateTypes();
+                loadRateTypes(); // Reload data
                 
             } catch (error) {
                 console.error('Error deleting rate type:', error);
                 showNotification('Failed to delete rate type: ' + error.message, 'error');
-            } finally {
-                hideLoading();
             }
         }
 
@@ -890,27 +943,32 @@
             };
         }
 
-        function showLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.style.display = 'flex';
-            }
-        }
-
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.style.display = 'none';
-            }
-        }
-
         function showNotification(message, type = 'info') {
             if (typeof window.showNotification === 'function') {
                 window.showNotification(message, type);
             } else {
                 // Fallback notification
                 console.log(`${type.toUpperCase()}: ${message}`);
-                alert(message);
+                
+                // Create simple notification
+                const notification = document.createElement('div');
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed; 
+                    top: 20px; 
+                    right: 20px; 
+                    background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'}; 
+                    color: white; 
+                    padding: 12px 24px; 
+                    border-radius: 8px; 
+                    z-index: 10000;
+                    font-size: 14px;
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 4000);
             }
         }
 
