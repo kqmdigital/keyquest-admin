@@ -3,539 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bankers - Keyquest Mortgage Admin</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #334155;
-        }
-
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: white;
-            border-right: 1px solid #e2e8f0;
-            padding: 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 20px;
-            font-weight: 700;
-            color: #1e293b;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .nav-menu {
-            padding: 24px 0;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        .nav-item:hover {
-            background: #f1f5f9;
-            color: #334155;
-        }
-
-        .nav-item.active {
-            background: #e0e7ff;
-            color: #4338ca;
-            border-right: 3px solid #4338ca;
-        }
-
-        .nav-item i {
-            width: 20px;
-            height: 20px;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 0;
-        }
-
-        .header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: #4338ca;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #3730a3;
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-sm {
-            padding: 4px 8px;
-            font-size: 12px;
-            border-radius: 6px;
-        }
-
-        .btn-edit {
-            background: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-        }
-
-        .btn-delete {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .user-profile:hover {
-            background: #f1f5f9;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #4338ca;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .user-role {
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        .content-area {
-            padding: 32px;
-        }
-
-        .search-filter-bar {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 16px 10px 40px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            width: 16px;
-            height: 16px;
-        }
-
-        .data-table {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th {
-            background: #f8fafc;
-            padding: 16px;
-            text-align: left;
-            font-weight: 600;
-            color: #475569;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .table td {
-            padding: 16px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-            vertical-align: top;
-        }
-
-        .table tr:hover {
-            background: #f8fafc;
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .banker-name {
-            font-weight: 500;
-            color: #1e293b;
-        }
-
-        .bank-access {
-            font-size: 12px;
-            color: #64748b;
-            line-height: 1.4;
-            max-width: 300px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .pagination-info {
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .pagination-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .pagination-btn {
-            padding: 8px 12px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .pagination-btn:hover {
-            background: #f8fafc;
-        }
-
-        .pagination-btn.active {
-            background: #4338ca;
-            color: white;
-            border-color: #4338ca;
-        }
-
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .modal-close:hover {
-            background: #f1f5f9;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            grid-column: span 2;
-        }
-
-        .form-group.half {
-            grid-column: span 1;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #374151;
-            font-size: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .checkbox-item:hover {
-            background: #f8fafc;
-        }
-
-        .checkbox-item input[type="checkbox"]:checked + label {
-            color: #4338ca;
-            font-weight: 500;
-        }
-
-        .modal-footer {
-            padding: 24px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .search-filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-box {
-                min-width: 100%;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.half {
-                grid-column: span 1;
-            }
-
-            .table {
-                font-size: 12px;
-            }
-
-            .table th,
-            .table td {
-                padding: 8px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .checkbox-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <title>Bankers - Keyquest Admin</title>
+    
+    <!-- Standardized CSS Link -->
+    <link rel="stylesheet" href="css/admin-styles.css">
+    
+    <!-- External Scripts in proper order -->
+    <script src="js/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config/supabase.js"></script>
+    <script src="js/admin-scripts.js"></script>
 </head>
 <body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -580,18 +61,27 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <header class="header">
-                <h1 class="header-title">Banker</h1>
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="header-title">Bankers</h1>
+                </div>
                 <div class="header-actions">
                     <button class="btn btn-primary" onclick="openModal('banker-modal')">
                         <i data-lucide="plus"></i>
-                        Add Banker
+                        <span>Add Banker</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
                     </button>
                     <div class="user-profile">
-                        <div class="user-avatar">A</div>
+                        <div class="user-avatar" id="userAvatar">A</div>
                         <div class="user-info">
-                            <div class="user-name">admin</div>
+                            <div class="user-name" id="userName">admin</div>
                             <div class="user-role">Super Admin</div>
                         </div>
                     </div>
@@ -599,151 +89,74 @@
             </header>
 
             <div class="content-area">
-                <!-- Search Bar -->
+                <!-- Enhanced Search and Filter Bar -->
                 <div class="search-filter-bar">
                     <div class="search-box">
                         <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" class="search-input" placeholder="Search here..." id="searchInput">
+                        <input type="text" class="search-input" placeholder="Search bankers..." id="searchInput">
+                    </div>
+                    <div class="filter-controls">
+                        <select class="filter-select" id="bankFilter">
+                            <option value="">All Banks</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="clearFilters()">
+                            <i data-lucide="x"></i>
+                            Clear
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportToCSV()">
+                            <i data-lucide="download"></i>
+                            Export
+                        </button>
                     </div>
                 </div>
 
                 <!-- Data Table -->
                 <div class="data-table">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Bank access</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="bankersTable">
-                            <tr>
-                                <td class="banker-name">admin</td>
-                                <td>admin@local.com</td>
-                                <td class="bank-access">-</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(1)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(1)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">Sub Admin</td>
-                                <td>contactus@keyquestmortgage.com.sg</td>
-                                <td class="bank-access">CIMB OCBC UOB DBS Maybank Standard Chartered HSBC SBI Bank Of China Hong Leong Finance Singapura Finance RHB Bank Sing Investments & Finance Citibank</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(2)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(2)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">Ds</td>
-                                <td>dev@harnods.com</td>
-                                <td class="bank-access">-</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(3)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(3)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">ahmad</td>
-                                <td>ahmad@harnods.com</td>
-                                <td class="bank-access">CIMB OCBC UOB DBS Maybank Standard Chartered HSBC SBI Bank Of China Hong Leong Finance Singapura Finance RHB Bank Sing Investments & Finance Citibank</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(4)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(4)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">Timo Lim</td>
-                                <td>dibuat12@gmail.com</td>
-                                <td class="bank-access">CIMB</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(5)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(5)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">Ata</td>
-                                <td>fata@harnods.com</td>
-                                <td class="bank-access">OCBC</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(6)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(6)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">Ben White</td>
-                                <td>dibuat12+1@gmail.com</td>
-                                <td class="bank-access">OCBC</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(7)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(7)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">Gema Harnods</td>
-                                <td>gema@harnods.com</td>
-                                <td class="bank-access">CIMB</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(8)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(8)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">Ryan</td>
-                                <td>manz.near@gmail.com</td>
-                                <td class="bank-access">OCBC</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(9)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(9)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="banker-name">Ryan OCBC</td>
-                                <td>ahmad+2@harnods.com</td>
-                                <td class="bank-access">CIMB</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editBanker(10)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteBanker(10)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Bank Access</th>
+                                    <th>Created At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bankersTableBody">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                        
+                        <!-- Loading State -->
+                        <div id="loadingState" class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Loading bankers...</p>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <i data-lucide="briefcase"></i>
+                            <h3>No bankers found</h3>
+                            <p>Start by adding your first banker.</p>
+                            <button class="btn btn-primary" onclick="openModal('banker-modal')">
+                                <i data-lucide="plus"></i>
+                                Add Banker
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Pagination -->
-                    <div class="pagination">
+                    <div class="pagination" id="pagination">
                         <div class="pagination-info">
-                            Showing 1 of 10
+                            <span id="paginationInfo">Showing 0 of 0</span>
                         </div>
                         <div class="pagination-controls">
-                            <button class="pagination-btn" disabled>
+                            <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
                                 <i data-lucide="chevron-left"></i>
                             </button>
-                            <button class="pagination-btn active">1</button>
-                            <button class="pagination-btn">2</button>
-                            <button class="pagination-btn">
+                            <span id="pageNumbers"></span>
+                            <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
                                 <i data-lucide="chevron-right"></i>
                             </button>
                         </div>
@@ -757,7 +170,7 @@
     <div class="modal" id="banker-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Add Banker</h3>
+                <h3 class="modal-title" id="bankerModalTitle">Add Banker</h3>
                 <button class="modal-close" onclick="closeModal('banker-modal')">
                     <i data-lucide="x"></i>
                 </button>
@@ -765,273 +178,732 @@
             <div class="modal-body">
                 <form id="bankerForm">
                     <div class="form-grid">
-                        <div class="form-group half">
-                            <label class="form-label">Name</label>
-                            <input type="text" class="form-input" id="bankerName" placeholder="Enter banker name" required>
-                        </div>
-
-                        <div class="form-group half">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-input" id="bankerEmail" placeholder="Enter email address" required>
-                        </div>
-
                         <div class="form-group">
-                            <label class="form-label">Bank access</label>
-                            <div class="checkbox-grid">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-cimb" value="CIMB">
-                                    <label for="access-cimb">CIMB</label>
+                            <label for="bankerName">Name *</label>
+                            <input type="text" id="bankerName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bankerEmail">Email *</label>
+                            <input type="email" id="bankerEmail" name="email" required>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="bankAccess">Bank Access</label>
+                            <div class="bank-access-container">
+                                <div class="bank-access-header">
+                                    <span>Select banks this banker can access:</span>
+                                    <div class="access-controls">
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick="selectAllBanks()">Select All</button>
+                                        <button type="button" class="btn btn-sm btn-secondary" onclick="clearAllBanks()">Clear All</button>
+                                    </div>
                                 </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-ocbc" value="OCBC">
-                                    <label for="access-ocbc">OCBC</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-uob" value="UOB">
-                                    <label for="access-uob">UOB</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-dbs" value="DBS">
-                                    <label for="access-dbs">DBS</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-maybank" value="Maybank">
-                                    <label for="access-maybank">Maybank</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-sc" value="Standard Chartered">
-                                    <label for="access-sc">Standard Chartered</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-hsbc" value="HSBC">
-                                    <label for="access-hsbc">HSBC</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-sbi" value="SBI">
-                                    <label for="access-sbi">SBI</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-boc" value="Bank Of China">
-                                    <label for="access-boc">Bank Of China</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-hlf" value="Hong Leong Finance">
-                                    <label for="access-hlf">Hong Leong Finance</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-sf" value="Singapura Finance">
-                                    <label for="access-sf">Singapura Finance</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-rhb" value="RHB Bank">
-                                    <label for="access-rhb">RHB Bank</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-sif" value="Sing Investments & Finance">
-                                    <label for="access-sif">Sing Investments & Finance</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="access-citibank" value="Citibank">
-                                    <label for="access-citibank">Citibank</label>
+                                <div class="bank-access-grid" id="bankAccessGrid">
+                                    <!-- Bank checkboxes will be populated here -->
                                 </div>
                             </div>
+                        </div>
+                        <div class="form-group form-group-full">
+                            <label for="bankerNotes">Notes</label>
+                            <textarea id="bankerNotes" name="notes" rows="3" placeholder="Additional notes about the banker..."></textarea>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('banker-modal')">Cancel</button>
-                <button class="btn btn-primary" onclick="saveBanker()">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('banker-modal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveBanker()">
+                    <span id="saveButtonText">Save Banker</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
+    <!-- Sign Out Confirmation Modal -->
+    <div class="modal" id="signout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Sign Out</h3>
+                <button class="modal-close" onclick="closeModal('signout-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-message">
+                    <i data-lucide="log-out"></i>
+                    <p>Are you sure you want to sign out?<br>
+                    You will be redirected to the login page.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="performSignOut()">
+                    <i data-lucide="log-out"></i>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
 
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingMessage">Please wait...</p>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <script>
+        // Enhanced Bankers Management Script
+        let bankers = [];
+        let filteredBankers = [];
+        let banks = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
         let editingBankerId = null;
 
-        // Modal functionality
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            document.body.style.overflow = 'auto';
-            // Reset form
-            document.getElementById('bankerForm').reset();
-            document.querySelector('.modal-title').textContent = 'Add Banker';
-            editingBankerId = null;
-            // Uncheck all checkboxes
-            document.querySelectorAll('#banker-modal input[type="checkbox"]').forEach(cb => cb.checked = false);
-        }
-
-        // Close modal when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Enhanced Bankers page...');
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Show page loaded notification
+            showNotification('Page loaded successfully', 'success');
+            
+            // Check authentication
+            checkAuthentication();
+            
+            // Check if Supabase is loaded
+            if (typeof supabaseClient === 'undefined') {
+                console.error('❌ supabaseClient not found. Check script loading order.');
+                showNotification('Supabase connection failed', 'error');
+                return;
+            }
+            
+            console.log('✅ Supabase client loaded successfully');
+            loadData();
+            setupEventListeners();
         });
 
-        // Edit banker function
-        function editBanker(id) {
-            editingBankerId = id;
-            document.querySelector('.modal-title').textContent = 'Edit Banker';
-            
-            // Here you would typically load banker data from the database
-            // For demo, we'll populate with sample data
-            const rows = document.querySelectorAll('#bankersTable tr');
-            let bankerData = null;
-            
-            rows.forEach(row => {
-                const editBtn = row.querySelector(`button[onclick*="${id}"]`);
-                if (editBtn) {
-                    bankerData = {
-                        name: row.cells[0].textContent,
-                        email: row.cells[1].textContent,
-                        bankAccess: row.cells[2].textContent
-                    };
+        // ===================================
+        // AUTHENTICATION - FIXED VERSION
+        // ===================================
+        async function checkAuthentication() {
+            try {
+                const { data: { user }, error } = await supabaseClient.auth.getUser();
+                
+                if (error || !user) {
+                    window.location.href = 'login.html';
+                    return;
                 }
+                
+                // Update user info in header
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName && user.email) {
+                    userName.textContent = user.email.split('@')[0];
+                }
+                if (userAvatar && user.email) {
+                    userAvatar.textContent = user.email.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ===================================
+        // SIGN OUT FUNCTIONS - FIXED VERSION
+        // ===================================
+        function confirmSignOut() {
+            document.getElementById('signout-modal').style.display = 'flex';
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                // Clear any stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login
+                window.location.href = 'login.html';
+                
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showNotification('Sign out failed: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                closeModal('signout-modal');
+            }
+        }
+
+        // ===================================
+        // DATABASE OPERATIONS - SUPABASE
+        // ===================================
+        async function loadData() {
+            try {
+                showLoading('Loading data...');
+                
+                // Load both bankers and banks in parallel
+                const [bankersResult, banksResult] = await Promise.all([
+                    supabaseClient
+                        .from('bankers')
+                        .select('*')
+                        .order('created_at', { ascending: false }),
+                    supabaseClient
+                        .from('banks')
+                        .select('*')
+                        .order('name', { ascending: true })
+                ]);
+
+                if (bankersResult.error) throw bankersResult.error;
+                if (banksResult.error) throw banksResult.error;
+
+                bankers = bankersResult.data || [];
+                banks = banksResult.data || [];
+                filteredBankers = [...bankers];
+                
+                renderBankersTable();
+                updatePagination();
+                populateBankFilter();
+                populateBankAccessGrid();
+                
+                showNotification(`Loaded ${bankers.length} bankers successfully`, 'success');
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showNotification('Failed to load data: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function saveBanker() {
+            try {
+                const form = document.getElementById('bankerForm');
+                const formData = new FormData(form);
+                
+                // Get selected bank access
+                const selectedBanks = [];
+                const checkboxes = document.querySelectorAll('#bankAccessGrid input[type="checkbox"]:checked');
+                checkboxes.forEach(checkbox => {
+                    selectedBanks.push(checkbox.value);
+                });
+                
+                const bankerData = {
+                    name: formData.get('name').trim(),
+                    email: formData.get('email').trim(),
+                    bank_access: selectedBanks,
+                    notes: formData.get('notes')?.trim() || null
+                };
+
+                // Validation
+                if (!bankerData.name || !bankerData.email) {
+                    showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                // Check for duplicate email (case insensitive)
+                const existingBanker = bankers.find(banker => 
+                    banker.email.toLowerCase() === bankerData.email.toLowerCase() && 
+                    banker.id !== editingBankerId
+                );
+                
+                if (existingBanker) {
+                    showNotification('A banker with this email already exists', 'error');
+                    return;
+                }
+
+                showLoading(editingBankerId ? 'Updating banker...' : 'Creating banker...');
+
+                let result;
+                if (editingBankerId) {
+                    // Update existing banker
+                    result = await supabaseClient
+                        .from('bankers')
+                        .update(bankerData)
+                        .eq('id', editingBankerId);
+                } else {
+                    // Create new banker
+                    result = await supabaseClient
+                        .from('bankers')
+                        .insert([bankerData]);
+                }
+
+                if (result.error) throw result.error;
+
+                showNotification(
+                    editingBankerId ? 'Banker updated successfully' : 'Banker created successfully', 
+                    'success'
+                );
+                
+                closeModal('banker-modal');
+                loadData();
+                resetForm();
+
+            } catch (error) {
+                console.error('Error saving banker:', error);
+                if (error.code === '23505') {
+                    showNotification('A banker with this email already exists', 'error');
+                } else {
+                    showNotification('Failed to save banker: ' + error.message, 'error');
+                }
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function deleteBanker(id) {
+            const banker = bankers.find(b => b.id === id);
+            if (!banker) return;
+
+            if (!confirm(`Are you sure you want to delete "${banker.name}"? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                showLoading('Deleting banker...');
+
+                const { error } = await supabaseClient
+                    .from('bankers')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showNotification('Banker deleted successfully', 'success');
+                loadData();
+
+            } catch (error) {
+                console.error('Error deleting banker:', error);
+                showNotification('Failed to delete banker: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ===================================
+        // UI FUNCTIONS
+        // ===================================
+        function renderBankersTable() {
+            const tbody = document.getElementById('bankersTableBody');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+
+            // Hide loading state
+            loadingState.style.display = 'none';
+
+            if (filteredBankers.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedBankers = filteredBankers.slice(startIndex, endIndex);
+
+            tbody.innerHTML = paginatedBankers.map(banker => `
+                <tr>
+                    <td class="banker-name">${escapeHtml(banker.name)}</td>
+                    <td>${escapeHtml(banker.email)}</td>
+                    <td class="bank-access">
+                        ${formatBankAccess(banker.bank_access)}
+                    </td>
+                    <td>${formatDate(banker.created_at)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-edit" onclick="editBanker('${banker.id}')">
+                                <i data-lucide="edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-delete" onclick="deleteBanker('${banker.id}')">
+                                <i data-lucide="trash-2"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Reinitialize icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function formatBankAccess(bankAccess) {
+            if (!bankAccess || bankAccess.length === 0) {
+                return '<span class="text-muted">No access</span>';
+            }
+            
+            // Get bank names from bank IDs
+            const bankNames = bankAccess.map(bankId => {
+                const bank = banks.find(b => b.id === bankId);
+                return bank ? bank.name : 'Unknown Bank';
             });
             
-            if (bankerData) {
-                document.getElementById('bankerName').value = bankerData.name;
-                document.getElementById('bankerEmail').value = bankerData.email;
-                
-                // Check appropriate bank access checkboxes
-                if (bankerData.bankAccess !== '-') {
-                    const banks = bankerData.bankAccess.split(' ');
-                    banks.forEach(bank => {
-                        const checkbox = document.querySelector(`input[value="${bank}"]`);
-                        if (checkbox) checkbox.checked = true;
-                    });
-                }
+            // Show first few banks, then count if more
+            if (bankNames.length <= 3) {
+                return bankNames.join(', ');
+            } else {
+                return `${bankNames.slice(0, 3).join(', ')} +${bankNames.length - 3} more`;
             }
+        }
+
+        function editBanker(id) {
+            const banker = bankers.find(b => b.id === id);
+            if (!banker) return;
+
+            editingBankerId = id;
+            
+            document.getElementById('bankerModalTitle').textContent = 'Edit Banker';
+            document.getElementById('saveButtonText').textContent = 'Update Banker';
+            
+            // Populate form
+            document.getElementById('bankerName').value = banker.name;
+            document.getElementById('bankerEmail').value = banker.email;
+            document.getElementById('bankerNotes').value = banker.notes || '';
+            
+            // Set bank access checkboxes
+            const checkboxes = document.querySelectorAll('#bankAccessGrid input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = banker.bank_access && banker.bank_access.includes(checkbox.value);
+            });
             
             openModal('banker-modal');
         }
 
-        // Delete banker function
-        function deleteBanker(id) {
-            if (confirm('Are you sure you want to delete this banker?')) {
-                // Here you would implement the delete functionality
-                console.log('Deleting banker:', id);
-                
-                // Remove the row from the table (for demo purposes)
-                const rows = document.querySelectorAll('#bankersTable tr');
-                rows.forEach(row => {
-                    const editBtn = row.querySelector(`button[onclick*="${id}"]`);
-                    if (editBtn) {
-                        row.remove();
-                    }
-                });
-            }
+        function resetForm() {
+            editingBankerId = null;
+            document.getElementById('bankerForm').reset();
+            document.getElementById('bankerModalTitle').textContent = 'Add Banker';
+            document.getElementById('saveButtonText').textContent = 'Save Banker';
+            
+            // Clear all bank access checkboxes
+            const checkboxes = document.querySelectorAll('#bankAccessGrid input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
         }
 
-        // Save banker function
-        function saveBanker() {
-            const name = document.getElementById('bankerName').value.trim();
-            const email = document.getElementById('bankerEmail').value.trim();
+        function populateBankFilter() {
+            const filter = document.getElementById('bankFilter');
+            filter.innerHTML = '<option value="">All Banks</option>';
             
-            if (!name || !email) {
-                alert('Please enter both name and email');
+            banks.forEach(bank => {
+                filter.innerHTML += `<option value="${bank.id}">${escapeHtml(bank.name)}</option>`;
+            });
+        }
+
+        function populateBankAccessGrid() {
+            const grid = document.getElementById('bankAccessGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = banks.map(bank => `
+                <label class="bank-access-item">
+                    <input type="checkbox" value="${bank.id}">
+                    <span class="checkmark"></span>
+                    <span class="bank-name">${escapeHtml(bank.name)}</span>
+                </label>
+            `).join('');
+        }
+
+        function selectAllBanks() {
+            const checkboxes = document.querySelectorAll('#bankAccessGrid input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        }
+
+        function clearAllBanks() {
+            const checkboxes = document.querySelectorAll('#bankAccessGrid input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        // ===================================
+        // UTILITY FUNCTIONS
+        // ===================================
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                applyFilters();
+            });
+
+            // Bank filter
+            document.getElementById('bankFilter').addEventListener('change', function(e) {
+                applyFilters();
+            });
+
+            // Modal form submission
+            document.getElementById('bankerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveBanker();
+            });
+
+            // Escape key to close modals
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modals = document.querySelectorAll('.modal[style*="flex"]');
+                    modals.forEach(modal => {
+                        closeModal(modal.id);
+                    });
+                }
+            });
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const bankFilter = document.getElementById('bankFilter').value;
+            
+            filteredBankers = bankers.filter(banker => {
+                const matchesSearch = banker.name.toLowerCase().includes(searchTerm) ||
+                                    banker.email.toLowerCase().includes(searchTerm);
+                
+                const matchesBank = !bankFilter || 
+                                  (banker.bank_access && banker.bank_access.includes(bankFilter));
+                
+                return matchesSearch && matchesBank;
+            });
+            
+            currentPage = 1;
+            renderBankersTable();
+            updatePagination();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('bankFilter').value = '';
+            filteredBankers = [...bankers];
+            currentPage = 1;
+            renderBankersTable();
+            updatePagination();
+        }
+
+        function exportToCSV() {
+            if (filteredBankers.length === 0) {
+                showNotification('No data to export', 'warning');
                 return;
             }
 
-            // Get selected bank access
-            const selectedBanks = [];
-            document.querySelectorAll('#banker-modal input[type="checkbox"]:checked').forEach(cb => {
-                selectedBanks.push(cb.value);
-            });
+            const headers = ['Name', 'Email', 'Bank Access', 'Notes', 'Created At'];
+            const csvData = [
+                headers.join(','),
+                ...filteredBankers.map(banker => [
+                    `"${banker.name}"`,
+                    `"${banker.email}"`,
+                    `"${formatBankAccess(banker.bank_access)}"`,
+                    `"${banker.notes || ''}"`,
+                    `"${formatDate(banker.created_at)}"`
+                ].join(','))
+            ].join('\n');
 
-            const bankAccess = selectedBanks.length > 0 ? selectedBanks.join(' ') : '-';
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bankers-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
 
-            if (editingBankerId) {
-                // Update existing banker
-                console.log('Updating banker:', editingBankerId, { name, email, bankAccess });
+            showNotification('Bankers data exported successfully', 'success');
+        }
+
+        // ===================================
+        // MODAL FUNCTIONS
+        // ===================================
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
                 
-                // Update the table row (for demo purposes)
-                const rows = document.querySelectorAll('#bankersTable tr');
-                rows.forEach(row => {
-                    const editBtn = row.querySelector(`button[onclick*="${editingBankerId}"]`);
-                    if (editBtn) {
-                        row.cells[0].textContent = name;
-                        row.cells[1].textContent = email;
-                        row.cells[2].textContent = bankAccess;
-                    }
-                });
-            } else {
-                // Add new banker
-                console.log('Adding new banker:', { name, email, bankAccess });
-                
-                // Add new row to table (for demo purposes)
-                const tableBody = document.getElementById('bankersTable');
-                const newId = Date.now(); // Simple ID generation for demo
-                const newRow = document.createElement('tr');
-                newRow.innerHTML = `
-                    <td class="banker-name">${name}</td>
-                    <td>${email}</td>
-                    <td class="bank-access">${bankAccess}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-sm btn-edit" onclick="editBanker(${newId})">Edit</button>
-                            <button class="btn btn-sm btn-delete" onclick="deleteBanker(${newId})">Delete</button>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(newRow);
-            }
-            
-            closeModal('banker-modal');
-        }
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#bankersTable tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('mobile-open');
-        }
-
-        // Add mobile menu button for responsive design
-        if (window.innerWidth <= 768) {
-            const headerActions = document.querySelector('.header-actions');
-            const menuButton = document.createElement('button');
-            menuButton.className = 'btn btn-secondary';
-            menuButton.innerHTML = '<i data-lucide="menu"></i>';
-            menuButton.onclick = toggleSidebar;
-            headerActions.prepend(menuButton);
-            lucide.createIcons();
-        }
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                if (!sidebar.contains(e.target) && !e.target.closest('.btn-secondary')) {
-                    sidebar.classList.remove('mobile-open');
+                // Focus first input in forms
+                const firstInput = modal.querySelector('input, select, textarea');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
                 }
             }
-        });
+        }
 
-        // Handle form submission
-        document.getElementById('bankerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            saveBanker();
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                // Reset form if it's the banker modal
+                if (modalId === 'banker-modal') {
+                    resetForm();
+                }
+            }
+        }
+
+        // ===================================
+        // PAGINATION FUNCTIONS
+        // ===================================
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredBankers.length / itemsPerPage);
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, filteredBankers.length);
+
+            // Update pagination info
+            document.getElementById('paginationInfo').textContent = 
+                `Showing ${startItem} to ${endItem} of ${filteredBankers.length}`;
+
+            // Update pagination controls
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+
+            // Update page numbers
+            const pageNumbers = document.getElementById('pageNumbers');
+            pageNumbers.innerHTML = '';
+            
+            if (totalPages > 0) {
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        const pageBtn = document.createElement('button');
+                        pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                        pageBtn.textContent = i;
+                        pageBtn.onclick = () => {
+                            currentPage = i;
+                            renderBankersTable();
+                            updatePagination();
+                        };
+                        pageNumbers.appendChild(pageBtn);
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.className = 'pagination-ellipsis';
+                        pageNumbers.appendChild(ellipsis);
+                    }
+                }
+            }
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredBankers.length / itemsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderBankersTable();
+                updatePagination();
+            }
+        }
+
+        // ===================================
+        // UTILITY FUNCTIONS
+        // ===================================
+        function showLoading(message = 'Loading...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const messageEl = document.getElementById('loadingMessage');
+            if (overlay && messageEl) {
+                messageEl.textContent = message;
+                overlay.style.display = 'flex';
+            }
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-message">${escapeHtml(message)}</div>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(notification);
+
+            // Initialize icons for the close button
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+
+            // Add animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (sidebar && overlay) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-SG', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Initialize everything when page loads
+        window.addEventListener('load', function() {
+            console.log('✅ Bankers page fully loaded and initialized');
         });
     </script>
 </body>
