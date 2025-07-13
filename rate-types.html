@@ -3,570 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Type - Keyquest Mortgage</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #334155;
-        }
-
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: white;
-            border-right: 1px solid #e2e8f0;
-            padding: 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .sidebar-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 20px;
-            font-weight: 700;
-            color: #1e293b;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .nav-menu {
-            padding: 24px 0;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        .nav-item:hover {
-            background: #f1f5f9;
-            color: #334155;
-        }
-
-        .nav-item.active {
-            background: #e0e7ff;
-            color: #4338ca;
-            border-right: 3px solid #4338ca;
-        }
-
-        .nav-item i {
-            width: 20px;
-            height: 20px;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 0;
-        }
-
-        .header {
-            background: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 16px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: #4338ca;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #3730a3;
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-sm {
-            padding: 4px 8px;
-            font-size: 12px;
-            border-radius: 6px;
-        }
-
-        .btn-edit {
-            background: #f0f9ff;
-            color: #0369a1;
-            border: 1px solid #bae6fd;
-        }
-
-        .btn-delete {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .user-profile:hover {
-            background: #f1f5f9;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #4338ca;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .user-info {
-            flex: 1;
-        }
-
-        .user-name {
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .user-role {
-            color: #64748b;
-            font-size: 12px;
-        }
-
-        .content-area {
-            padding: 32px;
-        }
-
-        .search-filter-bar {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            min-width: 300px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 16px 10px 40px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            width: 16px;
-            height: 16px;
-        }
-
-        .filter-select {
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-            min-width: 140px;
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .data-table {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .table th {
-            background: #f8fafc;
-            padding: 16px;
-            text-align: left;
-            font-weight: 600;
-            color: #475569;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .table td {
-            padding: 16px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 14px;
-            vertical-align: top;
-        }
-
-        .table tr:hover {
-            background: #f8fafc;
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .rate-value {
-            font-weight: 600;
-            color: #059669;
-            font-size: 16px;
-        }
-
-        .bank-list {
-            font-size: 12px;
-            color: #64748b;
-            line-height: 1.4;
-            max-width: 400px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .pagination-info {
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .pagination-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .pagination-btn {
-            padding: 8px 12px;
-            border: 1px solid #e2e8f0;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .pagination-btn:hover {
-            background: #f8fafc;
-        }
-
-        .pagination-btn.active {
-            background: #4338ca;
-            color: white;
-            border-color: #4338ca;
-        }
-
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            padding: 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: #64748b;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .modal-close:hover {
-            background: #f1f5f9;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            grid-column: span 2;
-        }
-
-        .form-group.half {
-            grid-column: span 1;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #374151;
-            font-size: 14px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-        }
-
-        .form-select:focus {
-            outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
-        }
-
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .checkbox-item:hover {
-            background: #f8fafc;
-        }
-
-        .checkbox-item input[type="checkbox"]:checked + label {
-            color: #4338ca;
-            font-weight: 500;
-        }
-
-        .modal-footer {
-            padding: 24px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .search-filter-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-box {
-                min-width: 100%;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.half {
-                grid-column: span 1;
-            }
-
-            .table {
-                font-size: 12px;
-            }
-
-            .table th,
-            .table td {
-                padding: 8px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .checkbox-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <title>Rate Types - Keyquest Admin</title>
+    
+    <!-- Standardized CSS Link -->
+    <link rel="stylesheet" href="css/admin-styles.css">
+    
+    <!-- External Scripts in proper order -->
+    <script src="js/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config/supabase.js"></script>
+    <script src="js/admin-scripts.js"></script>
 </head>
 <body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    
     <div class="admin-container">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
@@ -611,31 +61,47 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <header class="header">
-                <h1 class="header-title">Rate Type</h1>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="openModal('rate-type-modal')">
-                        <i data-lucide="plus"></i>
-                        Add Rate Type
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
                     </button>
-                    <div class="user-profile">
-                        <div class="user-avatar">A</div>
-                        <div class="user-info">
-                            <div class="user-name">admin</div>
-                            <div class="user-role">Super Admin</div>
+                    <h1 class="page-title">Rate Type</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i data-lucide="user"></i>
                         </div>
+                        <div class="user-details">
+                            <span class="user-name">admin</span>
+                            <span class="user-role">Super Admin</span>
+                        </div>
+                        <button class="btn-icon" onclick="confirmSignOut()">
+                            <i data-lucide="log-out"></i>
+                        </button>
                     </div>
                 </div>
             </header>
 
-            <div class="content-area">
-                <!-- Search and Filter Bar -->
-                <div class="search-filter-bar">
-                    <div class="search-box">
-                        <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" class="search-input" placeholder="Search here..." id="searchInput">
+            <main class="content">
+                <div class="content-header">
+                    <div class="actions">
+                        <button class="btn btn-primary" onclick="openAddRateTypeModal()">
+                            <i data-lucide="plus"></i>
+                            <span>Add Rate Type</span>
+                        </button>
                     </div>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="filters">
+                    <div class="search-container">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search here...">
+                    </div>
+
                     <select class="filter-select" id="bankFilter">
                         <option value="">All bank</option>
                         <option value="CIMB">CIMB</option>
@@ -643,393 +109,778 @@
                         <option value="UOB">UOB</option>
                         <option value="DBS">DBS</option>
                         <option value="Maybank">Maybank</option>
-                        <option value="Multiple">Multiple Banks</option>
+                        <option value="Standard Chartered">Standard Chartered</option>
+                        <option value="HSBC">HSBC</option>
+                        <option value="SBI">SBI</option>
+                        <option value="Bank Of China">Bank Of China</option>
+                        <option value="Hong Leong Finance">Hong Leong Finance</option>
+                        <option value="Singapura Finance">Singapura Finance</option>
+                        <option value="RHB Bank">RHB Bank</option>
+                        <option value="Sing Investments & Finance">Sing Investments & Finance</option>
+                        <option value="Citibank">Citibank</option>
                     </select>
-                    <button class="btn btn-secondary" onclick="clearFilters()">
-                        Filter
+
+                    <button class="btn btn-secondary" id="filterButton" onclick="applyFilters()">
+                        <i data-lucide="filter"></i>
+                        <span>Filter</span>
                     </button>
                 </div>
 
                 <!-- Data Table -->
                 <div class="data-table">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Rate Type</th>
-                                <th>Rate Value</th>
-                                <th>Bank Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rateTypesTable">
-                            <tr>
-                                <td><strong>FIXED</strong></td>
-                                <td class="rate-value">0.00%</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(4)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(4)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>PPR</strong></td>
-                                <td class="rate-value">6.15%</td>
-                                <td>
-                                    <div class="bank-list">Hong Leong Finance</div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(5)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(5)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>PLR</strong></td>
-                                <td class="rate-value">5.35%</td>
-                                <td>
-                                    <div class="bank-list">Singapura Finance</div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(6)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(6)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>HHR</strong></td>
-                                <td class="rate-value">7.00%</td>
-                                <td>
-                                    <div class="bank-list">Hong Leong Finance</div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(7)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(7)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>PBR</strong></td>
-                                <td class="rate-value">4.05%</td>
-                                <td>
-                                    <div class="bank-list">Hong Leong Finance</div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(8)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(8)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>NMBR</strong></td>
-                                <td class="rate-value">7.85%</td>
-                                <td>
-                                    <div class="bank-list">Maybank</div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(9)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(9)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>1M COF</strong></td>
-                                <td class="rate-value">3.12%</td>
-                                <td>
-                                    <div class="bank-list">RHB Bank</div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(10)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(10)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Rate Type</th>
+                                    <th>Rate Value</th>
+                                    <th>Bank Name</th>
+                                    <th style="text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rateTypesTable">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 40px;">
+                                        <div class="loading-spinner">
+                                            <i data-lucide="loader-2" class="spinner"></i>
+                                            <span>Loading rate types...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <!-- Pagination -->
                     <div class="pagination">
-                        <div class="pagination-info">
+                        <div class="pagination-info" id="paginationInfo">
                             Showing 1 of 10
                         </div>
                         <div class="pagination-controls">
-                            <button class="pagination-btn" disabled>
+                            <button class="pagination-btn" id="prevBtn" onclick="previousPage()" disabled>
                                 <i data-lucide="chevron-left"></i>
                             </button>
-                            <button class="pagination-btn active">1</button>
-                            <button class="pagination-btn">2</button>
-                            <button class="pagination-btn">
+                            <span class="page-numbers" id="pageNumbers">
+                                <span class="page-number active">1</span>
+                                <span class="page-number">2</span>
+                                <span class="page-number">3</span>
+                            </span>
+                            <button class="pagination-btn" id="nextBtn" onclick="nextPage()">
                                 <i data-lucide="chevron-right"></i>
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
 
-    <!-- Add/Edit Rate Type Modal -->
-    <div class="modal" id="rate-type-modal">
+    <!-- Add Rate Type Modal -->
+    <div class="modal" id="add-rate-type-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Add Rate Type</h3>
-                <button class="modal-close" onclick="closeModal('rate-type-modal')">
+                <h3>Add Rate Type</h3>
+                <button class="btn-icon" onclick="closeModal('add-rate-type-modal')">
                     <i data-lucide="x"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form id="rateTypeForm">
-                    <div class="form-grid">
-                        <div class="form-group half">
-                            <label class="form-label">Rate type</label>
-                            <input type="text" class="form-input" placeholder="Enter rate type name" required>
-                        </div>
+            <form id="addRateTypeForm" onsubmit="submitRateType(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Rate type</label>
+                        <input type="text" class="form-input" name="rate_type" placeholder="Enter rate type" required>
+                    </div>
 
-                        <div class="form-group half">
-                            <label class="form-label">Rate value</label>
-                            <div style="position: relative;">
-                                <input type="number" class="form-input" step="0.001" placeholder="0.000" required style="padding-right: 30px;">
-                                <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #64748b;">%</span>
+                    <div class="form-group">
+                        <label class="form-label">Rate value</label>
+                        <div class="input-group">
+                            <input type="number" class="form-input" name="rate_value" step="0.001" placeholder="0.000" required>
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Bank name</label>
+                        <div class="multiselect-dropdown" onclick="toggleMultiSelect(event)">
+                            <div class="multiselect-selected" id="selectedBanks">
+                                Select banks
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Bank name</label>
-                            <div class="checkbox-grid">
-                                <div class="checkbox-item">
+                            <i data-lucide="chevron-down" class="multiselect-arrow"></i>
+                            <div class="multiselect-options" id="bankOptions">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-cimb" value="CIMB">
                                     <label for="bank-cimb">CIMB</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-ocbc" value="OCBC">
                                     <label for="bank-ocbc">OCBC</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-uob" value="UOB">
                                     <label for="bank-uob">UOB</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-dbs" value="DBS">
                                     <label for="bank-dbs">DBS</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-maybank" value="Maybank">
                                     <label for="bank-maybank">Maybank</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-sc" value="Standard Chartered">
                                     <label for="bank-sc">Standard Chartered</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-hsbc" value="HSBC">
                                     <label for="bank-hsbc">HSBC</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-sbi" value="SBI">
                                     <label for="bank-sbi">SBI</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-boc" value="Bank Of China">
                                     <label for="bank-boc">Bank Of China</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-hlf" value="Hong Leong Finance">
                                     <label for="bank-hlf">Hong Leong Finance</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-sf" value="Singapura Finance">
                                     <label for="bank-sf">Singapura Finance</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-rhb" value="RHB Bank">
                                     <label for="bank-rhb">RHB Bank</label>
                                 </div>
-                                <div class="checkbox-item">
+                                <div class="multiselect-option">
                                     <input type="checkbox" id="bank-sif" value="Sing Investments & Finance">
                                     <label for="bank-sif">Sing Investments & Finance</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="bank-citibank" value="Citibank">
+                                    <label for="bank-citibank">Citibank</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('add-rate-type-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Rate Type Modal -->
+    <div class="modal" id="edit-rate-type-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Rate Type</h3>
+                <button class="btn-icon" onclick="closeModal('edit-rate-type-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="editRateTypeForm" onsubmit="updateRateType(event)">
+                <input type="hidden" name="id" id="editRateTypeId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Rate type</label>
+                        <input type="text" class="form-input" name="rate_type" id="editRateType" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Rate value</label>
+                        <div class="input-group">
+                            <input type="number" class="form-input" name="rate_value" id="editRateValue" step="0.001" required>
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Bank name</label>
+                        <div class="multiselect-dropdown" onclick="toggleMultiSelect(event)">
+                            <div class="multiselect-selected" id="editSelectedBanks">
+                                Select banks
+                            </div>
+                            <i data-lucide="chevron-down" class="multiselect-arrow"></i>
+                            <div class="multiselect-options" id="editBankOptions">
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-cimb" value="CIMB">
+                                    <label for="edit-bank-cimb">CIMB</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-ocbc" value="OCBC">
+                                    <label for="edit-bank-ocbc">OCBC</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-uob" value="UOB">
+                                    <label for="edit-bank-uob">UOB</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-dbs" value="DBS">
+                                    <label for="edit-bank-dbs">DBS</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-maybank" value="Maybank">
+                                    <label for="edit-bank-maybank">Maybank</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-sc" value="Standard Chartered">
+                                    <label for="edit-bank-sc">Standard Chartered</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-hsbc" value="HSBC">
+                                    <label for="edit-bank-hsbc">HSBC</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-sbi" value="SBI">
+                                    <label for="edit-bank-sbi">SBI</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-boc" value="Bank Of China">
+                                    <label for="edit-bank-boc">Bank Of China</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-hlf" value="Hong Leong Finance">
+                                    <label for="edit-bank-hlf">Hong Leong Finance</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-sf" value="Singapura Finance">
+                                    <label for="edit-bank-sf">Singapura Finance</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-rhb" value="RHB Bank">
+                                    <label for="edit-bank-rhb">RHB Bank</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-sif" value="Sing Investments & Finance">
+                                    <label for="edit-bank-sif">Sing Investments & Finance</label>
+                                </div>
+                                <div class="multiselect-option">
+                                    <input type="checkbox" id="edit-bank-citibank" value="Citibank">
+                                    <label for="edit-bank-citibank">Citibank</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('edit-rate-type-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button class="btn-icon" onclick="closeModal('delete-confirmation-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this rate type? This action cannot be undone.</p>
+                <div class="rate-type-info" id="deleteRateTypeInfo"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('rate-type-modal')">Cancel</button>
-                <button class="btn btn-primary" onclick="saveRateType()">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal('delete-confirmation-modal')">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteRateType()">Delete</button>
             </div>
         </div>
     </div>
 
+    <!-- Success/Error Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <i data-lucide="check-circle" class="notification-icon"></i>
+            <span class="notification-message">Operation completed successfully</span>
+        </div>
+    </div>
+
     <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
+        // Rate Types Management
+        let rateTypes = [];
+        let filteredRateTypes = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let deleteRateTypeId = null;
 
-        // Modal functionality
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Close modal when clicking outside
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            AdminApp.currentPage = 'rate-types';
+            checkAuthentication();
+            loadRateTypes();
+            initializeSearch();
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         });
 
-        // Edit rate type function
-        function editRateType(id) {
-            // Here you would typically load the rate type data and populate the form
-            document.querySelector('.modal-title').textContent = 'Edit Rate Type';
-            openModal('rate-type-modal');
-        }
-
-        // Delete rate type function
-        function deleteRateType(id) {
-            if (confirm('Are you sure you want to delete this rate type?')) {
-                // Here you would implement the delete functionality
-                console.log('Deleting rate type:', id);
+        function checkAuthentication() {
+            // Check if user is authenticated
+            if (!localStorage.getItem('admin_session')) {
+                window.location.href = 'login.html';
+                return;
             }
         }
 
-        // Save rate type function
-        function saveRateType() {
-            // Here you would implement the save functionality
-            const formData = new FormData(document.getElementById('rateTypeForm'));
-            console.log('Saving rate type:', Object.fromEntries(formData));
-            closeModal('rate-type-modal');
-        }
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#rateTypesTable tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-
-        // Filter functionality
-        function clearFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('bankFilter').value = '';
-            
-            // Show all rows
-            document.querySelectorAll('#rateTypesTable tr').forEach(row => {
-                row.style.display = '';
-            });
-        }
-
-        // Bank filter functionality
-        document.getElementById('bankFilter').addEventListener('change', function(e) {
-            const selectedBank = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#rateTypesTable tr');
-            
-            rows.forEach(row => {
-                const bankText = row.querySelector('.bank-list').textContent.toLowerCase();
-                if (!selectedBank || bankText.includes(selectedBank)) {
-                    row.style.display = '';
+        async function loadRateTypes() {
+            try {
+                showLoading();
+                const result = await SupabaseService.getRateTypes();
+                
+                if (result.success) {
+                    rateTypes = result.data || [];
+                    filteredRateTypes = [...rateTypes];
+                    displayRateTypes();
+                    updatePagination();
                 } else {
-                    row.style.display = 'none';
+                    showNotification('Failed to load rate types: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error loading rate types:', error);
+                showNotification('Error loading rate types', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayRateTypes() {
+            const tableBody = document.getElementById('rateTypesTable');
+            if (!tableBody) return;
+
+            if (filteredRateTypes.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 40px;">
+                            <div class="no-data">
+                                <i data-lucide="inbox" style="width: 48px; height: 48px; color: #9ca3af; margin-bottom: 16px;"></i>
+                                <h3 style="color: #6b7280; margin-bottom: 8px;">No rate types found</h3>
+                                <p style="color: #9ca3af;">Try adjusting your search or filters</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedRateTypes = filteredRateTypes.slice(startIndex, endIndex);
+
+            tableBody.innerHTML = paginatedRateTypes.map(rateType => `
+                <tr>
+                    <td>
+                        <div class="rate-type-name">${escapeHtml(rateType.rate_type || 'N/A')}</div>
+                    </td>
+                    <td>
+                        <div class="rate-value">${rateType.rate_value ? rateType.rate_value + '%' : 'N/A'}</div>
+                    </td>
+                    <td>
+                        <div class="bank-list">${formatBankNames(rateType.bank_names)}</div>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-outline" onclick="editRateType('${rateType.id}')" title="Edit">
+                                <i data-lucide="edit-2"></i>
+                                <span>Edit</span>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteRateType('${rateType.id}')" title="Delete">
+                                <i data-lucide="trash-2"></i>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Re-initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function formatBankNames(bankNames) {
+            if (!bankNames || !Array.isArray(bankNames) || bankNames.length === 0) {
+                return 'No banks assigned';
+            }
+            
+            if (bankNames.length <= 3) {
+                return bankNames.join(', ');
+            } else {
+                return bankNames.slice(0, 3).join(', ') + ` +${bankNames.length - 3} more`;
+            }
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const bankFilter = document.getElementById('bankFilter').value;
+
+            filteredRateTypes = rateTypes.filter(rateType => {
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    rateType.rate_type?.toLowerCase().includes(searchTerm) ||
+                    rateType.rate_value?.toString().includes(searchTerm) ||
+                    (rateType.bank_names && rateType.bank_names.some(bank => 
+                        bank.toLowerCase().includes(searchTerm)
+                    ));
+
+                // Bank filter
+                const matchesBank = !bankFilter || 
+                    (rateType.bank_names && rateType.bank_names.includes(bankFilter));
+
+                return matchesSearch && matchesBank;
+            });
+
+            currentPage = 1;
+            displayRateTypes();
+            updatePagination();
+        }
+
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const bankFilter = document.getElementById('bankFilter');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', debounce(applyFilters, 300));
+            }
+            
+            if (bankFilter) {
+                bankFilter.addEventListener('change', applyFilters);
+            }
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredRateTypes.length / itemsPerPage);
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, filteredRateTypes.length);
+
+            // Update pagination info
+            const paginationInfo = document.getElementById('paginationInfo');
+            if (paginationInfo) {
+                paginationInfo.textContent = `Showing ${startItem} to ${endItem} of ${filteredRateTypes.length}`;
+            }
+
+            // Update pagination buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (prevBtn) {
+                prevBtn.disabled = currentPage === 1;
+            }
+            
+            if (nextBtn) {
+                nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+            }
+
+            // Update page numbers
+            updatePageNumbers(totalPages);
+        }
+
+        function updatePageNumbers(totalPages) {
+            const pageNumbers = document.getElementById('pageNumbers');
+            if (!pageNumbers || totalPages === 0) return;
+
+            let pages = [];
+            const showPages = 3;
+            
+            let startPage = Math.max(1, currentPage - Math.floor(showPages / 2));
+            let endPage = Math.min(totalPages, startPage + showPages - 1);
+            
+            if (endPage - startPage + 1 < showPages) {
+                startPage = Math.max(1, endPage - showPages + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                pages.push(i);
+            }
+
+            pageNumbers.innerHTML = pages.map(page => `
+                <span class="page-number ${page === currentPage ? 'active' : ''}" onclick="goToPage(${page})">
+                    ${page}
+                </span>
+            `).join('');
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayRateTypes();
+                updatePagination();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredRateTypes.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayRateTypes();
+                updatePagination();
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            displayRateTypes();
+            updatePagination();
+        }
+
+        // Modal functions
+        function openAddRateTypeModal() {
+            document.getElementById('addRateTypeForm').reset();
+            resetMultiSelect('bankOptions', 'selectedBanks');
+            openModal('add-rate-type-modal');
+        }
+
+        function editRateType(id) {
+            const rateType = rateTypes.find(rt => rt.id === id);
+            if (!rateType) return;
+
+            // Populate edit form
+            document.getElementById('editRateTypeId').value = rateType.id;
+            document.getElementById('editRateType').value = rateType.rate_type || '';
+            document.getElementById('editRateValue').value = rateType.rate_value || '';
+
+            // Set selected banks
+            resetMultiSelect('editBankOptions', 'editSelectedBanks');
+            if (rateType.bank_names && Array.isArray(rateType.bank_names)) {
+                rateType.bank_names.forEach(bankName => {
+                    const checkbox = document.querySelector(`#editBankOptions input[value="${bankName}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+                updateMultiSelectDisplay('editBankOptions', 'editSelectedBanks');
+            }
+
+            openModal('edit-rate-type-modal');
+        }
+
+        function deleteRateType(id) {
+            const rateType = rateTypes.find(rt => rt.id === id);
+            if (!rateType) return;
+
+            deleteRateTypeId = id;
+            document.getElementById('deleteRateTypeInfo').innerHTML = `
+                <div class="delete-info">
+                    <strong>Rate Type:</strong> ${escapeHtml(rateType.rate_type)}<br>
+                    <strong>Rate Value:</strong> ${rateType.rate_value}%<br>
+                    <strong>Banks:</strong> ${formatBankNames(rateType.bank_names)}
+                </div>
+            `;
+            openModal('delete-confirmation-modal');
+        }
+
+        async function confirmDeleteRateType() {
+            if (!deleteRateTypeId) return;
+
+            try {
+                showLoading();
+                const result = await SupabaseService.deleteRateType(deleteRateTypeId);
+                
+                if (result.success) {
+                    showNotification('Rate type deleted successfully', 'success');
+                    closeModal('delete-confirmation-modal');
+                    loadRateTypes();
+                    addRecentAction('delete', `Deleted rate type`);
+                } else {
+                    showNotification('Failed to delete rate type: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting rate type:', error);
+                showNotification('Error deleting rate type', 'error');
+            } finally {
+                hideLoading();
+                deleteRateTypeId = null;
+            }
+        }
+
+        async function submitRateType(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const selectedBanks = getSelectedBanks('bankOptions');
+            
+            if (selectedBanks.length === 0) {
+                showNotification('Please select at least one bank', 'error');
+                return;
+            }
+
+            const rateTypeData = {
+                rate_type: formData.get('rate_type'),
+                rate_value: parseFloat(formData.get('rate_value')),
+                bank_names: selectedBanks
+            };
+
+            try {
+                showLoading();
+                const result = await SupabaseService.createRateType(rateTypeData);
+                
+                if (result.success) {
+                    showNotification('Rate type created successfully', 'success');
+                    closeModal('add-rate-type-modal');
+                    loadRateTypes();
+                    addRecentAction('create', `Created rate type: ${rateTypeData.rate_type}`);
+                } else {
+                    showNotification('Failed to create rate type: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error creating rate type:', error);
+                showNotification('Error creating rate type', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function updateRateType(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const selectedBanks = getSelectedBanks('editBankOptions');
+            const id = formData.get('id');
+            
+            if (selectedBanks.length === 0) {
+                showNotification('Please select at least one bank', 'error');
+                return;
+            }
+
+            const rateTypeData = {
+                rate_type: formData.get('rate_type'),
+                rate_value: parseFloat(formData.get('rate_value')),
+                bank_names: selectedBanks
+            };
+
+            try {
+                showLoading();
+                const result = await SupabaseService.updateRateType(id, rateTypeData);
+                
+                if (result.success) {
+                    showNotification('Rate type updated successfully', 'success');
+                    closeModal('edit-rate-type-modal');
+                    loadRateTypes();
+                    addRecentAction('edit', `Updated rate type: ${rateTypeData.rate_type}`);
+                } else {
+                    showNotification('Failed to update rate type: ' + result.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error updating rate type:', error);
+                showNotification('Error updating rate type', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Multi-select functionality
+        function toggleMultiSelect(event) {
+            event.stopPropagation();
+            const dropdown = event.currentTarget;
+            const options = dropdown.querySelector('.multiselect-options');
+            const arrow = dropdown.querySelector('.multiselect-arrow');
+            
+            options.classList.toggle('show');
+            arrow.style.transform = options.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function updateMultiSelectDisplay(optionsId, displayId) {
+            const options = document.getElementById(optionsId);
+            const display = document.getElementById(displayId);
+            
+            if (!options || !display) return;
+            
+            const checkedBoxes = options.querySelectorAll('input[type="checkbox"]:checked');
+            const selectedValues = Array.from(checkedBoxes).map(cb => cb.value);
+            
+            if (selectedValues.length === 0) {
+                display.textContent = 'Select banks';
+            } else if (selectedValues.length <= 2) {
+                display.textContent = selectedValues.join(', ');
+            } else {
+                display.textContent = `${selectedValues.slice(0, 2).join(', ')} +${selectedValues.length - 2} more`;
+            }
+        }
+
+        function getSelectedBanks(optionsId) {
+            const options = document.getElementById(optionsId);
+            if (!options) return [];
+            
+            const checkedBoxes = options.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checkedBoxes).map(cb => cb.value);
+        }
+
+        function resetMultiSelect(optionsId, displayId) {
+            const options = document.getElementById(optionsId);
+            const display = document.getElementById(displayId);
+            
+            if (options) {
+                const checkboxes = options.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+            
+            if (display) {
+                display.textContent = 'Select banks';
+            }
+        }
+
+        // Event listeners for multi-select
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners for both add and edit multi-selects
+            ['bankOptions', 'editBankOptions'].forEach(optionsId => {
+                const displayId = optionsId === 'bankOptions' ? 'selectedBanks' : 'editSelectedBanks';
+                
+                const options = document.getElementById(optionsId);
+                if (options) {
+                    options.addEventListener('change', (e) => {
+                        if (e.target.type === 'checkbox') {
+                            updateMultiSelectDisplay(optionsId, displayId);
+                        }
+                    });
                 }
             });
         });
 
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('mobile-open');
-        }
-
-        // Add mobile menu button for responsive design
-        if (window.innerWidth <= 768) {
-            const headerActions = document.querySelector('.header-actions');
-            const menuButton = document.createElement('button');
-            menuButton.className = 'btn btn-secondary';
-            menuButton.innerHTML = '<i data-lucide="menu"></i>';
-            menuButton.onclick = toggleSidebar;
-            headerActions.prepend(menuButton);
-            lucide.createIcons();
-        }
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                if (!sidebar.contains(e.target) && !e.target.closest('.btn-secondary')) {
-                    sidebar.classList.remove('mobile-open');
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdowns = document.querySelectorAll('.multiselect-dropdown');
+            dropdowns.forEach(dropdown => {
+                if (!dropdown.contains(event.target)) {
+                    const options = dropdown.querySelector('.multiselect-options');
+                    const arrow = dropdown.querySelector('.multiselect-arrow');
+                    if (options && options.classList.contains('show')) {
+                        options.classList.remove('show');
+                        if (arrow) arrow.style.transform = 'rotate(0deg)';
+                    }
                 }
-            }
+            });
         });
 
-        // URL parameter handling for opening modal
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('action') === 'add') {
-            openModal('rate-type-modal');
+        // Utility functions
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
     </script>
 </body>
-</html>="bank-list">
-                                        CIMB, OCBC, UOB, DBS, Maybank, Standard Chartered, HSBC, SBI, Bank Of China, Hong Leong Finance, Singapura Finance, RHB Bank, Sing Investments & Finance
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(1)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(1)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>3M SORA</strong></td>
-                                <td class="rate-value">2.00%</td>
-                                <td>
-                                    <div class="bank-list">
-                                        CIMB, OCBC, UOB, DBS, Maybank, Standard Chartered, HSBC, SBI, Bank Of China, Hong Leong Finance, Singapura Finance, RHB Bank, Sing Investments & Finance
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(2)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(2)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>1M SORA</strong></td>
-                                <td class="rate-value">1.66%</td>
-                                <td>
-                                    <div class="bank-list">
-                                        CIMB, OCBC, UOB, DBS, Maybank, Standard Chartered, HSBC, SBI, Bank Of China, Hong Leong Finance, Singapura Finance, RHB Bank, Sing Investments & Finance
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn btn-sm btn-edit" onclick="editRateType(3)">Edit</button>
-                                        <button class="btn btn-sm btn-delete" onclick="deleteRateType(3)">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>FHR6</strong></td>
-                                <td class="rate-value">2.15%</td>
-                                <td>
-                                    <div class="bank-list">DBS</div>
-                                </td>
-                                <td>
-                                    <div class
+</html>
