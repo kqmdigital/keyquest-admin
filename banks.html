@@ -216,17 +216,6 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p id="loadingMessage">Please wait...</p>
-        </div>
-    </div>
-
-    <!-- Notification Container -->
-    <div class="notification-container" id="notificationContainer"></div>
-
     <script>
         // Enhanced Banks Management Script
         let banks = [];
@@ -670,55 +659,147 @@
         // ===================================
         // UTILITY FUNCTIONS
         // ===================================
-        function showLoading(message = 'Loading...') {
-            const overlay = document.getElementById('loadingOverlay');
-            const messageEl = document.getElementById('loadingMessage');
-            if (overlay && messageEl) {
-                messageEl.textContent = message;
-                overlay.style.display = 'flex';
-            }
-        }
-
-        function hideLoading() {
-            const overlay = document.getElementById('loadingOverlay');
-            if (overlay) {
-                overlay.style.display = 'none';
-            }
-        }
-
         function showNotification(message, type = 'success') {
-            const container = document.getElementById('notificationContainer');
-            if (!container) return;
+            // Remove existing notifications
+            const existing = document.querySelectorAll('.toast-notification');
+            existing.forEach(n => n.remove());
+
+            const colors = {
+                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
+                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
+                warning: { bg: '#fef3c7', border: '#d97706', text: '#b45309' },
+                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8' }
+            };
+
+            const color = colors[type] || colors.success;
 
             const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.innerHTML = `
-                <div class="notification-content">
-                    <div class="notification-message">${escapeHtml(message)}</div>
-                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
-                        <i data-lucide="x"></i>
-                    </button>
-                </div>
+            notification.className = 'toast-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${color.bg};
+                border: 1px solid ${color.border};
+                color: ${color.text};
+                padding: 16px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                z-index: 10000;
+                font-size: 14px;
+                font-weight: 500;
+                max-width: 400px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                animation: slideInFromRight 0.3s ease-out;
             `;
 
-            container.appendChild(notification);
+            notification.innerHTML = `
+                <span>${escapeHtml(message)}</span>
+                <button onclick="this.parentElement.remove()" style="
+                    background: none;
+                    border: none;
+                    color: ${color.text};
+                    cursor: pointer;
+                    padding: 4px;
+                    margin: 0;
+                    font-size: 16px;
+                    line-height: 1;
+                    opacity: 0.7;
+                    transition: opacity 0.2s;
+                    border-radius: 3px;
+                " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+            `;
 
-            // Initialize icons for the close button
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            // Add animation keyframes if not already added
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideInFromRight {
+                        from { 
+                            transform: translateX(100%); 
+                            opacity: 0; 
+                        }
+                        to { 
+                            transform: translateX(0); 
+                            opacity: 1; 
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
             }
 
-            // Auto dismiss after 5 seconds
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
             setTimeout(() => {
                 if (notification.parentElement) {
                     notification.remove();
                 }
             }, 5000);
+        }
 
-            // Add animation
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 100);
+        function showLoading(message = 'Loading...') {
+            // Remove existing loader
+            const existingLoader = document.getElementById('global-loader');
+            if (existingLoader) {
+                existingLoader.remove();
+            }
+
+            const loader = document.createElement('div');
+            loader.id = 'global-loader';
+            loader.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(255, 255, 255, 0.9);
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 24px;
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        gap: 16px;
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                    ">
+                        <div style="
+                            width: 20px;
+                            height: 20px;
+                            border: 2px solid #e2e8f0;
+                            border-top: 2px solid #4338ca;
+                            border-radius: 50%;
+                            animation: spin 1s linear infinite;
+                        "></div>
+                        <span style="color: #374151; font-weight: 500;">${message}</span>
+                    </div>
+                </div>
+                <style>
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+            document.body.appendChild(loader);
+        }
+
+        function hideLoading() {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.remove();
+            }
         }
 
         function toggleSidebar() {
