@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Packages - Keyquest Admin</title>
+    
+    <!-- Standardized CSS Link -->
+    <link rel="stylesheet" href="css/admin-styles.css">
+    
+    <!-- External Scripts -->
+    <script src="js/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config/supabase.js"></script>
+    <script src="js/admin-scripts.js"></script>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i data-lucide="building-2"></i>
+                    </div>
+                    <span>KEYQUEST</span>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="rate-packages.html" class="nav-item">
+                    <i data-lucide="package"></i>
+                    <span>Rate Package</span>
+                </a>
+                <a href="recommended-packages.html" class="nav-item active">
+                    <i data-lucide="star"></i>
+                    <span>Recommended Packages</span>
+                </a>
+                <a href="rate-types.html" class="nav-item">
+                    <i data-lucide="percent"></i>
+                    <span>Rate Type</span>
+                </a>
+                <a href="banks.html" class="nav-item">
+                    <i data-lucide="landmark"></i>
+                    <span>Bank</span>
+                </a>
+                <a href="bankers.html" class="nav-item">
+                    <i data-lucide="briefcase"></i>
+                    <span>Bankers</span>
+                </a>
+                <a href="agents.html" class="nav-item">
+                    <i data-lucide="users"></i>
+                    <span>Agents</span>
+                </a>
+                <a href="enquiry.html" class="nav-item">
+                    <i data-lucide="help-circle"></i>
+                    <span>Enquiry</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="header-title">Recommended Interest Rate Packages</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-avatar">AD</div>
+                        <div class="user-info">
+                            <span class="user-name">Admin User</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Content Header -->
+                <div class="content-header">
+                    <div class="content-title">
+                        <h2>Find Your Best Loan Package</h2>
+                        <p>Compare and discover the most competitive interest rate packages based on your criteria</p>
+                    </div>
+                    <div class="content-actions">
+                        <button class="btn btn-primary" onclick="generateReport()">
+                            <i data-lucide="download"></i>
+                            Download Top 3 Report
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">
+                            <i data-lucide="refresh-cw"></i>
+                            Reset Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="data-table">
+                    <div class="filter-section" style="padding: 24px; border-bottom: 1px solid #e2e8f0;">
+                        <h3 style="margin-bottom: 20px; color: #1e293b; font-size: 18px; font-weight: 600;">
+                            <i data-lucide="filter" style="width: 20px; height: 20px; margin-right: 8px;"></i>
+                            Filter Criteria
+                        </h3>
+                        
+                        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            <div class="form-group">
+                                <label class="form-label">Loan Type</label>
+                                <select class="form-control" id="loanTypeFilter">
+                                    <option value="">All Loan Types</option>
+                                    <option value="New Home Loan">New Home Loan</option>
+                                    <option value="Refinancing Home Loan">Refinancing Home Loan</option>
+                                    <option value="Commercial/Industrial">Commercial/Industrial</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Property Type</label>
+                                <select class="form-control" id="propertyTypeFilter">
+                                    <option value="">All Property Types</option>
+                                    <option value="HDB">HDB</option>
+                                    <option value="Private Property">Private Property</option>
+                                    <option value="EC">EC</option>
+                                    <option value="Commercial">Commercial</option>
+                                    <option value="Industrial">Industrial</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Property Status</label>
+                                <select class="form-control" id="propertyStatusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Under Construction">Under Construction</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Loan Amount (SGD)</label>
+                                <select class="form-control" id="loanAmountFilter">
+                                    <option value="">All Amounts</option>
+                                    <option value="100000">$100,000</option>
+                                    <option value="200000">$200,000</option>
+                                    <option value="250000">$250,000</option>
+                                    <option value="300000">$300,000</option>
+                                    <option value="400000">$400,000</option>
+                                    <option value="500000">$500,000</option>
+                                    <option value="600000">$600,000</option>
+                                    <option value="700000">$700,000</option>
+                                    <option value="750000">$750,000</option>
+                                    <option value="800000">$800,000</option>
+                                    <option value="900000">$900,000</option>
+                                    <option value="1000000">$1,000,000</option>
+                                    <option value="1200000">$1,200,000</option>
+                                    <option value="1500000">$1,500,000</option>
+                                    <option value="2000000">$2,000,000</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Lock Period</label>
+                                <select class="form-control" id="lockPeriodFilter">
+                                    <option value="">All Periods</option>
+                                    <option value="0 Year">0 Year</option>
+                                    <option value="1 Year">1 Year</option>
+                                    <option value="2 Years">2 Years</option>
+                                    <option value="3 Years">3 Years</option>
+                                    <option value="4 Years">4 Years</option>
+                                    <option value="5 Years">5 Years</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Rate Type</label>
+                                <select class="form-control" id="rateTypeFilter">
+                                    <option value="">All Rate Types</option>
+                                    <option value="Fixed">Fixed</option>
+                                    <option value="Floating">Floating</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Preferred Bank</label>
+                                <select class="form-control" id="bankFilter">
+                                    <option value="">All Banks</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="display: flex; align-items: end;">
+                                <button class="btn btn-primary" onclick="applyFilters()" style="width: 100%;">
+                                    <i data-lucide="search"></i>
+                                    Search Packages
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Summary -->
+                <div id="resultsSummary" class="data-table" style="margin-top: 24px; display: none;">
+                    <div style="padding: 20px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #0ea5e9;">
+                        <h4 style="color: #0c4a6e; margin-bottom: 8px; font-size: 16px;">
+                            <i data-lucide="check-circle" style="width: 18px; height: 18px; margin-right: 8px;"></i>
+                            Search Results
+                        </h4>
+                        <p id="summaryText" style="color: #075985; margin: 0; font-size: 14px;"></p>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="data-table" style="margin-top: 24px;">
+                    <div class="table-responsive">
+                        <table class="table" id="packagesTable">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Bank</th>
+                                    <th>Rate Type</th>
+                                    <th>Interest Rate Y1</th>
+                                    <th>Interest Rate Y2</th>
+                                    <th>Interest Rate Y3</th>
+                                    <th>Thereafter</th>
+                                    <th>Lock Period</th>
+                                    <th>Monthly Payment</th>
+                                    <th>Total Savings</th>
+                                    <th>Features</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="packagesTableBody">
+                                <tr id="noDataRow">
+                                    <td colspan="12" class="text-center" style="padding: 40px; color: #64748b;">
+                                        <i data-lucide="search" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i><br>
+                                        Use the filters above to search for recommended packages
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Loading Overlay -->
+                <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                    <div class="loading-content">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-message">Searching for best packages...</div>
+                    </div>
+                </div>
+
+                <!-- Package Details Modal -->
+                <div id="packageModal" class="modal">
+                    <div class="modal-dialog" style="max-width: 800px;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>Package Details</h3>
+                                <button class="modal-close" onclick="closeModal('packageModal')">
+                                    <i data-lucide="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="packageDetails">
+                                <!-- Package details will be populated here -->
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" onclick="closeModal('packageModal')">Close</button>
+                                <button class="btn btn-primary" onclick="enquirePackage()">
+                                    <i data-lucide="mail"></i>
+                                    Send Enquiry
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced JavaScript -->
+    <script>
+        let allPackages = [];
+        let filteredPackages = [];
+        let currentFilters = {};
+        let selectedPackage = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBanks();
+            loadPackages();
+            initializeLucideIcons();
+            attachEventListeners();
+        });
+
+        function initializeLucideIcons() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function attachEventListeners() {
+            // Add change event listeners to filters
+            const filters = ['loanTypeFilter', 'propertyTypeFilter', 'propertyStatusFilter', 
+                           'loanAmountFilter', 'lockPeriodFilter', 'rateTypeFilter', 'bankFilter'];
+            
+            filters.forEach(filterId => {
+                const element = document.getElementById(filterId);
+                if (element) {
+                    element.addEventListener('change', function() {
+                        // Auto-apply filters when selection changes
+                        setTimeout(applyFilters, 100);
+                    });
+                }
+            });
+        }
+
+        // Load banks for filter dropdown
+        async function loadBanks() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('banks')
+                    .select('name')
+                    .order('name');
+
+                if (error) throw error;
+
+                const bankFilter = document.getElementById('bankFilter');
+                data.forEach(bank => {
+                    const option = document.createElement('option');
+                    option.value = bank.name;
+                    option.textContent = bank.name;
+                    bankFilter.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading banks:', error);
+            }
+        }
+
+        // Load all packages
+        async function loadPackages() {
+            try {
+                showLoading();
+                const { data, error } = await supabaseClient
+                    .from('rate_packages')
+                    .select('*')
+                    .eq('status', 'active')
+                    .order('bank_name');
+
+                if (error) throw error;
+
+                allPackages = data || [];
+                console.log(`Loaded ${allPackages.length} packages`);
+                
+            } catch (error) {
+                console.error('Error loading packages:', error);
+                showNotification('Error loading packages', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Apply filters and search for packages
+        function applyFilters() {
+            showLoading();
+            
+            // Get filter values
+            currentFilters = {
+                loanType: document.getElementById('loanTypeFilter').value,
+                propertyType: document.getElementById('propertyTypeFilter').value,
+                propertyStatus: document.getElementById('propertyStatusFilter').value,
+                loanAmount: document.getElementById('loanAmountFilter').value,
+                lockPeriod: document.getElementById('lockPeriodFilter').value,
+                rateType: document.getElementById('rateTypeFilter').value,
+                bank: document.getElementById('bankFilter').value
+            };
+
+            // Filter packages
+            filteredPackages = allPackages.filter(pkg => {
+                if (currentFilters.loanType && pkg.loan_type !== currentFilters.loanType) return false;
+                if (currentFilters.propertyType && pkg.property_type !== currentFilters.propertyType) return false;
+                if (currentFilters.propertyStatus && pkg.property_status !== currentFilters.propertyStatus) return false;
+                if (currentFilters.loanAmount && pkg.loan_amount != currentFilters.loanAmount) return false;
+                if (currentFilters.lockPeriod && pkg.lock_period !== currentFilters.lockPeriod) return false;
+                if (currentFilters.rateType && pkg.rate_type_category !== currentFilters.rateType) return false;
+                if (currentFilters.bank && pkg.bank_name !== currentFilters.bank) return false;
+                return true;
+            });
+
+            // Sort by interest rate (Year 1)
+            filteredPackages.sort((a, b) => {
+                const rateA = calculateInterestRate(a, 1);
+                const rateB = calculateInterestRate(b, 1);
+                return rateA - rateB;
+            });
+
+            displayResults();
+            hideLoading();
+        }
+
+        // Calculate interest rate for a given year
+        function calculateInterestRate(pkg, year) {
+            let baseRate = 0;
+            let spread = 0;
+            let operator = '+';
+
+            switch(year) {
+                case 1:
+                    baseRate = getBaseRate(pkg.year1_rate_type || pkg.reference_rate);
+                    spread = pkg.year1_value || 0;
+                    operator = pkg.year1_operator || '+';
+                    break;
+                case 2:
+                    baseRate = getBaseRate(pkg.year2_rate_type || pkg.reference_rate);
+                    spread = pkg.year2_value || 0;
+                    operator = pkg.year2_operator || '+';
+                    break;
+                case 3:
+                    baseRate = getBaseRate(pkg.year3_rate_type || pkg.reference_rate);
+                    spread = pkg.year3_value || 0;
+                    operator = pkg.year3_operator || '+';
+                    break;
+                default:
+                    baseRate = getBaseRate(pkg.thereafter_rate_type || pkg.reference_rate);
+                    spread = pkg.thereafter_value || 0;
+                    operator = pkg.thereafter_operator || '+';
+            }
+
+            return operator === '+' ? baseRate + spread : baseRate - spread;
+        }
+
+        // Get base rate (simplified - you may want to fetch from rate_types table)
+        function getBaseRate(rateType) {
+            const baseRates = {
+                'FIXED': 2.50,
+                '3M SORA': 2.16,
+                '1M SORA': 2.10,
+                'SORA': 2.16,
+                'SIBOR': 2.50
+            };
+            
+            if (!rateType) return 2.50;
+            
+            const upperRateType = rateType.toUpperCase();
+            for (const [key, value] of Object.entries(baseRates)) {
+                if (upperRateType.includes(key)) {
+                    return value;
+                }
+            }
+            
+            return 2.50; // Default rate
+        }
+
+        // Calculate monthly payment
+        function calculateMonthlyPayment(principal, annualRate, years = 30) {
+            const monthlyRate = annualRate / 100 / 12;
+            const numberOfPayments = years * 12;
+            
+            if (monthlyRate === 0) {
+                return principal / numberOfPayments;
+            }
+            
+            return principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+                   (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+        }
+
+        // Calculate total savings compared to highest rate
+        function calculateSavings(packages, currentPackage, loanAmount) {
+            if (packages.length === 0) return 0;
+            
+            const highestRate = Math.max(...packages.map(p => calculateInterestRate(p, 1)));
+            const currentRate = calculateInterestRate(currentPackage, 1);
+            const currentPayment = calculateMonthlyPayment(loanAmount, currentRate);
+            const highestPayment = calculateMonthlyPayment(loanAmount, highestRate);
+            
+            return (highestPayment - currentPayment) * 12 * 5; // 5 years savings
+        }
+
+        // Display search results
+        function displayResults() {
+            const tbody = document.getElementById('packagesTableBody');
+            const noDataRow = document.getElementById('noDataRow');
+            const summaryDiv = document.getElementById('resultsSummary');
+            const summaryText = document.getElementById('summaryText');
+
+            if (filteredPackages.length === 0) {
+                noDataRow.style.display = 'table-row';
+                summaryDiv.style.display = 'none';
+                return;
+            }
+
+            noDataRow.style.display = 'none';
+            summaryDiv.style.display = 'block';
+            summaryText.textContent = `Found ${filteredPackages.length} packages matching your criteria. Results sorted by lowest interest rate.`;
+
+            // Clear existing rows
+            Array.from(tbody.children).forEach(row => {
+                if (row.id !== 'noDataRow') {
+                    row.remove();
+                }
+            });
+
+            const loanAmount = parseFloat(currentFilters.loanAmount) || 500000;
+
+            filteredPackages.forEach((pkg, index) => {
+                const row = document.createElement('tr');
+                const year1Rate = calculateInterestRate(pkg, 1);
+                const year2Rate = calculateInterestRate(pkg, 2);
+                const year3Rate = calculateInterestRate(pkg, 3);
+                const thereafterRate = calculateInterestRate(pkg, 0);
+                const monthlyPayment = calculateMonthlyPayment(loanAmount, year1Rate);
+                const totalSavings = calculateSavings(filteredPackages, pkg, loanAmount);
+
+                // Rank badge
+                let rankBadge = '';
+                if (index === 0) rankBadge = '<span class="status-badge badge-active">🥇 Best</span>';
+                else if (index === 1) rankBadge = '<span class="status-badge" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); color: white;">🥈 2nd</span>';
+                else if (index === 2) rankBadge = '<span class="status-badge" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: white;">🥉 3rd</span>';
+                else rankBadge = `<span class="status-badge" style="background: #f3f4f6; color: #374151;">#${index + 1}</span>`;
+
+                // Package features
+                const features = [];
+                if (pkg.legal_fee_subsidy) features.push('Legal Fee Subsidy');
+                if (pkg.valuation_subsidy) features.push('Valuation Subsidy');
+                if (pkg.partial_repayment) features.push('Partial Repayment');
+                if (pkg.waiver_due_to_sales) features.push('Waiver Due to Sales');
+                if (pkg.free_package_conversion_24m) features.push('Free Package Conversion 24M');
+
+                row.innerHTML = `
+                    <td>${rankBadge}</td>
+                    <td>
+                        <div style="font-weight: 600; color: #1e293b;">${pkg.bank_name}</div>
+                        <div style="font-size: 12px; color: #64748b;">${pkg.rate_type_category}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge ${pkg.rate_type_category === 'Fixed' ? 'badge-completed' : 'badge-pending'}">
+                            ${pkg.rate_type_category}
+                        </span>
+                    </td>
+                    <td><strong>${year1Rate.toFixed(2)}%</strong></td>
+                    <td>${year2Rate.toFixed(2)}%</td>
+                    <td>${year3Rate.toFixed(2)}%</td>
+                    <td>${thereafterRate.toFixed(2)}%</td>
+                    <td>${pkg.lock_period || 'N/A'}</td>
+                    <td><strong>$${monthlyPayment.toLocaleString('en-SG', {maximumFractionDigits: 0})}</strong></td>
+                    <td style="color: #059669; font-weight: 600;">$${totalSavings.toLocaleString('en-SG', {maximumFractionDigits: 0})}</td>
+                    <td>
+                        <div style="max-width: 150px; font-size: 11px;">
+                            ${features.slice(0, 2).map(f => `<span class="status-badge" style="background: #f0fdf4; color: #166534; margin: 1px; padding: 2px 6px;">${f}</span>`).join('')}
+                            ${features.length > 2 ? `<span style="color: #64748b;">+${features.length - 2} more</span>` : ''}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-sm btn-primary" onclick="viewPackageDetails('${pkg.id}')" title="View Details">
+                                <i data-lucide="eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="enquirePackage('${pkg.id}')" title="Enquire">
+                                <i data-lucide="mail"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            initializeLucideIcons();
+        }
+
+        // View package details
+        function viewPackageDetails(packageId) {
+            const pkg = filteredPackages.find(p => p.id === packageId);
+            if (!pkg) return;
+
+            selectedPackage = pkg;
+            const modal = document.getElementById('packageModal');
+            const detailsDiv = document.getElementById('packageDetails');
+
+            const loanAmount = parseFloat(currentFilters.loanAmount) || 500000;
+            const features = [];
+            if (pkg.legal_fee_subsidy) features.push('Legal Fee Subsidy');
+            if (pkg.valuation_subsidy) features.push('Valuation Subsidy');
+            if (pkg.partial_repayment) features.push('Partial Repayment');
+            if (pkg.waiver_due_to_sales) features.push('Waiver Due to Sales');
+            if (pkg.free_package_conversion_12m) features.push('Free Package Conversion 12M');
+            if (pkg.free_package_conversion_24m) features.push('Free Package Conversion 24M');
+            if (pkg.free_package_conversion_36m) features.push('Free Package Conversion 36M');
+
+            detailsDiv.innerHTML = `
+                <div class="form-grid" style="gap: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Bank</label>
+                        <p style="font-weight: 600; font-size: 16px; color: #1e293b;">${pkg.bank_name}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rate Type</label>
+                        <p><span class="status-badge ${pkg.rate_type_category === 'Fixed' ? 'badge-completed' : 'badge-pending'}">${pkg.rate_type_category}</span></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Property Type</label>
+                        <p>${pkg.property_type}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Property Status</label>
+                        <p>${pkg.property_status}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Loan Amount</label>
+                        <p>$${pkg.loan_amount?.toLocaleString('en-SG')}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lock Period</label>
+                        <p>${pkg.lock_period || 'N/A'}</p>
+                    </div>
+                </div>
+
+                <h4 style="margin: 24px 0 16px 0; color: #1e293b;">Interest Rate Schedule</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Interest Rate</th>
+                                <th>Monthly Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Year 1</td>
+                                <td><strong>${calculateInterestRate(pkg, 1).toFixed(2)}%</strong></td>
+                                <td><strong>$${calculateMonthlyPayment(loanAmount, calculateInterestRate(pkg, 1)).toLocaleString('en-SG', {maximumFractionDigits: 0})}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Year 2</td>
+                                <td>${calculateInterestRate(pkg, 2).toFixed(2)}%</td>
+                                <td>$${calculateMonthlyPayment(loanAmount, calculateInterestRate(pkg, 2)).toLocaleString('en-SG', {maximumFractionDigits: 0})}</td>
+                            </tr>
+                            <tr>
+                                <td>Year 3</td>
+                                <td>${calculateInterestRate(pkg, 3).toFixed(2)}%</td>
+                                <td>$${calculateMonthlyPayment(loanAmount, calculateInterestRate(pkg, 3)).toLocaleString('en-SG', {maximumFractionDigits: 0})}</td>
+                            </tr>
+                            <tr>
+                                <td>Thereafter</td>
+                                <td>${calculateInterestRate(pkg, 0).toFixed(2)}%</td>
+                                <td>$${calculateMonthlyPayment(loanAmount, calculateInterestRate(pkg, 0)).toLocaleString('en-SG', {maximumFractionDigits: 0})}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                ${features.length > 0 ? `
+                <h4 style="margin: 24px 0 16px 0; color: #1e293b;">Package Features</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    ${features.map(f => `<span class="status-badge badge-active">${f}</span>`).join('')}
+                </div>
+                ` : ''}
+
+                ${pkg.remarks ? `
+                <h4 style="margin: 24px 0 16px 0; color: #1e293b;">Additional Information</h4>
+                <p style="background: #f8fafc; padding: 16px; border-radius: 8px; border-left: 4px solid #e2e8f0;">${pkg.remarks}</p>
+                ` : ''}
+            `;
+
+            modal.style.display = 'block';
+            initializeLucideIcons();
+        }
+
+        // Generate and download top 3 packages report
+        function generateReport() {
+            if (filteredPackages.length === 0) {
+                showNotification('Please search for packages first', 'warning');
+                return;
+            }
+
+            const top3 = filteredPackages.slice(0, 3);
+            const loanAmount = parseFloat(currentFilters.loanAmount) || 500000;
+            
+            // Create comprehensive report content
+            let reportContent = `TOP 3 RECOMMENDED LOAN PACKAGES REPORT\n`;
+            reportContent += `Generated on: ${new Date().toLocaleDateString('en-SG')}\n`;
+            reportContent += `Loan Amount: $${loanAmount.toLocaleString('en-SG')}\n\n`;
+
+            // Add filter criteria
+            reportContent += `SEARCH CRITERIA:\n`;
+            if (currentFilters.loanType) reportContent += `Loan Type: ${currentFilters.loanType}\n`;
+            if (currentFilters.propertyType) reportContent += `Property Type: ${currentFilters.propertyType}\n`;
+            if (currentFilters.propertyStatus) reportContent += `Property Status: ${currentFilters.propertyStatus}\n`;
+            if (currentFilters.lockPeriod) reportContent += `Lock Period: ${currentFilters.lockPeriod}\n`;
+            if (currentFilters.rateType) reportContent += `Rate Type: ${currentFilters.rateType}\n`;
+            if (currentFilters.bank) reportContent += `Preferred Bank: ${currentFilters.bank}\n`;
+            reportContent += `\n`;
+
+            // Add detailed comparison
+            top3.forEach((pkg, index) => {
+                const rank = index + 1;
+                const year1Rate = calculateInterestRate(pkg, 1);
+                const monthlyPayment = calculateMonthlyPayment(loanAmount, year1Rate);
+                const totalSavings = calculateSavings(filteredPackages, pkg, loanAmount);
+
+                reportContent += `${rank}. ${pkg.bank_name}\n`;
+                reportContent += `   Rate Type: ${pkg.rate_type_category}\n`;
+                reportContent += `   Interest Rate Y1: ${year1Rate.toFixed(2)}%\n`;
+                reportContent += `   Interest Rate Y2: ${calculateInterestRate(pkg, 2).toFixed(2)}%\n`;
+                reportContent += `   Interest Rate Y3: ${calculateInterestRate(pkg, 3).toFixed(2)}%\n`;
+                reportContent += `   Thereafter: ${calculateInterestRate(pkg, 0).toFixed(2)}%\n`;
+                reportContent += `   Monthly Payment: $${monthlyPayment.toLocaleString('en-SG', {maximumFractionDigits: 0})}\n`;
+                reportContent += `   5-Year Savings: $${totalSavings.toLocaleString('en-SG', {maximumFractionDigits: 0})}\n`;
+                reportContent += `   Lock Period: ${pkg.lock_period || 'N/A'}\n`;
+                
+                // Add features
+                const features = [];
+                if (pkg.legal_fee_subsidy) features.push('Legal Fee Subsidy');
+                if (pkg.valuation_subsidy) features.push('Valuation Subsidy');
+                if (pkg.partial_repayment) features.push('Partial Repayment');
+                if (pkg.waiver_due_to_sales) features.push('Waiver Due to Sales');
+                
+                if (features.length > 0) {
+                    reportContent += `   Features: ${features.join(', ')}\n`;
+                }
+                reportContent += `\n`;
+            });
+
+            // Add disclaimer
+            reportContent += `DISCLAIMER:\n`;
+            reportContent += `Interest rates are indicative and subject to change. \n`;
+            reportContent += `Please contact the respective banks for the latest rates and terms.\n`;
+            reportContent += `This report is generated for comparison purposes only.\n`;
+
+            // Download as text file
+            const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Top_3_Loan_Packages_Report_${new Date().toISOString().split('T')[0]}.txt`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Report downloaded successfully', 'success');
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            document.getElementById('loanTypeFilter').value = '';
+            document.getElementById('propertyTypeFilter').value = '';
+            document.getElementById('propertyStatusFilter').value = '';
+            document.getElementById('loanAmountFilter').value = '';
+            document.getElementById('lockPeriodFilter').value = '';
+            document.getElementById('rateTypeFilter').value = '';
+            document.getElementById('bankFilter').value = '';
+
+            filteredPackages = [];
+            currentFilters = {};
+            
+            // Reset table
+            const tbody = document.getElementById('packagesTableBody');
+            const noDataRow = document.getElementById('noDataRow');
+            Array.from(tbody.children).forEach(row => {
+                if (row.id !== 'noDataRow') {
+                    row.remove();
+                }
+            });
+            noDataRow.style.display = 'table-row';
+            document.getElementById('resultsSummary').style.display = 'none';
+
+            showNotification('Filters reset', 'info');
+        }
+
+        // Enquire about package
+        function enquirePackage(packageId = null) {
+            const pkg = packageId ? filteredPackages.find(p => p.id === packageId) : selectedPackage;
+            if (!pkg) return;
+
+            // Create enquiry (you can integrate this with your enquiry system)
+            const enquiryText = `I am interested in the ${pkg.bank_name} ${pkg.rate_type_category} rate package. Please provide more information.`;
+            
+            // For now, we'll show a notification
+            showNotification(`Enquiry sent for ${pkg.bank_name} package`, 'success');
+            
+            // Close modal if open
+            if (document.getElementById('packageModal').style.display === 'block') {
+                closeModal('packageModal');
+            }
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Loading functions
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // Notification function (you can integrate with your existing notification system)
+        function showNotification(message, type = 'info') {
+            console.log(`${type.toUpperCase()}: ${message}`);
+            // You can implement a proper notification system here
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal[style*="block"]');
+                openModals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            }
+        });
+    </script>
+
+    <style>
+        /* Additional custom styles */
+        .action-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-dialog {
+            position: relative;
+            margin: 50px auto;
+            max-width: 600px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 24px 24px 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 0 24px 24px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Enhanced status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .modal-dialog {
+                margin: 20px;
+                max-width: calc(100vw - 40px);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .table {
+                font-size: 12px;
+            }
+            
+            .table th,
+            .table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</body>
+</html>
