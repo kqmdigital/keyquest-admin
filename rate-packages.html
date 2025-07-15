@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rate Packages - Keyquest Mortgage Admin</title>
     <link rel="stylesheet" href="css/admin-styles.css">
+    <!-- Required Scripts in correct order -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/lucide.min.js"></script>
     <script src="config/supabase.js"></script>
 </head>
@@ -1092,12 +1094,26 @@
             for (let [key, value] of formData.entries()) {
                 if (key.includes('_penalty') || key.includes('_value') || key === 'minimum_loan_size') {
                     packageData[key] = value ? parseFloat(value) : null;
-                } else if (key.includes('_subsidy') || key.includes('_repayment') || key.includes('_conversion') || key === 'waiver_due_to_sales') {
-                    packageData[key] = value === 'on';
+                } else if (key.includes('_subsidy') || key.includes('_repayment') || 
+                          key.includes('_conversion') || key === 'waiver_due_to_sales') {
+                    // These are checkboxes - they're only in formData if checked
+                    packageData[key] = true;
                 } else {
                     packageData[key] = value || null;
                 }
             }
+
+            // Set all boolean fields to false if not in formData (unchecked)
+            const booleanFields = [
+                'legal_fee_subsidy', 'valuation_subsidy', 'partial_repayment', 
+                'waiver_due_to_sales', 'free_package_conversion_12m', 
+                'free_package_conversion_24m', 'free_package_conversion_36m'
+            ];
+            booleanFields.forEach(field => {
+                if (!(field in packageData)) {
+                    packageData[field] = false;
+                }
+            });
 
             try {
                 if (window.AdminApp && window.AdminApp.editingItemId) {
