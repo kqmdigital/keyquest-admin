@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Keyquest Mortgage Admin</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <title>Login - Keyquest Admin</title>
+    
+    <!-- Standardized CSS Link -->
+    <link rel="stylesheet" href="css/admin-styles.css">
+    
+    <!-- External Scripts in proper order -->
+    <script src="js/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config/supabase.js"></script>
+    <script src="js/admin-scripts.js"></script>
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Login-specific styles */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -25,19 +26,34 @@
         }
 
         .login-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .login-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 32px 32px 24px;
+            padding: 40px 32px 32px;
             text-align: center;
             color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: shimmer 6s ease-in-out infinite;
         }
 
         .logo {
@@ -45,76 +61,94 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover .logo-icon {
+            transform: scale(1.05) rotate(5deg);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .login-subtitle {
             opacity: 0.9;
-            font-size: 14px;
+            font-size: 16px;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
         }
 
-        .login-body {
-            padding: 32px;
+        .login-form {
+            padding: 40px 32px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .form-label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
+            font-weight: 600;
             color: #374151;
             font-size: 14px;
         }
 
         .form-input {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
             font-size: 14px;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         }
 
         .form-input:focus {
             outline: none;
-            border-color: #4338ca;
-            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+            border-color: #667eea;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
         }
 
-        .password-input-container {
+        .password-container {
             position: relative;
         }
 
         .password-toggle {
             position: absolute;
-            right: 12px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
-            color: #64748b;
+            color: #6b7280;
             cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
+            padding: 6px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
         }
 
         .password-toggle:hover {
-            background: #f1f5f9;
+            color: #374151;
+            background: rgba(102, 126, 234, 0.1);
         }
 
         .login-button {
@@ -122,90 +156,182 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .login-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-button:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .login-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
         .login-button:disabled {
-            opacity: 0.6;
+            opacity: 0.7;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
-        }
-
-        .error-message {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .demo-credentials {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 20px;
-        }
-
-        .demo-credentials h4 {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e40af;
-            margin-bottom: 8px;
-        }
-
-        .demo-credentials p {
-            font-size: 12px;
-            color: #1e40af;
-            margin-bottom: 4px;
         }
 
         .loading-spinner {
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-top: 2px solid white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            display: none;
         }
+
+        .error-message {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .demo-credentials {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .demo-credentials h4 {
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .demo-credentials p {
+            color: #64748b;
+            font-size: 13px;
+            margin: 6px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .debug-info {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .debug-info h5 {
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .debug-item {
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-success { background: #16a34a; }
+        .status-error { background: #dc2626; }
+        .status-warning { background: #d97706; }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 480px) {
             .login-container {
-                margin: 0;
-                border-radius: 0;
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
+                margin: 10px;
+                max-width: none;
             }
-
-            .login-body {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
+            
+            .login-form {
+                padding: 32px 24px;
+            }
+            
+            .login-header {
+                padding: 32px 24px 24px;
             }
         }
     </style>
@@ -219,157 +345,352 @@
                 </div>
                 <span>KEYQUEST</span>
             </div>
-            <div class="login-subtitle">Admin Panel</div>
+            <p class="login-subtitle">Admin Panel Access</p>
         </div>
 
-        <div class="login-body">
-            <div class="error-message" id="errorMessage"></div>
+        <div class="login-form">
+            <div class="error-message" id="errorMessage">
+                Invalid credentials. Please try again.
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                Login successful! Redirecting...
+            </div>
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label class="form-label">Email</label>
+                    <label class="form-label" for="email">Email Address</label>
                     <input 
                         type="email" 
                         class="form-input" 
                         id="email" 
-                        placeholder="Enter your email" 
+                        name="email" 
+                        placeholder="Enter your email address"
                         required
-                        autocomplete="email"
                     >
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <div class="password-input-container">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="password-container">
                         <input 
                             type="password" 
                             class="form-input" 
                             id="password" 
-                            placeholder="Enter your password" 
+                            name="password" 
+                            placeholder="Enter your password"
                             required
-                            autocomplete="current-password"
                         >
                         <button type="button" class="password-toggle" onclick="togglePassword()">
-                            <i data-lucide="eye" id="eyeIcon"></i>
+                            <i data-lucide="eye" id="passwordIcon"></i>
                         </button>
                     </div>
                 </div>
 
                 <button type="submit" class="login-button" id="loginButton">
-                    <span id="buttonText">Sign In</span>
-                    <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <i data-lucide="log-in" id="loginIcon"></i>
+                    <span id="loginButtonText">Sign In</span>
                 </button>
             </form>
 
             <div class="demo-credentials">
-                <h4>Demo Credentials</h4>
-                <p><strong>Email:</strong> admin@keyquestmortgage.com.sg</p>
-                <p><strong>Password:</strong> admin123</p>
+                <h4>
+                    <i data-lucide="info"></i>
+                    Demo Credentials
+                </h4>
+                <p>Email: admin@keyquest.com</p>
+                <p>Password: admin123</p>
+            </div>
+
+            <div class="forgot-password">
+                <a href="#" onclick="showNotification('Please contact your administrator for password reset', 'info')">
+                    Forgot your password?
+                </a>
+            </div>
+
+            <div class="debug-info">
+                <h5>System Status</h5>
+                <div class="debug-item">
+                    <span>Supabase Client:</span>
+                    <span id="supabaseStatus">
+                        <span class="status-indicator status-warning"></span>
+                        Loading...
+                    </span>
+                </div>
+                <div class="debug-item">
+                    <span>Admin Scripts:</span>
+                    <span id="adminScriptsStatus">
+                        <span class="status-indicator status-warning"></span>
+                        Loading...
+                    </span>
+                </div>
+                <div class="debug-item">
+                    <span>Icons:</span>
+                    <span id="iconsStatus">
+                        <span class="status-indicator status-warning"></span>
+                        Loading...
+                    </span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
+        // Login specific functionality
+        let isLoading = false;
 
-        // Check if user is already logged in
-        document.addEventListener('DOMContentLoaded', async () => {
-            const { user } = await AuthService.getCurrentUser();
-            if (user) {
-                window.location.href = 'index.html';
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Login page...');
+            
+            // Check system status
+            checkSystemStatus();
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+                updateStatus('iconsStatus', 'Ready', 'success');
+            } else {
+                updateStatus('iconsStatus', 'Failed', 'error');
             }
+            
+            // Check if already logged in
+            checkExistingSession();
+            
+            // Add form submit handler
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            console.log('Login page ready');
         });
 
-        // Password toggle functionality
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eyeIcon');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.setAttribute('data-lucide', 'eye-off');
+        // Check system status
+        function checkSystemStatus() {
+            // Check Supabase
+            if (typeof supabaseClient !== 'undefined') {
+                updateStatus('supabaseStatus', 'Connected', 'success');
             } else {
-                passwordInput.type = 'password';
-                eyeIcon.setAttribute('data-lucide', 'eye');
+                updateStatus('supabaseStatus', 'Not Available', 'error');
             }
-            lucide.createIcons();
+
+            // Check Admin Scripts
+            if (typeof showNotification !== 'undefined') {
+                updateStatus('adminScriptsStatus', 'Loaded', 'success');
+            } else {
+                updateStatus('adminScriptsStatus', 'Not Loaded', 'error');
+            }
         }
 
-        // Show error message
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
+        // Update status indicator
+        function updateStatus(elementId, text, type) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const statusClass = type === 'success' ? 'status-success' : 
+                                   type === 'error' ? 'status-error' : 'status-warning';
+                element.innerHTML = `<span class="status-indicator ${statusClass}"></span>${text}`;
+            }
         }
 
-        // Hide error message
-        function hideError() {
-            const errorDiv = document.getElementById('errorMessage');
-            errorDiv.style.display = 'none';
-        }
-
-        // Set loading state
-        function setLoading(loading) {
-            const button = document.getElementById('loginButton');
-            const buttonText = document.getElementById('buttonText');
-            const spinner = document.getElementById('loadingSpinner');
-            const form = document.getElementById('loginForm');
-
-            button.disabled = loading;
-            buttonText.style.display = loading ? 'none' : 'inline';
-            spinner.style.display = loading ? 'block' : 'none';
-            
-            // Disable form inputs during loading
-            const inputs = form.querySelectorAll('input');
-            inputs.forEach(input => input.disabled = loading);
-        }
-
-        // Handle form submission
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideError();
-            setLoading(true);
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
+        // Check for existing session
+        async function checkExistingSession() {
             try {
-                const result = await AuthService.signIn(email, password);
+                if (typeof supabaseClient === 'undefined') {
+                    console.log('Supabase client not available');
+                    return;
+                }
+
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
                 
-                if (result.success) {
-                    // Success - redirect to dashboard
-                    Utils.showSuccess('Login successful! Redirecting...');
+                if (session && session.user) {
+                    console.log('Existing session found, redirecting...');
+                    showSuccessMessage('Session found! Redirecting...');
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1000);
-                } else {
-                    // Error - show message
-                    showError(result.error || 'Login failed. Please check your credentials.');
                 }
             } catch (error) {
+                console.error('Session check error:', error);
+            }
+        }
+
+        // Handle login form submission
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            if (isLoading) return;
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validate inputs
+            if (!email || !password) {
+                showErrorMessage('Please fill in all fields');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showErrorMessage('Please enter a valid email address');
+                return;
+            }
+
+            try {
+                setLoadingState(true);
+                hideMessages();
+
+                // Demo login check
+                if (email === 'admin@keyquest.com' && password === 'admin123') {
+                    showSuccessMessage('Demo login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                    return;
+                }
+
+                // Real Supabase authentication
+                if (typeof supabaseClient !== 'undefined') {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
+                    if (error) throw error;
+
+                    if (data.user) {
+                        showSuccessMessage('Login successful! Redirecting...');
+                        
+                        // Store user info if needed
+                        if (data.user.email) {
+                            localStorage.setItem('user_email', data.user.email);
+                        }
+
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    }
+                } else {
+                    throw new Error('Authentication service not available');
+                }
+
+            } catch (error) {
                 console.error('Login error:', error);
-                showError('An unexpected error occurred. Please try again.');
+                showErrorMessage(getErrorMessage(error.message));
             } finally {
-                setLoading(false);
+                setLoadingState(false);
+            }
+        }
+
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('passwordIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.setAttribute('data-lucide', 'eye');
+            }
+            
+            // Re-initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // Set loading state
+        function setLoadingState(loading) {
+            isLoading = loading;
+            const button = document.getElementById('loginButton');
+            const spinner = document.getElementById('loadingSpinner');
+            const icon = document.getElementById('loginIcon');
+            const text = document.getElementById('loginButtonText');
+
+            if (loading) {
+                button.disabled = true;
+                spinner.style.display = 'block';
+                icon.style.display = 'none';
+                text.textContent = 'Signing In...';
+            } else {
+                button.disabled = false;
+                spinner.style.display = 'none';
+                icon.style.display = 'block';
+                text.textContent = 'Sign In';
+            }
+        }
+
+        // Show error message
+        function showErrorMessage(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show success message
+        function showSuccessMessage(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+        }
+
+        // Hide all messages
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        // Validate email format
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Get user-friendly error message
+        function getErrorMessage(error) {
+            const errorMap = {
+                'Invalid login credentials': 'Invalid email or password. Please try again.',
+                'Email not confirmed': 'Please check your email and confirm your account.',
+                'Too many requests': 'Too many login attempts. Please try again later.',
+                'User not found': 'No account found with this email address.',
+                'Invalid email': 'Please enter a valid email address.',
+                'Weak password': 'Password should be at least 6 characters long.',
+                'Authentication service not available': 'Login service is temporarily unavailable. Please try the demo credentials.'
+            };
+
+            return errorMap[error] || 'Login failed. Please try again or contact support.';
+        }
+
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Enter key to submit
+            if (event.key === 'Enter' && !isLoading) {
+                const form = document.getElementById('loginForm');
+                if (form) {
+                    form.dispatchEvent(new Event('submit'));
+                }
             }
         });
 
-        // Demo login functionality
-        document.querySelector('.demo-credentials').addEventListener('click', () => {
-            document.getElementById('email').value = 'admin@keyquestmortgage.com.sg';
+        // Auto-fill demo credentials for testing
+        function fillDemoCredentials() {
+            document.getElementById('email').value = 'admin@keyquest.com';
             document.getElementById('password').value = 'admin123';
-        });
+        }
 
-        // Handle Enter key in password field
-        document.getElementById('password').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        // Add click handler for demo credentials
+        document.addEventListener('DOMContentLoaded', function() {
+            const demoCredentials = document.querySelector('.demo-credentials');
+            if (demoCredentials) {
+                demoCredentials.addEventListener('click', fillDemoCredentials);
+                demoCredentials.style.cursor = 'pointer';
+                demoCredentials.title = 'Click to auto-fill demo credentials';
             }
         });
-
-        // Auto-focus email field
-        document.getElementById('email').focus();
     </script>
 </body>
 </html>
