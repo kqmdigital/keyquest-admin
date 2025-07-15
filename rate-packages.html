@@ -3,62 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Packages - Keyquest Admin</title>
-    
-    <!-- Standardized CSS Link -->
+    <title>Rate Packages - Keyquest Mortgage Admin</title>
     <link rel="stylesheet" href="css/admin-styles.css">
-    
-    <!-- External Scripts in proper order -->
-    <script src="js/lucide.min.js"></script>
+    <!-- Required Scripts in correct order -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/lucide.min.js"></script>
     <script src="config/supabase.js"></script>
-    <script src="js/admin-scripts.js"></script>
 </head>
 <body>
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-    
-    <div class="admin-container">
+    <div class="admin-layout">
         <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">
-                        <i data-lucide="building-2"></i>
-                    </div>
-                    <span>KEYQUEST</span>
-                </a>
+                <div class="logo">
+                    <h2>Admin Panel</h2>
+                </div>
+                <button class="sidebar-close" id="sidebar-close" onclick="closeSidebar()">
+                    <i data-lucide="x"></i>
+                </button>
             </div>
-            <nav class="nav-menu">
+            
+            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-item">
-                    <i data-lucide="layout-dashboard"></i>
+                    <i data-lucide="home"></i>
                     <span>Dashboard</span>
                 </a>
                 <a href="rate-packages.html" class="nav-item active">
                     <i data-lucide="package"></i>
-                    <span>Rate Package</span>
+                    <span>Rate Packages</span>
                 </a>
                 <a href="rate-types.html" class="nav-item">
                     <i data-lucide="percent"></i>
-                    <span>Rate Type</span>
+                    <span>Rate Types</span>
                 </a>
                 <a href="banks.html" class="nav-item">
                     <i data-lucide="landmark"></i>
-                    <span>Bank</span>
+                    <span>Banks</span>
                 </a>
                 <a href="bankers.html" class="nav-item">
                     <i data-lucide="briefcase"></i>
                     <span>Bankers</span>
                 </a>
                 <a href="agents.html" class="nav-item">
-                    <i data-lucide="users"></i>
+                    <i data-lucide="user-check"></i>
                     <span>Agents</span>
                 </a>
                 <a href="enquiry.html" class="nav-item">
                     <i data-lucide="help-circle"></i>
-                    <span>Enquiry</span>
+                    <span>Enquiries</span>
                 </a>
             </nav>
-        </div>
+        </aside>
 
         <!-- Main Content -->
         <div class="main-content">
@@ -69,133 +64,155 @@
                     </button>
                     <h1 class="header-title">Rate Packages</h1>
                 </div>
-                <div class="header-right">
-                    <div class="header-actions">
-                        <button class="btn btn-primary" onclick="openModal('package-modal')">
-                            <i data-lucide="plus"></i>
-                            Add Package
-                        </button>
-                        <button class="btn btn-secondary" onclick="confirmSignOut()">
-                            <i data-lucide="log-out"></i>
-                            <span>Sign Out</span>
-                        </button>
-                    </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openModal('package-modal')">
+                        <i data-lucide="plus"></i>
+                        Add Rate Package
+                    </button>
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </button>
                     <div class="user-profile">
                         <div class="user-avatar" id="userAvatar">A</div>
                         <div class="user-info">
-                            <div class="user-name" id="userName">Admin</div>
+                            <div class="user-name" id="userName">admin</div>
                             <div class="user-role">Super Admin</div>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <div class="content">
-                <!-- Enhanced Search and Filter Bar -->
+            <div class="content-area">
+                <!-- Search and Filter Bar -->
                 <div class="search-filter-bar">
                     <div class="search-box">
                         <i data-lucide="search" class="search-icon"></i>
-                        <input type="text" class="search-input" placeholder="Search packages..." id="searchInput">
+                        <input type="text" class="search-input" placeholder="Search rate packages..." id="searchInput">
                     </div>
-                    <div class="filter-controls">
-                        <select class="filter-select" id="propertyTypeFilter">
-                            <option value="">All Property Types</option>
-                            <option value="HDB">HDB</option>
-                            <option value="Private Property">Private Property</option>
-                            <option value="EC">EC</option>
-                            <option value="Commercial">Commercial</option>
-                            <option value="Industrial">Industrial</option>
-                        </select>
-                        <select class="filter-select" id="loanTypeFilter">
-                            <option value="">All Loan Types</option>
-                            <option value="New Home Loan">New Home Loan</option>
-                            <option value="Refinancing Home Loan">Refinancing Home Loan</option>
-                            <option value="Commercial/Industrial">Commercial/Industrial</option>
-                        </select>
-                        <select class="filter-select" id="rateTypeFilter">
-                            <option value="">All Rate Types</option>
-                            <option value="Fixed">Fixed</option>
-                            <option value="Floating">Floating</option>
-                            <option value="Board">Board</option>
-                        </select>
-                        <select class="filter-select" id="lockPeriodFilter">
-                            <option value="">All Lock Periods</option>
-                            <option value="1">1 Year</option>
-                            <option value="2">2 Years</option>
-                            <option value="3">3 Years</option>
-                            <option value="4">4 Years</option>
-                            <option value="5">5 Years</option>
-                        </select>
-                        <select class="filter-select" id="bankFilter">
-                            <option value="">All Banks</option>
-                            <option value="CIMB">CIMB</option>
-                            <option value="OCBC">OCBC</option>
-                            <option value="UOB">UOB</option>
-                            <option value="DBS">DBS</option>
-                            <option value="MBB">MBB</option>
-                            <option value="SCB">SCB</option>
-                            <option value="HSBC">HSBC</option>
-                            <option value="SBI">SBI</option>
-                            <option value="BOC">BOC</option>
-                            <option value="HLF">HLF</option>
-                            <option value="SF">SF</option>
-                            <option value="RHB">RHB</option>
-                            <option value="SIF">SIF</option>
-                            <option value="Citibank">Citibank</option>
-                        </select>
-                        <button class="btn btn-secondary" onclick="clearAllFilters()">
-                            <i data-lucide="x"></i>
-                            Clear
-                        </button>
-                        <button class="btn btn-secondary" onclick="exportPackages()">
-                            <i data-lucide="download"></i>
-                            Export
-                        </button>
-                    </div>
+
+                    <select class="filter-select" id="propertyTypeFilter">
+                        <option value="">Select Property Type</option>
+                        <option value="HDB">HDB</option>
+                        <option value="Private Property">Private Property</option>
+                        <option value="EC">EC</option>
+                        <option value="Commercial">Commercial</option>
+                        <option value="Industrial">Industrial</option>
+                    </select>
+
+                    <select class="filter-select" id="loanTypeFilter">
+                        <option value="">Select Loan Type</option>
+                        <option value="New Home Loan">New Home Loan</option>
+                        <option value="Refinancing Home Loan">Refinancing Home Loan</option>
+                        <option value="Commercial/Industrial">Commercial/Industrial</option>
+                    </select>
+
+                    <select class="filter-select" id="rateTypeFilter">
+                        <option value="">Select Rate Type</option>
+                        <option value="Fixed">Fixed</option>
+                        <option value="Floating">Floating</option>
+                    </select>
+
+                    <select class="filter-select" id="lockPeriodFilter">
+                        <option value="">Select Lock Period</option>
+                        <option value="0 Year">0 Year</option>
+                        <option value="1 Year">1 Year</option>
+                        <option value="2 Years">2 Years</option>
+                        <option value="3 Years">3 Years</option>
+                        <option value="4 Years">4 Years</option>
+                        <option value="5 Years">5 Years</option>
+                        <option value="6 Years">6 Years</option>
+                        <option value="7 Years">7 Years</option>
+                        <option value="8 Years">8 Years</option>
+                        <option value="9 Years">9 Years</option>
+                        <option value="10 Years">10 Years</option>
+                    </select>
+
+                    <select class="filter-select" id="bankFilter">
+                        <option value="">Select Bank</option>
+                        <option value="CIMB">CIMB</option>
+                        <option value="OCBC">OCBC</option>
+                        <option value="UOB">UOB</option>
+                        <option value="DBS">DBS</option>
+                        <option value="MBB">MBB</option>
+                        <option value="SCB">SCB</option>
+                        <option value="HSBC">HSBC</option>
+                        <option value="SBI">SBI</option>
+                        <option value="BOC">BOC</option>
+                        <option value="HLF">HLF</option>
+                        <option value="SF">SF</option>
+                        <option value="RHB">RHB</option>
+                        <option value="SIF">SIF</option>
+                        <option value="Citibank">Citibank</option>
+                    </select>
+
+                    <button class="btn btn-secondary" onclick="clearAllFilters()" id="clearFiltersBtn">
+                        <i data-lucide="x"></i>
+                        <span>Clear</span>
+                    </button>
+                    
+                    <button class="btn btn-secondary" onclick="exportToCSV('rate-packages.csv')">
+                        <i data-lucide="download"></i>
+                        <span>Export</span>
+                    </button>
                 </div>
 
                 <!-- Data Table -->
                 <div class="data-table">
-                    <div class="table-responsive">
+                    <div class="table-container">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>BANK</th>
-                                    <th>PROPERTY</th>
-                                    <th>STATUS</th>
+                                    <th>BANK NAME</th>
+                                    <th>PROPERTY TYPE</th>
+                                    <th>BUY UNDER</th>
+                                    <th>PROPERTY STATUS</th>
                                     <th>RATE TYPE</th>
                                     <th>LOAN TYPE</th>
                                     <th>LOCK PERIOD</th>
-                                    <th>MIN LOAN</th>
-                                    <th>YEAR 1 RATE</th>
+                                    <th>MIN LOAN SIZE</th>
+                                    <th>INTEREST Y1</th>
                                     <th>ACTIONS</th>
                                 </tr>
                             </thead>
-                            <tbody id="packagesTableBody">
-                                <!-- Packages will be loaded here -->
+                            <tbody id="packagesTable">
+                                <tr>
+                                    <td colspan="10" style="text-align: center; padding: 40px;">
+                                        <div class="loading-spinner"></div>
+                                        <div style="margin-top: 10px;">Loading rate packages...</div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Pagination -->
-                <div class="pagination-container">
-                    <div class="pagination-info" id="paginationInfo">
-                        Showing 1-10 of 0 packages
+                <!-- Enhanced Pagination -->
+                <div class="pagination">
+                    <div class="pagination-info">
+                        <span id="paginationInfo">Showing 0 of 0</span>
                     </div>
                     <div class="pagination-controls" id="paginationControls">
                         <!-- Pagination buttons will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Recent Actions Section -->
+                <div class="recent-actions-section">
+                    <h3>Recent Actions</h3>
+                    <div class="recent-actions-list" id="recentActionsList">
+                        <div class="no-actions">No recent actions</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Add/Edit Package Modal -->
-    <div class="modal modal-large" id="package-modal" style="display: none;">
+    <!-- Add/Edit Rate Package Modal -->
+    <div class="modal" id="package-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="packageModalTitle">Add Rate Package</h3>
+                <h3 class="modal-title" id="modalTitle">Add Rate Package</h3>
                 <button class="modal-close" onclick="closeModal('package-modal')">
                     <i data-lucide="x"></i>
                 </button>
@@ -250,6 +267,16 @@
                             </div>
 
                             <div class="form-group half">
+                                <label class="form-label">Buy Under</label>
+                                <select class="form-select" name="buy_under" required>
+                                    <option value="">Select buy under</option>
+                                    <option value="Company Operating">Company Operating</option>
+                                    <option value="Company Investment Holding">Company Investment Holding</option>
+                                    <option value="Individual Name">Individual Name</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group half">
                                 <label class="form-label">Property status</label>
                                 <select class="form-select" name="property_status" required>
                                     <option value="">Select property status</option>
@@ -259,136 +286,150 @@
                             </div>
 
                             <div class="form-group half">
-                                <label class="form-label">Lock period (years)</label>
-                                <input type="number" class="form-input" name="lock_period" placeholder="e.g., 2">
-                            </div>
-
-                            <div class="form-group half">
                                 <label class="form-label">Rate type category</label>
-                                <select class="form-select" name="rate_type_category">
-                                    <option value="">Select rate type</option>
-                                    <option value="Fixed">Fixed</option>
-                                    <option value="Floating">Floating</option>
-                                    <option value="Board">Board</option>
-                                </select>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="rate_type_category" value="Fixed" required>
+                                        <span>Fixed</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="rate_type_category" value="Floating" required>
+                                        <span>Floating</span>
+                                    </label>
+                                </div>
                             </div>
 
-                            <div class="form-group half">
+                            <div class="form-group">
                                 <label class="form-label">Minimum loan size</label>
-                                <input type="number" class="form-input" name="minimum_loan_size" placeholder="e.g., 100000">
+                                <div class="input-group">
+                                    <span class="input-prefix">S$</span>
+                                    <input type="number" class="form-input" name="minimum_loan_size" placeholder="500000" min="0">
+                                </div>
                             </div>
 
                             <div class="form-group half">
-                                <label class="form-label">Maximum loan size</label>
-                                <input type="number" class="form-input" name="maximum_loan_size" placeholder="e.g., 1000000">
+                                <label class="form-label">Lock Period</label>
+                                <select class="form-select" name="lock_period" required>
+                                    <option value="">Select lock period</option>
+                                    <option value="0 Year">0 Year</option>
+                                    <option value="1 Year">1 Year</option>
+                                    <option value="2 Years">2 Years</option>
+                                    <option value="3 Years">3 Years</option>
+                                    <option value="4 Years">4 Years</option>
+                                    <option value="5 Years">5 Years</option>
+                                    <option value="6 Years">6 Years</option>
+                                    <option value="7 Years">7 Years</option>
+                                    <option value="8 Years">8 Years</option>
+                                    <option value="9 Years">9 Years</option>
+                                    <option value="10 Years">10 Years</option>
+                                </select>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Interest Rates Configuration -->
+                    <!-- Interest Rate Information -->
                     <div class="form-section">
-                        <h4>Interest Rates Configuration</h4>
-                        <div class="rate-year-container">
-                            <!-- Year 1 -->
-                            <div class="rate-year-row">
-                                <label class="form-label">Year 1</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <select class="form-select rate-type-select" name="year1_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(1)">
-                                        <option value="">Select rate type</option>
-                                    </select>
-                                    <select class="form-select" name="year1_operator" style="width: 60px;" onchange="calculateRealTimeRate(1)">
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
-                                    </select>
-                                    <input type="number" class="form-input" name="year1_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(1)">
-                                    <span style="padding: 0 8px;">%</span>
-                                    <div class="calculated-rate" id="year1_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
-                                </div>
+                        <h4>Interest Rate Information</h4>
+                        
+                        <!-- Year 1 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 1</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select rate-type-select" name="year1_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(1)">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year1_operator" style="width: 60px;" onchange="calculateRealTimeRate(1)">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year1_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(1)">
+                                <span style="padding: 0 8px;">%</span>
+                                <div class="calculated-rate" id="year1_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
+                        </div>
 
-                            <!-- Year 2 -->
-                            <div class="rate-year-row">
-                                <label class="form-label">Year 2</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <select class="form-select rate-type-select" name="year2_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(2)">
-                                        <option value="">Select rate type</option>
-                                    </select>
-                                    <select class="form-select" name="year2_operator" style="width: 60px;" onchange="calculateRealTimeRate(2)">
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
-                                    </select>
-                                    <input type="number" class="form-input" name="year2_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(2)">
-                                    <span style="padding: 0 8px;">%</span>
-                                    <div class="calculated-rate" id="year2_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
-                                </div>
+                        <!-- Year 2 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 2</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select rate-type-select" name="year2_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(2)">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year2_operator" style="width: 60px;" onchange="calculateRealTimeRate(2)">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year2_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(2)">
+                                <span style="padding: 0 8px;">%</span>
+                                <div class="calculated-rate" id="year2_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
+                        </div>
 
-                            <!-- Year 3 -->
-                            <div class="rate-year-row">
-                                <label class="form-label">Year 3</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <select class="form-select rate-type-select" name="year3_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(3)">
-                                        <option value="">Select rate type</option>
-                                    </select>
-                                    <select class="form-select" name="year3_operator" style="width: 60px;" onchange="calculateRealTimeRate(3)">
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
-                                    </select>
-                                    <input type="number" class="form-input" name="year3_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(3)">
-                                    <span style="padding: 0 8px;">%</span>
-                                    <div class="calculated-rate" id="year3_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
-                                </div>
+                        <!-- Year 3 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 3</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select rate-type-select" name="year3_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(3)">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year3_operator" style="width: 60px;" onchange="calculateRealTimeRate(3)">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year3_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(3)">
+                                <span style="padding: 0 8px;">%</span>
+                                <div class="calculated-rate" id="year3_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
+                        </div>
 
-                            <!-- Year 4 -->
-                            <div class="rate-year-row">
-                                <label class="form-label">Year 4</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <select class="form-select rate-type-select" name="year4_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(4)">
-                                        <option value="">Select rate type</option>
-                                    </select>
-                                    <select class="form-select" name="year4_operator" style="width: 60px;" onchange="calculateRealTimeRate(4)">
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
-                                    </select>
-                                    <input type="number" class="form-input" name="year4_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(4)">
-                                    <span style="padding: 0 8px;">%</span>
-                                    <div class="calculated-rate" id="year4_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
-                                </div>
+                        <!-- Year 4 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 4</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select rate-type-select" name="year4_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(4)">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year4_operator" style="width: 60px;" onchange="calculateRealTimeRate(4)">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year4_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(4)">
+                                <span style="padding: 0 8px;">%</span>
+                                <div class="calculated-rate" id="year4_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
+                        </div>
 
-                            <!-- Year 5 -->
-                            <div class="rate-year-row">
-                                <label class="form-label">Year 5</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <select class="form-select rate-type-select" name="year5_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(5)">
-                                        <option value="">Select rate type</option>
-                                    </select>
-                                    <select class="form-select" name="year5_operator" style="width: 60px;" onchange="calculateRealTimeRate(5)">
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
-                                    </select>
-                                    <input type="number" class="form-input" name="year5_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(5)">
-                                    <span style="padding: 0 8px;">%</span>
-                                    <div class="calculated-rate" id="year5_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
-                                </div>
+                        <!-- Year 5 -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Year 5</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select rate-type-select" name="year5_rate_type" style="flex: 2;" onchange="calculateRealTimeRate(5)">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="year5_operator" style="width: 60px;" onchange="calculateRealTimeRate(5)">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="year5_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(5)">
+                                <span style="padding: 0 8px;">%</span>
+                                <div class="calculated-rate" id="year5_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
+                        </div>
 
-                            <!-- Thereafter -->
-                            <div class="rate-year-row">
-                                <label class="form-label">Thereafter</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
-                                    <select class="form-select rate-type-select" name="thereafter_rate_type" style="flex: 2;" onchange="calculateRealTimeRate('thereafter')">
-                                        <option value="">Select rate type</option>
-                                    </select>
-                                    <select class="form-select" name="thereafter_operator" style="width: 60px;" onchange="calculateRealTimeRate('thereafter')">
-                                        <option value="+">+</option>
-                                        <option value="-">-</option>
-                                    </select>
-                                    <input type="number" class="form-input" name="thereafter_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate('thereafter')">
-                                    <span style="padding: 0 8px;">%</span>
-                                    <div class="calculated-rate" id="thereafter_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
-                                </div>
+                        <!-- Thereafter -->
+                        <div class="rate-year-row">
+                            <label class="form-label">Thereafter</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select class="form-select rate-type-select" name="thereafter_rate_type" style="flex: 2;" onchange="calculateRealTimeRate('thereafter')">
+                                    <option value="">Select rate type</option>
+                                </select>
+                                <select class="form-select" name="thereafter_operator" style="width: 60px;" onchange="calculateRealTimeRate('thereafter')">
+                                    <option value="+">+</option>
+                                    <option value="-">-</option>
+                                </select>
+                                <input type="number" class="form-input" name="thereafter_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate('thereafter')">
+                                <span style="padding: 0 8px;">%</span>
+                                <div class="calculated-rate" id="thereafter_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
                         </div>
                     </div>
@@ -414,65 +455,106 @@
                             </div>
 
                             <div class="form-group half">
-                                <label class="form-label">Processing fee</label>
+                                <label class="form-label">Cancellation penalty</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-input" name="processing_fee" step="0.01" placeholder="500">
-                                    <span class="input-suffix">SGD</span>
-                                </div>
-                            </div>
-
-                            <div class="form-group half">
-                                <label class="form-label">Legal fee subsidy</label>
-                                <div class="input-group">
-                                    <input type="checkbox" class="form-checkbox" name="legal_fee_subsidy">
-                                    <span>Available</span>
-                                </div>
-                            </div>
-
-                            <div class="form-group half">
-                                <label class="form-label">Valuation subsidy</label>
-                                <div class="input-group">
-                                    <input type="checkbox" class="form-checkbox" name="valuation_subsidy">
-                                    <span>Available</span>
-                                </div>
-                            </div>
-
-                            <div class="form-group half">
-                                <label class="form-label">Partial repayment</label>
-                                <div class="input-group">
-                                    <input type="checkbox" class="form-checkbox" name="partial_repayment">
-                                    <span>Allowed</span>
+                                    <input type="number" class="form-input" name="cancellation_penalty" step="0.01" placeholder="1.0">
+                                    <span class="input-suffix">%</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Features -->
+                    <div class="form-section">
+                        <h4>Package Features</h4>
+                        <div class="form-grid">
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="legal_fee_subsidy">
+                                    <span class="checkmark"></span>
+                                    Legal fee subsidy
+                                </label>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="valuation_subsidy">
+                                    <span class="checkmark"></span>
+                                    Valuation subsidy
+                                </label>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="partial_repayment">
+                                    <span class="checkmark"></span>
+                                    Partial repayment allowed
+                                </label>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="waiver_due_to_sales">
+                                    <span class="checkmark"></span>
+                                    Waiver due to sales
+                                </label>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="free_package_conversion_12m">
+                                    <span class="checkmark"></span>
+                                    Free conversion (12 months)
+                                </label>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="free_package_conversion_24m">
+                                    <span class="checkmark"></span>
+                                    Free conversion (24 months)
+                                </label>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="free_package_conversion_36m">
+                                    <span class="checkmark"></span>
+                                    Free conversion (36 months)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="form-section">
+                        <h4>Additional Information</h4>
+                        <div class="form-group">
+                            <label class="form-label">Remarks</label>
+                            <textarea class="form-input" name="remarks" rows="4" placeholder="Additional notes or remarks about this rate package..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('package-modal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Package</button>
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('package-modal')">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="savePackage()">
-                    <span id="savePackageButtonText">Save Package</span>
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- Package View Modal -->
-    <div class="modal modal-large" id="package-view-modal" style="display: none;">
+    <!-- View Package Modal -->
+    <div class="modal" id="view-modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Package Details</h3>
-                <button class="modal-close" onclick="closeModal('package-view-modal')">
+                <h3 class="modal-title">Rate Package Details</h3>
+                <button class="modal-close" onclick="closeModal('view-modal')">
                     <i data-lucide="x"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <div id="packageViewContent">
-                    <!-- Package details will be loaded here -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('package-view-modal')">Close</button>
+            <div class="modal-body" id="viewModalBody">
+                <!-- Content will be populated dynamically -->
             </div>
         </div>
     </div>
@@ -487,18 +569,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="confirm-message">
-                    <i data-lucide="log-out"></i>
-                    <p>Are you sure you want to sign out?<br>
-                    You will be redirected to the login page.</p>
+                <p>Are you sure you want to sign out?</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="performSignOut()">Sign Out</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
-                <button class="btn btn-primary" onclick="performSignOut()">
-                    <i data-lucide="log-out"></i>
-                    Sign Out
-                </button>
             </div>
         </div>
     </div>
@@ -657,31 +732,59 @@
             const multiplier = operator === '-' ? -1 : 1;
             const finalRate = baseRate + (multiplier * value);
 
-            return `${finalRate.toFixed(3)}%`;
+            return `${rateType} (${baseRate.toFixed(3)}%) ${operator}${value}% = ${finalRate.toFixed(3)}%`;
         }
 
-        // Load rate types from database
-        async function loadRateTypes() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('rate_types')
-                    .select('*')
-                    .order('rate_type');
-
-                if (error) throw error;
-
-                rateTypes = data || [];
-
-            } catch (error) {
-                console.error('Error loading rate types:', error);
-                showNotification('Failed to load rate types: ' + error.message, 'error');
+        // Enhanced form validation
+        function validateRatePackageForm(formData) {
+            const errors = [];
+            const selectedBank = formData.get('bank_name');
+            
+            if (!selectedBank) {
+                errors.push('Bank name is required');
+                return errors;
             }
+
+            const fullBankName = getFullBankName(selectedBank);
+
+            // Validate at least one year has rate data
+            let hasRateData = false;
+            for (let year = 1; year <= 5; year++) {
+                const rateType = formData.get(`year${year}_rate_type`);
+                const value = formData.get(`year${year}_value`);
+                
+                if (rateType && value) {
+                    hasRateData = true;
+                    
+                    // Validate rate type is available for selected bank
+                    const rateTypeData = rateTypes.find(rt => rt.rate_type === rateType);
+                    if (!rateTypeData || !rateTypeData.bank_names.includes(fullBankName)) {
+                        errors.push(`Rate type "${rateType}" is not available for ${selectedBank}`);
+                    }
+                }
+            }
+
+            // Check thereafter
+            const thereafterRateType = formData.get('thereafter_rate_type');
+            const thereafterValue = formData.get('thereafter_value');
+            if (thereafterRateType && thereafterValue) {
+                hasRateData = true;
+                const rateTypeData = rateTypes.find(rt => rt.rate_type === thereafterRateType);
+                if (!rateTypeData || !rateTypeData.bank_names.includes(fullBankName)) {
+                    errors.push(`Rate type "${thereafterRateType}" is not available for ${selectedBank}`);
+                }
+            }
+
+            if (!hasRateData) {
+                errors.push('At least one year must have rate information');
+            }
+
+            return errors;
         }
 
-        // Load packages from database
+        // Load rate packages
         async function loadPackages() {
             try {
-                showLoading('Loading packages...');
                 const { data, error } = await supabaseClient
                     .from('rate_packages')
                     .select('*')
@@ -694,15 +797,13 @@
                 displayPackages();
                 updatePagination();
 
-                showNotification(`Loaded ${packages.length} packages`, 'success');
-
             } catch (error) {
                 console.error('Error loading packages:', error);
-                const tbody = document.getElementById('packagesTableBody');
+                const tbody = document.getElementById('packagesTable');
                 if (tbody) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="9" style="text-align: center; padding: 40px; color: #ef4444;">
+                            <td colspan="10" style="text-align: center; padding: 40px; color: #ef4444;">
                                 <div style="margin-bottom: 12px;">Failed to load data</div>
                                 <div style="font-size: 12px; color: #6b7280;">${error.message}</div>
                                 <button onclick="loadPackages()" style="margin-top: 12px; padding: 8px 16px; background: #4338ca; color: white; border: none; border-radius: 6px; cursor: pointer;">
@@ -712,14 +813,28 @@
                         </tr>
                     `;
                 }
-            } finally {
-                hideLoading();
+            }
+        }
+
+        // Load rate types
+        async function loadRateTypes() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('rate_types')
+                    .select('rate_type, rate_value, bank_names')
+                    .order('rate_type');
+
+                if (error) throw error;
+                rateTypes = data || [];
+
+            } catch (error) {
+                console.error('Error loading rate types:', error);
             }
         }
 
         // Display packages in table
         function displayPackages() {
-            const tbody = document.getElementById('packagesTableBody');
+            const tbody = document.getElementById('packagesTable');
             if (!tbody) return;
 
             const startIndex = (currentPage - 1) * itemsPerPage;
@@ -729,8 +844,8 @@
             if (pagePackages.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 40px; color: #64748b;">
-                            ${filteredPackages.length === 0 ? 'No packages found' : 'No packages match your filters'}
+                        <td colspan="10" style="text-align: center; padding: 40px; color: #64748b;">
+                            ${filteredPackages.length === 0 ? 'No rate packages found' : 'No packages match your filters'}
                         </td>
                     </tr>
                 `;
@@ -741,6 +856,7 @@
                 <tr>
                     <td><strong>${pkg.bank_name || 'N/A'}</strong></td>
                     <td>${pkg.property_type || 'N/A'}</td>
+                    <td>${pkg.buy_under || 'N/A'}</td>
                     <td>
                         <span class="status-badge ${pkg.property_status === 'Completed' ? 'status-completed' : 'status-pending'}">
                             ${pkg.property_status || 'N/A'}
@@ -790,19 +906,15 @@
             const bank = document.getElementById('bankFilter')?.value || '';
 
             filteredPackages = packages.filter(pkg => {
-                const matchesSearch = !searchTerm || 
-                    (pkg.bank_name && pkg.bank_name.toLowerCase().includes(searchTerm)) ||
-                    (pkg.property_type && pkg.property_type.toLowerCase().includes(searchTerm)) ||
-                    (pkg.loan_type && pkg.loan_type.toLowerCase().includes(searchTerm));
-
-                const matchesPropertyType = !propertyType || pkg.property_type === propertyType;
-                const matchesLoanType = !loanType || pkg.loan_type === loanType;
-                const matchesRateType = !rateType || pkg.rate_type_category === rateType;
-                const matchesLockPeriod = !lockPeriod || pkg.lock_period == lockPeriod;
-                const matchesBank = !bank || pkg.bank_name === bank;
-
-                return matchesSearch && matchesPropertyType && matchesLoanType && 
-                       matchesRateType && matchesLockPeriod && matchesBank;
+                return (!searchTerm || 
+                       (pkg.bank_name && pkg.bank_name.toLowerCase().includes(searchTerm)) ||
+                       (pkg.property_type && pkg.property_type.toLowerCase().includes(searchTerm)) ||
+                       (pkg.buy_under && pkg.buy_under.toLowerCase().includes(searchTerm))) &&
+                       (!propertyType || pkg.property_type === propertyType) &&
+                       (!loanType || pkg.loan_type === loanType) &&
+                       (!rateType || pkg.rate_type_category === rateType) &&
+                       (!lockPeriod || pkg.lock_period === lockPeriod) &&
+                       (!bank || pkg.bank_name === bank);
             });
 
             currentPage = 1;
@@ -819,13 +931,12 @@
                 const totalItems = filteredPackages.length;
                 const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
                 const endItem = Math.min(currentPage * itemsPerPage, totalItems);
-
-                paginationInfo.textContent = `Showing ${startItem}-${endItem} of ${totalItems} packages`;
+                paginationInfo.textContent = `Showing ${startItem}-${endItem} of ${totalItems}`;
             }
 
             if (paginationControls) {
                 const totalPages = Math.ceil(filteredPackages.length / itemsPerPage);
-
+                
                 if (totalPages > 1) {
                     let controls = '';
                     
@@ -833,10 +944,10 @@
                     controls += `<button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
                         <i data-lucide="chevron-left"></i> Previous
                     </button>`;
-
+                    
                     // Page numbers
                     for (let i = 1; i <= totalPages; i++) {
-                        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                        if (i === currentPage || i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
                             controls += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
                         } else if (i === currentPage - 2 || i === currentPage + 2) {
                             controls += '<span class="pagination-ellipsis">...</span>';
@@ -907,90 +1018,109 @@
                 });
             }
 
-            const viewContent = `
-                <div class="package-details">
-                    <div class="detail-section">
+            const content = `
+                <div class="view-content">
+                    <div class="view-section">
                         <h4>Basic Information</h4>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <label>Bank:</label>
-                                <span>${pkg.bank_name || 'N/A'}</span>
-                            </div>
-                            <div class="detail-item">
-                                <label>Property Type:</label>
-                                <span>${pkg.property_type || 'N/A'}</span>
-                            </div>
-                            <div class="detail-item">
-                                <label>Loan Type:</label>
-                                <span>${pkg.loan_type || 'N/A'}</span>
-                            </div>
-                            <div class="detail-item">
-                                <label>Property Status:</label>
-                                <span>${pkg.property_status || 'N/A'}</span>
-                            </div>
+                        <div class="view-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="view-item"><strong>Bank Name:</strong> ${pkg.bank_name || 'N/A'}</div>
+                            <div class="view-item"><strong>Property Type:</strong> ${pkg.property_type || 'N/A'}</div>
+                            <div class="view-item"><strong>Buy Under:</strong> ${pkg.buy_under || 'N/A'}</div>
+                            <div class="view-item"><strong>Loan Type:</strong> ${pkg.loan_type || 'N/A'}</div>
+                            <div class="view-item"><strong>Property Status:</strong> ${pkg.property_status || 'N/A'}</div>
+                            <div class="view-item"><strong>Rate Type:</strong> ${pkg.rate_type_category || 'N/A'}</div>
                         </div>
                     </div>
-
-                    <div class="detail-section">
-                        <h4>Interest Schedule</h4>
-                        <div class="interest-schedule">
+                    
+                    ${interestSchedule.length > 0 ? `
+                    <div class="view-section">
+                        <h4>Interest Rate Schedule</h4>
+                        <div style="background: #f9fafb; padding: 16px; border-radius: 8px; border: 1px solid #e5e7eb;">
                             ${interestSchedule.map(item => `
-                                <div class="schedule-item">
-                                    <span class="period">${item.period}:</span>
-                                    <span class="rate">${item.calculation}</span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                                    <strong>${item.period}:</strong>
+                                    <span style="font-family: monospace; color: #059669;">${item.calculation}</span>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
-
-                    <div class="detail-section">
+                    ` : ''}
+                    
+                    <div class="view-section">
                         <h4>Financial Details</h4>
-                        <div class="detail-grid">
-                            <div class="detail-item">
-                                <label>Min Loan:</label>
-                                <span>${formatNumber(pkg.minimum_loan_size)}</span>
-                            </div>
-                            <div class="detail-item">
-                                <label>Max Loan:</label>
-                                <span>${formatNumber(pkg.maximum_loan_size)}</span>
-                            </div>
-                            <div class="detail-item">
-                                <label>Lock Period:</label>
-                                <span>${pkg.lock_period || 'N/A'} years</span>
-                            </div>
-                            <div class="detail-item">
-                                <label>Processing Fee:</label>
-                                <span>$${pkg.processing_fee || 'N/A'}</span>
-                            </div>
+                        <div class="view-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="view-item"><strong>Lock Period:</strong> ${pkg.lock_period || 'N/A'}</div>
+                            <div class="view-item"><strong>Minimum Loan Size:</strong> ${formatNumber(pkg.minimum_loan_size)}</div>
+                            <div class="view-item"><strong>Lock In Period:</strong> ${pkg.lock_in_period || 'N/A'}</div>
+                            <div class="view-item"><strong>Partial Pay Penalty:</strong> ${pkg.partial_pay_penalty ? pkg.partial_pay_penalty + '%' : 'N/A'}</div>
+                            <div class="view-item"><strong>Full Redeem Penalty:</strong> ${pkg.full_redeem_penalty ? pkg.full_redeem_penalty + '%' : 'N/A'}</div>
+                            <div class="view-item"><strong>Cancellation Penalty:</strong> ${pkg.cancellation_penalty ? pkg.cancellation_penalty + '%' : 'N/A'}</div>
                         </div>
                     </div>
+                    
+                    <div class="view-section">
+                        <h4>Package Features</h4>
+                        <div class="view-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="view-item"><strong>Legal Fee Subsidy:</strong> ${pkg.legal_fee_subsidy ? 'Yes' : 'No'}</div>
+                            <div class="view-item"><strong>Valuation Subsidy:</strong> ${pkg.valuation_subsidy ? 'Yes' : 'No'}</div>
+                            <div class="view-item"><strong>Partial Repayment:</strong> ${pkg.partial_repayment ? 'Allowed' : 'Not Allowed'}</div>
+                            <div class="view-item"><strong>Waiver Due to Sales:</strong> ${pkg.waiver_due_to_sales ? 'Yes' : 'No'}</div>
+                            <div class="view-item"><strong>Free Conversion (12m):</strong> ${pkg.free_package_conversion_12m ? 'Yes' : 'No'}</div>
+                            <div class="view-item"><strong>Free Conversion (24m):</strong> ${pkg.free_package_conversion_24m ? 'Yes' : 'No'}</div>
+                            <div class="view-item"><strong>Free Conversion (36m):</strong> ${pkg.free_package_conversion_36m ? 'Yes' : 'No'}</div>
+                        </div>
+                    </div>
+                    
+                    ${pkg.remarks ? `
+                    <div class="view-section">
+                        <h4>Remarks</h4>
+                        <div style="background: #f9fafb; padding: 12px; border-radius: 6px; border: 1px solid #e5e7eb;">
+                            ${pkg.remarks}
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
             `;
 
-            document.getElementById('packageViewContent').innerHTML = viewContent;
-            openModal('package-view-modal');
+            document.getElementById('viewModalBody').innerHTML = content;
+            openModal('view-modal');
         }
 
-        // Save package
-        async function savePackage() {
-            const form = document.getElementById('packageForm');
-            const formData = new FormData(form);
+        // Enhanced form handling
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            
+            // Validate form
+            const errors = validateRatePackageForm(formData);
+            if (errors.length > 0) {
+                showNotification('Validation errors:\n' + errors.join('\n'), 'error');
+                return;
+            }
 
             const packageData = {};
             
-            // Get all form data
+            // Process form data
             for (let [key, value] of formData.entries()) {
-                if (value !== '') {
-                    if (key.includes('penalty') || key.includes('fee') || key.includes('size') || key.includes('period') || key.includes('value')) {
-                        packageData[key] = parseFloat(value) || null;
-                    } else {
-                        packageData[key] = value;
-                    }
+                if (key.includes('_penalty') || key.includes('_value') || key === 'minimum_loan_size') {
+                    packageData[key] = value ? parseFloat(value) : null;
+                } else if (key.includes('_subsidy') || key.includes('_repayment') || 
+                          key.includes('_conversion') || key === 'waiver_due_to_sales') {
+                    // These are checkboxes - they're only in formData if checked
+                    packageData[key] = true;
+                } else {
+                    packageData[key] = value || null;
                 }
             }
 
-            // Handle checkboxes
-            ['legal_fee_subsidy', 'valuation_subsidy', 'partial_repayment'].forEach(field => {
+            // Set all boolean fields to false if not in formData (unchecked)
+            const booleanFields = [
+                'legal_fee_subsidy', 'valuation_subsidy', 'partial_repayment', 
+                'waiver_due_to_sales', 'free_package_conversion_12m', 
+                'free_package_conversion_24m', 'free_package_conversion_36m'
+            ];
+            booleanFields.forEach(field => {
                 if (!(field in packageData)) {
                     packageData[field] = false;
                 }
@@ -1073,11 +1203,10 @@
             }
 
             window.AdminApp.editingItemId = null;
-            document.getElementById('packageModalTitle').textContent = 'Duplicate Package';
-            document.getElementById('savePackageButtonText').textContent = 'Save Package';
-            
+            document.getElementById('modalTitle').textContent = 'Duplicate Rate Package';
             openModal('package-modal');
-            showNotification('Package duplicated. Make changes and save.', 'info');
+            
+            addRecentAction('duplicate', `Duplicating package: ${pkg.bank_name} - ${pkg.property_type}`);
         }
 
         function editPackage(id) {
@@ -1105,7 +1234,7 @@
             if (pkg.bank_name) {
                 setTimeout(() => {
                     onBankChange();
-                    // Restore rate type selections
+                    // Restore rate type selections and calculations
                     setTimeout(() => {
                         ['year1', 'year2', 'year3', 'year4', 'year5', 'thereafter'].forEach(period => {
                             const rateType = pkg[`${period}_rate_type`];
@@ -1122,17 +1251,17 @@
             }
 
             window.AdminApp.editingItemId = id;
-            document.getElementById('packageModalTitle').textContent = 'Edit Package';
-            document.getElementById('savePackageButtonText').textContent = 'Update Package';
-            
+            document.getElementById('modalTitle').textContent = 'Edit Rate Package';
             openModal('package-modal');
+            
+            addRecentAction('edit', `Started editing package: ${pkg.bank_name} - ${pkg.property_type}`);
         }
 
         async function deletePackage(id) {
             const pkg = packages.find(p => p.id === id);
             if (!pkg) return;
 
-            if (!confirm(`Are you sure you want to delete this package?\n\nBank: ${pkg.bank_name}\nProperty: ${pkg.property_type}\n\nThis action cannot be undone.`)) {
+            if (!confirm(`Are you sure you want to delete the rate package for ${pkg.bank_name}?\n\nThis action cannot be undone.`)) {
                 return;
             }
 
@@ -1141,16 +1270,82 @@
                     .from('rate_packages')
                     .delete()
                     .eq('id', id);
-                
+
                 if (error) throw error;
 
-                showNotification('Package deleted successfully', 'success');
-                loadPackages();
                 addRecentAction('delete', `Deleted package: ${pkg.bank_name} - ${pkg.property_type}`);
+                showNotification('Package deleted successfully', 'success');
+                loadPackages(); // Reload data
                 
             } catch (error) {
                 console.error('Error deleting package:', error);
                 showNotification('Failed to delete package: ' + error.message, 'error');
+            }
+        }
+
+        function exportToCSV(filename) {
+            if (filteredPackages.length === 0) {
+                showNotification('No data to export', 'warning');
+                return;
+            }
+
+            const headers = [
+                'Bank Name', 'Property Type', 'Buy Under', 'Property Status', 
+                'Rate Type', 'Loan Type', 'Lock Period', 'Min Loan Size', 'Interest Y1'
+            ];
+
+            const csvContent = [
+                headers.join(','),
+                ...filteredPackages.map(pkg => [
+                    pkg.bank_name || '',
+                    pkg.property_type || '',
+                    pkg.buy_under || '',
+                    pkg.property_status || '',
+                    pkg.rate_type_category || '',
+                    pkg.loan_type || '',
+                    pkg.lock_period || '',
+                    pkg.minimum_loan_size || '',
+                    calculateInterestYear(pkg, 1).replace(/,/g, ';') // Replace commas to avoid CSV issues
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Data exported successfully', 'success');
+        }
+
+        // Sign out functions
+        function confirmSignOut() {
+            openModal('signout-modal');
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                // Clear any stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login
+                window.location.href = 'login.html';
+                
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showNotification('Sign out failed: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                closeModal('signout-modal');
             }
         }
 
@@ -1162,64 +1357,21 @@
             document.getElementById('rateTypeFilter').value = '';
             document.getElementById('lockPeriodFilter').value = '';
             document.getElementById('bankFilter').value = '';
+            
             filterPackages();
         }
 
-        // Export packages to CSV
-        function exportPackages() {
-            if (!filteredPackages || filteredPackages.length === 0) {
-                showNotification('No data to export', 'warning');
-                return;
-            }
-            
-            const headers = ['Bank', 'Property Type', 'Loan Type', 'Property Status', 'Rate Type', 'Lock Period', 'Min Loan', 'Max Loan', 'Year 1 Rate'];
-            const csvContent = [
-                headers.join(','),
-                ...filteredPackages.map(pkg => [
-                    `"${(pkg.bank_name || '').replace(/"/g, '""')}"`,
-                    `"${(pkg.property_type || '').replace(/"/g, '""')}"`,
-                    `"${(pkg.loan_type || '').replace(/"/g, '""')}"`,
-                    `"${(pkg.property_status || '').replace(/"/g, '""')}"`,
-                    `"${(pkg.rate_type_category || '').replace(/"/g, '""')}"`,
-                    pkg.lock_period || '',
-                    pkg.minimum_loan_size || '',
-                    pkg.maximum_loan_size || '',
-                    calculateInterestYear(pkg, 1)
-                ].join(','))
-            ].join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            if (link.download !== undefined) {
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', `rate-packages-${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-
         // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+        document.getElementById('searchInput').addEventListener('input', debounce(filterPackages, 300));
+        document.getElementById('propertyTypeFilter').addEventListener('change', filterPackages);
+        document.getElementById('loanTypeFilter').addEventListener('change', filterPackages);
+        document.getElementById('rateTypeFilter').addEventListener('change', filterPackages);
+        document.getElementById('lockPeriodFilter').addEventListener('change', filterPackages);
+        document.getElementById('bankFilter').addEventListener('change', filterPackages);
 
-            // Setup event listeners
-            document.getElementById('searchInput').addEventListener('input', debounce(filterPackages, 300));
-            document.getElementById('propertyTypeFilter').addEventListener('change', filterPackages);
-            document.getElementById('loanTypeFilter').addEventListener('change', filterPackages);
-            document.getElementById('rateTypeFilter').addEventListener('change', filterPackages);
-            document.getElementById('lockPeriodFilter').addEventListener('change', filterPackages);
-            document.getElementById('bankFilter').addEventListener('change', filterPackages);
+        document.getElementById('packageForm').addEventListener('submit', handleFormSubmit);
 
-            // Load initial data
-            Promise.all([loadPackages(), loadRateTypes()]);
-        });
-
+        // Debounce function
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -1231,6 +1383,34 @@
                 timeout = setTimeout(later, wait);
             };
         }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal:not([style*="display: none"])');
+                openModals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                closeSidebar();
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Initialize AdminApp
+            if (!window.AdminApp) {
+                window.AdminApp = { editingItemId: null };
+            }
+
+            // Load data
+            await loadRateTypes();
+            await loadPackages();
+        });
     </script>
 </body>
 </html>
