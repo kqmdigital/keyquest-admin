@@ -458,7 +458,7 @@
                                 </button>
                                 <button class="btn btn-sm btn-delete" onclick="deleteBank('${bank.id}')" title="Delete" 
                                         style="background: #ef4444; color: white; border: none;" 
-                                        ${isActive ? 'disabled title="Cannot delete bank with active rate types or packages"' : ''}>
+                                        ${isActive ? 'disabled' : ''}>
                                     <i data-lucide="trash-2"></i>
                                 </button>
                             </div>
@@ -798,7 +798,85 @@
         });
     </script>
 
+    <!-- Consistent Button Styling -->
     <style>
+        /* Standardized Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            min-height: 36px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            min-height: 32px;
+        }
+
+        .btn-edit {
+            background: #3b82f6 !important;
+            color: white !important;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb !important;
+        }
+
+        .btn-delete {
+            background: #ef4444 !important;
+            color: white !important;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626 !important;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn:disabled:hover {
+            background-color: inherit !important;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .action-buttons .btn {
+            border: none;
+        }
+
         .bank-abbr {
             font-family: monospace;
             font-weight: 600;
@@ -824,15 +902,6 @@
             margin-left: 4px;
             color: #6b7280;
             font-size: 11px;
-        }
-
-        .action-buttons button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .action-buttons button:disabled:hover {
-            background-color: inherit !important;
         }
 
         .status-badge.status-inactive {
