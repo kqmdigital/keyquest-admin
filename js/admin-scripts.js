@@ -1,442 +1,159 @@
-/**
- * KEYQUEST ADMIN PANEL - ENHANCED JAVASCRIPT
- * ==========================================
- * Complete functionality for all admin pages with enhanced filtering
- */
+// ===================================
+// ENHANCED ADMIN JAVASCRIPT FRAMEWORK
+// Version: 2.0 - Updated for Rate Package Enhancements
+// ===================================
 
 // ===================================
-// GLOBAL VARIABLES & CONFIGURATION
+// GLOBAL CONFIGURATION & CONSTANTS
 // ===================================
 
 const AdminApp = {
-    currentPage: '',
-    currentUser: null,
     editingItemId: null,
-    notifications: [],
-    recentActions: [],
+    currentUser: null,
+    isLoading: false,
     config: {
-        apiBaseUrl: '/api',
-        itemsPerPage: 10,
-        debounceDelay: 300
+        pagination: {
+            itemsPerPage: 10
+        },
+        notifications: {
+            duration: 5000
+        }
     }
 };
 
+// Standardized bank mappings for consistency across all pages
+const STANDARD_BANK_MAPPINGS = {
+    'CIMB': 'CIMB',
+    'OCBC': 'OCBC', 
+    'UOB': 'UOB',
+    'DBS': 'DBS',
+    'Maybank': 'MBB',
+    'Standard Chartered': 'SCB',
+    'HSBC': 'HSBC',
+    'SBI': 'SBI',
+    'Bank Of China': 'BOC',
+    'Hong Leong Finance': 'HLF',
+    'Singapura Finance': 'SF',
+    'RHB Bank': 'RHB',
+    'Sing Investments & Finance': 'SIF',
+    'Citibank': 'Citibank'
+};
+
+// Reverse mapping for display purposes
+const REVERSE_BANK_MAPPINGS = Object.fromEntries(
+    Object.entries(STANDARD_BANK_MAPPINGS).map(([full, abbr]) => [abbr, full])
+);
+
 // ===================================
-// INITIALIZATION
+// UTILITY FUNCTIONS
 // ===================================
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
-});
+// Enhanced bank name conversion functions
+function getFullBankName(abbreviation) {
+    return REVERSE_BANK_MAPPINGS[abbreviation] || abbreviation;
+}
 
-function initializeApp() {
+function getBankAbbreviation(fullName) {
+    return STANDARD_BANK_MAPPINGS[fullName] || fullName;
+}
+
+// Convert bank names for database storage (full names)
+function convertBankNamesForStorage(bankAbbreviations) {
+    return bankAbbreviations.map(abbr => getFullBankName(abbr));
+}
+
+// Convert bank names for display (abbreviations)
+function convertBankNamesForDisplay(bankFullNames) {
+    if (!Array.isArray(bankFullNames)) return [];
+    return bankFullNames.map(full => getBankAbbreviation(full));
+}
+
+// Enhanced notification system
+function showNotification(message, type = 'info', duration = 5000) {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div class="notification-icon">
+                ${type === 'success' ? '<i data-lucide="check-circle"></i>' : 
+                  type === 'error' ? '<i data-lucide="x-circle"></i>' : 
+                  type === 'warning' ? '<i data-lucide="alert-triangle"></i>' : 
+                  '<i data-lucide="info"></i>'}
+            </div>
+            <div class="notification-message">${message}</div>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+    `;
+
+    // Add to page
+    document.body.appendChild(notification);
+
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
 
-    // Set current page
-    AdminApp.currentPage = getCurrentPage();
-    
-    // Set active navigation
-    setActiveNavigation();
-    
-    // Initialize responsive handlers
-    initializeResponsive();
-    
-    // Initialize search functionality
-    initializeSearch();
-    
-    // Initialize keyboard shortcuts
-    initializeKeyboardShortcuts();
-    
-    // Initialize forms
-    initializeForms();
-    
-    // Initialize modals
-    initializeModals();
-
-    // Initialize enhanced filtering for rate packages
-    if (AdminApp.currentPage === 'rate-packages') {
-        initializeEnhancedFiltering();
-    }
-
-    // Initialize rate types specific functionality
-    if (AdminApp.currentPage === 'rate-types') {
-        initRateTypesPage();
-    }
-    
-    // Show welcome message
+    // Auto-remove after duration
     setTimeout(() => {
-        showNotification('Page loaded successfully', 'success');
-    }, 500);
-
-    console.log('Admin App initialized for page:', AdminApp.currentPage);
-}
-
-function getCurrentPage() {
-    const path = window.location.pathname;
-    const page = path.split('/').pop() || 'index.html';
-    return page.replace('.html', '');
-}
-
-function setActiveNavigation() {
-    const navItems = document.querySelectorAll('.nav-item');
-    const currentPage = AdminApp.currentPage;
-    
-    navItems.forEach(item => {
-        item.classList.remove('active');
-        const href = item.getAttribute('href');
-        if (href && href.includes(currentPage)) {
-            item.classList.add('active');
-        }
-    });
-}
-
-// ===================================
-// ENHANCED FILTERING SYSTEM (RATE PACKAGES)
-// ===================================
-
-function initializeEnhancedFiltering() {
-    // Setup multi-select filter listeners for rate packages
-    setupMultiSelectFilters();
-    
-    // Setup search input listener
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        let searchTimeout;
-        searchInput.addEventListener('input', function(e) {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                filterPackages();
-            }, AdminApp.config.debounceDelay);
-        });
-    }
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.multi-select-filter')) {
-            document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
-                dropdown.style.display = 'none';
-            });
-        }
-    });
-}
-
-function setupMultiSelectFilters() {
-    // Add change listeners to all filter checkboxes
-    document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            handleFilterChange(this);
-        });
-    });
-}
-
-function handleFilterChange(checkbox) {
-    const filter = checkbox.closest('.multi-select-filter');
-    const filterId = filter.id;
-    
-    // Handle "All" checkbox logic
-    if (checkbox.value.includes('All')) {
-        const otherCheckboxes = filter.querySelectorAll('input[type="checkbox"]:not([value*="All"])');
-        if (checkbox.checked) {
-            // If "All" is checked, uncheck others
-            otherCheckboxes.forEach(cb => cb.checked = false);
-        }
-    } else {
-        // If a specific option is checked, uncheck "All"
-        const allCheckbox = filter.querySelector('input[value*="All"]');
-        if (checkbox.checked && allCheckbox) {
-            allCheckbox.checked = false;
-        }
-        
-        // If no specific options are checked, check "All"
-        const specificCheckboxes = filter.querySelectorAll('input[type="checkbox"]:not([value*="All"]):checked');
-        if (specificCheckboxes.length === 0 && allCheckbox) {
-            allCheckbox.checked = true;
-        }
-    }
-    
-    updateFilterButtonText(filter);
-    
-    // Apply filters with debounce
-    clearTimeout(window.filterTimeout);
-    window.filterTimeout = setTimeout(() => {
-        if (typeof filterPackages === 'function') {
-            filterPackages();
-        }
-    }, 300);
-}
-
-function updateFilterButtonText(filter) {
-    const button = filter.querySelector('.filter-select-btn span');
-    const checkboxes = filter.querySelectorAll('input[type="checkbox"]:checked');
-    const allCheckbox = filter.querySelector('input[value*="All"]');
-    
-    if (!button) return;
-    
-    const baseText = button.textContent.split(' - ')[0];
-    
-    if (checkboxes.length === 0 || (checkboxes.length === 1 && allCheckbox && allCheckbox.checked)) {
-        button.textContent = baseText;
-    } else {
-        const selectedCount = allCheckbox && allCheckbox.checked ? 0 : checkboxes.length;
-        if (selectedCount > 0) {
-            button.textContent = `${baseText} - ${selectedCount} selected`;
-        } else {
-            button.textContent = baseText;
-        }
-    }
-}
-
-function getSelectedFilterValues(filterId) {
-    const filter = document.getElementById(filterId);
-    if (!filter) return [];
-    
-    const checkboxes = filter.querySelectorAll('input[type="checkbox"]:checked');
-    return Array.from(checkboxes).map(cb => cb.value).filter(value => !value.includes('All'));
-}
-
-function getAllSelectedFilters() {
-    return {
-        propertyType: getSelectedFilterValues('propertyTypeFilter'),
-        buyUnder: getSelectedFilterValues('buyUnderFilter'),
-        loanType: getSelectedFilterValues('loanTypeFilter'),
-        rateType: getSelectedFilterValues('rateTypeFilter'),
-        lockPeriod: getSelectedFilterValues('lockPeriodFilter'),
-        loanAmount: getSelectedFilterValues('loanAmountFilter'),
-        bank: getSelectedFilterValues('bankFilter')
-    };
-}
-
-// ===================================
-// MULTI-SELECT FOR RATE TYPES & GENERAL USE
-// ===================================
-
-function toggleMultiSelect(eventOrFilterId) {
-    // Handle both event-based calls (rate types) and filterId-based calls (rate packages)
-    if (typeof eventOrFilterId === 'string') {
-        // Rate packages style call
-        const filter = document.getElementById(eventOrFilterId);
-        if (!filter) return;
-        
-        const dropdown = filter.querySelector('.multi-select-dropdown');
-        if (!dropdown) return;
-        
-        // Close all other dropdowns
-        document.querySelectorAll('.multi-select-dropdown').forEach(d => {
-            if (d !== dropdown) d.style.display = 'none';
-        });
-        
-        // Toggle current dropdown
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    } else {
-        // Rate types style call (event-based)
-        const event = eventOrFilterId;
-        event.stopPropagation();
-        const dropdown = event.currentTarget;
-        const options = dropdown.querySelector('.multiselect-options');
-        const arrow = dropdown.querySelector('.multiselect-arrow');
-        
-        // Close other open dropdowns
-        document.querySelectorAll('.multiselect-options.show').forEach(openOptions => {
-            if (openOptions !== options) {
-                openOptions.classList.remove('show');
-                const openArrow = openOptions.parentElement.querySelector('.multiselect-arrow');
-                if (openArrow) openArrow.style.transform = 'rotate(0deg)';
-            }
-        });
-        
-        // Toggle current dropdown
-        options.classList.toggle('show');
-        if (arrow) {
-            arrow.style.transform = options.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
-        }
-    }
-}
-
-function clearAllFilters() {
-    // Clear search input
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.value = '';
-    }
-    
-    // Reset all checkboxes for rate packages
-    document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(checkbox => {
-        checkbox.checked = checkbox.value.includes('All');
-    });
-    
-    // Update all filter button texts for rate packages
-    document.querySelectorAll('.multi-select-filter').forEach(filter => {
-        updateFilterButtonText(filter);
-    });
-    
-    // Apply filters
-    if (typeof filterPackages === 'function') {
-        filterPackages();
-    }
-    
-    showNotification('All filters cleared', 'info');
-}
-
-// ===================================
-// MOBILE & RESPONSIVE FUNCTIONALITY
-// ===================================
-
-function initializeResponsive() {
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.querySelector('.sidebar-toggle');
-    
-    // Auto-hide sidebar on mobile
-    if (window.innerWidth <= 768) {
-        sidebar?.classList.add('sidebar-hidden');
-    }
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            sidebar?.classList.remove('sidebar-hidden');
-        }
-    });
-}
-
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar?.classList.toggle('sidebar-hidden');
-}
-
-function closeSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar?.classList.add('sidebar-hidden');
-}
-
-// ===================================
-// NOTIFICATION SYSTEM
-// ===================================
-
-function showNotification(message, type = 'info', duration = 4000) {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-message">${message}</span>
-            <button class="notification-close" onclick="closeNotification(this)">
-                <i data-lucide="x"></i>
-            </button>
-        </div>
-    `;
-    
-    const container = getOrCreateNotificationContainer();
-    container.appendChild(notification);
-    
-    // Initialize Lucide icons for the notification
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-    
-    // Auto-remove notification
-    setTimeout(() => {
-        closeNotification(notification.querySelector('.notification-close'));
-    }, duration);
-    
-    // Add to notifications array
-    AdminApp.notifications.push({
-        message,
-        type,
-        timestamp: new Date().toISOString()
-    });
-}
-
-function getOrCreateNotificationContainer() {
-    let container = document.getElementById('notification-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'notification-container';
-        container.className = 'notification-container';
-        document.body.appendChild(container);
-    }
-    return container;
-}
-
-function closeNotification(button) {
-    const notification = button.closest('.notification');
-    if (notification) {
-        notification.style.animation = 'slideOut 0.3s ease-out forwards';
-        setTimeout(() => {
+        if (notification.parentNode) {
             notification.remove();
-        }, 300);
-    }
+        }
+    }, duration);
 }
 
-// ===================================
-// LOADING STATES
-// ===================================
-
+// Enhanced loading system
 function showLoading(message = 'Loading...') {
-    const loading = document.createElement('div');
-    loading.id = 'global-loading';
-    loading.className = 'loading-overlay';
-    loading.innerHTML = `
+    AdminApp.isLoading = true;
+    
+    const loadingOverlay = document.createElement('div');
+    loadingOverlay.id = 'loading-overlay';
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.innerHTML = `
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <div class="loading-message">${message}</div>
         </div>
     `;
-    document.body.appendChild(loading);
+    
+    document.body.appendChild(loadingOverlay);
 }
 
 function hideLoading() {
-    const loading = document.getElementById('global-loading');
-    if (loading) {
-        loading.remove();
+    AdminApp.isLoading = false;
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.remove();
     }
 }
 
-function withLoading(asyncFunction, message = 'Processing...') {
-    return async function(...args) {
-        try {
-            showLoading(message);
-            const result = await asyncFunction.apply(this, args);
-            return result;
-        } finally {
-            hideLoading();
-        }
-    };
+// Loading wrapper for async operations
+async function withLoading(asyncFunction, loadingMessage = 'Processing...') {
+    try {
+        showLoading(loadingMessage);
+        return await asyncFunction();
+    } finally {
+        hideLoading();
+    }
 }
 
 // ===================================
 // MODAL MANAGEMENT
 // ===================================
 
-function initializeModals() {
-    // Add click listeners to modal overlays
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeModal(modal.id);
-            }
-        });
-    });
-    
-    // Add escape key listener
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            const activeModal = document.querySelector('.modal.active');
-            if (activeModal) {
-                closeModal(activeModal.id);
-            }
-        }
-    });
-}
-
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.classList.add('active');
-        document.body.classList.add('modal-open');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
         
-        // Focus on first input if available
+        // Focus first input if available
         const firstInput = modal.querySelector('input, select, textarea');
         if (firstInput) {
             setTimeout(() => firstInput.focus(), 100);
@@ -447,395 +164,168 @@ function openModal(modalId) {
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.classList.remove('active');
-        document.body.classList.remove('modal-open');
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
         
-        // Reset form if it exists
-        const form = modal.querySelector('form');
-        if (form) {
+        // Reset forms in modal
+        const forms = modal.querySelectorAll('form');
+        forms.forEach(form => {
             form.reset();
-        }
+            // Clear any calculated rates
+            const calculatedDivs = form.querySelectorAll('.calculated-rate');
+            calculatedDivs.forEach(div => div.textContent = '');
+        });
         
-        // Clear editing state
+        // Reset editing state
         AdminApp.editingItemId = null;
     }
 }
 
 // ===================================
-// FORM INITIALIZATION
+// SIDEBAR MANAGEMENT
 // ===================================
 
-function initializeForms() {
-    // Add form validation and enhancement
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            if (!validateForm(form)) {
-                e.preventDefault();
-                showNotification('Please fill in all required fields correctly', 'error');
-            }
-        });
-    });
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
     
-    // Add input enhancements
-    document.querySelectorAll('input[type="email"]').forEach(input => {
-        input.addEventListener('blur', function() {
-            if (this.value && !isValidEmail(this.value)) {
-                this.setCustomValidity('Please enter a valid email address');
-                this.classList.add('input-error');
-            } else {
-                this.setCustomValidity('');
-                this.classList.remove('input-error');
-            }
-        });
-    });
-}
-
-function validateForm(form) {
-    const requiredFields = form.querySelectorAll('[required]');
-    let isValid = true;
-    
-    requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-            field.classList.add('input-error');
-            isValid = false;
-        } else {
-            field.classList.remove('input-error');
-        }
-    });
-    
-    return isValid;
-}
-
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// ===================================
-// SEARCH FUNCTIONALITY
-// ===================================
-
-function initializeSearch() {
-    const searchInput = document.getElementById('searchInput');
-    if (!searchInput) return;
-    
-    let searchTimeout;
-    
-    searchInput.addEventListener('input', function(e) {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            performSearch(e.target.value);
-        }, AdminApp.config.debounceDelay);
-    });
-}
-
-function performSearch(searchTerm) {
-    const term = searchTerm.toLowerCase().trim();
-    
-    // Get the table body based on current page
-    let tableId;
-    switch (AdminApp.currentPage) {
-        case 'banks': tableId = 'banksTable'; break;
-        case 'agents': tableId = 'agentsTable'; break;
-        case 'bankers': tableId = 'bankersTable'; break;
-        case 'rate-types': tableId = 'rateTypesTable'; break;
-        case 'rate-packages': 
-            // Use custom filtering for rate packages
-            if (typeof filterPackages === 'function') {
-                filterPackages();
-            }
-            return;
-        case 'enquiry': tableId = 'enquiryTable'; break;
-        default: return;
-    }
-    
-    const tableBody = document.getElementById(tableId);
-    if (!tableBody) return;
-    
-    const rows = tableBody.querySelectorAll('tr');
-    let visibleCount = 0;
-    
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        const shouldShow = !term || text.includes(term);
-        row.style.display = shouldShow ? '' : 'none';
-        if (shouldShow) visibleCount++;
-    });
-    
-    // Update pagination info if exists
-    const paginationInfo = document.querySelector('.pagination-info');
-    if (paginationInfo && term) {
-        paginationInfo.textContent = `Showing ${visibleCount} results for "${searchTerm}"`;
-    }
-}
-
-// ===================================
-// KEYBOARD SHORTCUTS
-// ===================================
-
-function initializeKeyboardShortcuts() {
-    document.addEventListener('keydown', function(e) {
-        // Ctrl/Cmd + K for search
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) {
-                searchInput.focus();
-                searchInput.select();
-            }
-        }
+    if (sidebar) {
+        sidebar.classList.toggle('sidebar-open');
         
-        // Ctrl/Cmd + N for new item
-        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-            e.preventDefault();
-            const addButton = document.querySelector('.btn-primary[onclick*="Modal"]');
-            if (addButton) {
-                addButton.click();
-            }
+        if (!overlay) {
+            const sidebarOverlay = document.createElement('div');
+            sidebarOverlay.className = 'sidebar-overlay';
+            sidebarOverlay.onclick = closeSidebar;
+            document.body.appendChild(sidebarOverlay);
         }
-    });
+    }
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar) {
+        sidebar.classList.remove('sidebar-open');
+    }
+    
+    if (overlay) {
+        overlay.remove();
+    }
 }
 
 // ===================================
-// EXPORT FUNCTIONALITY
+// RATE PACKAGE SPECIFIC FUNCTIONS
 // ===================================
 
-function exportToCSV(filename) {
-    const table = document.querySelector('.table');
-    if (!table) {
-        showNotification('No data to export', 'error');
-        return;
+// Enhanced rate calculation with validation
+function calculateRateWithValidation(rateType, operator, value, availableRateTypes) {
+    if (!rateType || !value || !availableRateTypes) {
+        return null;
     }
+
+    // Find the rate type data
+    const rateTypeData = availableRateTypes.find(rt => rt.rate_type === rateType);
+    if (!rateTypeData) {
+        return null;
+    }
+
+    const baseRate = parseFloat(rateTypeData.rate_value) || 0;
+    const adjustmentValue = parseFloat(value) || 0;
+    const multiplier = operator === '-' ? -1 : 1;
     
-    const rows = Array.from(table.querySelectorAll('tr:not([style*="display: none"])'));
-    const csvContent = rows.map(row => {
-        const cells = Array.from(row.querySelectorAll('th, td'));
-        return cells.map(cell => {
-            // Remove action buttons from export
-            if (cell.querySelector('.action-buttons')) {
-                return '';
+    return {
+        baseRate: baseRate,
+        adjustment: adjustmentValue,
+        operator: operator,
+        finalRate: baseRate + (multiplier * adjustmentValue),
+        rateType: rateType,
+        display: `${rateType} (${baseRate.toFixed(3)}%) ${operator}${adjustmentValue.toFixed(3)}% = ${(baseRate + (multiplier * adjustmentValue)).toFixed(3)}%`
+    };
+}
+
+// Validate rate package form with enhanced bank-rate type validation
+function validateRatePackageForm(formData, availableRateTypes) {
+    const errors = [];
+    const selectedBank = formData.get('bank_name');
+    
+    if (!selectedBank) {
+        errors.push('Bank name is required');
+        return errors;
+    }
+
+    const fullBankName = getFullBankName(selectedBank);
+
+    // Validate at least one year has rate data
+    let hasRateData = false;
+    const rateYears = ['year1', 'year2', 'year3', 'year4', 'year5', 'thereafter'];
+    
+    for (const year of rateYears) {
+        const rateType = formData.get(`${year}_rate_type`);
+        const value = formData.get(`${year}_value`);
+        
+        if (rateType && value) {
+            hasRateData = true;
+            
+            // Validate rate type is available for selected bank
+            const rateTypeData = availableRateTypes.find(rt => rt.rate_type === rateType);
+            if (!rateTypeData) {
+                errors.push(`Rate type "${rateType}" not found in database`);
+                continue;
             }
             
-            let text = cell.textContent.trim();
-            // Escape quotes and wrap in quotes if contains comma
-            if (text.includes(',') || text.includes('"') || text.includes('\n')) {
-                text = '"' + text.replace(/"/g, '""') + '"';
+            if (!rateTypeData.bank_names || !Array.isArray(rateTypeData.bank_names)) {
+                errors.push(`Rate type "${rateType}" has invalid bank data`);
+                continue;
             }
-            return text;
-        }).join(',');
-    }).join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    
-    if (link.download !== undefined) {
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-    
-    showNotification('Data exported successfully', 'success');
-}
+            
+            if (!rateTypeData.bank_names.includes(fullBankName)) {
+                errors.push(`Rate type "${rateType}" is not available for ${selectedBank}`);
+            }
 
-function printTable() {
-    const table = document.querySelector('.table');
-    if (!table) {
-        showNotification('No data to print', 'error');
-        return;
-    }
-    
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <title>Print ${AdminApp.currentPage.charAt(0).toUpperCase() + AdminApp.currentPage.slice(1)}</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    table { width: 100%; border-collapse: collapse; }
-                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    th { background-color: #f2f2f2; }
-                    .action-buttons { display: none; }
-                </style>
-            </head>
-            <body>
-                <h1>${AdminApp.currentPage.charAt(0).toUpperCase() + AdminApp.currentPage.slice(1)} Data</h1>
-                ${table.outerHTML}
-            </body>
-        </html>
-    `);
-    
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
-}
-
-// ===================================
-// AUTHENTICATION
-// ===================================
-
-function confirmSignOut() {
-    if (confirm('Are you sure you want to sign out?')) {
-        signOut();
-    }
-}
-
-function signOut() {
-    // Clear any stored data
-    localStorage.removeItem('admin_session');
-    sessionStorage.clear();
-    
-    // Redirect to login
-    window.location.href = 'login.html';
-}
-
-// ===================================
-// UTILITY FUNCTIONS
-// ===================================
-
-function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-}
-
-function formatCurrency(amount, currency = 'SGD') {
-    if (!amount) return 'N/A';
-    return new Intl.NumberFormat('en-SG', {
-        style: 'currency',
-        currency: currency
-    }).format(amount);
-}
-
-function formatDate(dateString) {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-SG', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-}
-
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// ===================================
-// RECENT ACTIONS MANAGEMENT
-// ===================================
-
-function addRecentAction(type, description, details = {}) {
-    const action = {
-        id: Date.now(),
-        type,
-        description,
-        details,
-        timestamp: new Date().toISOString(),
-        user: AdminApp.currentUser || 'admin'
-    };
-    
-    AdminApp.recentActions.unshift(action);
-    
-    // Keep only last 50 actions
-    if (AdminApp.recentActions.length > 50) {
-        AdminApp.recentActions = AdminApp.recentActions.slice(0, 50);
-    }
-    
-    // Store in localStorage for persistence
-    try {
-        localStorage.setItem('admin_recent_actions', JSON.stringify(AdminApp.recentActions));
-    } catch (e) {
-        console.warn('Unable to store recent actions:', e);
-    }
-    
-    // Update UI if on rate-packages page
-    if (AdminApp.currentPage === 'rate-packages' && typeof updateRecentActions === 'function') {
-        updateRecentActions();
-    }
-}
-
-function loadRecentActions() {
-    try {
-        const stored = localStorage.getItem('admin_recent_actions');
-        if (stored) {
-            AdminApp.recentActions = JSON.parse(stored);
+            // Validate rate value range
+            const rateValue = parseFloat(value);
+            if (isNaN(rateValue)) {
+                errors.push(`Invalid rate value for ${year}`);
+            } else if (rateValue < 0 || rateValue > 100) {
+                errors.push(`Rate value for ${year} must be between 0 and 100`);
+            }
         }
-    } catch (e) {
-        console.warn('Unable to load recent actions:', e);
-        AdminApp.recentActions = [];
     }
+
+    if (!hasRateData) {
+        errors.push('At least one year must have rate information');
+    }
+
+    // Validate minimum loan size
+    const minLoanSize = formData.get('minimum_loan_size');
+    if (minLoanSize && (isNaN(parseFloat(minLoanSize)) || parseFloat(minLoanSize) < 0)) {
+        errors.push('Minimum loan size must be a positive number');
+    }
+
+    return errors;
 }
 
-// ===================================
-// GLOBAL ERROR HANDLING
-// ===================================
-
-window.addEventListener('error', function(e) {
-    console.error('Global error:', e.error);
-    showNotification('An unexpected error occurred', 'error');
-});
-
-window.addEventListener('unhandledrejection', function(e) {
-    console.error('Unhandled promise rejection:', e.reason);
-    showNotification('An unexpected error occurred', 'error');
-});
-
-// ===================================
-// PERFORMANCE MONITORING
-// ===================================
-
-function logPerformance(action) {
-    if (window.performance && window.performance.mark) {
-        window.performance.mark(`${action}-${Date.now()}`);
+// Enhanced bank filtering for rate types
+function filterRateTypesByBank(rateTypes, selectedBankAbbr) {
+    if (!selectedBankAbbr || !rateTypes) {
+        return [];
     }
+
+    const fullBankName = getFullBankName(selectedBankAbbr);
+    
+    return rateTypes.filter(rateType => {
+        return rateType.bank_names && 
+               Array.isArray(rateType.bank_names) && 
+               rateType.bank_names.includes(fullBankName);
+    });
 }
 
 // ===================================
 // RATE TYPES SPECIFIC FUNCTIONS
 // ===================================
 
-// Bank selection management for rate types
-function updateBankSelection(optionsId, displayId) {
-    const options = document.getElementById(optionsId);
-    const display = document.getElementById(displayId);
-    
-    if (!options || !display) return;
-    
-    const checkedBoxes = options.querySelectorAll('input[type="checkbox"]:checked');
-    const selectedValues = Array.from(checkedBoxes).map(cb => cb.value);
-    
-    if (selectedValues.length === 0) {
-        display.textContent = 'Select banks';
-        display.style.color = '#9ca3af';
-    } else if (selectedValues.length <= 2) {
-        display.textContent = selectedValues.join(', ');
-        display.style.color = '#374151';
-    } else {
-        display.textContent = `${selectedValues.slice(0, 2).join(', ')} +${selectedValues.length - 2} more`;
-        display.style.color = '#374151';
-    }
-}
-
-// Validation functions for rate types
+// Enhanced validation for rate types
 function validateRateTypeForm(formData, selectedBanks) {
     const errors = [];
     
@@ -845,6 +335,8 @@ function validateRateTypeForm(formData, selectedBanks) {
         errors.push('Rate type is required');
     } else if (rateType.length < 2) {
         errors.push('Rate type must be at least 2 characters');
+    } else if (!/^[A-Z0-9\s]+$/i.test(rateType)) {
+        errors.push('Rate type can only contain letters, numbers, and spaces');
     }
     
     // Validate rate value
@@ -871,7 +363,7 @@ function formatRateValue(value) {
     return parseFloat(value).toFixed(3) + '%';
 }
 
-// Format bank names for table display
+// Format bank names for table display with abbreviations
 function formatBankDisplay(bankNames, maxDisplay = 3) {
     if (!bankNames || !Array.isArray(bankNames) || bankNames.length === 0) {
         return '<span style="color: #9ca3af; font-style: italic;">No banks assigned</span>';
@@ -887,13 +379,345 @@ function formatBankDisplay(bankNames, maxDisplay = 3) {
     }
 }
 
-// Enhanced error handling for rate types
+// ===================================
+// DATA EXPORT FUNCTIONS
+// ===================================
+
+// Enhanced CSV export with proper escaping
+function exportToCSV(data, headers, filename = 'export.csv') {
+    if (!data || data.length === 0) {
+        showNotification('No data to export', 'warning');
+        return;
+    }
+    
+    // Escape CSV values
+    function escapeCSV(value) {
+        if (value === null || value === undefined) return '';
+        const stringValue = String(value);
+        if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+            return `"${stringValue.replace(/"/g, '""')}"`;
+        }
+        return stringValue;
+    }
+    
+    const csvContent = [
+        headers.join(','),
+        ...data.map(row => 
+            headers.map(header => escapeCSV(row[header] || '')).join(',')
+        )
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showNotification('Data exported successfully', 'success');
+}
+
+// Print table functionality
+function printTable(tableSelector = '.table') {
+    const table = document.querySelector(tableSelector);
+    if (!table) {
+        showNotification('No table found to print', 'error');
+        return;
+    }
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Print Table</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    th { background-color: #f5f5f5; font-weight: bold; }
+                    .bank-tag { background: #e5e7eb; padding: 2px 4px; border-radius: 2px; font-size: 11px; }
+                    .status-badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+                    .status-completed { background: #dcfce7; color: #166534; }
+                    .status-pending { background: #fef3c7; color: #92400e; }
+                    .status-inactive { background: #f3f4f6; color: #6b7280; }
+                    @media print { body { margin: 0; } }
+                </style>
+            </head>
+            <body>
+                <h1>Table Export - ${new Date().toLocaleDateString()}</h1>
+                ${table.outerHTML}
+                <script>window.print(); window.close();</script>
+            </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
+
+// ===================================
+// RECENT ACTIONS MANAGEMENT
+// ===================================
+
+function addRecentAction(type, description) {
+    const actions = getRecentActions();
+    const newAction = {
+        id: Date.now(),
+        type: type,
+        description: description,
+        timestamp: new Date().toISOString(),
+        user: AdminApp.currentUser?.email || 'admin'
+    };
+    
+    actions.unshift(newAction);
+    
+    // Keep only last 10 actions
+    const trimmedActions = actions.slice(0, 10);
+    
+    try {
+        localStorage.setItem('recentActions', JSON.stringify(trimmedActions));
+        updateRecentActionsDisplay();
+    } catch (error) {
+        console.warn('Could not save recent actions:', error);
+    }
+}
+
+function getRecentActions() {
+    try {
+        const actions = localStorage.getItem('recentActions');
+        return actions ? JSON.parse(actions) : [];
+    } catch (error) {
+        console.warn('Could not load recent actions:', error);
+        return [];
+    }
+}
+
+function updateRecentActionsDisplay() {
+    const container = document.getElementById('recentActionsList');
+    if (!container) return;
+    
+    const actions = getRecentActions();
+    
+    if (actions.length === 0) {
+        container.innerHTML = '<div class="no-actions">No recent actions</div>';
+        return;
+    }
+    
+    container.innerHTML = actions.map(action => `
+        <div class="recent-action-item">
+            <div class="action-icon action-${action.type}">
+                ${getActionIcon(action.type)}
+            </div>
+            <div class="action-details">
+                <div class="action-description">${escapeHtml(action.description)}</div>
+                <div class="action-timestamp">${formatTimestamp(action.timestamp)}</div>
+            </div>
+        </div>
+    `).join('');
+    
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+}
+
+function getActionIcon(type) {
+    const icons = {
+        'add': '<i data-lucide="plus"></i>',
+        'edit': '<i data-lucide="edit"></i>',
+        'delete': '<i data-lucide="trash-2"></i>',
+        'duplicate': '<i data-lucide="copy"></i>',
+        'view': '<i data-lucide="eye"></i>',
+        'export': '<i data-lucide="download"></i>'
+    };
+    return icons[type] || '<i data-lucide="activity"></i>';
+}
+
+function formatTimestamp(isoString) {
+    const date = new Date(isoString);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return date.toLocaleDateString();
+}
+
+function loadRecentActions() {
+    updateRecentActionsDisplay();
+}
+
+// ===================================
+// FORM UTILITIES
+// ===================================
+
+// Enhanced multi-select functionality
+function toggleMultiSelect(selectId) {
+    const select = document.getElementById(selectId);
+    const dropdown = select?.nextElementSibling;
+    
+    if (dropdown && dropdown.classList.contains('multi-select-dropdown')) {
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+// Clear all filters functionality
+function clearAllFilters() {
+    const filterElements = document.querySelectorAll('.search-input, .filter-select, .filter-input');
+    filterElements.forEach(element => {
+        if (element.type === 'checkbox') {
+            element.checked = false;
+        } else {
+            element.value = '';
+        }
+    });
+    
+    // Trigger filter function if it exists
+    if (typeof filterPackages === 'function') filterPackages();
+    if (typeof filterRateTypes === 'function') filterRateTypes();
+    if (typeof filterBanks === 'function') filterBanks();
+    if (typeof filterAgents === 'function') filterAgents();
+    if (typeof filterBankers === 'function') filterBankers();
+    if (typeof filterEnquiries === 'function') filterEnquiries();
+}
+
+// ===================================
+// AUTHENTICATION UTILITIES
+// ===================================
+
+// Enhanced sign out with confirmation
+function confirmSignOut() {
+    const modal = document.getElementById('signout-modal');
+    if (modal) {
+        openModal('signout-modal');
+    } else {
+        // Fallback if modal doesn't exist
+        if (confirm('Are you sure you want to sign out?')) {
+            performSignOut();
+        }
+    }
+}
+
+async function performSignOut() {
+    try {
+        showLoading('Signing out...');
+        
+        if (typeof supabaseClient !== 'undefined') {
+            const { error } = await supabaseClient.auth.signOut();
+            if (error) throw error;
+        }
+        
+        // Clear stored data
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Redirect to login
+        window.location.href = 'login.html';
+        
+    } catch (error) {
+        console.error('Sign out error:', error);
+        showNotification('Sign out failed: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+        const modal = document.getElementById('signout-modal');
+        if (modal) {
+            closeModal('signout-modal');
+        }
+    }
+}
+
+// ===================================
+// UTILITY FUNCTIONS
+// ===================================
+
+// Enhanced HTML escaping
+function escapeHtml(text) {
+    if (typeof text !== 'string') return '';
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+        '/': '&#x2F;'
+    };
+    return text.replace(/[&<>"'/]/g, m => map[m]);
+}
+
+// Debounce function for search inputs
+function debounce(func, wait, immediate) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            timeout = null;
+            if (!immediate) func(...args);
+        };
+        const callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func(...args);
+    };
+}
+
+// Format numbers with thousand separators
+function formatNumber(num) {
+    if (!num || isNaN(num)) return 'N/A';
+    return new Intl.NumberFormat('en-US').format(num);
+}
+
+// Format currency
+function formatCurrency(amount, currency = 'SGD') {
+    if (!amount || isNaN(amount)) return 'N/A';
+    return new Intl.NumberFormat('en-SG', {
+        style: 'currency',
+        currency: currency
+    }).format(amount);
+}
+
+// Format date consistently
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-SG');
+}
+
+// Format date with time
+function formatDateTime(dateString) {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleString('en-SG');
+}
+
+// ===================================
+// ERROR HANDLING
+// ===================================
+
+// Global error handler for rate package operations
+function handleRatePackageError(error, operation = 'operation') {
+    console.error(`Rate package ${operation} error:`, error);
+    
+    let message = `Failed to ${operation} rate package`;
+    
+    if (typeof error === 'string') {
+        if (error.includes('duplicate') || error.includes('unique')) {
+            message = 'A rate package with similar details already exists';
+        } else if (error.includes('foreign key') || error.includes('reference')) {
+            message = 'Invalid reference to bank or rate type';
+        } else if (error.includes('check constraint')) {
+            message = 'Invalid data format. Please check your inputs';
+        }
+    } else if (error.message) {
+        message += ': ' + error.message;
+    }
+    
+    showNotification(message, 'error');
+}
+
+// Global error handler for rate type operations
 function handleRateTypeError(error, operation = 'operation') {
     console.error(`Rate type ${operation} error:`, error);
     
     let message = `Failed to ${operation} rate type`;
     
-    // Handle specific error types
     if (typeof error === 'string') {
         if (error.includes('duplicate') || error.includes('unique')) {
             message = 'A rate type with this name and value already exists';
@@ -907,246 +731,96 @@ function handleRateTypeError(error, operation = 'operation') {
     showNotification(message, 'error');
 }
 
-// Enhanced loading states for rate types
-function setRateTypeLoading(isLoading, element = null) {
-    if (element) {
-        if (isLoading) {
-            element.disabled = true;
-            element.innerHTML = '<i data-lucide="loader-2" class="spinner"></i> Loading...';
-        } else {
-            element.disabled = false;
-            // Restore original content
-        }
-    } else {
-        if (isLoading) {
-            showLoading();
-        } else {
-            hideLoading();
-        }
-    }
-    
-    // Re-initialize Lucide icons
-    if (typeof lucide !== 'undefined') {
-        lucide.createIcons();
-    }
-}
+// ===================================
+// KEYBOARD SHORTCUTS
+// ===================================
 
-// Rate type data export
-function exportRateTypes(rateTypes, filename = 'rate-types.csv') {
-    if (!rateTypes || rateTypes.length === 0) {
-        showNotification('No data to export', 'warning');
-        return;
-    }
-    
-    const headers = ['Rate Type', 'Rate Value (%)', 'Bank Names', 'Created Date'];
-    const csvContent = [
-        headers.join(','),
-        ...rateTypes.map(rt => [
-            `"${(rt.rate_type || '').replace(/"/g, '""')}"`,
-            rt.rate_value || '',
-            `"${(rt.bank_names || []).join(', ').replace(/"/g, '""')}"`,
-            rt.created_at ? new Date(rt.created_at).toLocaleDateString() : ''
-        ].join(','))
-    ].join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.style.display = 'none';
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showNotification('Rate types exported successfully', 'success');
-}
-
-// Keyboard shortcuts for rate types page
+// Initialize keyboard shortcuts for rate types page
 function initRateTypeKeyboardShortcuts() {
     document.addEventListener('keydown', function(e) {
-        // Only apply on rate types page
-        if (!window.location.pathname.includes('rate-types')) return;
-        
-        // Ctrl/Cmd + N for new rate type
+        // Ctrl/Cmd + N: New rate type
         if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
             e.preventDefault();
-            if (typeof openAddRateTypeModal === 'function') {
-                openAddRateTypeModal();
-            }
+            const addButton = document.querySelector('[onclick*="openAddRateTypeModal"]');
+            if (addButton) addButton.click();
         }
         
-        // Escape to close modals
-        if (e.key === 'Escape') {
-            const openModals = document.querySelectorAll('.modal:not([style*="display: none"])');
-            openModals.forEach(modal => {
-                const modalId = modal.id;
-                if (typeof closeModal === 'function') {
-                    closeModal(modalId);
-                }
-            });
+        // Ctrl/Cmd + E: Export
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            const exportButton = document.querySelector('[onclick*="exportRateTypes"]');
+            if (exportButton) exportButton.click();
         }
     });
 }
 
-// Initialize rate types specific functionality
+// Initialize keyboard shortcuts for rate packages page
+function initRatePackageKeyboardShortcuts() {
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + N: New rate package
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+            e.preventDefault();
+            const addButton = document.querySelector('[onclick*="openModal(\'package-modal\')"]');
+            if (addButton) addButton.click();
+        }
+        
+        // Ctrl/Cmd + E: Export
+        if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+            e.preventDefault();
+            const exportButton = document.querySelector('[onclick*="exportToCSV"]');
+            if (exportButton) exportButton.click();
+        }
+    });
+}
+
+// ===================================
+// INITIALIZATION FUNCTIONS
+// ===================================
+
+// Initialize rate types page functionality
 function initRateTypesPage() {
+    console.log('Initializing rate types page...');
+    
     // Initialize keyboard shortcuts
     initRateTypeKeyboardShortcuts();
     
-    // Add CSS for enhanced styling
+    // Load recent actions
+    loadRecentActions();
+    
+    // Add enhanced styling for rate types
     const style = document.createElement('style');
     style.textContent = `
         .bank-tag {
             display: inline-block;
-            background: #e0f2fe;
-            color: #0369a1;
+            background: #e5e7eb;
+            color: #374151;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             margin: 1px;
-            border: 1px solid #bae6fd;
+            font-weight: 500;
         }
         
         .bank-tag.more {
-            background: #f3f4f6;
-            color: #6b7280;
-            border-color: #d1d5db;
-        }
-        
-        .multiselect-dropdown {
-            position: relative;
-            cursor: pointer;
-        }
-        
-        .multiselect-selected {
-            padding: 10px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            min-height: 20px;
-        }
-        
-        .multiselect-selected:hover {
-            border-color: #cbd5e1;
-        }
-        
-        .multiselect-arrow {
-            transition: transform 0.2s ease;
-            width: 16px;
-            height: 16px;
-            color: #6b7280;
-        }
-        
-        .multiselect-options {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .multiselect-options.show {
-            display: block;
-        }
-        
-        .multiselect-option {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        
-        .multiselect-option:hover {
-            background-color: #f8fafc;
-        }
-        
-        .multiselect-option input[type="checkbox"] {
-            margin-right: 8px;
-            margin-top: 0;
-        }
-        
-        .multiselect-option label {
-            margin: 0;
-            cursor: pointer;
-            flex: 1;
+            background: #3b82f6;
+            color: white;
         }
         
         .rate-value {
+            font-family: monospace;
             font-weight: 600;
             color: #059669;
-            font-size: 14px;
-        }
-        
-        .rate-type-name {
-            font-weight: 500;
-            color: #374151;
-        }
-        
-        .bank-list {
-            font-size: 12px;
-            line-height: 1.4;
-            max-width: 300px;
-        }
-        
-        .input-group {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-        
-        .input-suffix {
-            position: absolute;
-            right: 12px;
-            color: #6b7280;
-            font-size: 14px;
-            pointer-events: none;
-        }
-        
-        .input-group .form-input {
-            padding-right: 30px;
-        }
-        
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .delete-info {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 6px;
-            padding: 12px;
-            margin-top: 12px;
-        }
-        
-        .delete-info strong {
-            color: #991b1b;
         }
         
         .no-data {
             text-align: center;
-            padding: 40px 20px;
+            padding: 40px;
+            color: #6b7280;
         }
         
-        .no-data i {
-            display: block;
+        .no-data svg {
+            width: 48px;
+            height: 48px;
             margin: 0 auto 16px;
         }
         
@@ -1166,12 +840,161 @@ function initRateTypesPage() {
     console.log('Rate types page functionality initialized');
 }
 
+// Initialize rate packages page functionality
+function initRatePackagesPage() {
+    console.log('Initializing rate packages page...');
+    
+    // Initialize keyboard shortcuts
+    initRatePackageKeyboardShortcuts();
+    
+    // Load recent actions
+    loadRecentActions();
+    
+    console.log('Rate packages page functionality initialized');
+}
+
+// ===================================
+// NOTIFICATION STYLES
+// ===================================
+
+// Add notification styles to page
+function addNotificationStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px;
+            gap: 12px;
+        }
+        
+        .notification-icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .notification-message {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+            white-space: pre-line;
+        }
+        
+        .notification-close {
+            flex-shrink: 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            width: 16px;
+            height: 16px;
+            opacity: 0.5;
+        }
+        
+        .notification-close:hover {
+            opacity: 1;
+        }
+        
+        .notification-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .notification-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        
+        .notification-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+        
+        .notification-info {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .loading-content {
+            background: white;
+            padding: 32px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-message {
+            color: #374151;
+            font-size: 14px;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
 // ===================================
 // INITIALIZATION ON PAGE LOAD
 // ===================================
 
 // Load recent actions on page load
 loadRecentActions();
+
+// Add notification styles
+addNotificationStyles();
 
 // ===================================
 // EXPORT FOR GLOBAL USE
@@ -1192,17 +1015,50 @@ window.clearAllFilters = clearAllFilters;
 window.exportToCSV = exportToCSV;
 window.printTable = printTable;
 window.confirmSignOut = confirmSignOut;
+window.performSignOut = performSignOut;
 window.addRecentAction = addRecentAction;
+window.formatNumber = formatNumber;
+window.formatCurrency = formatCurrency;
+window.formatDate = formatDate;
+window.formatDateTime = formatDateTime;
+window.escapeHtml = escapeHtml;
+window.debounce = debounce;
+
+// Bank standardization functions
+window.getFullBankName = getFullBankName;
+window.getBankAbbreviation = getBankAbbreviation;
+window.convertBankNamesForStorage = convertBankNamesForStorage;
+window.convertBankNamesForDisplay = convertBankNamesForDisplay;
+
+// Rate package specific functions
+window.calculateRateWithValidation = calculateRateWithValidation;
+window.validateRatePackageForm = validateRatePackageForm;
+window.filterRateTypesByBank = filterRateTypesByBank;
+window.handleRatePackageError = handleRatePackageError;
+window.initRatePackagesPage = initRatePackagesPage;
 
 // Rate types specific functions
-window.updateBankSelection = updateBankSelection;
 window.validateRateTypeForm = validateRateTypeForm;
 window.formatRateValue = formatRateValue;
 window.formatBankDisplay = formatBankDisplay;
 window.handleRateTypeError = handleRateTypeError;
-window.setRateTypeLoading = setRateTypeLoading;
-window.exportRateTypes = exportRateTypes;
 window.initRateTypeKeyboardShortcuts = initRateTypeKeyboardShortcuts;
 window.initRateTypesPage = initRateTypesPage;
 
 console.log('Enhanced Admin JavaScript framework loaded successfully');
+
+// Auto-initialize page-specific functionality based on current page
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPage = window.location.pathname.split('/').pop();
+    
+    if (currentPage === 'rate-types.html') {
+        initRateTypesPage();
+    } else if (currentPage === 'rate-packages.html') {
+        initRatePackagesPage();
+    }
+    
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
+});
