@@ -95,14 +95,6 @@
             </header>
 
             <div class="content">
-                <!-- Content Header -->
-                <div class="content-header">
-                    <div class="content-title">
-                        <h2>Package Recommendation System</h2>
-                        <p>Find the best mortgage packages based on customer criteria</p>
-                    </div>
-                </div>
-
                 <!-- Filter Criteria Form -->
                 <div class="filter-form-container">
                     <div class="filter-form">
@@ -357,8 +349,8 @@
                 
                 // Check loan amount range
                 if (loanAmount > 0) {
-                    const minAmount = pkg.min_loan_amount || 0;
-                    const maxAmount = pkg.max_loan_amount || Infinity;
+                    const minAmount = pkg.minimum_loan_size || 0;
+                    const maxAmount = pkg.maximum_loan_size || Infinity;
                     if (loanAmount < minAmount || loanAmount > maxAmount) return false;
                 }
 
@@ -440,8 +432,8 @@
                         </td>
                         <td>
                             <div class="loan-range">
-                                <div>Min: $${(pkg.min_loan_amount || 0).toLocaleString()}</div>
-                                <div>Max: $${(pkg.max_loan_amount || 0).toLocaleString()}</div>
+                                <div>Min: $${(pkg.minimum_loan_size || 0).toLocaleString()}</div>
+                                <div>Max: $${(pkg.maximum_loan_size || 0).toLocaleString()}</div>
                                 ${pkg.lock_period ? `<div class="lock-period">${pkg.lock_period} year lock</div>` : ''}
                             </div>
                         </td>
@@ -579,8 +571,18 @@
             showNotification('Filters reset', 'success');
         }
 
-        // Additional recommended packages functionality would go here...
-        
+        // Utility functions
+        function escapeHtml(text) {
+            if (typeof text !== 'string') return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
     </script>
 </body>
 </html>
