@@ -276,6 +276,39 @@
             text-decoration: underline;
         }
 
+        .debug-info {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .debug-info h5 {
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .debug-item {
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-success { background: #16a34a; }
+        .status-error { background: #dc2626; }
+        .status-warning { background: #d97706; }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -375,6 +408,31 @@
                     Forgot your password?
                 </a>
             </div>
+
+            <div class="debug-info">
+                <h5>System Status</h5>
+                <div class="debug-item">
+                    <span>Supabase Client:</span>
+                    <span id="supabaseStatus">
+                        <span class="status-indicator status-warning"></span>
+                        Loading...
+                    </span>
+                </div>
+                <div class="debug-item">
+                    <span>Admin Scripts:</span>
+                    <span id="adminScriptsStatus">
+                        <span class="status-indicator status-warning"></span>
+                        Loading...
+                    </span>
+                </div>
+                <div class="debug-item">
+                    <span>Icons:</span>
+                    <span id="iconsStatus">
+                        <span class="status-indicator status-warning"></span>
+                        Loading...
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -386,9 +444,15 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initializing Login page...');
             
+            // Check system status
+            checkSystemStatus();
+            
             // Initialize Lucide icons
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
+                updateStatus('iconsStatus', 'Ready', 'success');
+            } else {
+                updateStatus('iconsStatus', 'Failed', 'error');
             }
             
             // Check if already logged in
@@ -399,6 +463,33 @@
             
             console.log('Login page ready');
         });
+
+        // Check system status
+        function checkSystemStatus() {
+            // Check Supabase
+            if (typeof supabaseClient !== 'undefined') {
+                updateStatus('supabaseStatus', 'Connected', 'success');
+            } else {
+                updateStatus('supabaseStatus', 'Not Available', 'error');
+            }
+
+            // Check Admin Scripts
+            if (typeof showNotification !== 'undefined') {
+                updateStatus('adminScriptsStatus', 'Loaded', 'success');
+            } else {
+                updateStatus('adminScriptsStatus', 'Not Loaded', 'error');
+            }
+        }
+
+        // Update status indicator
+        function updateStatus(elementId, text, type) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const statusClass = type === 'success' ? 'status-success' : 
+                                   type === 'error' ? 'status-error' : 'status-warning';
+                element.innerHTML = `<span class="status-indicator ${statusClass}"></span>${text}`;
+            }
+        }
 
         // Check for existing session
         async function checkExistingSession() {
@@ -567,7 +658,8 @@
                 'Too many requests': 'Too many login attempts. Please try again later.',
                 'User not found': 'No account found with this email address.',
                 'Invalid email': 'Please enter a valid email address.',
-                'Weak password': 'Password should be at least 6 characters long.'
+                'Weak password': 'Password should be at least 6 characters long.',
+                'Authentication service not available': 'Login service is temporarily unavailable. Please try the demo credentials.'
             };
 
             return errorMap[error] || 'Login failed. Please try again or contact support.';
@@ -578,10 +670,27 @@
             // Enter key to submit
             if (event.key === 'Enter' && !isLoading) {
                 const form = document.getElementById('loginForm');
-                form.dispatchEvent(new Event('submit'));
+                if (form) {
+                    form.dispatchEvent(new Event('submit'));
+                }
             }
         });
 
+        // Auto-fill demo credentials for testing
+        function fillDemoCredentials() {
+            document.getElementById('email').value = 'admin@keyquest.com';
+            document.getElementById('password').value = 'admin123';
+        }
+
+        // Add click handler for demo credentials
+        document.addEventListener('DOMContentLoaded', function() {
+            const demoCredentials = document.querySelector('.demo-credentials');
+            if (demoCredentials) {
+                demoCredentials.addEventListener('click', fillDemoCredentials);
+                demoCredentials.style.cursor = 'pointer';
+                demoCredentials.title = 'Click to auto-fill demo credentials';
+            }
+        });
     </script>
 </body>
 </html>
