@@ -1869,10 +1869,10 @@
                             <tbody>
 
                               <!-- Min Loan Size Row -->
-                                <tr style="background: #fdf2f8;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #be185d; background: #be185d; color: white; word-wrap: break-word; vertical-align: middle;">Min Loan Size</td>
+                                 <tr style="background: white;">
+                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Min Loan Size</td>
                                     ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #be185d; background: ${index === 0 ? '#fdf2f8' : '#fef7f3'}; font-weight: bold; color: #be185d; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
                                             ${formatCurrency(pkg.minimum_loan_size || 0)}
                                         </td>
                                     `).join('')}
@@ -1903,20 +1903,20 @@
                                 ` : ''}
 
                                 <!-- Lock-in Period Row (REPLACED Average Rate Row) -->
-                                <tr style="background: #dcfce7; border: 2px solid #16a34a;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #16a34a; background: #16a34a; color: white; word-wrap: break-word; vertical-align: middle;">Lock-in Period</td>
+                                <tr style="background: white;">
+                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Lock-in Period</td>
                                     ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #16a34a; font-weight: bold; color: #16a34a; background: ${index === 0 ? '#bbf7d0' : '#dcfce7'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
                                             ${pkg.lock_period || 'No Lock-in'}
                                         </td>
                                     `).join('')}
                                 </tr>
 
                                 <!-- Monthly Installment Row -->
-                                <tr style="background: #ddd6fe;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #8b5cf6; background: #8b5cf6; color: white; word-wrap: break-word; vertical-align: middle;">Monthly Installment</td>
+                                <tr style="background: white;">
+                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Monthly Installment</td>
                                     ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #8b5cf6; font-weight: bold; color: #7c3aed; background: ${index === 0 ? '#c4b5fd' : '#ddd6fe'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
                                             ${formatCurrency(pkg.monthlyInstallment)}
                                         </td>
                                     `).join('')}
@@ -1924,10 +1924,10 @@
 
                             
                                 <!-- Remarks Row -->
-                                <tr style="background: #f0f9ff;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #0ea5e9; background: #0ea5e9; color: white; word-wrap: break-word; vertical-align: top;">Remarks</td>
+                                <tr style="background: white;">
+                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Remarks</td>
                                     ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: left; border: 1px solid #0ea5e9; font-size: 11px; line-height: 1.4; background: ${index === 0 ? '#e0f2fe' : '#f0f9ff'}; vertical-align: top; word-wrap: break-word; white-space: normal; overflow-wrap: break-word; max-width: 0;">
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; vertical-align: top; word-wrap: break-word; white-space: normal; overflow-wrap: break-word; max-width: 0;">
                                             <div style="word-wrap: break-word; overflow-wrap: break-word;">
                                                 ${(pkg.custom_remarks || pkg.remarks || 'N/A').replace(/\n/g, '<br>')}
                                             </div>
@@ -1941,9 +1941,8 @@
                     <!-- Important Disclaimer -->
                     <div style="background: #fef2f2; padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444; margin-bottom: 30px;">
                         <h4 style="margin: 0 0 12px 0; color: #dc2626; font-size: 16px; font-weight: bold;">Important Disclaimer</h4>
-                        <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #7f1d1d;">
-                            All interest rates are subject to bank's final approval and may vary based on individual credit assessment. Terms and conditions apply. 
-                            This report is for informational purposes only and does not constitute a binding offer.
+                        <p style="margin: 0; font-size: 12px; line-height: 1.0; color: #7f1d1d;">
+                            All interest rates are subject to bank's final approval and may vary based on individual credit assessment. This report is for informational purposes only and does not constitute a binding offer.
                         </p>
                     </div>
 
