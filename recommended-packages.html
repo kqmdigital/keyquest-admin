@@ -11,14 +11,110 @@
     <script src="config/supabase.js"></script>
     <script src="js/admin-scripts.js"></script>
     <style>
-        /* Enhanced Recommended Packages Styles */
+        /* Admin Header - Matches standard admin layout */
+        .admin-header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Admin Container - Matches standard layout */
+        .admin-container {
+            min-height: 100vh;
+            background: #f8fafc;
+            padding: 0;
+        }
+
+        /* Content wrapper */
+        .content-wrapper {
+            padding: 0 24px 24px 24px;
+        }
+
+        /* Page Header - Adjusted for admin layout */
         .page-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 40px 32px;
-            border-radius: 20px;
-            margin-bottom: 32px;
-            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.25);
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.25);
             position: relative;
             overflow: hidden;
         }
@@ -28,37 +124,36 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             transform: translate(50%, -50%);
         }
 
         .page-header h1 {
-            margin: 0 0 12px 0;
-            font-size: 32px;
-            font-weight: 800;
+            margin: 0 0 8px 0;
+            font-size: 28px;
+            font-weight: 700;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .page-header p {
             margin: 0;
             opacity: 0.95;
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 15px;
+            font-weight: 400;
         }
 
-        /* Enhanced Loan Type Tabs */
+        /* Loan Type Tabs - Adjusted spacing */
         .loan-type-tabs {
             display: flex;
             background: white;
-            border-radius: 20px;
-            padding: 8px;
-            margin-bottom: 32px;
+            border-radius: 16px;
+            padding: 6px;
+            margin-bottom: 24px;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
         }
 
         .loan-tab {
@@ -109,14 +204,14 @@
             transform: translateY(-2px);
         }
 
-        /* Enhanced Search Section */
+        /* Search Section - Adjusted for admin layout */
         .search-section {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 20px;
-            padding: 32px;
-            margin-bottom: 32px;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
             position: relative;
             overflow: hidden;
         }
@@ -127,7 +222,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, #667eea, #764ba2, #10b981);
         }
 
@@ -209,6 +304,93 @@
             background: linear-gradient(135deg, #5a6fd8 0%, #6b4190 100%);
             transform: translateY(-3px);
             box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        }
+
+        /* NEW: Live Filter Controls */
+        .live-filters-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            display: none; /* Hidden until results are shown */
+        }
+
+        .live-filters-section.active {
+            display: block;
+        }
+
+        .live-filters-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .live-filters-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .filter-select, .filter-input {
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .clear-filters-btn {
+            background: #f3f4f6;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .clear-filters-btn:hover {
+            background: #e5e7eb;
+            color: #374151;
         }
 
         /* Enhanced Results Section */
@@ -387,11 +569,62 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
         }
 
         .package-rank {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.3);
+        }
+
+        .package-title {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .bank-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .package-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .package-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .detail-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+        }
+
+        .detail-icon {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             width: 48px;
@@ -400,89 +633,50 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 18px;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .package-bank {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .bank-name {
-            font-size: 24px;
-            font-weight: 800;
-            color: #1e293b;
-            margin-bottom: 4px;
-        }
-
-        .package-type {
-            font-size: 14px;
-            color: #64748b;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .rate-info {
-            text-align: right;
-        }
-
-        .avg-rate {
-            font-size: 32px;
-            font-weight: 800;
-            color: #059669;
-            margin-bottom: 4px;
-            text-shadow: 0 1px 2px rgba(5, 150, 105, 0.1);
-        }
-
-        .monthly-payment {
-            font-size: 16px;
-            color: #374151;
-            font-weight: 600;
-        }
-
-        .package-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-            margin: 24px 0;
-            padding: 24px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .detail-label {
-            font-size: 12px;
-            color: #6b7280;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin: 0 auto 16px;
+            font-size: 20px;
         }
 
         .detail-value {
-            font-size: 14px;
+            font-size: 24px;
+            font-weight: 800;
             color: #1e293b;
-            font-weight: 600;
+            margin-bottom: 8px;
         }
 
-        /* Enhanced Rate Schedule */
+        .detail-label {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        /* Rate Schedule Section */
         .rate-schedule {
-            margin: 24px 0;
+            margin: 32px 0;
+            background: linear-gradient(135deg, #fef3f3 0%, #fef2f2 100%);
+            border: 1px solid #fecaca;
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rate-schedule::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
         }
 
         .rate-schedule-title {
             font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 16px;
+            color: #991b1b;
+            margin-bottom: 20px;
             font-size: 16px;
             display: flex;
             align-items: center;
@@ -492,63 +686,45 @@
         .rate-schedule-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
+            gap: 16px;
         }
 
         .rate-item {
             background: white;
-            padding: 20px;
+            border: 1px solid #fecaca;
             border-radius: 12px;
+            padding: 16px;
             text-align: center;
-            border: 2px solid #d1fae5;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rate-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
-            transition: left 0.6s;
-        }
-
-        .rate-item:hover::before {
-            left: 100%;
         }
 
         .rate-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
-            border-color: #10b981;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.1);
         }
 
         .rate-period {
             font-size: 12px;
-            color: #6b7280;
             font-weight: 600;
+            color: #7c2d12;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.025em;
             margin-bottom: 8px;
         }
 
         .rate-value {
             font-size: 20px;
             font-weight: 800;
-            color: #059669;
+            color: #dc2626;
         }
 
-        /* Enhanced Remarks Section */
+        /* Package Remarks Section */
         .package-remarks {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border: 2px solid #fcd34d;
+            margin: 24px 0;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid #93c5fd;
             border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
+            padding: 24px;
             position: relative;
             overflow: hidden;
         }
@@ -560,35 +736,32 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #f59e0b, #d97706);
+            background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa);
         }
 
         .remarks-title {
             font-weight: 700;
-            color: #92400e;
-            margin-bottom: 12px;
-            font-size: 14px;
+            color: #1e40af;
+            margin-bottom: 16px;
+            font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            gap: 10px;
         }
 
         .remarks-content {
-            color: #92400e;
-            font-size: 14px;
+            color: #1e3a8a;
             line-height: 1.6;
-            font-weight: 500;
+            font-size: 14px;
         }
 
-        /* Enhanced Package Remarks Editor */
+        /* Package Remarks Editor */
         .package-remarks-editor {
+            margin: 24px 0;
             background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border: 2px solid #0ea5e9;
+            border: 1px solid #7dd3fc;
             border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
+            padding: 24px;
             position: relative;
             overflow: hidden;
         }
@@ -738,42 +911,49 @@
             margin-bottom: 24px;
         }
 
-        /* Loading Overlay Enhanced */
+        /* Loading Overlay - Matches admin-scripts.js standard */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            backdrop-filter: blur(8px);
         }
 
-        .loading-spinner {
+        .loading-content {
+            background: white;
+            padding: 32px;
+            border-radius: 8px;
             text-align: center;
-            color: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 16px;
         }
 
-        .loading-spinner i {
-            font-size: 48px;
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .loading-spinner span {
-            font-size: 16px;
+        .loading-message {
+            color: #374151;
+            font-size: 14px;
             font-weight: 500;
         }
 
@@ -810,318 +990,289 @@
         }
 
         @media (max-width: 768px) {
-            .page-header {
-                padding: 24px 20px;
-                text-align: center;
-            }
-            
-            .page-header h1 {
-                font-size: 24px;
-            }
-            
             .loan-type-tabs {
                 flex-direction: column;
                 gap: 8px;
-            }
-            
-            .search-section {
-                padding: 24px 20px;
             }
             
             .search-form {
                 grid-template-columns: 1fr;
             }
             
+            .filter-controls {
+                grid-template-columns: 1fr;
+            }
+            
             .package-header {
                 flex-direction: column;
-                text-align: center;
+                align-items: flex-start;
                 gap: 16px;
             }
             
-            .rate-info {
-                text-align: center;
-            }
-            
-            .packages-container {
-                padding: 20px;
-            }
-            
-            .package-card {
-                padding: 20px;
+            .package-title {
+                margin-left: 0;
             }
             
             .package-actions {
                 justify-content: center;
             }
         }
-
-        @media (max-width: 480px) {
-            .rate-schedule-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .features-list {
-                flex-direction: column;
-            }
-            
-            .detail-item {
-                flex-direction: column;
-                gap: 8px;
-                text-align: center;
-            }
-
-            .remarks-textarea {
-                min-height: 60px;
-                font-size: 13px;
-            }
-
-            .package-remarks-editor {
-                padding: 16px;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-    
- <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">
-                        <i data-lucide="building-2"></i>
-                    </div>
-                    <span>KEYQUEST</span>
-                </a>
+    <div class="admin-container">
+        <!-- Admin Header - Matches standard admin layout -->
+        <header class="admin-header">
+            <div class="header-left">
+                <h1 class="header-title">🏠 Recommended Packages</h1>
             </div>
-    
-    <!-- DARK NAVIGATION MENU -->
-    <nav class="nav-menu">
-        <a href="index.html" class="nav-item">
-            <i data-lucide="layout-dashboard"></i>
-            <span>Dashboard</span>
-        </a>
-        <a href="rate-packages.html" class="nav-item">
-            <i data-lucide="package"></i>
-            <span>Rate Package</span>
-        </a>
-        <a href="rate-types.html" class="nav-item">
-            <i data-lucide="percent"></i>
-            <span>Rate Type</span>
-        </a>
-        <a href="banks.html" class="nav-item">
-            <i data-lucide="landmark"></i>
-            <span>Bank</span>
-        </a>
-        <a href="bankers.html" class="nav-item">
-            <i data-lucide="briefcase"></i>
-            <span>Bankers</span>
-        </a>
-        <a href="agents.html" class="nav-item">
-            <i data-lucide="users"></i>
-            <span>Agents</span>
-        </a>
-        <a href="enquiry.html" class="nav-item">
-            <i data-lucide="help-circle"></i>
-            <span>Enquiry</span>
-        </a>
-        <a href="recommended-packages.html" class="nav-item active">
-            <i data-lucide="star"></i>
-            <span>Recommended Packages</span>
-        </a>
-    </nav>
-</div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <header class="header">
-                <div class="header-left">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
-                        <i data-lucide="menu"></i>
-                    </button>
-                    <h1 class="header-title">Recommended Packages</h1>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="confirmSignOut()">
-                        <i data-lucide="log-out"></i>
-                        <span>Sign Out</span>
-                    </button>
-                    <div class="user-profile">
-                        <div class="user-avatar" id="userAvatar">A</div>
-                        <div class="user-info">
-                            <div class="user-name" id="userName">admin</div>
-                            <div class="user-role">Super Admin</div>
-                        </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="confirmSignOut()">
+                    <i data-lucide="log-out"></i>
+                    <span>Sign Out</span>
+                </button>
+                <div class="user-profile">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">admin</div>
+                        <div class="user-role">Mortgage Advisor</div>
                     </div>
                 </div>
-            </header>
-            
-            <div class="content-area">
+            </div>
+        </header>
+
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>🏠 Recommended Packages</h1>
+                <p>Find the perfect mortgage package tailored to your client's needs</p>
+            </div>
+
+        <!-- Loan Type Selection - CRITICAL: Filters packages by business loan category -->
+        <div class="loan-type-tabs">
+            <button class="loan-tab active" data-loan-type="New Home Loan">
+                <i data-lucide="home"></i>
+                New Home Loan
+            </button>
+            <button class="loan-tab" data-loan-type="Refinancing Home Loan">
+                <i data-lucide="repeat"></i>
+                Refinancing Home Loan
+            </button>
+            <button class="loan-tab" data-loan-type="Commercial/Industrial">
+                <i data-lucide="building"></i>
+                Commercial/Industrial
+            </button>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <form class="search-form" id="searchForm" onsubmit="searchPackages(event)">
+                <div class="form-group">
+                    <label class="form-label">Property Type</label>
+                    <select class="form-select" id="propertyType">
+                        <option value="">Select Property Type</option>
+                        <option value="Private Property">Private Property</option>
+                        <option value="HDB">HDB</option>
+                        <option value="EC">EC</option>
+                        <option value="Commercial">Commercial</option>
+                        <option value="Industrial">Industrial</option>
+                    </select>
+                </div>
                 
-                <!-- Loan Type Tabs -->
-                <div class="loan-type-tabs">
-                    <button class="loan-tab active" onclick="selectLoanType('New Home Loan')" data-loan-type="New Home Loan">
-                        <i data-lucide="home"></i>
-                        New Home Loan
-                    </button>
-                    <button class="loan-tab" onclick="selectLoanType('Refinancing Home Loan')" data-loan-type="Refinancing Home Loan">
-                        <i data-lucide="repeat"></i>
-                        Refinancing Home Loan
-                    </button>
-                    <button class="loan-tab" onclick="selectLoanType('Commercial/Industrial')" data-loan-type="Commercial/Industrial">
-                        <i data-lucide="briefcase"></i>
-                        Commercial/Industrial
-                    </button>
+                <div class="form-group">
+                    <label class="form-label">Property Status</label>
+                    <select class="form-select" id="propertyStatus">
+                        <option value="">Select Property Status</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Under Construction">Under Construction</option>
+                        <option value="BUC">Build Under Construction</option>
+                    </select>
                 </div>
-
-                <!-- Search Section -->
-                <div class="search-section">
-                   
-                    <form class="search-form" id="searchForm" onsubmit="searchPackages(event)">
-                        <div class="form-group">
-                            <label class="form-label">Property Type</label>
-                            <select class="form-select" id="propertyType">
-                                <option value="">Select Property Type</option>
-                                <option value="Private Property">Private Property</option>
-                                <option value="HDB">HDB</option>
-                                <option value="EC">EC</option>
-                                <option value="Commercial">Commercial</option>
-                                <option value="Industrial">Industrial</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Property Status</label>
-                            <select class="form-select" id="propertyStatus">
-                                <option value="">Select Property Status</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Under Construction">Under Construction</option>
-                                <option value="BUC">Build Under Construction</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Buy Under</label>
-                            <select class="form-select" id="buyUnder">
-                                <option value="">Select Buy Under</option>
-                                <option value="Individual Name">Individual Name</option>
-                                <option value="Company Operating">Company Operating</option>
-                                <option value="Company Investment">Company Investment</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Loan Amount ($)</label>
-                            <input type="number" class="form-input" id="loanAmount" placeholder="500,000" min="0" step="1000">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Loan Tenure</label>
-                            <select class="form-select" id="loanTenure">
-                                <option value="">Select Tenure</option>
-                                <option value="20">20 years</option>
-                                <option value="25">25 years</option>
-                                <option value="30">30 years</option>
-                                <option value="35">35 years</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <button type="submit" class="search-button">
-                                <i data-lucide="search"></i>
-                                Find Best Packages
-                            </button>
-                        </div>
-                    </form>
+                
+                <div class="form-group">
+                    <label class="form-label">Buy Under</label>
+                    <select class="form-select" id="buyUnder">
+                        <option value="">Select Buy Under</option>
+                        <option value="Individual Name">Individual Name</option>
+                        <option value="Company Operating">Company Operating</option>
+                        <option value="Company Investment">Company Investment</option>
+                    </select>
                 </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Loan Amount ($)</label>
+                    <input type="number" class="form-input" id="loanAmount" placeholder="500,000" min="0" step="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Loan Tenure</label>
+                    <select class="form-select" id="loanTenure">
+                        <option value="">Select Tenure</option>
+                        <option value="5">5 years</option>
+                        <option value="10">10 years</option>
+                        <option value="15">15 years</option>
+                        <option value="20">20 years</option>
+                        <option value="25">25 years</option>
+                        <option value="30">30 years</option>
+                        <option value="35">35 years</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="search-button">
+                    <i data-lucide="search"></i>
+                    Find Best Packages
+                </button>
+            </form>
+        </div>
 
-                <!-- Results Section -->
-                <div class="results-section" id="resultsContainer" style="display: none;">
-                    <div class="results-header">
-                        <div class="results-title">
-                            <i data-lucide="trending-up"></i>
-                            Recommended Packages
-                            <span class="results-count" id="resultsCount">0</span>
+        <!-- NEW: Live Filter Controls (Hidden initially) -->
+        <div class="live-filters-section" id="liveFiltersSection">
+            <div class="live-filters-header">
+                <div class="live-filters-title">
+                    <i data-lucide="filter"></i>
+                    Refine Results
+                </div>
+                <button class="clear-filters-btn" onclick="clearLiveFilters()">
+                    <i data-lucide="x"></i>
+                    Clear Filters
+                </button>
+            </div>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label class="filter-label">Search Banks</label>
+                    <input type="text" class="filter-input" id="bankSearchFilter" placeholder="Search by bank name..." onkeyup="applyLiveFilters()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Rate Type</label>
+                    <select class="filter-select" id="rateTypeFilter" onchange="applyLiveFilters()">
+                        <option value="">All Rate Types</option>
+                        <option value="Fixed">Fixed</option>
+                        <option value="Floating">Floating</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Max Interest Rate</label>
+                    <input type="number" class="filter-input" id="maxRateFilter" placeholder="e.g. 3.5" step="0.1" min="0" onchange="applyLiveFilters()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Min Loan Amount</label>
+                    <input type="number" class="filter-input" id="minLoanFilter" placeholder="e.g. 300000" step="10000" min="0" onchange="applyLiveFilters()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Lock Period</label>
+                    <select class="filter-select" id="lockPeriodFilter" onchange="applyLiveFilters()">
+                        <option value="">All Lock Periods</option>
+                        <option value="No Lock">No Lock</option>
+                        <option value="1 Year">1 Year</option>
+                        <option value="2 Years">2 Years</option>
+                        <option value="3 Years">3 Years</option>
+                        <option value="4 Years">4 Years</option>
+                        <option value="5 Years">5 Years</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsContainer" style="display: none;">
+            <div class="results-header">
+                <div class="results-title">
+                    <i data-lucide="trending-up"></i>
+                    Recommended Packages
+                    <span class="results-count" id="resultsCount">0</span>
+                </div>
+                
+                <div class="results-actions">
+                    <div class="report-options">
+                        <div class="option-group">
+                            <label class="option-label">Client Name:</label>
+                            <input type="text" class="client-name-input" id="clientName" placeholder="Enter client name">
                         </div>
-                        <div class="results-actions">
-                            <div class="report-options">
-                                <div class="option-group">
-                                    <label for="clientName" class="option-label">Client Name:</label>
-                                    <input type="text" id="clientName" class="client-name-input" placeholder="Enter client name for report" />
-                                </div>
-                                <div class="option-group">
-                                    <input type="checkbox" id="hideBankNames" class="option-checkbox">
-                                    <label for="hideBankNames" class="option-checkbox-label">Hide Bank Names in Report</label>
-                                </div>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="download-btn" onclick="generateProfessionalReport()">
-                                    <i data-lucide="file-text"></i>
-                                    Generate Report
-                                </button>
-                                <button class="download-btn" onclick="exportCSV()" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); margin-left: 12px;">
-                                    <i data-lucide="download"></i>
-                                    Export CSV
-                                </button>
-                                <button class="download-btn" onclick="toggleAllSelections()" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); margin-left: 12px;">
-                                    <i data-lucide="check-square"></i>
-                                    Toggle All
-                                </button>
-                            </div>
+                        <div class="option-group">
+                            <input type="checkbox" class="option-checkbox" id="hideBankNames">
+                            <label class="option-checkbox-label" for="hideBankNames">Hide bank names in report</label>
                         </div>
                     </div>
-                    
-                    <div class="packages-container" id="packagesContainer">
-                        <!-- Package cards will be dynamically inserted here -->
-                    </div>
-                    
-                    <div class="no-results" id="noResults" style="display: none;">
-                        <i data-lucide="search"></i>
-                        <h3>No Matching Packages Found</h3>
-                        <p>Try adjusting your search criteria to find more suitable options.</p>
-                        <button class="btn btn-primary" onclick="clearFilters()">
-                            <i data-lucide="rotate-ccw"></i>
-                            Reset Search
+                    <div class="action-buttons">
+                        <button class="download-btn" onclick="toggleAllSelections()">
+                            <i data-lucide="check-square"></i>
+                            Select All/None
+                        </button>
+                        <button class="download-btn" onclick="downloadPackagesList()">
+                            <i data-lucide="download"></i>
+                            Generate Report
                         </button>
                     </div>
                 </div>
             </div>
+            
+            <div class="packages-container" id="packagesContainer">
+                <!-- Packages will be populated here -->
+            </div>
+            
+            <div class="no-results" id="noResults" style="display: none;">
+                <i data-lucide="search-x"></i>
+                <h3>No packages found</h3>
+                <p>Try adjusting your search criteria or filters to find more options.</p>
+            </div>
         </div>
-    </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
-        <div class="loading-spinner">
-            <i data-lucide="loader" class="animate-spin"></i>
-            <span>Finding the best packages for you...</span>
+        <!-- Loading Overlay - Matches admin-scripts.js standard -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-message" id="loadingText">Loading...</div>
+            </div>
         </div>
-    </div>
+        
+        </div> <!-- End content-wrapper -->
+    </div> <!-- End admin-container -->
 
     <script>
         // ===================================
-        // GLOBAL VARIABLES - PRESERVED FROM ORIGINAL
+        // GLOBAL VARIABLES
         // ===================================
         let allPackages = [];
         let rateTypes = [];
-        let currentLoanType = 'New Home Loan';
         let currentResults = [];
+        let filteredResults = []; // NEW: Store filtered results for live filtering
         let searchCriteria = {};
+        let currentLoanType = 'New Home Loan';
 
         // ===================================
-        // INITIALIZATION - PRESERVED FROM ORIGINAL
+        // INITIALIZATION - MATCHES ADMIN STANDARD PATTERN
         // ===================================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Recommended Packages page loading...');
-            checkAuthentication();
-            setupEventListeners();
-            loadData();
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                console.log('🚀 Recommended Packages page loading...');
+                
+                // Initialize icons first
+                if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                    lucide.createIcons();
+                }
+                
+                // Check authentication
+                await checkAuth();
+                
+                // Set up event listeners
+                setupEventListeners();
+                
+                // Load data
+                await loadData();
+                
+                console.log('✅ Recommended Packages page ready');
+                
+            } catch (error) {
+                console.error('💥 Page initialization error:', error);
+                showNotification('Page initialization failed: ' + error.message, 'error');
+            }
         });
 
         // ===================================
-        // AUTHENTICATION CHECK - PRESERVED FROM ORIGINAL
+        // AUTHENTICATION - MATCHES ADMIN STANDARD PATTERN
         // ===================================
-        async function checkAuthentication() {
+        async function checkAuth() {
             try {
                 const { data: { user } } = await supabaseClient.auth.getUser();
                 if (!user) {
@@ -1129,12 +1280,18 @@
                     window.location.href = 'login.html';
                     return;
                 }
-
-                // Update user display
-                if (user.email) {
-                    document.getElementById('userName').textContent = user.email.split('@')[0];
-                    document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+                
+                // Update user display if elements exist
+                const userNameEl = document.getElementById('userName');
+                const userAvatarEl = document.getElementById('userAvatar');
+                
+                if (user.email && userNameEl && userAvatarEl) {
+                    userNameEl.textContent = user.email.split('@')[0];
+                    userAvatarEl.textContent = user.email.charAt(0).toUpperCase();
                 }
+                
+                console.log('✅ User authenticated:', user.email);
+                
             } catch (error) {
                 console.error('💥 Auth check failed:', error);
                 window.location.href = 'login.html';
@@ -1284,7 +1441,11 @@
                 filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
 
                 currentResults = filteredPackages;
+                filteredResults = [...filteredPackages]; // NEW: Initialize filtered results
                 displayResults(filteredPackages);
+                
+                // NEW: Show live filters section
+                showLiveFilters();
                 
                 console.log(`🔍 Found ${filteredPackages.length} matching packages`);
                 
@@ -1294,6 +1455,97 @@
             } finally {
                 hideLoading();
             }
+        }
+
+        // ===================================
+        // NEW: LIVE FILTERING FUNCTIONS
+        // ===================================
+        function showLiveFilters() {
+            const liveFiltersSection = document.getElementById('liveFiltersSection');
+            if (liveFiltersSection) {
+                liveFiltersSection.classList.add('active');
+            }
+        }
+
+        function hideLiveFilters() {
+            const liveFiltersSection = document.getElementById('liveFiltersSection');
+            if (liveFiltersSection) {
+                liveFiltersSection.classList.remove('active');
+            }
+        }
+
+        function applyLiveFilters() {
+            if (!currentResults.length) return;
+
+            // Get filter values
+            const bankSearch = document.getElementById('bankSearchFilter').value.toLowerCase().trim();
+            const rateTypeFilter = document.getElementById('rateTypeFilter').value;
+            const maxRateFilter = parseFloat(document.getElementById('maxRateFilter').value) || Infinity;
+            const minLoanFilter = parseFloat(document.getElementById('minLoanFilter').value) || 0;
+            const lockPeriodFilter = document.getElementById('lockPeriodFilter').value;
+
+            // Apply filters to current results
+            filteredResults = currentResults.filter(pkg => {
+                // Bank name filter
+                if (bankSearch && !pkg.bank_name.toLowerCase().includes(bankSearch)) {
+                    return false;
+                }
+
+                // Rate type filter
+                if (rateTypeFilter && pkg.rate_type_category !== rateTypeFilter) {
+                    return false;
+                }
+
+                // Max interest rate filter
+                if (pkg.avgFirst2Years > maxRateFilter) {
+                    return false;
+                }
+
+                // Min loan amount filter
+                if (pkg.minimum_loan_size && pkg.minimum_loan_size < minLoanFilter) {
+                    return false;
+                }
+
+                // Lock period filter
+                const pkgLockPeriod = pkg.lock_period || 'No Lock';
+                if (lockPeriodFilter && pkgLockPeriod !== lockPeriodFilter) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            // Update display with filtered results
+            displayResults(filteredResults);
+            
+            // Update results count
+            const resultsCount = document.getElementById('resultsCount');
+            if (resultsCount) {
+                resultsCount.textContent = filteredResults.length;
+            }
+
+            console.log(`🔍 Live filter applied: ${filteredResults.length} results`);
+        }
+
+        function clearLiveFilters() {
+            // Clear all filter inputs
+            document.getElementById('bankSearchFilter').value = '';
+            document.getElementById('rateTypeFilter').value = '';
+            document.getElementById('maxRateFilter').value = '';
+            document.getElementById('minLoanFilter').value = '';
+            document.getElementById('lockPeriodFilter').value = '';
+
+            // Reset filtered results to show all current results
+            filteredResults = [...currentResults];
+            displayResults(filteredResults);
+
+            // Update results count
+            const resultsCount = document.getElementById('resultsCount');
+            if (resultsCount) {
+                resultsCount.textContent = filteredResults.length;
+            }
+
+            showNotification('Filters cleared', 'info');
         }
 
         // ===================================
@@ -1336,70 +1588,55 @@
         }
 
         function formatPercentage(rate) {
-            return `${rate.toFixed(2)}%`;
+            return `${rate.toFixed(3)}%`;
         }
 
-        // Calculate interest rate for a specific year - PRESERVED FROM ORIGINAL
         function calculateInterestRate(pkg, year) {
-            let rateType, operator, value;
+            const rateTypeId = pkg[`year${year}_rate_type`];
+            const operator = pkg[`year${year}_operator`];
+            const value = pkg[`year${year}_value`];
             
             if (year === 'thereafter') {
-                rateType = pkg.thereafter_rate_type;
-                operator = pkg.thereafter_operator;
-                value = pkg.thereafter_value;
-            } else {
-                rateType = pkg[`year${year}_rate_type`];
-                operator = pkg[`year${year}_operator`];
-                value = pkg[`year${year}_value`];
-            }
-
-            if (!rateType || value === null || value === undefined) return 0;
-
-            if (rateType === 'FIXED') {
-                return parseFloat(value) || 0;
-            } else {
-                // Find the reference rate
-                const referenceRate = rateTypes.find(rt => rt.rate_type === rateType);
-                if (!referenceRate) {
-                    console.warn(`❌ Reference rate type not found: ${rateType}`);
-                    return 0;
-                }
-
-                const baseRate = parseFloat(referenceRate.rate_value) || 0;
-                const adjustment = parseFloat(value) || 0;
+                const rateTypeId = pkg.thereafter_rate_type;
+                const operator = pkg.thereafter_operator;
+                const value = pkg.thereafter_value;
                 
-                if (operator === '+') {
-                    return baseRate + adjustment;
-                } else if (operator === '-') {
-                    return Math.max(0, baseRate - adjustment);
-                } else {
-                    return baseRate;
-                }
+                if (!rateTypeId || !operator || value === null) return 0;
+                
+                const rateType = rateTypes.find(rt => rt.id === rateTypeId);
+                if (!rateType) return 0;
+                
+                const baseRate = rateType.rate_value;
+                return operator === '+' ? baseRate + value : baseRate - value;
             }
+            
+            if (!rateTypeId || !operator || value === null) return 0;
+            
+            const rateType = rateTypes.find(rt => rt.id === rateTypeId);
+            if (!rateType) return 0;
+            
+            const baseRate = rateType.rate_value;
+            return operator === '+' ? baseRate + value : baseRate - value;
         }
 
-        // Format rate display for tables - PRESERVED FROM ORIGINAL
         function formatRateDisplay(pkg, year) {
-            let rateType, operator, value;
+            const rate = calculateInterestRate(pkg, year);
+            if (rate === 0) return 'N/A';
             
-            if (year === 'thereafter') {
-                rateType = pkg.thereafter_rate_type;
-                operator = pkg.thereafter_operator;
-                value = pkg.thereafter_value;
-            } else {
-                rateType = pkg[`year${year}_rate_type`];
-                operator = pkg[`year${year}_operator`];
-                value = pkg[`year${year}_value`];
-            }
-
-            if (!rateType || value === null || value === undefined) return '-';
-
-            if (rateType === 'FIXED') {
-                const rate = calculateInterestRate(pkg, year);
-                return `${formatPercentage(rate)} Fixed`;
+            const rateTypeId = year === 'thereafter' ? pkg.thereafter_rate_type : pkg[`year${year}_rate_type`];
+            const operator = year === 'thereafter' ? pkg.thereafter_operator : pkg[`year${year}_operator`];
+            const value = year === 'thereafter' ? pkg.thereafter_value : pkg[`year${year}_value`];
+            
+            if (!rateTypeId) return 'N/A';
+            
+            const rateType = rateTypes.find(rt => rt.id === rateTypeId);
+            if (!rateType) return 'N/A';
+            
+            if (value === 0) {
+                return `${rateType.rate_name}: ${rate.toFixed(3)}%`;
             } else {
                 const operatorSymbol = operator === '+' ? '+' : '-';
-                return `${rateType} ${operatorSymbol} ${value}%`;
+                return `${rateType.rate_name} ${operatorSymbol} ${value}%`;
             }
         }
 
@@ -1486,40 +1723,43 @@
                     
                     <div class="package-header">
                         <div class="package-rank">${rank}</div>
-                        <div class="package-bank">
+                        <div class="package-title">
                             <div class="bank-name">${pkg.bank_name}</div>
-                            <div class="package-type">${pkg.rate_type_category || 'Rate Package'}</div>
-                        </div>
-                        <div class="rate-info">
-                            <div class="avg-rate">${formatPercentage(pkg.avgFirst2Years)}</div>
-                            <div class="monthly-payment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
+                            <div class="package-subtitle">${pkg.rate_type_category} Rate • ${pkg.lock_period || 'No Lock-in'}</div>
                         </div>
                     </div>
 
                     <div class="package-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Property Type</div>
+                        <div class="detail-card">
+                            <div class="detail-icon">
+                                <i data-lucide="percent"></i>
+                            </div>
+                            <div class="detail-value">${formatPercentage(pkg.avgFirst2Years)}</div>
+                            <div class="detail-label">Avg First 2 Years</div>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <div class="detail-icon">
+                                <i data-lucide="dollar-sign"></i>
+                            </div>
+                            <div class="detail-value">${formatCurrency(pkg.monthlyInstallment)}</div>
+                            <div class="detail-label">Monthly Installment</div>
+                        </div>
+                        
+                        <div class="detail-card">
+                            <div class="detail-icon">
+                                <i data-lucide="home"></i>
+                            </div>
                             <div class="detail-value">${pkg.property_type}</div>
+                            <div class="detail-label">Property Type</div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Property Status</div>
+                        
+                        <div class="detail-card">
+                            <div class="detail-icon">
+                                <i data-lucide="calendar"></i>
+                            </div>
                             <div class="detail-value">${pkg.property_status}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Buy Under</div>
-                            <div class="detail-value">${pkg.buy_under}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Rate Type</div>
-                            <div class="detail-value">${pkg.rate_type_category}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Lock Period</div>
-                            <div class="detail-value">${pkg.lock_period || 'No Lock-in'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Min. Loan Size</div>
-                            <div class="detail-value">${formatCurrency(pkg.minimum_loan_size || 0)}</div>
+                            <div class="detail-label">Property Status</div>
                         </div>
                     </div>
 
@@ -1598,104 +1838,41 @@
                 `);
             }
 
-            return rates.length > 0 ? rates.join('') : null;
+            return rates.length > 0 ? rates.join('') : '';
         }
 
         function generatePackageFeatures(pkg) {
             const features = [];
             
-            if (pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) {
-                features.push(`
-                    <div class="feature-tag">
-                        <i data-lucide="shield"></i>
-                        Legal Fee Subsidy
-                    </div>
-                `);
-            }
+            if (pkg.legal_fee_subsidy) features.push('<div class="feature-tag"><i data-lucide="shield-check"></i> Legal Fee Subsidy</div>');
+            if (pkg.free_fire_insurance) features.push('<div class="feature-tag"><i data-lucide="flame"></i> Free Fire Insurance</div>');
+            if (pkg.free_conversion) features.push('<div class="feature-tag"><i data-lucide="repeat"></i> Free Conversion</div>');
+            if (pkg.cashback_amount && pkg.cashback_amount > 0) features.push(`<div class="feature-tag"><i data-lucide="dollar-sign"></i> ${formatCurrency(pkg.cashback_amount)} Cashback</div>`);
             
-            if (pkg.cash_rebate === 'true' || pkg.cash_rebate === true) {
-                features.push(`
-                    <div class="feature-tag">
-                        <i data-lucide="dollar-sign"></i>
-                        Cash Rebate
-                    </div>
-                `);
-            }
-            
-            if (pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true) {
-                features.push(`
-                    <div class="feature-tag">
-                        <i data-lucide="repeat"></i>
-                        Free Conversion (12M)
-                    </div>
-                `);
-            }
-
-            if (pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true) {
-                features.push(`
-                    <div class="feature-tag">
-                        <i data-lucide="repeat"></i>
-                        Free Conversion (24M)
-                    </div>
-                `);
-            }
-
-            return features.length > 0 ? features.join('') : null;
+            return features.length > 0 ? features.join('') : '';
         }
 
-        // ===================================
-        // UTILITY FUNCTIONS - PRESERVED FROM ORIGINAL
-        // ===================================
-        function formatPercentage(value) {
-            if (value == null || value === 0) return 'N/A';
-            return `${value.toFixed(2)}%`;
-        }
-
-        function formatCurrency(value) {
-            if (!value || value === 0) return '$0';
-            return new Intl.NumberFormat('en-SG', {
-                style: 'currency',
-                currency: 'SGD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(value);
-        }
-
-        // Clear all filters - PRESERVED FROM ORIGINAL
-        function clearFilters() {
-            document.getElementById('propertyType').value = '';
-            document.getElementById('propertyStatus').value = '';
-            document.getElementById('buyUnder').value = '';
-            document.getElementById('loanAmount').value = '';
-            document.getElementById('loanTenure').value = '';
-            
-            // Clear results
-            document.getElementById('resultsContainer').style.display = 'none';
-            currentResults = [];
-            searchCriteria = {};
-        }
-
-        // Download packages list - PRESERVED FROM ORIGINAL
-        function downloadPackagesList() {
-            if (!currentResults.length) {
-                showNotification('No results to download. Please search for packages first.', 'error');
-                return;
-            }
-
-            generateProfessionalReport();
-        }
         // ===================================
         // PACKAGE SELECTION MANAGEMENT
         // ===================================
         function togglePackageSelection(packageIndex) {
             const checkbox = document.getElementById(`pkg-select-${packageIndex}`);
+            
+            // Update the original currentResults
             if (currentResults[packageIndex]) {
                 currentResults[packageIndex].selected = checkbox.checked;
-                console.log(`📋 Package ${packageIndex} selection:`, checkbox.checked);
-                
-                // Update selection count display
-                updateSelectionCount();
             }
+            
+            // Also update filteredResults if it exists
+            const filteredIndex = filteredResults.findIndex(pkg => pkg.id === currentResults[packageIndex]?.id);
+            if (filteredIndex !== -1) {
+                filteredResults[filteredIndex].selected = checkbox.checked;
+            }
+            
+            console.log(`📋 Package ${packageIndex} selection:`, checkbox.checked);
+            
+            // Update selection count display
+            updateSelectionCount();
         }
 
         function updateSelectionCount() {
@@ -1705,7 +1882,7 @@
                 resultsSubtitle.innerHTML = `
                     <i data-lucide="trending-up"></i>
                     Recommended Packages
-                    <span class="results-count">${currentResults.length}</span>
+                    <span class="results-count">${filteredResults.length}</span>
                     <small style="font-size: 14px; font-weight: 500; color: #6b7280; margin-left: 12px; opacity: 0.8;">
                         (${selectedCount} selected for report)
                     </small>
@@ -1781,264 +1958,6 @@
                 return;
             }
 
-            console.log('📄 Generating professional report for', selectedPackages.length, 'packages');
-
-            const reportDate = new Date().toLocaleDateString('en-SG', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-            });
-
-            // Determine which years have data across all packages
-            const yearsToShow = [];
-            for (let year = 1; year <= 5; year++) {
-                const hasData = selectedPackages.some(pkg => {
-                    const rate = calculateInterestRate(pkg, year);
-                    return rate > 0;
-                });
-                if (hasData) {
-                    yearsToShow.push(year);
-                }
-            }
-
-            // Check if thereafter has data
-            const hasThereafterData = selectedPackages.some(pkg => {
-                const rate = calculateInterestRate(pkg, 'thereafter');
-                return rate > 0;
-            });
-
-            const reportContent = `
-                <div style="padding: 40px; background: white; font-family: Arial, sans-serif;">
-                    <!-- Header Section -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #1e40af; padding-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 20px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #1e40af); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <div style="color: white; font-weight: bold; font-size: 24px; text-align: center; line-height: 1.2;">
-                                    <img src="https://ik.imagekit.io/hst9jooux/KeyQuest%20Logo.jpeg?updatedAt=1748073687798" 
-                                     alt="KeyQuest Mortgage Logo" 
-                                     style="height: 80px; width: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-                                </div>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 32px; font-weight: bold; color: #1e40af; margin-bottom: 8px;">Top Interest Rate Packages</div>
-                            ${clientName ? 
-                                `<div style="font-size: 18px; color: #1f2937; margin-top: 8px; font-weight: 600;">Prepared for: ${clientName}</div>` : ''}
-                            <div style="font-size: 14px; color: #9ca3af; margin-top: 4px;">Generated on ${reportDate}</div>
-                        </div>
-                    </div>
-
-                    <!-- Simplified Loan Information -->
-                    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #1e40af;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 16px;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>Loan Amount:</strong> 
-                                <span>${formatCurrency(searchCriteria.loanAmount || 0)}</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>Loan Tenure:</strong> 
-                                <span>${searchCriteria.loanTenure || 'N/A'} years</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Interest Rate Comparison Table -->
-                    <div style="margin-bottom: 40px;">
-                       
-                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; font-size: 12px; table-layout: fixed;">
-                            <colgroup>
-                                <col style="width: 15%;">
-                                ${selectedPackages.map(() => `<col style="width: ${85/selectedPackages.length}%;">`).join('')}
-                            </colgroup>
-                            <thead>
-                                <tr style="background: #f9fafb;">
-                                    <th style="padding: 12px; text-align: left; border: 1px solid #e5e7eb; font-weight: bold; word-wrap: break-word; vertical-align: top;">Period</th>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <th style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; font-weight: bold; background: ${index === 0 ? '#fef3c7' : '#f9fafb'}; word-wrap: break-word; vertical-align: top; line-height: 1.3;">
-                                            <div style="font-size: 13px; font-weight: bold; margin-bottom: 4px;">
-                                                ${hideBankNames ? `Bank ${String.fromCharCode(65 + index)}` : pkg.bank_name}
-                                            </div>
-                                            <div style="font-size: 11px; color: #6b7280; font-weight: normal;">
-                                                ${pkg.rate_type_category || 'Rate Type'}
-                                            </div>
-                                        </th>
-                                    `).join('')}
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                              <!-- Min Loan Size Row -->
-                                 <tr style="background: white;">
-                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Min Loan Size</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${formatCurrency(pkg.minimum_loan_size || 0)}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-                                
-                                <!-- Interest Rate Rows for Years -->
-                                ${yearsToShow.map(year => `
-                                    <tr style="background: white;">
-                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Year ${year}</td>
-                                        ${selectedPackages.map((pkg, index) => `
-                                            <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                                ${formatRateDisplay(pkg, year)}
-                                            </td>
-                                        `).join('')}
-                                    </tr>
-                                `).join('')}
-
-                                <!-- Thereafter Row -->
-                                ${hasThereafterData ? `
-                                    <tr style="background: white;">
-                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Thereafter</td>
-                                        ${selectedPackages.map((pkg, index) => `
-                                            <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                                ${formatRateDisplay(pkg, 'thereafter')}
-                                            </td>
-                                        `).join('')}
-                                    </tr>
-                                ` : ''}
-
-                                <!-- Lock-in Period Row (REPLACED Average Rate Row) -->
-                                <tr style="background: white;">
-                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Lock-in Period</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${pkg.lock_period || 'No Lock-in'}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Monthly Installment Row -->
-                                <tr style="background: white;">
-                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Monthly Installment</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${formatCurrency(pkg.monthlyInstallment)}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                            
-                                <!-- Remarks Row -->
-                                <tr style="background: white;">
-                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Remarks</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; vertical-align: top; word-wrap: break-word; white-space: normal; overflow-wrap: break-word; max-width: 0;">
-                                            <div style="word-wrap: break-word; overflow-wrap: break-word;">
-                                                ${(pkg.custom_remarks || pkg.remarks || 'N/A').replace(/\n/g, '<br>')}
-                                            </div>
-                                        </td>
-                                    `).join('')}
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Important Disclaimer -->
-                    <div style="background: #fef2f2; padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444; margin-bottom: 30px;">
-                        <h4 style="margin: 0 0 12px 0; color: #dc2626; font-size: 16px; font-weight: bold;">Important Disclaimer</h4>
-                        <p style="margin: 0; font-size: 12px; line-height: 1.0; color: #7f1d1d;">
-                            All interest rates are subject to bank's final approval and may vary based on individual credit assessment. This report is for informational purposes only and does not constitute a binding offer.
-                        </p>
-                    </div>
-
-                    
-                </div>
-            `;
-
-            // Open modal with report content
-            openReportModal(reportContent);
-        }
-
-        function openReportModal(content) {
-            // Create modal if it doesn't exist
-            let modal = document.getElementById('report-modal');
-            if (!modal) {
-                modal = document.createElement('div');
-                modal.id = 'report-modal';
-                modal.className = 'modal';
-                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
-                modal.innerHTML = `
-                    <div style="background: white; border-radius: 16px; width: 100%; max-width: 1200px; max-height: 90vh; display: flex; flex-direction: column;">
-                        <div style="padding: 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-                            <h3 style="margin: 0; color: #1f2937;">Professional Mortgage Report</h3>
-                            <div style="display: flex; gap: 12px;">
-                                <button onclick="printReport()" style="padding: 8px 16px; background: #1e40af; color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
-                                    Print/Save PDF
-                                </button>
-                                <button onclick="closeReportModal()" style="padding: 8px 12px; background: #6b7280; color: white; border: none; border-radius: 8px; cursor: pointer;">
-                                    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div id="report-content" style="flex: 1; overflow-y: auto;">
-                            ${content}
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-            } else {
-                document.getElementById('report-content').innerHTML = content;
-            }
-
-            modal.style.display = 'flex';
-            
-            // Re-initialize Lucide icons for the modal
-            setTimeout(() => {
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-            }, 100);
-        }
-
-        function closeReportModal() {
-            const modal = document.getElementById('report-modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        function printReport() {
-            const originalTitle = document.title;
-            document.title = `Keyquest_Mortgage_Report_${new Date().toISOString().split('T')[0]}`;
-            
-            const reportContent = document.getElementById('report-content').innerHTML;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>${document.title}</title>
-                    <style>
-                        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-                        @media print {
-                            body { margin: 0; }
-                            .no-print { display: none; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${reportContent}
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-            
-            document.title = originalTitle;
-        }
-
-        function exportCSV() {
-            if (!currentResults.length) {
-                showNotification('No results to export. Please search for packages first.', 'error');
-                return;
-            }
-
             const headers = [
                 'Rank', 'Bank Name', 'Avg First 2 Years (%)', 'Monthly Installment', 'Property Type', 
                 'Property Status', 'Buy Under', 'Rate Type', 'Lock Period', 'Min Loan Size', 'Custom Remarks'
@@ -2046,9 +1965,9 @@
 
             const csvContent = [
                 headers.join(','),
-                ...currentResults.map((pkg, index) => [
+                ...selectedPackages.map((pkg, index) => [
                     index + 1,
-                    `"${pkg.bank_name}"`,
+                    `"${hideBankNames ? 'Bank ' + (index + 1) : pkg.bank_name}"`,
                     pkg.avgFirst2Years.toFixed(3),
                     pkg.monthlyInstallment.toFixed(2),
                     `"${pkg.property_type}"`,
@@ -2063,7 +1982,8 @@
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
-            const filename = `mortgage_recommendations_${new Date().toISOString().split('T')[0]}.csv`;
+            const clientPrefix = clientName ? `${clientName.replace(/[^a-zA-Z0-9]/g, '_')}_` : '';
+            const filename = `${clientPrefix}mortgage_recommendations_${new Date().toISOString().split('T')[0]}.csv`;
             
             link.href = URL.createObjectURL(blob);
             link.download = filename;
@@ -2072,7 +1992,128 @@
             link.click();
             document.body.removeChild(link);
 
-            showNotification('Data exported successfully', 'success');
+            showNotification('Report generated successfully', 'success');
+        }
+
+        // ===================================
+        // UTILITY FUNCTIONS - MATCHES ADMIN-SCRIPTS.JS STANDARD
+        // ===================================
+        function clearResults() {
+            currentResults = [];
+            filteredResults = [];
+            const resultsContainer = document.getElementById('resultsContainer');
+            if (resultsContainer) {
+                resultsContainer.style.display = 'none';
+            }
+            hideLiveFilters();
+        }
+
+        function showLoading(message = 'Loading...') {
+            // Remove existing loader if any
+            const existingLoader = document.getElementById('global-loader');
+            if (existingLoader) {
+                existingLoader.remove();
+            }
+
+            const overlay = document.getElementById('loadingOverlay');
+            const text = document.getElementById('loadingText');
+            if (overlay && text) {
+                text.textContent = message;
+                overlay.style.display = 'flex';
+            } else {
+                // Fallback: create loader like other admin pages
+                const loader = document.createElement('div');
+                loader.id = 'global-loader';
+                loader.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(255, 255, 255, 0.9);
+                        z-index: 9999;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    ">
+                        <div style="
+                            background: white;
+                            padding: 32px;
+                            border-radius: 8px;
+                            text-align: center;
+                            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 16px;
+                        ">
+                            <div style="
+                                width: 32px;
+                                height: 32px;
+                                border: 3px solid #f3f4f6;
+                                border-top: 3px solid #3b82f6;
+                                border-radius: 50%;
+                                animation: spin 1s linear infinite;
+                            "></div>
+                            <span style="color: #374151; font-weight: 500;">${message}</span>
+                        </div>
+                    </div>
+                    <style>
+                        @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                    </style>
+                `;
+                document.body.appendChild(loader);
+            }
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            const loader = document.getElementById('global-loader');
+            
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Use admin-scripts showNotification if available, otherwise fallback
+            if (typeof window.showNotification === 'function') {
+                window.showNotification(message, type);
+            } else {
+                // Fallback notification system
+                console.log(`${type.toUpperCase()}: ${message}`);
+                
+                // Create simple toast notification
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    font-size: 14px;
+                    font-weight: 500;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 3000);
+            }
         }
 
         // ===================================
@@ -2091,77 +2132,14 @@
                 const { error } = await supabaseClient.auth.signOut();
                 if (error) throw error;
                 
-                // Clear any stored data
-                localStorage.clear();
-                sessionStorage.clear();
-                
-                // Redirect to login
                 window.location.href = 'login.html';
                 
             } catch (error) {
-                console.error('Sign out error:', error);
+                console.error('💥 Sign out error:', error);
                 showNotification('Sign out failed: ' + error.message, 'error');
             } finally {
                 hideLoading();
             }
-        }
-
-        // ===================================
-        // LOADING AND NOTIFICATION FUNCTIONS - PRESERVED FROM ORIGINAL
-        // ===================================
-        function showLoading(message = 'Loading...') {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const loadingText = loadingOverlay.querySelector('span');
-            if (loadingText) loadingText.textContent = message;
-            loadingOverlay.style.display = 'flex';
-        }
-
-        function hideLoading() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.display = 'none';
-            }
-        }
-
-        function showNotification(message, type = 'info') {
-            console.log(`[${type.toUpperCase()}] ${message}`);
-            // You can implement a proper notification system here
-        }
-
-        // ===================================
-        // MODAL FUNCTIONS
-        // ===================================
-        function openModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'flex';
-            }
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        // ===================================
-        // SIDEBAR FUNCTIONS - PRESERVED FROM ORIGINAL
-        // ===================================
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            sidebar?.classList.toggle('open');
-            overlay?.classList.toggle('active');
-        }
-
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            sidebar?.classList.remove('open');
-            overlay?.classList.remove('active');
         }
     </script>
 </body>
