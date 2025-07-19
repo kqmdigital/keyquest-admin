@@ -780,7 +780,7 @@
                     <span>Enquiry</span>
                 </a>
                 <a href="recommended-packages.html" class="nav-item active">
-                    <i data-lucide="star"></i>
+                    <i data-lucide="award"></i>
                     <span>Recommended Packages</span>
                 </a>
             </nav>
@@ -813,7 +813,7 @@
             <div class="content-area">
                 <!-- Page Header -->
                 <div class="page-header">
-                    <h1><i data-lucide="star"></i> Find Your Perfect Home Loan</h1>
+                    <h1><i data-lucide="award"></i> Find Your Perfect Home Loan</h1>
                     <p>Discover the best mortgage packages tailored to your needs with our smart recommendation engine</p>
                 </div>
 
@@ -824,11 +824,11 @@
                         New Home Loan
                     </button>
                     <button class="loan-tab" onclick="selectLoanType('Refinancing Home Loan')" data-loan-type="Refinancing Home Loan">
-                        <i data-lucide="refresh-cw"></i>
+                        <i data-lucide="repeat"></i>
                         Refinancing Home Loan
                     </button>
                     <button class="loan-tab" onclick="selectLoanType('Commercial/Industrial')" data-loan-type="Commercial/Industrial">
-                        <i data-lucide="building"></i>
+                        <i data-lucide="briefcase"></i>
                         Commercial/Industrial
                     </button>
                 </div>
@@ -846,6 +846,7 @@
                                 <option value="">Select Property Type</option>
                                 <option value="Private Property">Private Property</option>
                                 <option value="HDB">HDB</option>
+                                <option value="EC">EC</option>
                                 <option value="Commercial">Commercial</option>
                                 <option value="Industrial">Industrial</option>
                             </select>
@@ -857,6 +858,7 @@
                                 <option value="">Select Property Status</option>
                                 <option value="Completed">Completed</option>
                                 <option value="Under Construction">Under Construction</option>
+                                <option value="BUC">Build Under Construction</option>
                             </select>
                         </div>
                         
@@ -864,9 +866,9 @@
                             <label class="form-label">Buy Under</label>
                             <select class="form-select" id="buyUnder">
                                 <option value="">Select Buy Under</option>
-                                <option value="Individual">Individual</option>
-                                <option value="Company (Operating)">Company (Operating)</option>
-                                <option value="Company (Investment)">Company (Investment)</option>
+                                <option value="Individual Name">Individual Name</option>
+                                <option value="Company Operating">Company Operating</option>
+                                <option value="Company Investment">Company Investment</option>
                             </select>
                         </div>
                         
@@ -914,11 +916,11 @@
                     </div>
                     
                     <div class="no-results" id="noResults" style="display: none;">
-                        <i data-lucide="search-x"></i>
+                        <i data-lucide="search"></i>
                         <h3>No Matching Packages Found</h3>
                         <p>Try adjusting your search criteria to find more suitable options.</p>
                         <button class="btn btn-primary" onclick="clearFilters()">
-                            <i data-lucide="refresh-cw"></i>
+                            <i data-lucide="rotate-ccw"></i>
                             Reset Search
                         </button>
                     </div>
@@ -930,7 +932,7 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="loading-spinner">
-            <i data-lucide="loader-2" class="animate-spin"></i>
+            <i data-lucide="loader" class="animate-spin"></i>
             <span>Finding the best packages for you...</span>
         </div>
     </div>
@@ -1149,8 +1151,36 @@
 
                 showLoading('Searching for packages...');
 
+                // Debug: Show first few packages for reference
+                console.log('📦 Sample packages for debugging:', allPackages.slice(0, 3).map(pkg => ({
+                    bank_name: pkg.bank_name,
+                    loan_type: pkg.loan_type,
+                    property_type: pkg.property_type,
+                    property_status: pkg.property_status,
+                    buy_under: pkg.buy_under,
+                    minimum_loan_size: pkg.minimum_loan_size
+                })));
+
                 // Filter packages based on criteria
                 let filteredPackages = allPackages.filter(pkg => {
+                    // Debug logging for first package
+                    if (pkg === allPackages[0]) {
+                        console.log('🔍 Debug filtering first package:', {
+                            'pkg.loan_type': pkg.loan_type,
+                            'currentLoanType': currentLoanType,
+                            'loan_type_match': pkg.loan_type === currentLoanType,
+                            'pkg.property_type': pkg.property_type,
+                            'propertyType': propertyType,
+                            'property_type_match': !propertyType || pkg.property_type === propertyType,
+                            'pkg.buy_under': pkg.buy_under,
+                            'buyUnder': buyUnder,
+                            'buy_under_match': !buyUnder || pkg.buy_under === buyUnder,
+                            'pkg.minimum_loan_size': pkg.minimum_loan_size,
+                            'loanAmount': loanAmount,
+                            'loan_size_match': !pkg.minimum_loan_size || loanAmount >= pkg.minimum_loan_size
+                        });
+                    }
+
                     // Filter by loan type
                     if (currentLoanType === 'New Home Loan' && pkg.loan_type !== 'New Home Loan') return false;
                     if (currentLoanType === 'Refinancing Home Loan' && pkg.loan_type !== 'Refinancing Home Loan') return false;
@@ -1416,7 +1446,7 @@
                     ${features ? `
                         <div class="package-features">
                             <div class="features-title">
-                                <i data-lucide="star"></i>
+                                <i data-lucide="award"></i>
                                 Package Features
                             </div>
                             <div class="features-list">
@@ -1469,7 +1499,7 @@
             if (pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) {
                 features.push(`
                     <div class="feature-tag">
-                        <i data-lucide="shield-check"></i>
+                        <i data-lucide="shield"></i>
                         Legal Fee Subsidy
                     </div>
                 `);
@@ -1487,7 +1517,7 @@
             if (pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true) {
                 features.push(`
                     <div class="feature-tag">
-                        <i data-lucide="refresh-cw"></i>
+                        <i data-lucide="repeat"></i>
                         Free Conversion (12M)
                     </div>
                 `);
@@ -1496,7 +1526,7 @@
             if (pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true) {
                 features.push(`
                     <div class="feature-tag">
-                        <i data-lucide="refresh-cw"></i>
+                        <i data-lucide="repeat"></i>
                         Free Conversion (24M)
                     </div>
                 `);
