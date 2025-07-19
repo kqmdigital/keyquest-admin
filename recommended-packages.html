@@ -738,34 +738,44 @@
             margin-bottom: 24px;
         }
 
-        /* Loading Overlay Enhanced */
         .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            backdrop-filter: blur(8px);
-        }
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
 
-        .loading-spinner {
-            text-align: center;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
+.loading-content {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
 
-        .loading-spinner i {
-            font-size: 48px;
-            animation: spin 1s linear infinite;
-        }
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #4338ca;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-message {
+    color: #374151;
+    font-weight: 500;
+    font-size: 14px;
+}
 
         @keyframes spin {
             from { transform: rotate(0deg); }
@@ -777,6 +787,23 @@
             font-weight: 500;
         }
 
+        .search-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Optional: Add a subtle pulse effect for better UX */
+.search-button:disabled:hover {
+    transform: none !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+}
+        
         /* Package Selection */
         .package-selection {
             position: absolute;
@@ -1091,12 +1118,12 @@
     </div>
 
     <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
-        <div class="loading-spinner">
-            <i data-lucide="loader" class="animate-spin"></i>
-            <span>Finding the best packages for you...</span>
-        </div>
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <span class="loading-message">Finding the best packages for you...</span>
     </div>
+</div>
 
     <script>
         // ===================================
@@ -1141,6 +1168,17 @@
             }
         }
 
+        function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
         // ===================================
         // EVENT LISTENERS SETUP - PRESERVED FROM ORIGINAL
         // ===================================
@@ -1175,8 +1213,26 @@
                 searchForm.addEventListener('submit', searchPackages);
             }
 
-            console.log('✅ Event listeners set up successfully');
+            // Live filtering event listeners
+    const filterInputs = [
+        'propertyType',
+        'propertyStatus', 
+        'buyUnder',
+        'loanAmount',
+        'loanTenure'
+    ];
+
+    filterInputs.forEach(inputId => {
+        const element = document.getElementById(inputId);
+        if (element) {
+            // Add debounced live filtering
+            element.addEventListener('input', debounce(performLiveFilter, 300));
+            element.addEventListener('change', performLiveFilter);
         }
+    });
+
+    console.log('✅ Event listeners set up successfully');
+}
 
         // ===================================
         // LOAN TYPE SELECTION - PRESERVED FROM ORIGINAL
@@ -1296,6 +1352,111 @@
             }
         }
 
+        // Live filtering function (lightweight version of search)
+function performLiveFilter() {
+    // Only perform live filtering if we have initial results
+    if (!allPackages.length || !currentLoanType) {
+        return;
+    }
+
+    try {
+        // Get current form values
+        const formData = {
+            propertyType: document.getElementById('propertyType').value,
+            propertyStatus: document.getElementById('propertyStatus').value,
+            buyUnder: document.getElementById('buyUnder').value,
+            loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
+            loanTenure: parseInt(document.getElementById('loanTenure').value) || 25
+        };
+
+        // Only filter if at least one field has a value
+        const hasFilters = Object.values(formData).some(value => 
+            value !== '' && value !== 0
+        );
+
+        if (!hasFilters) {
+            // Clear results if no filters
+            clearResults();
+            return;
+        }
+
+        // Show subtle loading indicator
+        const searchButton = document.querySelector('.search-button');
+        const originalText = searchButton.innerHTML;
+        searchButton.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Filtering...';
+        searchButton.disabled = true;
+
+        // Small delay to show loading state
+        setTimeout(() => {
+            searchCriteria = { ...formData, loanType: currentLoanType };
+            
+            // Filter packages based on criteria
+            let filteredPackages = allPackages.filter(pkg => {
+                // Filter by loan type
+                if (pkg.loan_type !== currentLoanType) return false;
+                
+                // Filter by property type
+                if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
+                
+                // Filter by property status
+                if (formData.propertyStatus && pkg.property_status !== formData.propertyStatus) return false;
+                
+                // Filter by buy under
+                if (formData.buyUnder && pkg.buy_under !== formData.buyUnder) return false;
+                
+                // Filter by minimum loan size
+                if (formData.loanAmount > 0 && pkg.minimum_loan_size && formData.loanAmount < pkg.minimum_loan_size) return false;
+                
+                return true;
+            });
+
+            // Calculate metrics for each package
+            filteredPackages = filteredPackages.map(pkg => {
+                const avgFirst2Years = calculateAverageFirst2Years(pkg);
+                const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
+                
+                return {
+                    ...pkg,
+                    avgFirst2Years,
+                    monthlyInstallment,
+                    selected: true
+                };
+            });
+
+            // Sort by average rate (ascending - best rates first)
+            filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
+
+            currentResults = filteredPackages;
+            displayResults(filteredPackages);
+
+            // Restore search button
+            searchButton.innerHTML = originalText;
+            searchButton.disabled = false;
+            
+            // Re-initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            console.log(`🔍 Live filtered to ${filteredPackages.length} packages`);
+        }, 100);
+        
+    } catch (error) {
+        console.error('💥 Live filter error:', error);
+        // Restore search button in case of error
+        const searchButton = document.querySelector('.search-button');
+        searchButton.innerHTML = '<i data-lucide="search"></i> Find Best Packages';
+        searchButton.disabled = false;
+    }
+}
+
+        function clearResults() {
+    const resultsContainer = document.getElementById('resultsContainer');
+    if (resultsContainer) {
+        resultsContainer.style.display = 'none';
+    }
+    currentResults = [];
+}
         // ===================================
         // CALCULATION FUNCTIONS - PRESERVED FROM ORIGINAL
         // ===================================
@@ -2109,19 +2270,19 @@
         // ===================================
         // LOADING AND NOTIFICATION FUNCTIONS - PRESERVED FROM ORIGINAL
         // ===================================
-        function showLoading(message = 'Loading...') {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const loadingText = loadingOverlay.querySelector('span');
-            if (loadingText) loadingText.textContent = message;
-            loadingOverlay.style.display = 'flex';
-        }
+    function showLoading(message = 'Loading...') {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = loadingOverlay.querySelector('.loading-message');
+    if (loadingText) loadingText.textContent = message;
+    loadingOverlay.style.display = 'flex';
+}
 
-        function hideLoading() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) {
-                loadingOverlay.style.display = 'none';
-            }
-        }
+function hideLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+    }
+}
 
         function showNotification(message, type = 'info') {
             console.log(`[${type.toUpperCase()}] ${message}`);
