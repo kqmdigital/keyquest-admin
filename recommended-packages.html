@@ -379,14 +379,63 @@
             border-color: #667eea;
         }
 
-        .package-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
+        
+
+       /* Inline package details in header */
+.package-details-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+}
+
+.detail-inline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+}
+
+.detail-label-inline {
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.detail-value-inline {
+    font-weight: 500;
+    color: #1e293b;
+}
+
+/* Inline package features */
+.package-features-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.features-title-inline {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+/* Update package header for better spacing */
+.package-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
 
         .package-rank {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -856,11 +905,23 @@
                 grid-template-columns: 1fr;
             }
             
-            .package-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 16px;
-            }
+            .package-details-inline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .package-features-inline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .package-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
             
             .rate-info {
                 text-align: center;
@@ -1707,44 +1768,40 @@ function displayResults(packages, shouldScroll = true) {
                     </div>
                     
                     <div class="package-header">
-                        <div class="package-rank">${rank}</div>
-                        <div class="package-bank">
-                            <div class="bank-name">${pkg.bank_name}</div>
-                            <div class="package-type">${pkg.rate_type_category || 'Rate Package'}</div>
-                        </div>
-                        <div class="rate-info">
-                            <div class="avg-rate">${formatPercentage(pkg.avgFirst2Years)}</div>
-                            <div class="monthly-payment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
-                        </div>
-                    </div>
+    <div class="package-rank">${rank}</div>
+    <div class="package-bank">
+        <div class="bank-name">${pkg.bank_name}</div>
+        <div class="package-type">${pkg.rate_type_category || 'Rate Package'}</div>
+    </div>
+    <div class="package-details-inline">
+        <div class="detail-inline">
+            <span class="detail-label-inline">Property:</span>
+            <span class="detail-value-inline">${pkg.property_type}</span>
+        </div>
+        <div class="detail-inline">
+            <span class="detail-label-inline">Status:</span>
+            <span class="detail-value-inline">${pkg.property_status}</span>
+        </div>
+        <div class="detail-inline">
+            <span class="detail-label-inline">Buy Under:</span>
+            <span class="detail-value-inline">${pkg.buy_under}</span>
+        </div>
+        <div class="detail-inline">
+            <span class="detail-label-inline">Lock:</span>
+            <span class="detail-value-inline">${pkg.lock_period || 'No Lock-in'}</span>
+        </div>
+        <div class="detail-inline">
+            <span class="detail-label-inline">Min Loan:</span>
+            <span class="detail-value-inline">${formatCurrency(pkg.minimum_loan_size || 0)}</span>
+        </div>
+    </div>
+    <div class="rate-info">
+        <div class="avg-rate">${formatPercentage(pkg.avgFirst2Years)}</div>
+        <div class="monthly-payment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
+    </div>
+</div>
 
-                    <div class="package-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Property Type</div>
-                            <div class="detail-value">${pkg.property_type}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Property Status</div>
-                            <div class="detail-value">${pkg.property_status}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Buy Under</div>
-                            <div class="detail-value">${pkg.buy_under}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Rate Type</div>
-                            <div class="detail-value">${pkg.rate_type_category}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Lock Period</div>
-                            <div class="detail-value">${pkg.lock_period || 'No Lock-in'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Min. Loan Size</div>
-                            <div class="detail-value">${formatCurrency(pkg.minimum_loan_size || 0)}</div>
-                        </div>
-                    </div>
-
+                   
                     ${rateSchedule ? `
                         <div class="rate-schedule">
                             <div class="rate-schedule-title">
@@ -1757,27 +1814,16 @@ function displayResults(packages, shouldScroll = true) {
                         </div>
                     ` : ''}
 
-                    ${pkg.remarks ? `
-                        <div class="package-remarks">
-                            <div class="remarks-title">
-                                <i data-lucide="info"></i>
-                                Important Notes
-                            </div>
-                            <div class="remarks-content">${pkg.remarks}</div>
-                        </div>
-                    ` : ''}
-
+                    
                     ${features ? `
-                        <div class="package-features">
-                            <div class="features-title">
-                                <i data-lucide="award"></i>
-                                Package Features
-                            </div>
-                            <div class="features-list">
-                                ${features}
-                            </div>
-                        </div>
-                    ` : ''}
+    <div class="package-features-inline">
+        <span class="features-title-inline">
+            <i data-lucide="award"></i>
+            Package Features:
+        </span>
+        ${features}
+    </div>
+` : ''}
 
                     <div class="package-remarks-editor">
                         <div class="remarks-editor-title">
