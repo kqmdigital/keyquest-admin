@@ -572,7 +572,7 @@
                     <span>Enquiry</span>
                 </a>
                 <a href="recommended-packages.html" class="nav-item active">
-                    <i data-lucide="star"></i>
+                    <i data-lucide="award"></i>
                     <span>Recommended Packages</span>
                 </a>
             </nav>
@@ -586,7 +586,7 @@
                         <i data-lucide="menu"></i>
                     </button>
                     <h1 class="header-title">
-                        <i data-lucide="star"></i>
+                        <i data-lucide="award"></i>
                         Recommended Packages
                     </h1>
                 </div>
@@ -610,6 +610,9 @@
                 <div class="page-header">
                     <h1>Find Your Best Mortgage Rate</h1>
                     <p>Get personalized mortgage package recommendations ranked by average first 2 years interest rates</p>
+                    <div style="margin-top: 16px; font-size: 14px; opacity: 0.8;">
+                        💡 If the page seems stuck loading, click the "Clear Loading" or "Refresh Data" buttons below
+                    </div>
                 </div>
 
                 <!-- Loan Type Tabs -->
@@ -619,11 +622,11 @@
                         New Home Loan
                     </button>
                     <button class="loan-tab" onclick="selectLoanType('Refinancing Home Loan')" data-loan-type="Refinancing Home Loan">
-                        <i data-lucide="refresh-cw"></i>
+                        <i data-lucide="repeat"></i>
                         Refinancing Home Loan
                     </button>
                     <button class="loan-tab" onclick="selectLoanType('Commercial/Industrial')" data-loan-type="Commercial/Industrial">
-                        <i data-lucide="building"></i>
+                        <i data-lucide="briefcase"></i>
                         Commercial/Industrial
                     </button>
                 </div>
@@ -705,11 +708,11 @@
                             Find Best Rates
                         </button>
                         <button class="btn-secondary" onclick="clearFilters()">
-                            <i data-lucide="refresh-ccw"></i>
+                            <i data-lucide="rotate-ccw"></i>
                             Clear Filters
                         </button>
                         <button class="btn-secondary" onclick="refreshData()" title="Refresh data if loading is stuck">
-                            <i data-lucide="database"></i>
+                            <i data-lucide="refresh-cw"></i>
                             Refresh Data
                         </button>
                     </div>
@@ -719,7 +722,7 @@
                 <div class="results-container" id="resultsContainer" style="display: none;">
                     <div class="results-header">
                         <h2 class="results-title">
-                            <i data-lucide="trending-down"></i>
+                            <i data-lucide="arrow-down"></i>
                             Recommended Packages
                         </h2>
                         <p class="results-subtitle" id="resultsSubtitle">Ranked by average first 2 years interest rates</p>
@@ -727,6 +730,10 @@
                             <button class="btn-secondary" onclick="exportResults()">
                                 <i data-lucide="download"></i>
                                 Export CSV
+                            </button>
+                            <button class="btn-secondary" onclick="forceHideLoading()" title="Click if page seems stuck loading">
+                                <i data-lucide="x-circle"></i>
+                                Clear Loading
                             </button>
                         </div>
                     </div>
@@ -796,14 +803,25 @@
             // Add a timeout for data loading to prevent infinite loading
             const loadingTimeout = setTimeout(() => {
                 console.warn('⏰ Data loading timeout - taking too long');
-                hideLoading();
-                showNotification('Loading is taking longer than expected. Try clicking "Refresh Data" or check the browser console for errors.', 'warning');
-            }, 30000); // 30 second timeout
+                forceHideLoading();
+                showNotification('Loading is taking longer than expected. Try clicking "Refresh Data" or "Clear Loading" if page seems stuck.', 'warning');
+            }, 15000); // 15 second timeout (reduced from 30)
             
             loadData().finally(() => {
                 clearTimeout(loadingTimeout);
+                // Force hide loading to ensure it's cleared
+                setTimeout(forceHideLoading, 500);
                 setupEventListeners();
             });
+            
+            // Ultimate fallback: force hide loading after 10 seconds regardless
+            setTimeout(() => {
+                const loadingElements = document.querySelectorAll('.loading-overlay, #loading-overlay, #global-loader');
+                if (loadingElements.length > 0) {
+                    console.log('🕐 10-second fallback - force hiding any remaining loading');
+                    forceHideLoading();
+                }
+            }, 10000);
         });
 
         // ===================================
@@ -895,13 +913,26 @@
                 await loadPackages();
                 console.log(`✅ Loaded ${allPackages.length} packages`);
                 
+                // Force hide any loading overlays
+                hideLoading();
+                
+                // Also remove any loading overlays that might be stuck
+                const loadingOverlays = document.querySelectorAll('.loading-overlay, #loading-overlay, #global-loader');
+                loadingOverlays.forEach(overlay => {
+                    if (overlay && overlay.parentNode) {
+                        overlay.remove();
+                    }
+                });
+                
                 showNotification(`Data loaded successfully: ${rateTypes.length} rate types, ${allPackages.length} packages`, 'success');
                 
             } catch (error) {
                 console.error('❌ Error loading data:', error);
                 showNotification('Error loading data: ' + error.message, 'error');
             } finally {
+                // Force hide loading to ensure it's properly cleared
                 hideLoading();
+                forceHideLoading();
                 console.log('🏁 Data loading completed');
             }
         }
@@ -979,6 +1010,23 @@
                 if (userInfo && !userInfo.contains(event.target)) {
                     userDropdown?.classList.remove('show');
                 }
+            });
+            
+            // Global fallback: if user clicks 3 times anywhere, force hide loading
+            let clickCount = 0;
+            document.addEventListener('click', function() {
+                clickCount++;
+                if (clickCount === 3) {
+                    const loadingElements = document.querySelectorAll('.loading-overlay, #loading-overlay, #global-loader');
+                    if (loadingElements.length > 0) {
+                        console.log('🔧 Triple-click detected - force hiding loading');
+                        forceHideLoading();
+                        showNotification('Loading state cleared by triple-click', 'info');
+                    }
+                    clickCount = 0;
+                }
+                // Reset counter after 2 seconds
+                setTimeout(() => { clickCount = 0; }, 2000);
             });
         }
 
@@ -1411,8 +1459,45 @@
         // REFRESH AND DEBUG FUNCTIONS
         // ===================================
         
+        // Force hide all loading states
+        function forceHideLoading() {
+            console.log('🔧 Force hiding all loading states...');
+            
+            // Hide using admin-scripts.js function
+            if (typeof hideLoading === 'function') {
+                hideLoading();
+            }
+            
+            // Remove any loading overlays manually
+            const loadingSelectors = [
+                '.loading-overlay',
+                '#loading-overlay', 
+                '#global-loader',
+                '[id*="loading"]',
+                '[class*="loading"]'
+            ];
+            
+            loadingSelectors.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                    if (element && element.style) {
+                        element.style.display = 'none';
+                        element.remove();
+                    }
+                });
+            });
+            
+            // Reset body overflow
+            document.body.style.overflow = '';
+            
+            console.log('✅ All loading states cleared');
+        }
+        
         async function refreshData() {
             console.log('🔄 Manual data refresh triggered');
+            
+            // Force hide any stuck loading first
+            forceHideLoading();
             
             // Reset global variables
             allPackages = [];
@@ -1440,7 +1525,7 @@
             
             // Test Supabase connection
             if (typeof supabaseClient !== 'undefined') {
-                supabaseClient.from('rate_types').select('count(*)').then(({ data, error }) => {
+                supabaseClient.from('rate_types').select('rate_type').limit(1).then(({ data, error }) => {
                     if (error) {
                         console.error('❌ Supabase test query failed:', error);
                     } else {
