@@ -708,6 +708,10 @@
                             <i data-lucide="refresh-ccw"></i>
                             Clear Filters
                         </button>
+                        <button class="btn-secondary" onclick="refreshData()" title="Refresh data if loading is stuck">
+                            <i data-lucide="database"></i>
+                            Refresh Data
+                        </button>
                     </div>
                 </div>
 
@@ -753,13 +757,7 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay" style="display: none;">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p id="loading-text">Loading...</p>
-        </div>
-    </div>
+    <!-- Loading Overlay - Removed since admin-scripts.js provides this -->
 
     <script>
         // Global variables
@@ -772,20 +770,40 @@
         // Initialize page using the same pattern as other admin pages
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initializing Recommended Packages page...');
+            console.log('📍 Current URL:', window.location.href);
+            console.log('🔧 Available scripts:', {
+                supabase: typeof supabaseClient !== 'undefined',
+                lucide: typeof lucide !== 'undefined',
+                adminScripts: typeof showLoading !== 'undefined'
+            });
+            
+            // Helpful message for debugging
+            console.log('💡 If the page seems stuck loading, check the browser console for errors or click "Refresh Data" button');
             
             // Check if Supabase is available
             if (typeof supabaseClient === 'undefined') {
                 console.error('❌ Supabase client not available. Check script loading order.');
-                showNotification('Supabase connection failed', 'error');
+                showNotification('Supabase connection failed. Please refresh the page.', 'error');
                 return;
             }
             
             console.log('✅ Supabase client loaded successfully');
+            console.log('🌐 Supabase URL:', supabaseClient.supabaseUrl);
             
             // Initialize using the same pattern as other pages
             checkAuthentication();
-            loadData();
-            setupEventListeners();
+            
+            // Add a timeout for data loading to prevent infinite loading
+            const loadingTimeout = setTimeout(() => {
+                console.warn('⏰ Data loading timeout - taking too long');
+                hideLoading();
+                showNotification('Loading is taking longer than expected. Try clicking "Refresh Data" or check the browser console for errors.', 'warning');
+            }, 30000); // 30 second timeout
+            
+            loadData().finally(() => {
+                clearTimeout(loadingTimeout);
+                setupEventListeners();
+            });
         });
 
         // ===================================
@@ -793,12 +811,22 @@
         // ===================================
         async function checkAuthentication() {
             try {
+                console.log('🔐 Checking authentication...');
                 const { data: { user }, error } = await supabaseClient.auth.getUser();
                 
-                if (error || !user) {
+                if (error) {
+                    console.error('❌ Auth error:', error);
                     window.location.href = 'login.html';
                     return;
                 }
+                
+                if (!user) {
+                    console.log('👤 No user found, redirecting to login');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                console.log('✅ User authenticated:', user.email);
                 
                 // Update user info in header
                 const userName = document.getElementById('userName');
@@ -811,7 +839,7 @@
                     userAvatar.textContent = user.email.charAt(0).toUpperCase();
                 }
             } catch (error) {
-                console.error('Auth check failed:', error);
+                console.error('💥 Auth check failed:', error);
                 window.location.href = 'login.html';
             }
         }
@@ -850,58 +878,87 @@
         // DATA LOADING - FOLLOWS SAME PATTERN
         // ===================================
         async function loadData() {
+            console.log('🔄 Starting data load...');
+            
             try {
-                showLoading('Loading data...');
+                showLoading('Loading rate types...');
                 
                 // Load rate types first
+                console.log('📊 Loading rate types...');
                 await loadRateTypes();
+                console.log(`✅ Loaded ${rateTypes.length} rate types`);
+                
+                showLoading('Loading packages...');
                 
                 // Load packages
+                console.log('📦 Loading packages...');
                 await loadPackages();
+                console.log(`✅ Loaded ${allPackages.length} packages`);
                 
-                showNotification('Data loaded successfully', 'success');
+                showNotification(`Data loaded successfully: ${rateTypes.length} rate types, ${allPackages.length} packages`, 'success');
                 
             } catch (error) {
-                console.error('Error loading data:', error);
+                console.error('❌ Error loading data:', error);
                 showNotification('Error loading data: ' + error.message, 'error');
             } finally {
                 hideLoading();
+                console.log('🏁 Data loading completed');
             }
         }
 
         // Load rate types for calculations
         async function loadRateTypes() {
             try {
+                console.log('🔍 Querying rate_types table...');
                 const { data, error } = await supabaseClient
                     .from('rate_types')
                     .select('rate_type, rate_value')
                     .order('rate_type');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Supabase error loading rate types:', error);
+                    throw error;
+                }
+                
                 rateTypes = data || [];
-                console.log(`Loaded ${rateTypes.length} rate types`);
+                console.log(`✅ Successfully loaded ${rateTypes.length} rate types:`, rateTypes.slice(0, 3));
+                
+                if (rateTypes.length === 0) {
+                    console.warn('⚠️ No rate types found in database');
+                }
+                
             } catch (error) {
-                console.error('Error loading rate types:', error);
-                throw error;
+                console.error('❌ Error in loadRateTypes:', error);
+                throw new Error(`Failed to load rate types: ${error.message}`);
             }
         }
 
         // Load all packages
         async function loadPackages() {
             try {
+                console.log('🔍 Querying rate_packages table...');
                 const { data, error } = await supabaseClient
                     .from('rate_packages')
                     .select('*')
                     .order('bank_name');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Supabase error loading packages:', error);
+                    throw error;
+                }
 
                 allPackages = data || [];
-                console.log(`Loaded ${allPackages.length} packages`);
+                console.log(`✅ Successfully loaded ${allPackages.length} packages`);
+                
+                if (allPackages.length === 0) {
+                    console.warn('⚠️ No packages found in database');
+                } else {
+                    console.log('📦 Sample package:', allPackages[0]);
+                }
                 
             } catch (error) {
-                console.error('Error loading packages:', error);
-                throw error;
+                console.error('❌ Error in loadPackages:', error);
+                throw new Error(`Failed to load packages: ${error.message}`);
             }
         }
 
@@ -1351,8 +1408,50 @@
         }
 
         // ===================================
-        // OTHER FUNCTIONS
+        // REFRESH AND DEBUG FUNCTIONS
         // ===================================
+        
+        async function refreshData() {
+            console.log('🔄 Manual data refresh triggered');
+            
+            // Reset global variables
+            allPackages = [];
+            rateTypes = [];
+            currentResults = [];
+            
+            try {
+                await loadData();
+                showNotification('Data refreshed successfully!', 'success');
+            } catch (error) {
+                console.error('❌ Manual refresh failed:', error);
+                showNotification('Failed to refresh data: ' + error.message, 'error');
+            }
+        }
+
+        // Debug function to check system status
+        function debugSystemStatus() {
+            console.log('🔧 System Debug Status:');
+            console.log('- Supabase Client:', typeof supabaseClient !== 'undefined');
+            console.log('- Admin Scripts:', typeof showLoading !== 'undefined');
+            console.log('- Lucide Icons:', typeof lucide !== 'undefined');
+            console.log('- Rate Types Count:', rateTypes.length);
+            console.log('- Packages Count:', allPackages.length);
+            console.log('- Current User:', document.getElementById('userName')?.textContent);
+            
+            // Test Supabase connection
+            if (typeof supabaseClient !== 'undefined') {
+                supabaseClient.from('rate_types').select('count(*)').then(({ data, error }) => {
+                    if (error) {
+                        console.error('❌ Supabase test query failed:', error);
+                    } else {
+                        console.log('✅ Supabase connection test passed:', data);
+                    }
+                });
+            }
+        }
+
+        // Call debug on page load for troubleshooting
+        setTimeout(debugSystemStatus, 5000);
         
         function enquirePackage(packageId) {
             window.location.href = `enquiry.html?package=${packageId}`;
