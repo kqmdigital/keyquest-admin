@@ -608,42 +608,29 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <header class="header">
                 <div class="header-left">
                     <button class="menu-toggle" onclick="toggleSidebar()">
                         <i data-lucide="menu"></i>
                     </button>
-                    <h1 class="header-title">
-                        <i data-lucide="award"></i>
-                        Recommended Packages
-                    </h1>
+                    <h1 class="header-title">Recommended Packages</h1>
                 </div>
-                <div class="header-right">
-                    <div class="user-info" onclick="toggleUserDropdown()">
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </button>
+                    <div class="user-profile">
                         <div class="user-avatar" id="userAvatar">A</div>
-                        <span class="user-name" id="userName">Admin</span>
-                        <i data-lucide="chevron-down"></i>
-                    </div>
-                    <div class="user-dropdown" id="userDropdown">
-                        <a href="#" onclick="confirmSignOut()">
-                            <i data-lucide="log-out"></i>
-                            Sign Out
-                        </a>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">admin</div>
+                            <div class="user-role">Super Admin</div>
+                        </div>
                     </div>
                 </div>
             </header>
-
-            <div class="content">
-                <!-- Page Header -->
-                <div class="page-header">
-                    <h1>Find Your Best Mortgage Rate</h1>
-                    <p>Get personalized mortgage package recommendations ranked by average first 2 years interest rates</p>
-                    <div style="margin-top: 16px; font-size: 14px; opacity: 0.8;">
-                        💡 If the page seems stuck loading, click the "Clear Loading" or "Refresh Data" buttons below
-                    </div>
-                </div>
-
+            
                 <!-- Loan Type Tabs -->
                 <div class="loan-type-tabs">
                     <button class="loan-tab active" onclick="selectLoanType('New Home Loan')" data-loan-type="New Home Loan">
