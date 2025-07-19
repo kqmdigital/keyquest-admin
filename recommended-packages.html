@@ -1064,40 +1064,44 @@
                 </div>
 
                 <!-- Results Section -->
-                <div class="results-section" id="resultsContainer" style="display: none;">
-                    <div class="results-header">
-                        <div class="results-title">
-                            <i data-lucide="trending-up"></i>
-                            Recommended Packages
-                            <span class="results-count" id="resultsCount">0</span>
-                        </div>
-                        <div class="results-actions">
-                            <div class="report-options">
-                                <div class="option-group">
-                                    <label for="clientName" class="option-label">Client Name:</label>
-                                    <input type="text" id="clientName" class="client-name-input" placeholder="Enter client name for report" />
-                                </div>
-                                <div class="option-group">
-                                    <input type="checkbox" id="hideBankNames" class="option-checkbox">
-                                    <label for="hideBankNames" class="option-checkbox-label">Hide Bank Names in Report</label>
-                                </div>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="download-btn" onclick="generateProfessionalReport()">
-                                    <i data-lucide="file-text"></i>
-                                    Generate Report
-                                </button>
-                                <button class="download-btn" onclick="exportCSV()" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); margin-left: 12px;">
-                                    <i data-lucide="download"></i>
-                                    Export CSV
-                                </button>
-                                <button class="download-btn" onclick="toggleAllSelections()" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); margin-left: 12px;">
-                                    <i data-lucide="check-square"></i>
-                                    Toggle All
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+              <div class="results-section" id="resultsContainer" style="display: none;">
+    <div class="results-header">
+        <div class="results-title">
+            <i data-lucide="trending-up"></i>
+            Recommended Packages
+            <span class="results-count" id="resultsCount">0</span>
+        </div>
+        <div class="results-actions">
+            <!-- Move options to the left -->
+            <div class="report-options">
+                <div class="option-group">
+                    <label for="clientName" class="option-label">Client Name:</label>
+                    <input type="text" id="clientName" class="client-name-input" placeholder="Enter client name for report" />
+                </div>
+                <div class="option-group">
+                    <input type="checkbox" id="hideBankNames" class="option-checkbox">
+                    <label for="hideBankNames" class="option-checkbox-label">Hide Bank Names in Report</label>
+                </div>
+            </div>
+
+            <!-- Buttons aligned to the right -->
+            <div class="action-buttons">
+                <button class="download-btn" onclick="generateProfessionalReport()">
+                    <i data-lucide="file-text"></i>
+                    Generate Report
+                </button>
+                <button class="download-btn" onclick="exportCSV()" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+                    <i data-lucide="download"></i>
+                    Export CSV
+                </button>
+                <button class="download-btn" onclick="toggleAllSelections()" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">
+                    <i data-lucide="check-square"></i>
+                    Toggle All
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
                     
                     <div class="packages-container" id="packagesContainer">
                         <!-- Package cards will be dynamically inserted here -->
