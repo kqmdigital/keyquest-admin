@@ -1424,30 +1424,53 @@
                 
                 // Animate cards in with staggered effect
                 setTimeout(() => {
+                    packagesContainer.style.transition = 'opacity 0.6s ease';
                     packagesContainer.style.opacity = '1';
+                    
+                    // Stagger animation for each card
                     const cards = packagesContainer.querySelectorAll('.package-card');
                     cards.forEach((card, index) => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(30px)';
+                        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                        
                         setTimeout(() => {
-                            card.style.animation = 'slideInUp 0.6s ease-out forwards';
-                        }, index * 100);
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, index * 150); // Stagger delay
                     });
                 }, 100);
+                
+                // Update the results subtitle to show selection info
+                const resultsSubtitle = document.querySelector('.results-title');
+                if (resultsSubtitle) {
+                    const selectedCount = packages.filter(pkg => pkg.selected !== false).length;
+                    resultsSubtitle.innerHTML = `
+                        <i data-lucide="trending-up"></i>
+                        Recommended Packages
+                        <span class="results-count">${packages.length}</span>
+                        <small style="font-size: 14px; font-weight: 500; color: #6b7280; margin-left: 12px; opacity: 0.8;">
+                            (${selectedCount} selected for report)
+                        </small>
+                    `;
+                }
             }
 
             resultsContainer.style.display = 'block';
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
             
-            // Re-initialize Lucide icons for new content
+            // Re-initialize Lucide icons for dynamically added content
             setTimeout(() => {
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
-            }, 200);
+            }, 100);
         }
 
         function createPackageCard(pkg, index) {
             const rank = index + 1;
             const rateSchedule = generateRateSchedule(pkg);
-            const features = generateFeaturesList(pkg);
+            const features = generatePackageFeatures(pkg);
             
             return `
                 <div class="package-card" data-package-index="${index}">
@@ -1576,35 +1599,89 @@
             return rates.length > 0 ? rates.join('') : null;
         }
 
-        function generateFeaturesList(pkg) {
+        function generatePackageFeatures(pkg) {
             const features = [];
             
-            // Add features based on package properties
-            if (pkg.legal_fee_subsidy === 'Y' || pkg.cash_rebate === 'Y') {
-                features.push('<span class="feature-tag"><i data-lucide="dollar-sign"></i>Legal Fee Subsidy</span>');
-            }
-            if (pkg.partial_prepayment === 'Y') {
-                features.push('<span class="feature-tag"><i data-lucide="credit-card"></i>Partial Prepayment</span>');
-            }
-            if (pkg.free_conversion === 'Y') {
-                features.push('<span class="feature-tag"><i data-lucide="refresh-cw"></i>Free Conversion</span>');
-            }
-            if (pkg.lock_period && pkg.lock_period !== 'No Lock-in') {
-                features.push(`<span class="feature-tag"><i data-lucide="lock"></i>Lock Period: ${pkg.lock_period}</span>`);
+            if (pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) {
+                features.push(`
+                    <div class="feature-tag">
+                        <i data-lucide="shield"></i>
+                        Legal Fee Subsidy
+                    </div>
+                `);
             }
             
+            if (pkg.cash_rebate === 'true' || pkg.cash_rebate === true) {
+                features.push(`
+                    <div class="feature-tag">
+                        <i data-lucide="dollar-sign"></i>
+                        Cash Rebate
+                    </div>
+                `);
+            }
+            
+            if (pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true) {
+                features.push(`
+                    <div class="feature-tag">
+                        <i data-lucide="repeat"></i>
+                        Free Conversion (12M)
+                    </div>
+                `);
+            }
+
+            if (pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true) {
+                features.push(`
+                    <div class="feature-tag">
+                        <i data-lucide="repeat"></i>
+                        Free Conversion (24M)
+                    </div>
+                `);
+            }
+
             return features.length > 0 ? features.join('') : null;
         }
 
-        // Clear search results and form - PRESERVED FROM ORIGINAL
+        // ===================================
+        // UTILITY FUNCTIONS - PRESERVED FROM ORIGINAL
+        // ===================================
+        function formatPercentage(value) {
+            if (value == null || value === 0) return 'N/A';
+            return `${value.toFixed(2)}%`;
+        }
+
+        function formatCurrency(value) {
+            if (!value || value === 0) return '$0';
+            return new Intl.NumberFormat('en-SG', {
+                style: 'currency',
+                currency: 'SGD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        // Clear all filters - PRESERVED FROM ORIGINAL
         function clearFilters() {
-            document.getElementById('searchForm').reset();
+            document.getElementById('propertyType').value = '';
+            document.getElementById('propertyStatus').value = '';
+            document.getElementById('buyUnder').value = '';
+            document.getElementById('loanAmount').value = '';
+            document.getElementById('loanTenure').value = '';
+            
+            // Clear results
             document.getElementById('resultsContainer').style.display = 'none';
             currentResults = [];
             searchCriteria = {};
         }
 
         // Download packages list - PRESERVED FROM ORIGINAL
+        function downloadPackagesList() {
+            if (!currentResults.length) {
+                showNotification('No results to download. Please search for packages first.', 'error');
+                return;
+            }
+
+            generateProfessionalReport();
+        }
         // ===================================
         // PACKAGE SELECTION MANAGEMENT
         // ===================================
