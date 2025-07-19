@@ -557,21 +557,25 @@
         }
 
         .rate-schedule-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-        }
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
 
         .rate-item {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            border: 2px solid #d1fae5;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+    background: white;
+    padding: 16px 12px;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid #d1fae5;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
 
         .rate-item::before {
             content: '';
@@ -604,10 +608,12 @@
         }
 
         .rate-value {
-            font-size: 20px;
-            font-weight: 800;
-            color: #059669;
-        }
+    font-size: 14px;
+    font-weight: 600;
+    color: #059669;
+    line-height: 1.3;
+    word-break: break-word;
+}
 
         /* Enhanced Remarks Section */
         .package-remarks {
@@ -959,6 +965,19 @@
             .package-actions {
                 justify-content: center;
             }
+
+             .rate-schedule-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .rate-value {
+        font-size: 13px;
+    }
+    
+    .rate-item {
+        padding: 14px 10px;
+        min-height: 70px;
+    }
         }
 
         @media (max-width: 480px) {
@@ -1675,6 +1694,37 @@ function performLiveFilter() {
             }
         }
 
+        // Enhanced rate display with reference rate values
+function formatDetailedRateDisplay(pkg, year) {
+    let rateType, operator, value;
+    
+    if (year === 'thereafter') {
+        rateType = pkg.thereafter_rate_type;
+        operator = pkg.thereafter_operator;
+        value = pkg.thereafter_value;
+    } else {
+        rateType = pkg[`year${year}_rate_type`];
+        operator = pkg[`year${year}_operator`];
+        value = pkg[`year${year}_value`];
+    }
+
+    if (!rateType || value === null || value === undefined) return '-';
+
+    if (rateType === 'FIXED') {
+        const rate = calculateInterestRate(pkg, year);
+        return `FIXED ${formatPercentage(rate)}`;
+    } else {
+        // Find the reference rate from rateTypes
+        const referenceRate = rateTypes.find(rt => rt.rate_type === rateType);
+        const referenceRateValue = referenceRate ? parseFloat(referenceRate.rate_value) || 0 : 0;
+        
+        const operatorSymbol = operator === '+' ? '+' : '-';
+        const spreadValue = parseFloat(value) || 0;
+        
+        return `${rateType}(${formatPercentage(referenceRateValue)}) ${operatorSymbol} ${spreadValue.toFixed(2)}%`;
+    }
+}
+
         // ===================================
         // DISPLAY FUNCTIONS - ENHANCED UI WITH PRESERVED LOGIC
         // ===================================
@@ -1863,32 +1913,32 @@ function displayResults(packages, shouldScroll = true) {
         }
 
         function generateRateSchedule(pkg) {
-            const rates = [];
-            
-            for (let year = 1; year <= 5; year++) {
-                const rate = calculateInterestRate(pkg, year);
-                if (rate > 0) {
-                    rates.push(`
-                        <div class="rate-item">
-                            <div class="rate-period">Year ${year}</div>
-                            <div class="rate-value">${formatPercentage(rate)}</div>
-                        </div>
-                    `);
-                }
-            }
-
-            const thereafterRate = calculateInterestRate(pkg, 'thereafter');
-            if (thereafterRate > 0) {
-                rates.push(`
-                    <div class="rate-item">
-                        <div class="rate-period">Thereafter</div>
-                        <div class="rate-value">${formatPercentage(thereafterRate)}</div>
-                    </div>
-                `);
-            }
-
-            return rates.length > 0 ? rates.join('') : null;
+    const rates = [];
+    
+    for (let year = 1; year <= 5; year++) {
+        const rate = calculateInterestRate(pkg, year);
+        if (rate > 0) {
+            rates.push(`
+                <div class="rate-item">
+                    <div class="rate-period">Year ${year}</div>
+                    <div class="rate-value">${formatDetailedRateDisplay(pkg, year)}</div>
+                </div>
+            `);
         }
+    }
+
+    const thereafterRate = calculateInterestRate(pkg, 'thereafter');
+    if (thereafterRate > 0) {
+        rates.push(`
+            <div class="rate-item">
+                <div class="rate-period">Thereafter</div>
+                <div class="rate-value">${formatDetailedRateDisplay(pkg, 'thereafter')}</div>
+            </div>
+        `);
+    }
+
+    return rates.length > 0 ? rates.join('') : null;
+}
 
         function generatePackageFeatures(pkg) {
             const features = [];
