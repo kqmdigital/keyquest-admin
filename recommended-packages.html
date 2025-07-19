@@ -888,13 +888,15 @@
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">
-                        <i data-lucide="building-2"></i>
-                    </div>
-                    <span>KEYQUEST</span>
-                </a>
-            </div>
+    <a href="index.html" class="logo">
+        <div class="logo-icon">
+            <img src="https://ik.imagekit.io/hst9jooux/KeyQuest%20Logo.jpeg?updatedAt=1748073687798" 
+                 alt="KeyQuest Logo" 
+                 style="height: 36px; width: auto; object-fit: contain; border-radius: 6px;"
+                 onerror="this.style.display='none'; this.parentElement.innerHTML='<i data-lucide=&quot;building-2&quot;></i>';" />
+        </div>
+    </a>
+</div>
             <nav class="nav-menu">
                 <a href="index.html" class="nav-item">
                     <i data-lucide="layout-dashboard"></i>
@@ -1811,8 +1813,11 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #1e40af; padding-bottom: 20px;">
                         <div style="display: flex; align-items: center; gap: 20px;">
                             <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #1e40af); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <div style="color: white; font-weight: bold; font-size: 16px; text-align: center; line-height: 1.2;">
-                                    KEYQUEST<br>MORTGAGE
+                                <div style="color: white; font-weight: bold; font-size: 24px; text-align: center; line-height: 1.2;">
+                                    <img src="https://ik.imagekit.io/hst9jooux/KeyQuest%20Logo.jpeg?updatedAt=1748073687798" 
+                                     alt="KeyQuest Mortgage Logo" 
+                                     style="height: 80px; width: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                                 </div>
                             </div>
                         </div>
@@ -1862,6 +1867,17 @@
                                 </tr>
                             </thead>
                             <tbody>
+
+                              <!-- Min Loan Size Row -->
+                                <tr style="background: #fdf2f8;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #be185d; background: #be185d; color: white; word-wrap: break-word; vertical-align: middle;">Min Loan Size</td>
+                                    ${selectedPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #be185d; background: ${index === 0 ? '#fdf2f8' : '#fef7f3'}; font-weight: bold; color: #be185d; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
+                                            ${formatCurrency(pkg.minimum_loan_size || 0)}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+                                
                                 <!-- Interest Rate Rows for Years -->
                                 ${yearsToShow.map(year => `
                                     <tr style="background: white;">
@@ -1886,56 +1902,6 @@
                                     </tr>
                                 ` : ''}
 
-                                <!-- Ranking Row -->
-                                <tr style="background: #fef3c7; border: 2px solid #f59e0b;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #f59e0b; background: #f59e0b; color: white; word-wrap: break-word; vertical-align: middle;">Ranking</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #f59e0b; font-weight: bold; color: #92400e; background: ${index === 0 ? '#fef3c7' : '#fffbeb'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            #${currentResults.findIndex(p => p.id === pkg.id) + 1}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Property Type Row -->
-                                <tr style="background: #f3e8ff;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #9333ea; background: #9333ea; color: white; word-wrap: break-word; vertical-align: middle;">Property Type</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #9333ea; background: ${index === 0 ? '#f3e8ff' : '#faf5ff'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${pkg.property_type}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Property Status Row -->
-                                <tr style="background: #fef2f2;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #dc2626; background: #dc2626; color: white; word-wrap: break-word; vertical-align: middle;">Property Status</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #dc2626; background: ${index === 0 ? '#fef2f2' : '#fef5f5'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${pkg.property_status}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Buy Under Row -->
-                                <tr style="background: #ecfdf5;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #059669; background: #059669; color: white; word-wrap: break-word; vertical-align: middle;">Buy Under</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #059669; background: ${index === 0 ? '#ecfdf5' : '#f0fdf4'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${pkg.buy_under}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Rate Type Row -->
-                                <tr style="background: #fef7cd;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #d97706; background: #d97706; color: white; word-wrap: break-word; vertical-align: middle;">Rate Type</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #d97706; background: ${index === 0 ? '#fef7cd' : '#fffbeb'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${pkg.rate_type_category}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
                                 <!-- Lock-in Period Row (REPLACED Average Rate Row) -->
                                 <tr style="background: #dcfce7; border: 2px solid #16a34a;">
                                     <td style="padding: 12px; font-weight: bold; border: 1px solid #16a34a; background: #16a34a; color: white; word-wrap: break-word; vertical-align: middle;">Lock-in Period</td>
@@ -1956,16 +1922,7 @@
                                     `).join('')}
                                 </tr>
 
-                                <!-- Min Loan Size Row -->
-                                <tr style="background: #fdf2f8;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #be185d; background: #be185d; color: white; word-wrap: break-word; vertical-align: middle;">Min Loan Size</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #be185d; background: ${index === 0 ? '#fdf2f8' : '#fef7f3'}; font-weight: bold; color: #be185d; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${formatCurrency(pkg.minimum_loan_size || 0)}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
+                            
                                 <!-- Remarks Row -->
                                 <tr style="background: #f0f9ff;">
                                     <td style="padding: 12px; font-weight: bold; border: 1px solid #0ea5e9; background: #0ea5e9; color: white; word-wrap: break-word; vertical-align: top;">Remarks</td>
