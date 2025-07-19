@@ -88,7 +88,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
             transition: left 0.6s;
         }
 
@@ -99,25 +99,24 @@
         .loan-tab.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-            transform: translateY(-3px);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
         }
 
         .loan-tab:hover:not(.active) {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             color: #475569;
             transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         /* Enhanced Search Section */
         .search-section {
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 24px;
-            padding: 40px;
+            border-radius: 20px;
+            padding: 32px;
             margin-bottom: 32px;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
             position: relative;
             overflow: hidden;
         }
@@ -129,59 +128,42 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
-            background-size: 200% 100%;
-            animation: gradientShift 3s ease-in-out infinite;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .search-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #10b981);
         }
 
         .search-form {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
+            gap: 20px;
+            align-items: end;
         }
 
         .form-group {
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .form-label {
-            display: block;
-            margin-bottom: 8px;
             font-weight: 600;
             color: #374151;
             font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.025em;
         }
 
-        .form-input, .form-select {
-            width: 100%;
-            padding: 16px 20px;
+        .form-input,
+        .form-select {
+            padding: 14px 16px;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 14px;
             background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            font-family: inherit;
         }
 
-        .form-input:focus, .form-select:focus {
+        .form-input:focus,
+        .form-select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
@@ -385,7 +367,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #10b981, #667eea, #764ba2);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -396,14 +378,20 @@
 
         .package-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-            border-color: rgba(102, 126, 234, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: #667eea;
+        }
+
+        .package-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .package-rank {
-            position: absolute;
-            top: -2px;
-            right: 24px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             width: 48px;
@@ -412,74 +400,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
+            font-weight: 700;
             font-size: 18px;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
         }
 
-        .package-rank.rank-1 {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-            transform: scale(1.1);
+        .package-bank {
+            flex: 1;
+            min-width: 200px;
         }
 
-        .package-selection {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid #e2e8f0;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .package-selection:hover {
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .package-checkbox {
-            width: 16px;
-            height: 16px;
-            accent-color: #667eea;
-            cursor: pointer;
-        }
-
-        .package-checkbox-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #4b5563;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .package-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 24px;
-            gap: 24px;
-        }
-
-        .bank-info h3 {
+        .bank-name {
             font-size: 24px;
             font-weight: 800;
             color: #1e293b;
-            margin: 0 0 8px 0;
+            margin-bottom: 4px;
         }
 
         .package-type {
-            color: #64748b;
             font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .rate-info {
@@ -488,90 +431,58 @@
 
         .avg-rate {
             font-size: 32px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-        }
-
-        .rate-label {
-            font-size: 12px;
-            color: #64748b;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .installment {
-            font-size: 20px;
-            font-weight: 700;
+            font-weight: 800;
             color: #059669;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 2px rgba(5, 150, 105, 0.1);
         }
 
-        /* Enhanced Package Details Grid */
+        .monthly-payment {
+            font-size: 16px;
+            color: #374151;
+            font-weight: 600;
+        }
+
         .package-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
             margin: 24px 0;
+            padding: 24px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
         }
 
         .detail-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .detail-item:hover {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            transform: translateY(-2px);
+            flex-direction: column;
+            gap: 6px;
         }
 
         .detail-label {
-            font-weight: 600;
+            font-size: 12px;
             color: #6b7280;
-            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .detail-value {
-            font-weight: 700;
-            color: #1f2937;
             font-size: 14px;
+            color: #1e293b;
+            font-weight: 600;
         }
 
         /* Enhanced Rate Schedule */
         .rate-schedule {
-            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
-            border: 2px solid #bbf7d0;
-            border-radius: 16px;
-            padding: 24px;
             margin: 24px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rate-schedule::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #10b981, #059669);
         }
 
         .rate-schedule-title {
             font-weight: 700;
-            color: #065f46;
-            margin-bottom: 20px;
+            color: #1e293b;
+            margin-bottom: 16px;
             font-size: 16px;
             display: flex;
             align-items: center;
@@ -581,7 +492,7 @@
         .rate-schedule-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
+            gap: 12px;
         }
 
         .rate-item {
@@ -825,6 +736,61 @@
         .no-results p {
             font-size: 16px;
             margin-bottom: 24px;
+        }
+
+        /* Loading Overlay Enhanced */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(8px);
+        }
+
+        .loading-spinner {
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .loading-spinner i {
+            font-size: 48px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-spinner span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Package Selection */
+        .package-selection {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .selection-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: #667eea;
+            cursor: pointer;
+            border-radius: 4px;
         }
 
         /* Responsive Design */
@@ -1187,102 +1153,27 @@
                 const userDropdown = document.getElementById('userDropdown');
                 const userInfo = document.querySelector('.user-info');
                 
-                if (userInfo && !userInfo.contains(event.target)) {
-                    userDropdown?.classList.remove('show');
+                if (userInfo && !userInfo.contains(event.target) && userDropdown) {
+                    userDropdown.style.display = 'none';
                 }
             });
-        }
 
-        // ===================================
-        // DATA LOADING - PRESERVED FROM ORIGINAL
-        // ===================================
-        async function loadData() {
-            console.log('🔄 Starting data load...');
-            
-            try {
-                showLoading('Loading rate types...');
-                
-                // Load rate types first
-                console.log('📊 Loading rate types...');
-                await loadRateTypes();
-                console.log(`✅ Loaded ${rateTypes.length} rate types`);
-                
-                showLoading('Loading packages...');
-                
-                // Load packages
-                console.log('📦 Loading packages...');
-                await loadPackages();
-                console.log(`✅ Loaded ${allPackages.length} packages`);
-                
-                // Force hide any loading overlays
-                hideLoading();
-                
-                showNotification(`Data loaded successfully: ${rateTypes.length} rate types, ${allPackages.length} packages`, 'success');
-                
-            } catch (error) {
-                console.error('❌ Error loading data:', error);
-                showNotification('Error loading data: ' + error.message, 'error');
-            } finally {
-                // Force hide loading to ensure it's properly cleared
-                hideLoading();
-                console.log('🏁 Data loading completed');
+            // Loan type tab interactions
+            const loanTabs = document.querySelectorAll('.loan-tab');
+            loanTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const loanType = this.getAttribute('data-loan-type');
+                    selectLoanType(loanType);
+                });
+            });
+
+            // Form submission
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', searchPackages);
             }
-        }
 
-        // Load rate types for calculations - PRESERVED FROM ORIGINAL
-        async function loadRateTypes() {
-            try {
-                console.log('🔍 Querying rate_types table...');
-                const { data, error } = await supabaseClient
-                    .from('rate_types')
-                    .select('rate_type, rate_value')
-                    .order('rate_type');
-
-                if (error) {
-                    console.error('❌ Supabase error loading rate types:', error);
-                    throw error;
-                }
-                
-                rateTypes = data || [];
-                console.log(`✅ Successfully loaded ${rateTypes.length} rate types:`, rateTypes.slice(0, 3));
-                
-                if (rateTypes.length === 0) {
-                    console.warn('⚠️ No rate types found in database');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error in loadRateTypes:', error);
-                throw new Error(`Failed to load rate types: ${error.message}`);
-            }
-        }
-
-        // Load all packages - PRESERVED FROM ORIGINAL
-        async function loadPackages() {
-            try {
-                console.log('🔍 Querying rate_packages table...');
-                const { data, error } = await supabaseClient
-                    .from('rate_packages')
-                    .select('*')
-                    .order('bank_name');
-
-                if (error) {
-                    console.error('❌ Supabase error loading packages:', error);
-                    throw error;
-                }
-
-                allPackages = data || [];
-                console.log(`✅ Successfully loaded ${allPackages.length} packages`);
-                
-                if (allPackages.length === 0) {
-                    console.warn('⚠️ No packages found in database');
-                } else {
-                    console.log('📦 Sample package:', allPackages[0]);
-                }
-                
-            } catch (error) {
-                console.error('❌ Error in loadPackages:', error);
-                throw new Error(`Failed to load packages: ${error.message}`);
-            }
+            console.log('✅ Event listeners set up successfully');
         }
 
         // ===================================
@@ -1291,153 +1182,114 @@
         function selectLoanType(loanType) {
             currentLoanType = loanType;
             
-            // Update tab active state
+            // Update tab appearance
             document.querySelectorAll('.loan-tab').forEach(tab => {
                 tab.classList.remove('active');
+                if (tab.getAttribute('data-loan-type') === loanType) {
+                    tab.classList.add('active');
+                }
             });
             
-            document.querySelector(`[data-loan-type="${loanType}"]`).classList.add('active');
-            
             // Clear previous results
-            document.getElementById('resultsContainer').style.display = 'none';
-            currentResults = [];
+            clearResults();
             
-            console.log('🔄 Loan type selected:', loanType);
+            console.log(`📋 Selected loan type: ${loanType}`);
         }
 
         // ===================================
-        // SEARCH FUNCTIONALITY - PRESERVED FROM ORIGINAL
+        // DATA LOADING FUNCTIONS - PRESERVED FROM ORIGINAL
+        // ===================================
+        async function loadData() {
+            try {
+                showLoading('Loading packages and rate types...');
+                
+                // Load packages and rate types in parallel
+                const [packagesResult, rateTypesResult] = await Promise.all([
+                    supabaseClient.from('rate_packages').select('*'),
+                    supabaseClient.from('rate_types').select('*')
+                ]);
+
+                if (packagesResult.error) throw packagesResult.error;
+                if (rateTypesResult.error) throw rateTypesResult.error;
+
+                allPackages = packagesResult.data || [];
+                rateTypes = rateTypesResult.data || [];
+
+                console.log(`📦 Loaded ${allPackages.length} packages and ${rateTypes.length} rate types`);
+                
+            } catch (error) {
+                console.error('💥 Error loading data:', error);
+                showNotification('Failed to load data: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ===================================
+        // SEARCH FUNCTIONS - PRESERVED FROM ORIGINAL  
         // ===================================
         async function searchPackages(event) {
             if (event) event.preventDefault();
             
             try {
+                showLoading('Searching for the best packages...');
+                
                 // Get form values
-                const propertyType = document.getElementById('propertyType').value;
-                const propertyStatus = document.getElementById('propertyStatus').value;
-                const buyUnder = document.getElementById('buyUnder').value;
-                const loanAmount = parseFloat(document.getElementById('loanAmount').value);
-                const loanTenure = parseInt(document.getElementById('loanTenure').value);
-
-                // Store search criteria
-                searchCriteria = {
-                    loanType: currentLoanType,
-                    propertyType,
-                    propertyStatus,
-                    buyUnder,
-                    loanAmount,
-                    loanTenure
+                const formData = {
+                    propertyType: document.getElementById('propertyType').value,
+                    propertyStatus: document.getElementById('propertyStatus').value,
+                    buyUnder: document.getElementById('buyUnder').value,
+                    loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
+                    loanTenure: parseInt(document.getElementById('loanTenure').value) || 25
                 };
 
-                console.log('🔍 Search parameters:', searchCriteria);
-
-                // Validation
-                if (!loanAmount || loanAmount <= 0) {
-                    showNotification('Please enter a valid loan amount', 'error');
-                    return;
-                }
-
-                if (!loanTenure) {
-                    showNotification('Please select a loan tenure', 'error');
-                    return;
-                }
-
-                showLoading('Searching for packages...');
-
-                // Debug: Show first few packages for reference
-                console.log('📦 Sample packages for debugging:', allPackages.slice(0, 3).map(pkg => ({
-                    bank_name: pkg.bank_name,
-                    loan_type: pkg.loan_type,
-                    property_type: pkg.property_type,
-                    property_status: pkg.property_status,
-                    buy_under: pkg.buy_under,
-                    minimum_loan_size: pkg.minimum_loan_size
-                })));
-
+                searchCriteria = { ...formData, loanType: currentLoanType };
+                
                 // Filter packages based on criteria
                 let filteredPackages = allPackages.filter(pkg => {
-                    // Debug logging for first package
-                    if (pkg === allPackages[0]) {
-                        console.log('🔍 Debug filtering first package:', {
-                            'pkg.loan_type': pkg.loan_type,
-                            'currentLoanType': currentLoanType,
-                            'loan_type_match': pkg.loan_type === currentLoanType,
-                            'pkg.property_type': pkg.property_type,
-                            'propertyType': propertyType,
-                            'property_type_match': !propertyType || pkg.property_type === propertyType,
-                            'pkg.buy_under': pkg.buy_under,
-                            'buyUnder': buyUnder,
-                            'buy_under_match': !buyUnder || pkg.buy_under === buyUnder,
-                            'pkg.minimum_loan_size': pkg.minimum_loan_size,
-                            'loanAmount': loanAmount,
-                            'loan_size_match': !pkg.minimum_loan_size || loanAmount >= pkg.minimum_loan_size
-                        });
-                    }
-
                     // Filter by loan type
-                    if (currentLoanType === 'New Home Loan' && pkg.loan_type !== 'New Home Loan') return false;
-                    if (currentLoanType === 'Refinancing Home Loan' && pkg.loan_type !== 'Refinancing Home Loan') return false;
-                    if (currentLoanType === 'Commercial/Industrial' && 
-                        !['Commercial', 'Industrial'].includes(pkg.loan_type)) return false;
-
+                    if (pkg.loan_type !== currentLoanType) return false;
+                    
                     // Filter by property type
-                    if (propertyType && pkg.property_type !== propertyType) return false;
-
+                    if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
+                    
                     // Filter by property status
-                    if (propertyStatus && pkg.property_status !== propertyStatus) return false;
-
+                    if (formData.propertyStatus && pkg.property_status !== formData.propertyStatus) return false;
+                    
                     // Filter by buy under
-                    if (buyUnder && pkg.buy_under !== buyUnder) return false;
-
-                    // Filter by minimum loan amount
-                    if (loanAmount > 0 && pkg.minimum_loan_size && loanAmount < pkg.minimum_loan_size) return false;
-
+                    if (formData.buyUnder && pkg.buy_under !== formData.buyUnder) return false;
+                    
+                    // Filter by minimum loan size
+                    if (formData.loanAmount > 0 && pkg.minimum_loan_size && formData.loanAmount < pkg.minimum_loan_size) return false;
+                    
                     return true;
                 });
 
-                console.log(`🔍 Found ${filteredPackages.length} matching packages`);
-
-                // Calculate recommendations
-                const processedPackages = filteredPackages.map(pkg => {
+                // Calculate metrics for each package
+                filteredPackages = filteredPackages.map(pkg => {
                     const avgFirst2Years = calculateAverageFirst2Years(pkg);
-                    const monthlyInstallment = calculateMonthlyInstallment(pkg, loanAmount, loanTenure);
+                    const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
                     
-                    // Calculate recommendation score
-                    let score = 0;
-                    
-                    // Lower rates get higher scores
-                    if (avgFirst2Years) {
-                        score += (10 - avgFirst2Years) * 10;
-                    }
-                    
-                    // Lower monthly installments get higher scores
-                    if (monthlyInstallment) {
-                        score += Math.max(0, 100 - (monthlyInstallment / 100));
-                    }
-                    
-                    // Special features add to score
-                    if (pkg.legal_fee_subsidy) score += 20;
-                    if (pkg.cash_rebate) score += 15;
-                    if (pkg.free_package_conversion_12m || pkg.free_package_conversion_24m || pkg.free_package_conversion_36m) score += 10;
-
                     return {
                         ...pkg,
                         avgFirst2Years,
                         monthlyInstallment,
-                        recommendationScore: score,
-                        selected: true // Mark as selected by default
+                        selected: true // Default to selected for report
                     };
-                })
-                .sort((a, b) => b.recommendationScore - a.recommendationScore)
-                .slice(0, 10); // Top 10 recommendations
+                });
 
-                currentResults = processedPackages;
-                displayResults(processedPackages);
-                hideLoading();
+                // Sort by average rate (ascending - best rates first)
+                filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
+
+                currentResults = filteredPackages;
+                displayResults(filteredPackages);
+                
+                console.log(`🔍 Found ${filteredPackages.length} matching packages`);
                 
             } catch (error) {
-                console.error('❌ Search failed:', error);
+                console.error('💥 Search error:', error);
                 showNotification('Search failed: ' + error.message, 'error');
+            } finally {
                 hideLoading();
             }
         }
@@ -1449,32 +1301,40 @@
             const year1Rate = calculateInterestRate(pkg, 1);
             const year2Rate = calculateInterestRate(pkg, 2);
             
-            if (year1Rate > 0 && year2Rate > 0) {
-                return (year1Rate + year2Rate) / 2;
-            } else if (year1Rate > 0) {
-                return year1Rate;
-            } else if (year2Rate > 0) {
-                return year2Rate;
-            }
+            if (year1Rate === 0 && year2Rate === 0) return 0;
+            if (year1Rate === 0) return year2Rate;
+            if (year2Rate === 0) return year1Rate;
             
-            return 0;
+            return (year1Rate + year2Rate) / 2;
         }
 
-        function calculateMonthlyInstallment(pkg, loanAmount, tenure) {
-            if (!loanAmount || !tenure) return 0;
-
-            const avgRate = calculateAverageFirst2Years(pkg);
-            if (avgRate <= 0) return 0;
-
-            const monthlyRate = avgRate / 100 / 12;
-            const numPayments = tenure * 12;
-
-            if (monthlyRate === 0) return loanAmount / numPayments;
-
-            const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
-                                 (Math.pow(1 + monthlyRate, numPayments) - 1);
+        function calculateMonthlyInstallment(principal, tenureYears, annualRate) {
+            if (!principal || !tenureYears || !annualRate) return 0;
+            
+            const monthlyRate = annualRate / 100 / 12;
+            const totalMonths = tenureYears * 12;
+            
+            if (monthlyRate === 0) {
+                return principal / totalMonths;
+            }
+            
+            const monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / 
+                                 (Math.pow(1 + monthlyRate, totalMonths) - 1);
             
             return monthlyPayment;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-SG', {
+                style: 'currency',
+                currency: 'SGD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatPercentage(rate) {
+            return `${rate.toFixed(2)}%`;
         }
 
         // Calculate interest rate for a specific year - PRESERVED FROM ORIGINAL
@@ -1491,9 +1351,7 @@
                 value = pkg[`year${year}_value`];
             }
 
-            if (!rateType || value === null || value === undefined) {
-                return 0;
-            }
+            if (!rateType || value === null || value === undefined) return 0;
 
             if (rateType === 'FIXED') {
                 return parseFloat(value) || 0;
@@ -1566,92 +1424,77 @@
                 
                 // Animate cards in with staggered effect
                 setTimeout(() => {
-                    packagesContainer.style.transition = 'opacity 0.6s ease';
                     packagesContainer.style.opacity = '1';
-                    
-                    // Stagger animation for each card
                     const cards = packagesContainer.querySelectorAll('.package-card');
                     cards.forEach((card, index) => {
-                        card.style.opacity = '0';
-                        card.style.transform = 'translateY(30px)';
-                        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-                        
                         setTimeout(() => {
-                            card.style.opacity = '1';
-                            card.style.transform = 'translateY(0)';
-                        }, index * 150); // Stagger delay
+                            card.style.animation = 'slideInUp 0.6s ease-out forwards';
+                        }, index * 100);
                     });
                 }, 100);
-                
-                // Update the results subtitle to show selection info
-                const resultsSubtitle = document.querySelector('.results-title');
-                if (resultsSubtitle) {
-                    const selectedCount = packages.filter(pkg => pkg.selected !== false).length;
-                    resultsSubtitle.innerHTML = `
-                        <i data-lucide="trending-up"></i>
-                        Recommended Packages
-                        <span class="results-count">${packages.length}</span>
-                        <small style="font-size: 14px; font-weight: 500; color: #6b7280; margin-left: 12px; opacity: 0.8;">
-                            (${selectedCount} selected for report)
-                        </small>
-                    `;
-                }
             }
 
             resultsContainer.style.display = 'block';
-            resultsContainer.scrollIntoView({ behavior: 'smooth' });
             
-            // Re-initialize Lucide icons for dynamically added content
+            // Re-initialize Lucide icons for new content
             setTimeout(() => {
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
-            }, 100);
+            }, 200);
         }
 
         function createPackageCard(pkg, index) {
+            const rank = index + 1;
             const rateSchedule = generateRateSchedule(pkg);
-            const features = generatePackageFeatures(pkg);
+            const features = generateFeaturesList(pkg);
             
             return `
-                                    <div class="package-card">
-                    <div class="package-rank ${index === 0 ? 'rank-1' : ''}">${index + 1}</div>
+                <div class="package-card" data-package-index="${index}">
                     <div class="package-selection">
-                        <input type="checkbox" id="pkg-select-${index}" class="package-checkbox" onchange="togglePackageSelection(${index})" checked>
-                        <label for="pkg-select-${index}" class="package-checkbox-label">Include in Report</label>
+                        <input type="checkbox" 
+                               id="pkg-select-${index}" 
+                               class="selection-checkbox" 
+                               onchange="togglePackageSelection(${index})"
+                               ${pkg.selected !== false ? 'checked' : ''}>
                     </div>
                     
                     <div class="package-header">
-                        <div class="bank-info">
-                            <h3>${pkg.bank_name || 'Unknown Bank'}</h3>
-                            <div class="package-type">
-                                <i data-lucide="percent"></i>
-                                ${pkg.rate_type_category || 'Unknown'} Rate • ${pkg.lock_period || 'No Lock-in'}
-                            </div>
+                        <div class="package-rank">${rank}</div>
+                        <div class="package-bank">
+                            <div class="bank-name">${pkg.bank_name}</div>
+                            <div class="package-type">${pkg.rate_type_category || 'Rate Package'}</div>
                         </div>
                         <div class="rate-info">
-                            <div class="rate-label">Avg First 2 Years</div>
                             <div class="avg-rate">${formatPercentage(pkg.avgFirst2Years)}</div>
-                            <div class="installment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
+                            <div class="monthly-payment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
                         </div>
                     </div>
 
                     <div class="package-details">
                         <div class="detail-item">
-                            <span class="detail-label">Property Type:</span>
-                            <span class="detail-value">${pkg.property_type || 'N/A'}</span>
+                            <div class="detail-label">Property Type</div>
+                            <div class="detail-value">${pkg.property_type}</div>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Property Status:</span>
-                            <span class="detail-value">${pkg.property_status || 'N/A'}</span>
+                            <div class="detail-label">Property Status</div>
+                            <div class="detail-value">${pkg.property_status}</div>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Buy Under:</span>
-                            <span class="detail-value">${pkg.buy_under || 'N/A'}</span>
+                            <div class="detail-label">Buy Under</div>
+                            <div class="detail-value">${pkg.buy_under}</div>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Min. Loan Size:</span>
-                            <span class="detail-value">${formatCurrency(pkg.minimum_loan_size || 0)}</span>
+                            <div class="detail-label">Rate Type</div>
+                            <div class="detail-value">${pkg.rate_type_category}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Lock Period</div>
+                            <div class="detail-value">${pkg.lock_period || 'No Lock-in'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Min. Loan Size</div>
+                            <div class="detail-value">${formatCurrency(pkg.minimum_loan_size || 0)}</div>
                         </div>
                     </div>
 
@@ -1733,75 +1576,29 @@
             return rates.length > 0 ? rates.join('') : null;
         }
 
-        function generatePackageFeatures(pkg) {
+        function generateFeaturesList(pkg) {
             const features = [];
             
-            if (pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) {
-                features.push(`
-                    <div class="feature-tag">
-                        <i data-lucide="shield"></i>
-                        Legal Fee Subsidy
-                    </div>
-                `);
+            // Add features based on package properties
+            if (pkg.legal_fee_subsidy === 'Y' || pkg.cash_rebate === 'Y') {
+                features.push('<span class="feature-tag"><i data-lucide="dollar-sign"></i>Legal Fee Subsidy</span>');
+            }
+            if (pkg.partial_prepayment === 'Y') {
+                features.push('<span class="feature-tag"><i data-lucide="credit-card"></i>Partial Prepayment</span>');
+            }
+            if (pkg.free_conversion === 'Y') {
+                features.push('<span class="feature-tag"><i data-lucide="refresh-cw"></i>Free Conversion</span>');
+            }
+            if (pkg.lock_period && pkg.lock_period !== 'No Lock-in') {
+                features.push(`<span class="feature-tag"><i data-lucide="lock"></i>Lock Period: ${pkg.lock_period}</span>`);
             }
             
-            if (pkg.cash_rebate === 'true' || pkg.cash_rebate === true) {
-                features.push(`
-                    <div class="feature-tag">
-                        <i data-lucide="dollar-sign"></i>
-                        Cash Rebate
-                    </div>
-                `);
-            }
-            
-            if (pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true) {
-                features.push(`
-                    <div class="feature-tag">
-                        <i data-lucide="repeat"></i>
-                        Free Conversion (12M)
-                    </div>
-                `);
-            }
-
-            if (pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true) {
-                features.push(`
-                    <div class="feature-tag">
-                        <i data-lucide="repeat"></i>
-                        Free Conversion (24M)
-                    </div>
-                `);
-            }
-
             return features.length > 0 ? features.join('') : null;
         }
 
-        // ===================================
-        // UTILITY FUNCTIONS - PRESERVED FROM ORIGINAL
-        // ===================================
-        function formatPercentage(value) {
-            if (value == null || value === 0) return 'N/A';
-            return `${value.toFixed(2)}%`;
-        }
-
-        function formatCurrency(value) {
-            if (!value || value === 0) return '$0';
-            return new Intl.NumberFormat('en-SG', {
-                style: 'currency',
-                currency: 'SGD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(value);
-        }
-
-        // Clear all filters - PRESERVED FROM ORIGINAL
+        // Clear search results and form - PRESERVED FROM ORIGINAL
         function clearFilters() {
-            document.getElementById('propertyType').value = '';
-            document.getElementById('propertyStatus').value = '';
-            document.getElementById('buyUnder').value = '';
-            document.getElementById('loanAmount').value = '';
-            document.getElementById('loanTenure').value = '';
-            
-            // Clear results
+            document.getElementById('searchForm').reset();
             document.getElementById('resultsContainer').style.display = 'none';
             currentResults = [];
             searchCriteria = {};
@@ -1905,303 +1702,161 @@
                 return;
             }
 
-            const reportDate = new Date().toLocaleDateString('en-SG', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-            });
+            // Generate PDF report content
+            const reportHtml = generateReportHtml(selectedPackages, clientName, hideBankNames);
+            
+            // Create and download the report
+            const blob = new Blob([reportHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `mortgage_recommendations_${clientName ? clientName.replace(/\s+/g, '_') : 'report'}_${new Date().toISOString().split('T')[0]}.html`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
 
-            // Determine which years have data across all packages
-            const yearsToShow = [];
-            for (let year = 1; year <= 5; year++) {
-                const hasData = selectedPackages.some(pkg => {
-                    const rate = calculateInterestRate(pkg, year);
-                    return rate > 0;
-                });
-                if (hasData) {
-                    yearsToShow.push(year);
-                }
-            }
-
-            // Check if thereafter has data
-            const hasThereafterData = selectedPackages.some(pkg => {
-                const rate = calculateInterestRate(pkg, 'thereafter');
-                return rate > 0;
-            });
-
-            const reportContent = `
-                <div style="padding: 40px; background: white; font-family: Arial, sans-serif;">
-                    <!-- Header Section -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #1e40af; padding-bottom: 20px;">
-                        <div style="display: flex; align-items: center; gap: 20px;">
-                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #1e40af); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                <div style="color: white; font-weight: bold; font-size: 24px; text-align: center; line-height: 1.2;">
-                                    <img src="https://ik.imagekit.io/hst9jooux/KeyQuest%20Logo.jpeg?updatedAt=1748073687798" 
-                                     alt="KeyQuest Mortgage Logo" 
-                                     style="height: 80px; width: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-                                </div>
-                            </div>
-                          
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 32px; font-weight: bold; color: #1e40af; margin-bottom: 8px;">Top Interest Rate Packages</div>
-                            
-                            ${clientName ? `<div style="font-size: 18px; color: #1f2937; margin-top: 8px; font-weight: 600;">Prepared for: ${clientName}</div>` : ''}
-                            <div style="font-size: 14px; color: #9ca3af; margin-top: 4px;">Generated on ${reportDate}</div>
-                        </div>
-                    </div>
-
-                    <!-- Simplified Loan Information -->
-                    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #1e40af;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 16px;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>Loan Amount:</strong> 
-                                <span>${formatCurrency(searchCriteria.loanAmount || 0)}</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>Loan Tenure:</strong> 
-                                <span>${searchCriteria.loanTenure || 'N/A'} years</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Interest Rate Comparison Table -->
-                    <div style="margin-bottom: 40px;">
-                       
-                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; font-size: 12px; table-layout: fixed;">
-                            <colgroup>
-                                <col style="width: 15%;">
-                                ${selectedPackages.map(() => `<col style="width: ${85/selectedPackages.length}%;">`).join('')}
-                            </colgroup>
-                            <thead>
-                                <tr style="background: #f9fafb;">
-                                    <th style="padding: 12px; text-align: left; border: 1px solid #e5e7eb; font-weight: bold; word-wrap: break-word; vertical-align: top;">Period</th>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <th style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; font-weight: bold; background: ${index === 0 ? '#fef3c7' : '#f9fafb'}; word-wrap: break-word; vertical-align: top; line-height: 1.3;">
-                                            <div style="font-size: 13px; font-weight: bold; margin-bottom: 4px;">
-                                                ${hideBankNames ? `Bank ${String.fromCharCode(65 + index)}` : pkg.bank_name}
-                                            </div>
-                                            <div style="font-size: 10px; color: #6b7280; font-weight: normal;">${pkg.rate_type_category} Rate</div>
-                                        </th>
-                                    `).join('')}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${yearsToShow.map(year => `
-                                    <tr style="background: ${year % 2 === 1 ? '#f8fafc' : 'white'};">
-                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Year ${year}</td>
-                                        ${selectedPackages.map((pkg, index) => `
-                                            <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; font-weight: bold; color: #059669; background: ${index === 0 ? '#fef3c7' : (year % 2 === 1 ? '#f8fafc' : 'white')}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                                ${formatRateDisplay(pkg, year)}
-                                            </td>
-                                        `).join('')}
-                                    </tr>
-                                `).join('')}
-
-                                ${hasThereafterData ? `
-                                    <tr style="background: white;">
-                                        <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Thereafter</td>
-                                        ${selectedPackages.map((pkg, index) => `
-                                            <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                                ${formatRateDisplay(pkg, 'thereafter')}
-                                            </td>
-                                        `).join('')}
-                                    </tr>
-                                ` : ''}
-
-                                <!-- Average Rate Row -->
-                                <tr style="background: #dcfce7; border: 2px solid #16a34a;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #16a34a; background: #16a34a; color: white; word-wrap: break-word; vertical-align: middle;">Avg First 2 Years</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #16a34a; font-weight: bold; color: #16a34a; background: ${index === 0 ? '#bbf7d0' : '#dcfce7'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${formatPercentage(pkg.avgFirst2Years)}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Monthly Installment Row -->
-                                <tr style="background: #ddd6fe;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #8b5cf6; background: #8b5cf6; color: white; word-wrap: break-word; vertical-align: middle;">Monthly Installment</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #8b5cf6; font-weight: bold; color: #7c3aed; background: ${index === 0 ? '#c4b5fd' : '#ddd6fe'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${formatCurrency(pkg.monthlyInstallment)}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Remarks Row -->
-                                <tr style="background: #f0f9ff;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #0ea5e9; background: #0ea5e9; color: white; word-wrap: break-word; vertical-align: top;">Remarks</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: left; border: 1px solid #0ea5e9; font-size: 11px; line-height: 1.4; background: ${index === 0 ? '#e0f2fe' : '#f0f9ff'}; vertical-align: top; word-wrap: break-word; white-space: normal; overflow-wrap: break-word; max-width: 0;">
-                                            <div style="word-wrap: break-word; overflow-wrap: break-word;">
-                                                ${(pkg.custom_remarks || pkg.remarks || 'NIL').replace(/\n/g, '<br>')}
-                                            </div>
-                                        </td>
-                                    `).join('')}
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Disclaimer -->
-                    <div style="background: #fef2f2; padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444; margin-bottom: 30px;">
-                        <h4 style="margin: 0 0 12px 0; color: #dc2626; font-size: 16px;">Important Disclaimer</h4>
-                        <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #7f1d1d;">
-                            All interest rates are subject to bank's final approval and may vary based on individual credit assessment. This report is for informational purposes only and does not constitute a binding offer.
-                        </p>
-                    </div>
-
-                    <!-- Report Generation Info -->
-                    <div style="text-align: center; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                        <p style="margin: 0; font-size: 12px; color: #6b7280;">
-                            Report generated by Keyquest Mortgage on ${new Date().toLocaleString('en-SG')}
-                        </p>
-                    </div>
-                </div>
-            `;
-
-            // Open modal with report content
-            openReportModal(reportContent);
+            showNotification('Report generated successfully', 'success');
         }
 
-        function openReportModal(content) {
-            // Create modal if it doesn't exist
-            let modal = document.getElementById('report-modal');
-            if (!modal) {
-                modal = document.createElement('div');
-                modal.id = 'report-modal';
-                modal.className = 'modal';
-                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
-                modal.innerHTML = `
-                    <div style="background: white; border-radius: 16px; width: 100%; max-width: 1200px; max-height: 90vh; display: flex; flex-direction: column;">
-                        <div style="padding: 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-                            <h3 style="margin: 0; color: #1f2937;">Professional Mortgage Report</h3>
-                            <div style="display: flex; gap: 12px;">
-                                <button onclick="printReport()" style="padding: 8px 16px; background: #1e40af; color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                    <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
-                                    Print/Save PDF
-                                </button>
-                                <button onclick="closeReportModal()" style="padding: 8px 12px; background: #6b7280; color: white; border: none; border-radius: 8px; cursor: pointer;">
-                                    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
-                                </button>
+        function generateReportHtml(packages, clientName, hideBankNames) {
+            const clientSection = clientName ? `
+                <div class="client-info">
+                    <h2>Prepared for: ${clientName}</h2>
+                    <p>Date: ${new Date().toLocaleDateString()}</p>
+                </div>
+            ` : '';
+
+            const packageCards = packages.map((pkg, index) => {
+                const bankDisplay = hideBankNames ? `Bank ${String.fromCharCode(65 + index)}` : pkg.bank_name;
+                const rateSchedule = generateRateScheduleForReport(pkg);
+                
+                return `
+                    <div class="report-package">
+                        <h3>Option ${index + 1}: ${bankDisplay}</h3>
+                        <div class="report-highlight">
+                            <div class="highlight-item">
+                                <span class="label">Average First 2 Years:</span>
+                                <span class="value">${formatPercentage(pkg.avgFirst2Years)}</span>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="label">Monthly Installment:</span>
+                                <span class="value">${formatCurrency(pkg.monthlyInstallment)}</span>
                             </div>
                         </div>
-                        <div id="report-content" style="flex: 1; overflow-y: auto;">
-                            ${content}
+                        
+                        <div class="report-details">
+                            <p><strong>Property Type:</strong> ${pkg.property_type}</p>
+                            <p><strong>Property Status:</strong> ${pkg.property_status}</p>
+                            <p><strong>Buy Under:</strong> ${pkg.buy_under}</p>
+                            <p><strong>Rate Type:</strong> ${pkg.rate_type_category}</p>
+                            <p><strong>Lock Period:</strong> ${pkg.lock_period || 'No Lock-in'}</p>
                         </div>
+                        
+                        ${rateSchedule}
+                        
+                        ${pkg.custom_remarks || pkg.remarks ? `
+                            <div class="report-remarks">
+                                <h4>Important Notes:</h4>
+                                <p>${pkg.custom_remarks || pkg.remarks}</p>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
-                document.body.appendChild(modal);
-            } else {
-                document.getElementById('report-content').innerHTML = content;
-            }
+            }).join('');
 
-            modal.style.display = 'flex';
-            
-            // Re-initialize Lucide icons for the modal
-            setTimeout(() => {
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-            }, 100);
-        }
-
-        function closeReportModal() {
-            const modal = document.getElementById('report-modal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        function printReport() {
-            const originalTitle = document.title;
-            document.title = `Keyquest_Mortgage_Report_${new Date().toISOString().split('T')[0]}`;
-            
-            const reportContent = document.getElementById('report-content').innerHTML;
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
+            return `
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>${document.title}</title>
+                    <title>Mortgage Recommendations Report</title>
                     <style>
-                        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-                        @media print {
-                            body { margin: 0; }
-                            .no-print { display: none; }
-                        }
+                        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                        .header { text-align: center; margin-bottom: 40px; }
+                        .client-info { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+                        .report-package { margin-bottom: 40px; page-break-inside: avoid; }
+                        .report-highlight { display: flex; gap: 30px; background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; }
+                        .highlight-item { display: flex; flex-direction: column; }
+                        .label { font-size: 12px; color: #666; }
+                        .value { font-size: 18px; font-weight: bold; color: #1976d2; }
+                        .report-details { margin: 20px 0; }
+                        .rate-schedule { margin: 20px 0; }
+                        .rate-table { width: 100%; border-collapse: collapse; }
+                        .rate-table th, .rate-table td { padding: 8px; border: 1px solid #ddd; text-align: center; }
+                        .rate-table th { background: #f5f5f5; }
+                        .report-remarks { background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0; }
                     </style>
                 </head>
                 <body>
-                    ${reportContent}
+                    <div class="header">
+                        <h1>Mortgage Recommendations Report</h1>
+                        <p>Generated by Keyquest Mortgage Admin</p>
+                    </div>
+                    
+                    ${clientSection}
+                    
+                    <div class="search-criteria">
+                        <h3>Search Criteria</h3>
+                        <p><strong>Loan Type:</strong> ${searchCriteria.loanType}</p>
+                        <p><strong>Property Type:</strong> ${searchCriteria.propertyType || 'Any'}</p>
+                        <p><strong>Property Status:</strong> ${searchCriteria.propertyStatus || 'Any'}</p>
+                        <p><strong>Buy Under:</strong> ${searchCriteria.buyUnder || 'Any'}</p>
+                        <p><strong>Loan Amount:</strong> ${formatCurrency(searchCriteria.loanAmount)}</p>
+                        <p><strong>Loan Tenure:</strong> ${searchCriteria.loanTenure} years</p>
+                    </div>
+                    
+                    ${packageCards}
+                    
+                    <div class="footer" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666;">
+                        <p>This report is generated for comparison purposes only. Please consult with your financial advisor for personalized advice.</p>
+                        <p>Generated on ${new Date().toLocaleString()}</p>
+                    </div>
                 </body>
                 </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-            
-            document.title = originalTitle;
+            `;
         }
 
-        // Helper function to format rate display for the report
-        function formatRateDisplay(pkg, year) {
-            let rateType, operator, value;
+        function generateRateScheduleForReport(pkg) {
+            const rates = [];
             
-            if (year === 'thereafter') {
-                rateType = pkg.thereafter_rate_type;
-                operator = pkg.thereafter_operator;
-                value = pkg.thereafter_value;
-            } else {
-                rateType = pkg[`year${year}_rate_type`];
-                operator = pkg[`year${year}_operator`];
-                value = pkg[`year${year}_value`];
-            }
-
-            if (!rateType || value === null || value === undefined) return '-';
-
-            if (rateType === 'FIXED') {
+            for (let year = 1; year <= 5; year++) {
                 const rate = calculateInterestRate(pkg, year);
-                return `${formatPercentage(rate)} Fixed`;
-            } else {
-                const operatorSymbol = operator === '+' ? '+' : '-';
-                return `${rateType} ${operatorSymbol} ${value}%`;
-            }
-        }
-
-        function generatePackageFeaturesForReport(pkg) {
-            const features = [];
-            
-            if (pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) {
-                features.push('• Legal Fee Subsidy');
-            }
-            
-            if (pkg.valuation_subsidy === 'true' || pkg.valuation_subsidy === true) {
-                features.push('• Valuation Subsidy');
-            }
-            
-            if (pkg.partial_repayment === 'true' || pkg.partial_repayment === true) {
-                features.push('• Partial Repayment Allowed');
-            }
-            
-            if (pkg.waiver_due_to_sales === 'true' || pkg.waiver_due_to_sales === true) {
-                features.push('• Waiver Due to Sales');
+                if (rate > 0) {
+                    rates.push(`
+                        <tr>
+                            <td>Year ${year}</td>
+                            <td>${formatPercentage(rate)}</td>
+                        </tr>
+                    `);
+                }
             }
 
-            if (pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true) {
-                features.push('• Free Package Conversion (12 Months)');
+            const thereafterRate = calculateInterestRate(pkg, 'thereafter');
+            if (thereafterRate > 0) {
+                rates.push(`
+                    <tr>
+                        <td>Thereafter</td>
+                        <td>${formatPercentage(thereafterRate)}</td>
+                    </tr>
+                `);
             }
 
-            if (pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true) {
-                features.push('• Free Package Conversion (24 Months)');
-            }
-
-            if (pkg.free_package_conversion_36m === 'true' || pkg.free_package_conversion_36m === true) {
-                features.push('• Free Package Conversion (36 Months)');
-            }
-
-            return features.length > 0 ? features.join('<br>') : 'No special features';
+            return rates.length > 0 ? `
+                <div class="rate-schedule">
+                    <h4>Interest Rate Schedule</h4>
+                    <table class="rate-table">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Interest Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rates.join('')}
+                        </tbody>
+                    </table>
+                </div>
+            ` : '';
         }
 
         function exportCSV() {
