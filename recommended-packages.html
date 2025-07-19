@@ -1567,7 +1567,29 @@
                 noResults.style.display = 'block';
             } else {
                 noResults.style.display = 'none';
+                
+                // Add loading state with fade-in animation
+                packagesContainer.style.opacity = '0';
                 packagesContainer.innerHTML = packages.map((pkg, index) => createPackageCard(pkg, index)).join('');
+                
+                // Animate cards in with staggered effect
+                setTimeout(() => {
+                    packagesContainer.style.transition = 'opacity 0.6s ease';
+                    packagesContainer.style.opacity = '1';
+                    
+                    // Stagger animation for each card
+                    const cards = packagesContainer.querySelectorAll('.package-card');
+                    cards.forEach((card, index) => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(30px)';
+                        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                        
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, index * 150); // Stagger delay
+                    });
+                }, 100);
                 
                 // Update the results subtitle to show selection info
                 const resultsSubtitle = document.querySelector('.results-title');
@@ -1577,7 +1599,7 @@
                         <i data-lucide="trending-up"></i>
                         Recommended Packages
                         <span class="results-count">${packages.length}</span>
-                        <small style="font-size: 12px; font-weight: normal; color: #6b7280; margin-left: 8px;">
+                        <small style="font-size: 14px; font-weight: 500; color: #6b7280; margin-left: 12px; opacity: 0.8;">
                             (${selectedCount} selected for report)
                         </small>
                     `;
@@ -1816,7 +1838,7 @@
                     <i data-lucide="trending-up"></i>
                     Recommended Packages
                     <span class="results-count">${currentResults.length}</span>
-                    <small style="font-size: 12px; font-weight: normal; color: #6b7280; margin-left: 8px;">
+                    <small style="font-size: 14px; font-weight: 500; color: #6b7280; margin-left: 12px; opacity: 0.8;">
                         (${selectedCount} selected for report)
                     </small>
                 `;
