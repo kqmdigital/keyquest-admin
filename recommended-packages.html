@@ -560,6 +560,65 @@
             font-weight: 500;
         }
 
+        /* Enhanced Package Remarks Editor */
+        .package-remarks-editor {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid #0ea5e9;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .package-remarks-editor::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0ea5e9, #0284c7);
+        }
+
+        .remarks-editor-title {
+            font-weight: 700;
+            color: #0c4a6e;
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .remarks-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px 16px;
+            border: 2px solid #bae6fd;
+            border-radius: 10px;
+            background: white;
+            color: #0c4a6e;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .remarks-textarea:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .remarks-textarea::placeholder {
+            color: #64748b;
+            font-style: italic;
+        }
+
         /* Enhanced Features Section */
         .package-features {
             margin: 24px 0;
@@ -733,6 +792,15 @@
                 gap: 8px;
                 text-align: center;
             }
+
+            .remarks-textarea {
+                min-height: 60px;
+                font-size: 13px;
+            }
+
+            .package-remarks-editor {
+                padding: 16px;
+            }
         }
     </style>
 </head>
@@ -905,9 +973,13 @@
                             Recommended Packages
                             <span class="results-count" id="resultsCount">0</span>
                         </div>
-                        <button class="download-btn" onclick="downloadPackagesList()">
+                        <button class="download-btn" onclick="generateProfessionalReport()">
+                            <i data-lucide="file-text"></i>
+                            Generate Report
+                        </button>
+                        <button class="download-btn" onclick="exportCSV()" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); margin-left: 12px;">
                             <i data-lucide="download"></i>
-                            Download List
+                            Export CSV
                         </button>
                     </div>
                     
@@ -1455,11 +1527,17 @@
                         </div>
                     ` : ''}
 
-                    <div class="package-actions">
-                        <button class="enquire-btn" onclick="enquirePackage(${pkg.id})">
-                            <i data-lucide="mail"></i>
-                            Enquire Now
-                        </button>
+                    <div class="package-remarks-editor">
+                        <div class="remarks-editor-title">
+                            <i data-lucide="edit"></i>
+                            Client Remarks (Editable)
+                        </div>
+                        <textarea 
+                            class="remarks-textarea" 
+                            id="remarks-${pkg.id || index}" 
+                            placeholder="Add custom remarks for this package..."
+                            onchange="updatePackageRemarks(${index}, this.value)"
+                        >${pkg.custom_remarks || pkg.remarks || ''}</textarea>
                     </div>
                 </div>
             `;
@@ -1568,18 +1646,419 @@
         }
 
         // Download packages list - PRESERVED FROM ORIGINAL
+        // ===================================
+        // PACKAGE REMARKS MANAGEMENT
+        // ===================================
+        function updatePackageRemarks(packageIndex, newRemarks) {
+            if (currentResults[packageIndex]) {
+                currentResults[packageIndex].custom_remarks = newRemarks;
+                console.log(`📝 Updated remarks for package ${packageIndex}:`, newRemarks);
+            }
+        }
+
+        // ===================================
+        // REPORT GENERATION FUNCTIONS
+        // ===================================
         function downloadPackagesList() {
             if (!currentResults.length) {
                 showNotification('No results to download. Please search for packages first.', 'error');
                 return;
             }
 
-            showNotification('Package list download started', 'success');
-            // Implementation for downloading packages list would go here
+            generateProfessionalReport();
         }
 
-        function enquirePackage(packageId) {
-            window.location.href = `enquiry.html?package=${packageId}`;
+        function generateProfessionalReport() {
+            if (!currentResults.length) {
+                showNotification('No results to generate report. Please search for packages first.', 'error');
+                return;
+            }
+
+            const reportDate = new Date().toLocaleDateString('en-SG', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            // Take top 5 packages for the report
+            const topPackages = currentResults.slice(0, 5);
+            
+            // Determine report title based on loan type
+            let reportTitle = "TOP MORTGAGE PACKAGES";
+            if (searchCriteria.loanType) {
+                reportTitle = `TOP ${searchCriteria.loanType.toUpperCase()} PACKAGES`;
+            }
+
+            const reportContent = `
+                <div style="padding: 40px; background: white; font-family: Arial, sans-serif;">
+                    <!-- Header Section -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 3px solid #1e40af; padding-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #1e40af); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <div style="color: white; font-weight: bold; font-size: 24px; text-align: center; line-height: 1.2;">
+                                    K<br>M
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 4px;">KEYQUEST</div>
+                                <div style="font-size: 14px; color: #6b7280;">M O R T G A G E</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 32px; font-weight: bold; color: #1e40af; margin-bottom: 8px;">${reportTitle}</div>
+                            <div style="font-size: 16px; color: #6b7280;">Professional Mortgage Report</div>
+                            <div style="font-size: 14px; color: #9ca3af; margin-top: 4px;">Generated on ${reportDate}</div>
+                        </div>
+                    </div>
+
+                    <!-- Search Criteria Summary -->
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #1e40af;">
+                        <h3 style="margin: 0 0 16px 0; color: #1f2937; font-size: 18px;">Search Criteria</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 14px;">
+                            <div><strong>Loan Type:</strong> ${searchCriteria.loanType || 'All'}</div>
+                            <div><strong>Property Type:</strong> ${searchCriteria.propertyType || 'All'}</div>
+                            <div><strong>Property Status:</strong> ${searchCriteria.propertyStatus || 'All'}</div>
+                            <div><strong>Buy Under:</strong> ${searchCriteria.buyUnder || 'All'}</div>
+                            <div><strong>Loan Amount:</strong> ${formatCurrency(searchCriteria.loanAmount || 0)}</div>
+                            <div><strong>Loan Tenure:</strong> ${searchCriteria.loanTenure || 'N/A'} years</div>
+                        </div>
+                    </div>
+
+                    <!-- Packages Comparison Table -->
+                    <div style="margin-bottom: 40px;">
+                        <h3 style="color: #1f2937; margin-bottom: 20px; font-size: 20px;">Interest Rate Comparison</h3>
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; font-size: 12px;">
+                            <thead>
+                                <tr style="background: #f9fafb;">
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #e5e7eb; font-weight: bold;">Year</th>
+                                    ${topPackages.map((pkg, index) => `
+                                        <th style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; font-weight: bold; background: ${index === 0 ? '#fef3c7' : '#f9fafb'};">
+                                            ${pkg.bank_name}<br>
+                                            <span style="font-size: 10px; color: #6b7280;">${pkg.rate_type_category} Rate</span>
+                                        </th>
+                                    `).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Year 1 Row -->
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb;">Year 1</td>
+                                    ${topPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; font-weight: bold; color: #059669; background: ${index === 0 ? '#fef3c7' : 'white'};">
+                                            ${formatRateDisplay(pkg, 1)}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+
+                                <!-- Year 2 Row -->
+                                <tr style="background: white;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb;">Year 2</td>
+                                    ${topPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; font-weight: bold; color: #059669; background: ${index === 0 ? '#fef3c7' : 'white'};">
+                                            ${formatRateDisplay(pkg, 2)}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+
+                                <!-- Year 3 Row -->
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb;">Year 3</td>
+                                    ${topPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : '#f8fafc'};">
+                                            ${formatRateDisplay(pkg, 3)}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+
+                                <!-- Year 4 Row -->
+                                <tr style="background: white;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb;">Year 4</td>
+                                    ${topPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'};">
+                                            ${formatRateDisplay(pkg, 4)}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+
+                                <!-- Year 5 Row -->
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb;">Year 5</td>
+                                    ${topPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : '#f8fafc'};">
+                                            ${formatRateDisplay(pkg, 5)}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+
+                                <!-- Thereafter Row -->
+                                <tr style="background: white;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb;">Thereafter</td>
+                                    ${topPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'};">
+                                            ${formatRateDisplay(pkg, 'thereafter')}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+
+                                <!-- Average Rate Row -->
+                                <tr style="background: #dcfce7; border: 2px solid #16a34a;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #16a34a; background: #16a34a; color: white;">Avg First 2 Years</td>
+                                    ${topPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #16a34a; font-weight: bold; color: #16a34a; background: ${index === 0 ? '#bbf7d0' : '#dcfce7'};">
+                                            ${formatPercentage(pkg.avgFirst2Years)}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+
+                                <!-- Monthly Installment Row -->
+                                <tr style="background: #ddd6fe;">
+                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #8b5cf6; background: #8b5cf6; color: white;">Monthly Installment</td>
+                                    ${topPackages.map((pkg, index) => `
+                                        <td style="padding: 12px; text-align: center; border: 1px solid #8b5cf6; font-weight: bold; color: #7c3aed; background: ${index === 0 ? '#c4b5fd' : '#ddd6fe'};">
+                                            ${formatCurrency(pkg.monthlyInstallment)}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Package Details -->
+                    <div style="margin-bottom: 40px;">
+                        <h3 style="color: #1f2937; margin-bottom: 20px; font-size: 20px;">Package Details & Remarks</h3>
+                        ${topPackages.map((pkg, index) => `
+                            <div style="margin-bottom: 30px; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px; background: ${index === 0 ? '#fef3c7' : '#f9fafb'};">
+                                <h4 style="margin: 0 0 16px 0; color: #1f2937; display: flex; align-items: center; gap: 12px;">
+                                    <span style="background: #1e40af; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;">${index + 1}</span>
+                                    ${pkg.bank_name} - ${pkg.rate_type_category} Rate
+                                </h4>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 14px; margin-bottom: 16px;">
+                                    <div><strong>Property Type:</strong> ${pkg.property_type}</div>
+                                    <div><strong>Property Status:</strong> ${pkg.property_status}</div>
+                                    <div><strong>Buy Under:</strong> ${pkg.buy_under}</div>
+                                    <div><strong>Lock Period:</strong> ${pkg.lock_period || 'No Lock-in'}</div>
+                                    <div><strong>Min. Loan Size:</strong> ${formatCurrency(pkg.minimum_loan_size || 0)}</div>
+                                    <div><strong>Avg First 2 Years:</strong> <span style="color: #059669; font-weight: bold;">${formatPercentage(pkg.avgFirst2Years)}</span></div>
+                                </div>
+                                ${generatePackageFeatures(pkg) ? `
+                                    <div style="margin-bottom: 16px;">
+                                        <strong style="color: #1f2937;">Package Features:</strong><br>
+                                        <div style="margin-top: 8px;">
+                                            ${generatePackageFeaturesForReport(pkg)}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                                ${(pkg.custom_remarks || pkg.remarks) ? `
+                                    <div style="background: white; padding: 12px; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                                        <strong style="color: #1f2937;">Remarks:</strong><br>
+                                        <div style="margin-top: 8px; color: #4b5563; line-height: 1.5;">
+                                            ${(pkg.custom_remarks || pkg.remarks).replace(/\n/g, '<br>')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Disclaimer -->
+                    <div style="background: #fef2f2; padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444; margin-bottom: 30px;">
+                        <h4 style="margin: 0 0 12px 0; color: #dc2626; font-size: 16px;">Important Disclaimer</h4>
+                        <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #7f1d1d;">
+                            All interest rates are subject to bank's final approval and may vary based on individual credit assessment. Terms and conditions apply. This report is for informational purposes only and does not constitute a binding offer. Please consult with our mortgage specialists for personalized advice.
+                        </p>
+                    </div>
+
+                    <!-- Report Generation Info -->
+                    <div style="text-align: center; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                        <p style="margin: 0; font-size: 12px; color: #6b7280;">
+                            Report generated by Keyquest Mortgage on ${new Date().toLocaleString('en-SG')}
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            // Open modal with report content
+            openReportModal(reportContent);
+        }
+
+        function openReportModal(content) {
+            // Create modal if it doesn't exist
+            let modal = document.getElementById('report-modal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'report-modal';
+                modal.className = 'modal';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;';
+                modal.innerHTML = `
+                    <div style="background: white; border-radius: 16px; width: 100%; max-width: 1200px; max-height: 90vh; display: flex; flex-direction: column;">
+                        <div style="padding: 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="margin: 0; color: #1f2937;">Professional Mortgage Report</h3>
+                            <div style="display: flex; gap: 12px;">
+                                <button onclick="printReport()" style="padding: 8px 16px; background: #1e40af; color: white; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                    <i data-lucide="printer" style="width: 16px; height: 16px;"></i>
+                                    Print/Save PDF
+                                </button>
+                                <button onclick="closeReportModal()" style="padding: 8px 12px; background: #6b7280; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                                    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="report-content" style="flex: 1; overflow-y: auto;">
+                            ${content}
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            } else {
+                document.getElementById('report-content').innerHTML = content;
+            }
+
+            modal.style.display = 'flex';
+            
+            // Re-initialize Lucide icons for the modal
+            setTimeout(() => {
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }, 100);
+        }
+
+        function closeReportModal() {
+            const modal = document.getElementById('report-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function printReport() {
+            const originalTitle = document.title;
+            document.title = `Keyquest_Mortgage_Report_${new Date().toISOString().split('T')[0]}`;
+            
+            const reportContent = document.getElementById('report-content').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${document.title}</title>
+                    <style>
+                        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+                        @media print {
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${reportContent}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+            
+            document.title = originalTitle;
+        }
+
+        // Helper function to format rate display for the report
+        function formatRateDisplay(pkg, year) {
+            let rateType, operator, value;
+            
+            if (year === 'thereafter') {
+                rateType = pkg.thereafter_rate_type;
+                operator = pkg.thereafter_operator;
+                value = pkg.thereafter_value;
+            } else {
+                rateType = pkg[`year${year}_rate_type`];
+                operator = pkg[`year${year}_operator`];
+                value = pkg[`year${year}_value`];
+            }
+
+            if (!rateType || value === null || value === undefined) return '-';
+
+            if (rateType === 'FIXED') {
+                const rate = calculateInterestRate(pkg, year);
+                return `${formatPercentage(rate)} Fixed`;
+            } else {
+                const operatorSymbol = operator === '+' ? '+' : '-';
+                return `${rateType} ${operatorSymbol} ${value}%`;
+            }
+        }
+
+        function generatePackageFeaturesForReport(pkg) {
+            const features = [];
+            
+            if (pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) {
+                features.push('• Legal Fee Subsidy');
+            }
+            
+            if (pkg.valuation_subsidy === 'true' || pkg.valuation_subsidy === true) {
+                features.push('• Valuation Subsidy');
+            }
+            
+            if (pkg.partial_repayment === 'true' || pkg.partial_repayment === true) {
+                features.push('• Partial Repayment Allowed');
+            }
+            
+            if (pkg.waiver_due_to_sales === 'true' || pkg.waiver_due_to_sales === true) {
+                features.push('• Waiver Due to Sales');
+            }
+
+            if (pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true) {
+                features.push('• Free Package Conversion (12 Months)');
+            }
+
+            if (pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true) {
+                features.push('• Free Package Conversion (24 Months)');
+            }
+
+            if (pkg.free_package_conversion_36m === 'true' || pkg.free_package_conversion_36m === true) {
+                features.push('• Free Package Conversion (36 Months)');
+            }
+
+            return features.length > 0 ? features.join('<br>') : 'No special features';
+        }
+
+        function exportCSV() {
+            if (!currentResults.length) {
+                showNotification('No results to export. Please search for packages first.', 'error');
+                return;
+            }
+
+            const headers = [
+                'Rank', 'Bank Name', 'Avg First 2 Years (%)', 'Monthly Installment', 'Property Type', 
+                'Property Status', 'Buy Under', 'Rate Type', 'Lock Period', 'Min Loan Size', 'Custom Remarks'
+            ];
+
+            const csvContent = [
+                headers.join(','),
+                ...currentResults.map((pkg, index) => [
+                    index + 1,
+                    `"${pkg.bank_name}"`,
+                    pkg.avgFirst2Years.toFixed(3),
+                    pkg.monthlyInstallment.toFixed(2),
+                    `"${pkg.property_type}"`,
+                    `"${pkg.property_status}"`,
+                    `"${pkg.buy_under}"`,
+                    `"${pkg.rate_type_category}"`,
+                    `"${pkg.lock_period || 'No Lock-in'}"`,
+                    (pkg.minimum_loan_size || 0),
+                    `"${(pkg.custom_remarks || pkg.remarks || '').replace(/"/g, '""')}"`
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const filename = `mortgage_recommendations_${new Date().toISOString().split('T')[0]}.csv`;
+            
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Data exported successfully', 'success');
         }
 
         // ===================================
@@ -1633,6 +2112,23 @@
         function showNotification(message, type = 'info') {
             console.log(`[${type.toUpperCase()}] ${message}`);
             // You can implement a proper notification system here
+        }
+
+        // ===================================
+        // MODAL FUNCTIONS
+        // ===================================
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
         }
 
         // ===================================
