@@ -29,6 +29,7 @@ body {
 }
 
 /* Enhanced Sidebar */
+/* Enhanced Sidebar */
 .sidebar {
     width: 280px;
     background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
@@ -41,93 +42,73 @@ body {
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
-    pointer-events: none;
-}
-
+/* BETTER WHITE HEADER - More Height & Better Proportions */
 .sidebar-header {
-    padding: 20px;
-    background: white; /* Clean white background */
-    border-bottom: 1px solid #e5e7eb;
+    padding: 32px 20px; /* More vertical padding */
+    background: white;
+    border-bottom: 2px solid #e5e7eb; /* Thicker border for better separation */
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-height: 100px; /* Ensure minimum height */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Stronger shadow */
 }
 
-.sidebar-header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    animation: shimmer 6s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-    0%, 100% { transform: rotate(0deg); }
-    50% { transform: rotate(180deg); }
-}
-
+/* Logo styling */
 .logo {
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     transition: all 0.3s ease;
+    width: 100%;
 }
 
 .logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.02); /* Subtle hover effect */
 }
 
-/* Logo container - no extra styling needed on white background */
+/* Logo container */
 .logo-container {
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    width: 100%;
 }
 
-.logo:hover .logo-container {
-    transform: scale(1.05);
-}
-
-/* Logo image sizing */
+/* BIGGER LOGO - Much more prominent */
 .logo-image {
-    height: 50px; /* Slightly larger on white background */
+    height: 70px; /* Increased from 50px */
     width: auto;
+    max-width: 200px; /* Ensure it doesn't get too wide */
     object-fit: contain;
     transition: all 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1)); /* Subtle shadow */
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15)); /* Better shadow */
 }
 
+.logo:hover .logo-image {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+}
+
+/* Navigation menu - Better spacing */
 .nav-menu {
-    padding: 24px 0;
+    padding: 16px 0; /* Reduced top padding since header is bigger */
     background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
 }
 
-/* Keep all your existing nav-item styles unchanged */
+/* Navigation items - keep existing styles but improve active state */
 .nav-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 24px;
+    padding: 16px 24px; /* Slightly more padding */
     color: #94a3b8;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px; /* Slightly larger text */
     font-weight: 500;
     border: none;
     background: none;
@@ -150,8 +131,8 @@ body {
 
 .nav-item:hover {
     background: rgba(148, 163, 184, 0.1);
-    color: #e2e8f0;
-    transform: translateX(8px);
+    color: #f1f5f9;
+    transform: translateX(6px);
 }
 
 .nav-item:hover::before {
@@ -159,16 +140,39 @@ body {
 }
 
 .nav-item.active {
-    background: linear-gradient(90deg, rgba(220, 38, 38, 0.2) 0%, transparent 100%);
-    color: #dc2626;
-    border-right: 3px solid #dc2626;
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.15) 0%, transparent 100%);
+    color: #fca5a5; /* Lighter red for better contrast */
+    border-right: 4px solid #dc2626; /* Thicker border */
     font-weight: 600;
-    transform: translateX(8px);
+    transform: translateX(6px);
 }
 
 .nav-item.active::before {
     width: 100%;
     background: linear-gradient(90deg, rgba(220, 38, 38, 0.1), transparent);
+}
+
+.nav-item i {
+    width: 22px; /* Slightly larger icons */
+    height: 22px;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover i,
+.nav-item.active i {
+    transform: scale(1.1);
+}
+
+/* Optional: Add a subtle brand accent */
+.sidebar-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #dc2626 0%, #1e40af 100%);
 }
 
 /* Mobile Sidebar */
