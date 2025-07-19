@@ -100,34 +100,6 @@
             margin-bottom: 32px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-            font-size: 14px;
-        }
-
-        .form-input, .form-select {
-            padding: 14px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            transform: translateY(-1px);
-        }
-
         .search-actions {
             display: flex;
             gap: 16px;
@@ -493,27 +465,6 @@
             margin: 0;
         }
 
-        .loading-state {
-            text-align: center;
-            padding: 80px 32px;
-            color: #6b7280;
-        }
-
-        .loading-spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid #f1f5f9;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 24px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .input-group {
             position: relative;
         }
@@ -530,136 +481,6 @@
 
         .input-group .form-input {
             padding-left: 48px;
-        }
-
-        /* Report Modal Styles */
-        .report-modal .modal-content {
-            max-width: 90vw;
-            width: 1000px;
-            max-height: 90vh;
-        }
-
-        .report-modal .modal-body {
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-
-        .report-container {
-            background: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .report-header {
-            text-align: center;
-            padding: 32px;
-            border-bottom: 3px solid #667eea;
-            margin-bottom: 32px;
-        }
-
-        .report-logo {
-            font-size: 32px;
-            font-weight: 800;
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-
-        .report-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 16px 0 8px 0;
-        }
-
-        .report-subtitle {
-            color: #6b7280;
-            font-size: 16px;
-        }
-
-        .report-summary {
-            background: #f8fafc;
-            padding: 24px;
-            border-radius: 12px;
-            margin-bottom: 32px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .report-summary h3 {
-            margin: 0 0 16px 0;
-            color: #1f2937;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .summary-item {
-            text-align: center;
-        }
-
-        .summary-label {
-            font-size: 12px;
-            color: #6b7280;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .summary-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .report-package {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            overflow: hidden;
-        }
-
-        .report-package-header {
-            background: #f8fafc;
-            padding: 20px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .report-package-body {
-            padding: 20px;
-        }
-
-        .report-rate-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 12px;
-            margin: 16px 0;
-        }
-
-        .report-rate-item {
-            text-align: center;
-            padding: 12px;
-            background: #f9fafb;
-            border-radius: 8px;
-        }
-
-        @media print {
-            .modal-header, .modal-footer {
-                display: none !important;
-            }
-            
-            .report-modal .modal-content {
-                box-shadow: none;
-                border: none;
-                max-width: none;
-                width: 100%;
-                max-height: none;
-            }
-            
-            .report-modal .modal-body {
-                max-height: none;
-                overflow: visible;
-            }
         }
 
         @media (max-width: 768px) {
@@ -899,10 +720,6 @@
                         </h2>
                         <p class="results-subtitle" id="resultsSubtitle">Ranked by average first 2 years interest rates</p>
                         <div class="results-actions">
-                            <button class="btn-secondary" onclick="generateReport()">
-                                <i data-lucide="file-text"></i>
-                                Generate Report
-                            </button>
                             <button class="btn-secondary" onclick="exportResults()">
                                 <i data-lucide="download"></i>
                                 Export CSV
@@ -910,36 +727,6 @@
                         </div>
                     </div>
                     <div id="resultsContent"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Professional Report Modal -->
-    <div class="modal report-modal" id="report-modal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Professional Mortgage Report</h3>
-                    <button class="modal-close" onclick="closeModal('report-modal')">
-                        <i data-lucide="x"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="report-container" id="reportContent">
-                        <!-- Report content will be generated here -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-secondary" onclick="closeModal('report-modal')">Close</button>
-                    <button class="btn-primary" onclick="printReport()">
-                        <i data-lucide="printer"></i>
-                        Print Report
-                    </button>
-                    <button class="btn-primary" onclick="downloadReportPDF()">
-                        <i data-lucide="download"></i>
-                        Download PDF
-                    </button>
                 </div>
             </div>
         </div>
@@ -981,35 +768,29 @@
         let rateTypes = [];
         let currentResults = [];
         let searchCriteria = {};
-        let isLoading = false;
 
-        // Initialize page
+        // Initialize page using the same pattern as other admin pages
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Initializing Recommended Packages page...');
             
-            // Check authentication first
-            checkAuthentication();
-            
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            
             // Check if Supabase is available
             if (typeof supabaseClient === 'undefined') {
-                console.error('❌ Supabase client not available');
-                showNotification('System initialization failed. Please refresh the page.', 'error');
+                console.error('❌ Supabase client not available. Check script loading order.');
+                showNotification('Supabase connection failed', 'error');
                 return;
             }
             
-            console.log('✅ System initialized successfully');
+            console.log('✅ Supabase client loaded successfully');
             
-            // Load initial data
-            loadRateTypes();
-            loadPackages();
+            // Initialize using the same pattern as other pages
+            checkAuthentication();
+            loadData();
+            setupEventListeners();
         });
 
-        // Authentication check
+        // ===================================
+        // AUTHENTICATION - SAME AS OTHER PAGES
+        // ===================================
         async function checkAuthentication() {
             try {
                 const { data: { user }, error } = await supabaseClient.auth.getUser();
@@ -1035,6 +816,59 @@
             }
         }
 
+        // ===================================
+        // SIGN OUT FUNCTIONS - SAME AS OTHER PAGES
+        // ===================================
+        function confirmSignOut() {
+            document.getElementById('signout-modal').style.display = 'flex';
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                // Clear any stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login
+                window.location.href = 'login.html';
+                
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showNotification('Sign out failed: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                closeModal('signout-modal');
+            }
+        }
+
+        // ===================================
+        // DATA LOADING - FOLLOWS SAME PATTERN
+        // ===================================
+        async function loadData() {
+            try {
+                showLoading('Loading data...');
+                
+                // Load rate types first
+                await loadRateTypes();
+                
+                // Load packages
+                await loadPackages();
+                
+                showNotification('Data loaded successfully', 'success');
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showNotification('Error loading data: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
         // Load rate types for calculations
         async function loadRateTypes() {
             try {
@@ -1045,8 +879,10 @@
 
                 if (error) throw error;
                 rateTypes = data || [];
+                console.log(`Loaded ${rateTypes.length} rate types`);
             } catch (error) {
                 console.error('Error loading rate types:', error);
+                throw error;
             }
         }
 
@@ -1065,11 +901,33 @@
                 
             } catch (error) {
                 console.error('Error loading packages:', error);
-                showNotification('Error loading packages', 'error');
+                throw error;
             }
         }
 
-        // Select loan type
+        // ===================================
+        // EVENT LISTENERS SETUP
+        // ===================================
+        function setupEventListeners() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(event) {
+                const userDropdown = document.getElementById('userDropdown');
+                const userInfo = document.querySelector('.user-info');
+                
+                if (userInfo && !userInfo.contains(event.target)) {
+                    userDropdown?.classList.remove('show');
+                }
+            });
+        }
+
+        // ===================================
+        // LOAN TYPE SELECTION
+        // ===================================
         function selectLoanType(loanType) {
             currentLoanType = loanType;
             
@@ -1085,6 +943,10 @@
             document.getElementById('resultsContainer').style.display = 'none';
         }
 
+        // ===================================
+        // CALCULATION FUNCTIONS
+        // ===================================
+        
         // Calculate interest rate for a specific year
         function calculateInterestRate(pkg, year) {
             if (!pkg || !rateTypes.length) return 0;
@@ -1140,6 +1002,10 @@
             return monthlyPayment;
         }
 
+        // ===================================
+        // UTILITY FUNCTIONS
+        // ===================================
+        
         // Format currency
         function formatCurrency(amount) {
             return new Intl.NumberFormat('en-SG', {
@@ -1170,44 +1036,44 @@
             searchCriteria = {};
         }
 
-        // Search packages
+        // ===================================
+        // SEARCH FUNCTIONALITY
+        // ===================================
+        
         async function searchPackages() {
-            if (isLoading) return;
-
-            // Get form values
-            const propertyType = document.getElementById('propertyType').value;
-            const propertyStatus = document.getElementById('propertyStatus').value;
-            const buyUnder = document.getElementById('buyUnder').value;
-            const loanAmount = parseFloat(document.getElementById('loanAmount').value);
-            const loanTenure = parseInt(document.getElementById('loanTenure').value);
-            const rateType = document.getElementById('rateType').value;
-
-            // Store search criteria for report generation
-            searchCriteria = {
-                loanType: currentLoanType,
-                propertyType,
-                propertyStatus,
-                buyUnder,
-                loanAmount,
-                loanTenure,
-                rateType
-            };
-
-            // Validation
-            if (!loanAmount || loanAmount <= 0) {
-                showNotification('Please enter a valid loan amount', 'error');
-                return;
-            }
-
-            if (!loanTenure) {
-                showNotification('Please select loan tenure', 'error');
-                return;
-            }
-
-            isLoading = true;
-            showLoading('Searching for best rates...');
-
             try {
+                // Get form values
+                const propertyType = document.getElementById('propertyType').value;
+                const propertyStatus = document.getElementById('propertyStatus').value;
+                const buyUnder = document.getElementById('buyUnder').value;
+                const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+                const loanTenure = parseInt(document.getElementById('loanTenure').value);
+                const rateType = document.getElementById('rateType').value;
+
+                // Store search criteria
+                searchCriteria = {
+                    loanType: currentLoanType,
+                    propertyType,
+                    propertyStatus,
+                    buyUnder,
+                    loanAmount,
+                    loanTenure,
+                    rateType
+                };
+
+                // Validation
+                if (!loanAmount || loanAmount <= 0) {
+                    showNotification('Please enter a valid loan amount', 'error');
+                    return;
+                }
+
+                if (!loanTenure) {
+                    showNotification('Please select loan tenure', 'error');
+                    return;
+                }
+
+                showLoading('Searching for best rates...');
+
                 // Filter packages based on criteria
                 let filteredPackages = allPackages.filter(pkg => {
                     // Must match loan type
@@ -1242,8 +1108,7 @@
                         avgFirst2Years,
                         year1Rate,
                         year2Rate: calculateInterestRate(pkg, 2),
-                        monthlyInstallment,
-                        totalSavings: calculateTotalSavings(pkg, loanAmount, loanTenure)
+                        monthlyInstallment
                     };
                 }).filter(pkg => pkg.avgFirst2Years > 0) // Only include packages with valid rates
                   .sort((a, b) => a.avgFirst2Years - b.avgFirst2Years); // Sort by lowest average rate first
@@ -1253,32 +1118,16 @@
                 
             } catch (error) {
                 console.error('Error searching packages:', error);
-                showNotification('Error searching packages', 'error');
+                showNotification('Error searching packages: ' + error.message, 'error');
             } finally {
-                isLoading = false;
                 hideLoading();
             }
         }
 
-        // Calculate total savings over loan period
-        function calculateTotalSavings(pkg, loanAmount, loanTenure) {
-            let totalInterest = 0;
-            const monthlyPrincipal = loanAmount / (loanTenure * 12);
-            let remainingBalance = loanAmount;
-
-            for (let year = 1; year <= loanTenure; year++) {
-                const rate = calculateInterestRate(pkg, year <= 5 ? year : 'thereafter');
-                const annualInterest = remainingBalance * (rate / 100);
-                totalInterest += annualInterest;
-                remainingBalance -= (monthlyPrincipal * 12);
-                
-                if (remainingBalance <= 0) break;
-            }
-
-            return loanAmount - totalInterest;
-        }
-
-        // Display search results
+        // ===================================
+        // DISPLAY RESULTS
+        // ===================================
+        
         function displayResults(packages, loanAmount, loanTenure) {
             const resultsContainer = document.getElementById('resultsContainer');
             const resultsContent = document.getElementById('resultsContent');
@@ -1433,11 +1282,7 @@
                 features.push('<span class="feature-tag">Partial Repayment</span>');
             }
             
-            if (pkg.waiver_due_to_sales === 'thinking>
-Now I need to add more functions for the report generation, export functionality, and other features. Let me continue with the rest of the JavaScript code.
-</thinking>
-
-true || pkg.waiver_due_to_sales === true) {
+            if (pkg.waiver_due_to_sales === 'true' || pkg.waiver_due_to_sales === true) {
                 features.push('<span class="feature-tag">Waiver Due to Sales</span>');
             }
 
@@ -1456,155 +1301,10 @@ true || pkg.waiver_due_to_sales === true) {
             return features.join('');
         }
 
-        // Generate Professional Report
-        function generateReport() {
-            if (!currentResults.length) {
-                showNotification('No results to generate report', 'error');
-                return;
-            }
-
-            const reportContent = document.getElementById('reportContent');
-            const reportDate = new Date().toLocaleDateString('en-SG', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-
-            const bestPackage = currentResults[0];
-
-            reportContent.innerHTML = `
-                <div class="report-header">
-                    <div class="report-logo">KEYQUEST MORTGAGE</div>
-                    <div class="report-title">Mortgage Package Recommendation Report</div>
-                    <div class="report-subtitle">Generated on ${reportDate}</div>
-                </div>
-
-                <div class="report-summary">
-                    <h3>Search Summary</h3>
-                    <div class="summary-grid">
-                        <div class="summary-item">
-                            <div class="summary-label">Loan Type</div>
-                            <div class="summary-value">${searchCriteria.loanType}</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Loan Amount</div>
-                            <div class="summary-value">${formatCurrency(searchCriteria.loanAmount)}</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Loan Tenure</div>
-                            <div class="summary-value">${searchCriteria.loanTenure} years</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Property Type</div>
-                            <div class="summary-value">${searchCriteria.propertyType || 'Any'}</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Property Status</div>
-                            <div class="summary-value">${searchCriteria.propertyStatus || 'Any'}</div>
-                        </div>
-                        <div class="summary-item">
-                            <div class="summary-label">Packages Found</div>
-                            <div class="summary-value">${currentResults.length}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <h3 style="color: #1f2937; margin: 32px 0 16px 0;">Recommended Packages (Ranked by Average First 2 Years Interest Rate)</h3>
-
-                ${currentResults.map((pkg, index) => `
-                    <div class="report-package">
-                        <div class="report-package-header">
-                            <h4 style="margin: 0; color: #1f2937; display: flex; align-items: center; gap: 12px;">
-                                <span style="background: ${index === 0 ? '#fbbf24' : '#10b981'}; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">
-                                    ${index + 1}
-                                </span>
-                                ${pkg.bank_name} - ${pkg.rate_type_category} Rate Package
-                            </h4>
-                            <div style="margin-top: 8px; display: flex; gap: 24px;">
-                                <span><strong>Average First 2 Years Rate:</strong> ${formatPercentage(pkg.avgFirst2Years)}</span>
-                                <span><strong>Monthly Installment:</strong> ${formatCurrency(pkg.monthlyInstallment)}</span>
-                            </div>
-                        </div>
-                        <div class="report-package-body">
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
-                                <div><strong>Property Type:</strong> ${pkg.property_type}</div>
-                                <div><strong>Property Status:</strong> ${pkg.property_status}</div>
-                                <div><strong>Buy Under:</strong> ${pkg.buy_under}</div>
-                                <div><strong>Lock Period:</strong> ${pkg.lock_period || 'No Lock-in'}</div>
-                                <div><strong>Min. Loan Size:</strong> ${formatCurrency(pkg.minimum_loan_size || 0)}</div>
-                            </div>
-
-                            <div>
-                                <strong>Interest Rate Schedule:</strong>
-                                <div class="report-rate-grid">
-                                    ${[1, 2, 3, 4, 5].map(year => {
-                                        const rate = calculateInterestRate(pkg, year);
-                                        return rate > 0 ? `
-                                            <div class="report-rate-item">
-                                                <div style="font-size: 12px; color: #6b7280;">Year ${year}</div>
-                                                <div style="font-weight: 700; color: #059669;">${formatPercentage(rate)}</div>
-                                            </div>
-                                        ` : '';
-                                    }).join('')}
-                                    ${calculateInterestRate(pkg, 'thereafter') > 0 ? `
-                                        <div class="report-rate-item">
-                                            <div style="font-size: 12px; color: #6b7280;">Thereafter</div>
-                                            <div style="font-weight: 700; color: #059669;">${formatPercentage(calculateInterestRate(pkg, 'thereafter'))}</div>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-
-                            ${pkg.remarks ? `
-                                <div style="margin-top: 16px; padding: 12px; background: #fef3c7; border-radius: 8px; border: 1px solid #fcd34d;">
-                                    <strong style="color: #92400e;">Important Notes:</strong>
-                                    <div style="color: #92400e; margin-top: 4px;">${pkg.remarks}</div>
-                                </div>
-                            ` : ''}
-
-                            ${generatePackageFeatures(pkg) ? `
-                                <div style="margin-top: 16px;">
-                                    <strong>Package Features:</strong>
-                                    <div style="margin-top: 8px;">
-                                        ${generatePackageFeatures(pkg).replace(/feature-tag/g, 'feature-tag').replace(/<span class="feature-tag([^"]*)">/g, '<span style="display: inline-block; padding: 4px 8px; margin: 2px; background: #dbeafe; color: #1e40af; border-radius: 12px; font-size: 12px; font-weight: 500;">')}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `).join('')}
-
-                <div style="margin-top: 32px; padding: 24px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
-                    <h4 style="margin: 0 0 12px 0; color: #1f2937;">Disclaimer</h4>
-                    <p style="margin: 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
-                        This report is generated based on current market rates and package information available at the time of generation. 
-                        Interest rates and terms are subject to change based on market conditions and bank policies. 
-                        Please consult with our mortgage specialists for the most up-to-date information and personalized advice.
-                    </p>
-                </div>
-
-                <div style="margin-top: 24px; text-align: center; color: #6b7280; font-size: 12px;">
-                    <p>Report generated by Keyquest Mortgage - ${reportDate}</p>
-                </div>
-            `;
-
-            openModal('report-modal');
-        }
-
-        // Print Report
-        function printReport() {
-            window.print();
-        }
-
-        // Download Report as PDF (simplified version)
-        function downloadReportPDF() {
-            // For a full PDF solution, you would integrate with a library like jsPDF
-            // For now, we'll trigger the print dialog which allows saving as PDF
-            showNotification('Use your browser\'s print function and select "Save as PDF" to download', 'info');
-            printReport();
-        }
-
-        // Export Results to CSV
+        // ===================================
+        // EXPORT FUNCTIONALITY
+        // ===================================
+        
         function exportResults() {
             if (!currentResults.length) {
                 showNotification('No results to export', 'error');
@@ -1650,103 +1350,21 @@ true || pkg.waiver_due_to_sales === true) {
             showNotification('Report exported successfully', 'success');
         }
 
-        // Enquire about package
+        // ===================================
+        // OTHER FUNCTIONS
+        // ===================================
+        
         function enquirePackage(packageId) {
-            // Navigate to enquiry page with package pre-selected
             window.location.href = `enquiry.html?package=${packageId}`;
         }
 
-        // Utility functions
-        function showLoading(message = 'Loading...') {
-            document.getElementById('loading-text').textContent = message;
-            document.getElementById('loading-overlay').style.display = 'flex';
-        }
-
-        function hideLoading() {
-            document.getElementById('loading-overlay').style.display = 'none';
-        }
-
-        function showNotification(message, type = 'info') {
-            // Create notification element
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            
-            const colors = {
-                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
-                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
-                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8' }
-            };
-
-            const color = colors[type] || colors.info;
-
-            notification.innerHTML = `
-                <div style="
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: ${color.bg};
-                    border: 1px solid ${color.border};
-                    color: ${color.text};
-                    padding: 16px 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                    z-index: 10000;
-                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                    font-size: 14px;
-                    font-weight: 500;
-                    max-width: 400px;
-                    animation: slideIn 0.3s ease-out;
-                ">
-                    ${message}
-                </div>
-                <style>
-                    @keyframes slideIn {
-                        from {
-                            transform: translateX(100%);
-                            opacity: 0;
-                        }
-                        to {
-                            transform: translateX(0);
-                            opacity: 1;
-                        }
-                    }
-                </style>
-            `;
-
-            document.body.appendChild(notification);
-
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 5000);
-        }
-
-        // Sidebar functions
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        }
-
-        // User dropdown functions
+        // User dropdown functions - SAME AS OTHER PAGES
         function toggleUserDropdown() {
             const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('show');
+            dropdown?.classList.toggle('show');
         }
 
-        // Modal functions
+        // Modal functions - SAME AS OTHER PAGES
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
         }
@@ -1755,43 +1373,22 @@ true || pkg.waiver_due_to_sales === true) {
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // Sign out functions
-        function confirmSignOut() {
-            openModal('signout-modal');
-        }
-
-        async function performSignOut() {
-            try {
-                showLoading('Signing out...');
-                
-                const { error } = await supabaseClient.auth.signOut();
-                if (error) throw error;
-                
-                // Clear any stored data
-                localStorage.clear();
-                sessionStorage.clear();
-                
-                // Redirect to login
-                window.location.href = 'login.html';
-                
-            } catch (error) {
-                console.error('Sign out error:', error);
-                showNotification('Sign out failed: ' + error.message, 'error');
-            } finally {
-                hideLoading();
-                closeModal('signout-modal');
-            }
-        }
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
-            const userDropdown = document.getElementById('userDropdown');
-            const userInfo = document.querySelector('.user-info');
+        // Sidebar functions - SAME AS OTHER PAGES
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
             
-            if (!userInfo.contains(event.target)) {
-                userDropdown.classList.remove('show');
-            }
-        });
+            sidebar?.classList.toggle('open');
+            overlay?.classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar?.classList.remove('open');
+            overlay?.classList.remove('active');
+        }
     </script>
 </body>
 </html>
