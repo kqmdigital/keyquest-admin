@@ -839,7 +839,7 @@
                         <i data-lucide="search"></i>
                         Enter Your Requirements
                     </h2>
-                    <form class="search-form" id="searchForm">
+                    <form class="search-form" id="searchForm" onsubmit="searchPackages(event)">
                         <div class="form-group">
                             <label class="form-label">Property Type</label>
                             <select class="form-select" id="propertyType">
@@ -896,7 +896,7 @@
                 </div>
 
                 <!-- Results Section -->
-                <div class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-section" id="resultsContainer" style="display: none;">
                     <div class="results-header">
                         <div class="results-title">
                             <i data-lucide="trending-up"></i>
@@ -917,7 +917,7 @@
                         <i data-lucide="search-x"></i>
                         <h3>No Matching Packages Found</h3>
                         <p>Try adjusting your search criteria to find more suitable options.</p>
-                        <button class="btn btn-primary" onclick="resetSearchForm()">
+                        <button class="btn btn-primary" onclick="clearFilters()">
                             <i data-lucide="refresh-cw"></i>
                             Reset Search
                         </button>
@@ -936,92 +936,163 @@
     </div>
 
     <script>
-        // All existing JavaScript functionality preserved
+        // ===================================
+        // GLOBAL VARIABLES - PRESERVED FROM ORIGINAL
+        // ===================================
         let allPackages = [];
         let rateTypes = [];
         let currentLoanType = 'New Home Loan';
+        let currentResults = [];
+        let searchCriteria = {};
 
-        // Initialize page
+        // ===================================
+        // INITIALIZATION - PRESERVED FROM ORIGINAL
+        // ===================================
         document.addEventListener('DOMContentLoaded', function() {
-            initializeLucideIcons();
-            loadInitialData();
+            console.log('🚀 Recommended Packages page loading...');
+            checkAuthentication();
             setupEventListeners();
+            loadData();
         });
 
-        function initializeLucideIcons() {
+        // ===================================
+        // AUTHENTICATION CHECK - PRESERVED FROM ORIGINAL
+        // ===================================
+        async function checkAuthentication() {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    console.warn('❌ No authenticated user found, redirecting to login');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Update user display
+                if (user.email) {
+                    document.getElementById('userName').textContent = user.email.split('@')[0];
+                    document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('💥 Auth check failed:', error);
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ===================================
+        // EVENT LISTENERS SETUP - PRESERVED FROM ORIGINAL
+        // ===================================
+        function setupEventListeners() {
+            // Initialize Lucide icons
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(event) {
+                const userDropdown = document.getElementById('userDropdown');
+                const userInfo = document.querySelector('.user-info');
+                
+                if (userInfo && !userInfo.contains(event.target)) {
+                    userDropdown?.classList.remove('show');
+                }
+            });
         }
 
-        function setupEventListeners() {
-            const searchForm = document.getElementById('searchForm');
-            if (searchForm) {
-                searchForm.addEventListener('submit', handleSearch);
-            }
-        }
-
-        async function loadInitialData() {
+        // ===================================
+        // DATA LOADING - PRESERVED FROM ORIGINAL
+        // ===================================
+        async function loadData() {
+            console.log('🔄 Starting data load...');
+            
             try {
-                showLoading('Loading data...');
+                showLoading('Loading rate types...');
                 
-                await Promise.all([
-                    loadRateTypes(),
-                    loadAllPackages()
-                ]);
+                // Load rate types first
+                console.log('📊 Loading rate types...');
+                await loadRateTypes();
+                console.log(`✅ Loaded ${rateTypes.length} rate types`);
                 
+                showLoading('Loading packages...');
+                
+                // Load packages
+                console.log('📦 Loading packages...');
+                await loadPackages();
+                console.log(`✅ Loaded ${allPackages.length} packages`);
+                
+                // Force hide any loading overlays
                 hideLoading();
-                console.log('✅ Initial data loaded successfully');
+                
+                showNotification(`Data loaded successfully: ${rateTypes.length} rate types, ${allPackages.length} packages`, 'success');
+                
             } catch (error) {
-                console.error('❌ Failed to load initial data:', error);
-                showNotification('Failed to load data: ' + error.message, 'error');
+                console.error('❌ Error loading data:', error);
+                showNotification('Error loading data: ' + error.message, 'error');
+            } finally {
+                // Force hide loading to ensure it's properly cleared
                 hideLoading();
+                console.log('🏁 Data loading completed');
             }
         }
 
+        // Load rate types for calculations - PRESERVED FROM ORIGINAL
         async function loadRateTypes() {
             try {
+                console.log('🔍 Querying rate_types table...');
                 const { data, error } = await supabaseClient
                     .from('rate_types')
-                    .select('*')
+                    .select('rate_type, rate_value')
                     .order('rate_type');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Supabase error loading rate types:', error);
+                    throw error;
+                }
+                
                 rateTypes = data || [];
-                console.log('📊 Rate types loaded:', rateTypes.length);
+                console.log(`✅ Successfully loaded ${rateTypes.length} rate types:`, rateTypes.slice(0, 3));
+                
+                if (rateTypes.length === 0) {
+                    console.warn('⚠️ No rate types found in database');
+                }
+                
             } catch (error) {
-                console.error('❌ Error loading rate types:', error);
-                throw error;
+                console.error('❌ Error in loadRateTypes:', error);
+                throw new Error(`Failed to load rate types: ${error.message}`);
             }
         }
 
-        async function loadAllPackages() {
+        // Load all packages - PRESERVED FROM ORIGINAL
+        async function loadPackages() {
             try {
+                console.log('🔍 Querying rate_packages table...');
                 const { data, error } = await supabaseClient
                     .from('rate_packages')
-                    .select(`
-                        *,
-                        banks (bank_name),
-                        rate_types (rate_type, rate_type_category)
-                    `)
-                    .order('created_at', { ascending: false });
+                    .select('*')
+                    .order('bank_name');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Supabase error loading packages:', error);
+                    throw error;
+                }
+
+                allPackages = data || [];
+                console.log(`✅ Successfully loaded ${allPackages.length} packages`);
                 
-                allPackages = (data || []).map(pkg => ({
-                    ...pkg,
-                    bank_name: pkg.banks?.bank_name || 'Unknown Bank',
-                    rate_type: pkg.rate_types?.rate_type || 'Unknown Rate Type',
-                    rate_type_category: pkg.rate_types?.rate_type_category || 'Unknown Category'
-                }));
+                if (allPackages.length === 0) {
+                    console.warn('⚠️ No packages found in database');
+                } else {
+                    console.log('📦 Sample package:', allPackages[0]);
+                }
                 
-                console.log('📦 Packages loaded:', allPackages.length);
             } catch (error) {
-                console.error('❌ Error loading packages:', error);
-                throw error;
+                console.error('❌ Error in loadPackages:', error);
+                throw new Error(`Failed to load packages: ${error.message}`);
             }
         }
 
+        // ===================================
+        // LOAN TYPE SELECTION - PRESERVED FROM ORIGINAL
+        // ===================================
         function selectLoanType(loanType) {
             currentLoanType = loanType;
             
@@ -1033,32 +1104,111 @@
             document.querySelector(`[data-loan-type="${loanType}"]`).classList.add('active');
             
             // Clear previous results
-            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'none';
+            currentResults = [];
             
             console.log('🔄 Loan type selected:', loanType);
         }
 
-        async function handleSearch(event) {
-            event.preventDefault();
+        // ===================================
+        // SEARCH FUNCTIONALITY - PRESERVED FROM ORIGINAL
+        // ===================================
+        async function searchPackages(event) {
+            if (event) event.preventDefault();
             
-            const searchParams = {
-                loanType: currentLoanType,
-                propertyType: document.getElementById('propertyType').value,
-                propertyStatus: document.getElementById('propertyStatus').value,
-                buyUnder: document.getElementById('buyUnder').value,
-                loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
-                loanTenure: parseInt(document.getElementById('loanTenure').value) || 30
-            };
-
-            console.log('🔍 Search parameters:', searchParams);
-
             try {
-                showLoading('Searching for the best packages...');
-                
-                const filteredPackages = filterPackages(searchParams);
-                const recommendedPackages = calculateRecommendations(filteredPackages, searchParams);
-                
-                displayResults(recommendedPackages, searchParams);
+                // Get form values
+                const propertyType = document.getElementById('propertyType').value;
+                const propertyStatus = document.getElementById('propertyStatus').value;
+                const buyUnder = document.getElementById('buyUnder').value;
+                const loanAmount = parseFloat(document.getElementById('loanAmount').value);
+                const loanTenure = parseInt(document.getElementById('loanTenure').value);
+
+                // Store search criteria
+                searchCriteria = {
+                    loanType: currentLoanType,
+                    propertyType,
+                    propertyStatus,
+                    buyUnder,
+                    loanAmount,
+                    loanTenure
+                };
+
+                console.log('🔍 Search parameters:', searchCriteria);
+
+                // Validation
+                if (!loanAmount || loanAmount <= 0) {
+                    showNotification('Please enter a valid loan amount', 'error');
+                    return;
+                }
+
+                if (!loanTenure) {
+                    showNotification('Please select a loan tenure', 'error');
+                    return;
+                }
+
+                showLoading('Searching for packages...');
+
+                // Filter packages based on criteria
+                let filteredPackages = allPackages.filter(pkg => {
+                    // Filter by loan type
+                    if (currentLoanType === 'New Home Loan' && pkg.loan_type !== 'New Home Loan') return false;
+                    if (currentLoanType === 'Refinancing Home Loan' && pkg.loan_type !== 'Refinancing Home Loan') return false;
+                    if (currentLoanType === 'Commercial/Industrial' && 
+                        !['Commercial', 'Industrial'].includes(pkg.loan_type)) return false;
+
+                    // Filter by property type
+                    if (propertyType && pkg.property_type !== propertyType) return false;
+
+                    // Filter by property status
+                    if (propertyStatus && pkg.property_status !== propertyStatus) return false;
+
+                    // Filter by buy under
+                    if (buyUnder && pkg.buy_under !== buyUnder) return false;
+
+                    // Filter by minimum loan amount
+                    if (loanAmount > 0 && pkg.minimum_loan_size && loanAmount < pkg.minimum_loan_size) return false;
+
+                    return true;
+                });
+
+                console.log(`🔍 Found ${filteredPackages.length} matching packages`);
+
+                // Calculate recommendations
+                const processedPackages = filteredPackages.map(pkg => {
+                    const avgFirst2Years = calculateAverageFirst2Years(pkg);
+                    const monthlyInstallment = calculateMonthlyInstallment(pkg, loanAmount, loanTenure);
+                    
+                    // Calculate recommendation score
+                    let score = 0;
+                    
+                    // Lower rates get higher scores
+                    if (avgFirst2Years) {
+                        score += (10 - avgFirst2Years) * 10;
+                    }
+                    
+                    // Lower monthly installments get higher scores
+                    if (monthlyInstallment) {
+                        score += Math.max(0, 100 - (monthlyInstallment / 100));
+                    }
+                    
+                    // Special features add to score
+                    if (pkg.legal_fee_subsidy) score += 20;
+                    if (pkg.cash_rebate) score += 15;
+                    if (pkg.free_package_conversion_12m || pkg.free_package_conversion_24m || pkg.free_package_conversion_36m) score += 10;
+
+                    return {
+                        ...pkg,
+                        avgFirst2Years,
+                        monthlyInstallment,
+                        recommendationScore: score
+                    };
+                })
+                .sort((a, b) => b.recommendationScore - a.recommendationScore)
+                .slice(0, 10); // Top 10 recommendations
+
+                currentResults = processedPackages;
+                displayResults(processedPackages);
                 hideLoading();
                 
             } catch (error) {
@@ -1068,78 +1218,30 @@
             }
         }
 
-        function filterPackages(params) {
-            return allPackages.filter(pkg => {
-                // Filter by loan type
-                if (params.loanType === 'New Home Loan' && pkg.loan_type !== 'New Home Loan') return false;
-                if (params.loanType === 'Refinancing Home Loan' && pkg.loan_type !== 'Refinancing Home Loan') return false;
-                if (params.loanType === 'Commercial/Industrial' && 
-                    !['Commercial', 'Industrial'].includes(pkg.loan_type)) return false;
-
-                // Filter by property type
-                if (params.propertyType && pkg.property_type !== params.propertyType) return false;
-
-                // Filter by property status
-                if (params.propertyStatus && pkg.property_status !== params.propertyStatus) return false;
-
-                // Filter by buy under
-                if (params.buyUnder && pkg.buy_under !== params.buyUnder) return false;
-
-                // Filter by minimum loan amount
-                if (params.loanAmount > 0 && pkg.minimum_loan_size && params.loanAmount < pkg.minimum_loan_size) return false;
-
-                return true;
-            });
-        }
-
-        function calculateRecommendations(packages, params) {
-            return packages.map(pkg => {
-                const monthlyInstallment = calculateMonthlyInstallment(pkg, params.loanAmount, params.loanTenure);
-                const avgFirst2Years = calculateAverageFirst2Years(pkg);
-                const totalInterest = calculateTotalInterest(pkg, params.loanAmount, params.loanTenure);
-                
-                // Calculate recommendation score
-                let score = 0;
-                
-                // Lower rates get higher scores
-                if (avgFirst2Years) {
-                    score += (10 - avgFirst2Years) * 10;
-                }
-                
-                // Lower monthly installments get higher scores
-                if (monthlyInstallment) {
-                    score += Math.max(0, 100 - (monthlyInstallment / 100));
-                }
-                
-                // Special features add to score
-                if (pkg.legal_fee_subsidy) score += 20;
-                if (pkg.cash_rebate) score += 15;
-                if (pkg.free_package_conversion) score += 10;
-
-                return {
-                    ...pkg,
-                    monthlyInstallment,
-                    avgFirst2Years,
-                    totalInterest,
-                    recommendationScore: score
-                };
-            })
-            .sort((a, b) => b.recommendationScore - a.recommendationScore)
-            .slice(0, 10); // Top 10 recommendations
+        // ===================================
+        // CALCULATION FUNCTIONS - PRESERVED FROM ORIGINAL
+        // ===================================
+        function calculateAverageFirst2Years(pkg) {
+            const year1Rate = calculateInterestRate(pkg, 1);
+            const year2Rate = calculateInterestRate(pkg, 2);
+            
+            if (year1Rate > 0 && year2Rate > 0) {
+                return (year1Rate + year2Rate) / 2;
+            } else if (year1Rate > 0) {
+                return year1Rate;
+            } else if (year2Rate > 0) {
+                return year2Rate;
+            }
+            
+            return 0;
         }
 
         function calculateMonthlyInstallment(pkg, loanAmount, tenure) {
-            const yearlyRates = [
-                pkg.interest_rate_year_1,
-                pkg.interest_rate_year_2,
-                pkg.interest_rate_year_3,
-                pkg.interest_rate_year_4,
-                pkg.interest_rate_year_5
-            ].filter(rate => rate != null);
+            if (!loanAmount || !tenure) return 0;
 
-            if (yearlyRates.length === 0 || !loanAmount) return 0;
+            const avgRate = calculateAverageFirst2Years(pkg);
+            if (avgRate <= 0) return 0;
 
-            const avgRate = yearlyRates.reduce((sum, rate) => sum + rate, 0) / yearlyRates.length;
             const monthlyRate = avgRate / 100 / 12;
             const numPayments = tenure * 12;
 
@@ -1151,29 +1253,77 @@
             return monthlyPayment;
         }
 
-        function calculateAverageFirst2Years(pkg) {
-            const year1 = pkg.interest_rate_year_1;
-            const year2 = pkg.interest_rate_year_2;
+        // Calculate interest rate for a specific year - PRESERVED FROM ORIGINAL
+        function calculateInterestRate(pkg, year) {
+            let rateType, operator, value;
             
-            if (year1 != null && year2 != null) {
-                return (year1 + year2) / 2;
-            } else if (year1 != null) {
-                return year1;
-            } else if (year2 != null) {
-                return year2;
+            if (year === 'thereafter') {
+                rateType = pkg.thereafter_rate_type;
+                operator = pkg.thereafter_operator;
+                value = pkg.thereafter_value;
+            } else {
+                rateType = pkg[`year${year}_rate_type`];
+                operator = pkg[`year${year}_operator`];
+                value = pkg[`year${year}_value`];
             }
+
+            if (!rateType || value === null || value === undefined) {
+                return 0;
+            }
+
+            if (rateType === 'FIXED') {
+                return parseFloat(value) || 0;
+            } else {
+                // Find the reference rate
+                const referenceRate = rateTypes.find(rt => rt.rate_type === rateType);
+                if (!referenceRate) {
+                    console.warn(`❌ Reference rate type not found: ${rateType}`);
+                    return 0;
+                }
+
+                const baseRate = parseFloat(referenceRate.rate_value) || 0;
+                const adjustment = parseFloat(value) || 0;
+                
+                if (operator === '+') {
+                    return baseRate + adjustment;
+                } else if (operator === '-') {
+                    return Math.max(0, baseRate - adjustment);
+                } else {
+                    return baseRate;
+                }
+            }
+        }
+
+        // Format rate display for tables - PRESERVED FROM ORIGINAL
+        function formatRateDisplay(pkg, year) {
+            let rateType, operator, value;
             
-            return 0;
+            if (year === 'thereafter') {
+                rateType = pkg.thereafter_rate_type;
+                operator = pkg.thereafter_operator;
+                value = pkg.thereafter_value;
+            } else {
+                rateType = pkg[`year${year}_rate_type`];
+                operator = pkg[`year${year}_operator`];
+                value = pkg[`year${year}_value`];
+            }
+
+            if (!rateType || value === null || value === undefined) return '-';
+
+            if (rateType === 'FIXED') {
+                const rate = calculateInterestRate(pkg, year);
+                return `${formatPercentage(rate)} Fixed`;
+            } else {
+                const operatorSymbol = operator === '+' ? '+' : '-';
+                return `${rateType} ${operatorSymbol} ${value}%`;
+            }
         }
 
-        function calculateTotalInterest(pkg, loanAmount, tenure) {
-            const monthlyInstallment = calculateMonthlyInstallment(pkg, loanAmount, tenure);
-            const totalPayments = monthlyInstallment * tenure * 12;
-            return totalPayments - loanAmount;
-        }
-
-        function displayResults(packages, searchParams) {
-            const resultsSection = document.getElementById('resultsSection');
+        // ===================================
+        // DISPLAY FUNCTIONS - ENHANCED UI WITH PRESERVED LOGIC
+        // ===================================
+        function displayResults(packages) {
+            const resultsContainer = document.getElementById('resultsContainer');
             const packagesContainer = document.getElementById('packagesContainer');
             const resultsCount = document.getElementById('resultsCount');
             const noResults = document.getElementById('noResults');
@@ -1185,19 +1335,23 @@
                 noResults.style.display = 'block';
             } else {
                 noResults.style.display = 'none';
-                packagesContainer.innerHTML = packages.map((pkg, index) => createPackageCard(pkg, index, searchParams)).join('');
+                packagesContainer.innerHTML = packages.map((pkg, index) => createPackageCard(pkg, index)).join('');
             }
 
-            resultsSection.style.display = 'block';
-            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            resultsContainer.style.display = 'block';
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
             
             // Re-initialize Lucide icons for dynamically added content
-            setTimeout(initializeLucideIcons, 100);
+            setTimeout(() => {
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            }, 100);
         }
 
-        function createPackageCard(pkg, index, searchParams) {
+        function createPackageCard(pkg, index) {
             const rateSchedule = generateRateSchedule(pkg);
-            const features = generateFeatures(pkg);
+            const features = generatePackageFeatures(pkg);
             
             return `
                 <div class="package-card">
@@ -1205,10 +1359,10 @@
                     
                     <div class="package-header">
                         <div class="bank-info">
-                            <h3>${pkg.bank_name}</h3>
+                            <h3>${pkg.bank_name || 'Unknown Bank'}</h3>
                             <div class="package-type">
                                 <i data-lucide="percent"></i>
-                                ${pkg.rate_type_category} Rate • ${pkg.lock_period || 'No Lock-in'}
+                                ${pkg.rate_type_category || 'Unknown'} Rate • ${pkg.lock_period || 'No Lock-in'}
                             </div>
                         </div>
                         <div class="rate-info">
@@ -1221,15 +1375,15 @@
                     <div class="package-details">
                         <div class="detail-item">
                             <span class="detail-label">Property Type:</span>
-                            <span class="detail-value">${pkg.property_type}</span>
+                            <span class="detail-value">${pkg.property_type || 'N/A'}</span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Property Status:</span>
-                            <span class="detail-value">${pkg.property_status}</span>
+                            <span class="detail-value">${pkg.property_status || 'N/A'}</span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Buy Under:</span>
-                            <span class="detail-value">${pkg.buy_under}</span>
+                            <span class="detail-value">${pkg.buy_under || 'N/A'}</span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Min. Loan Size:</span>
@@ -1282,28 +1436,37 @@
         }
 
         function generateRateSchedule(pkg) {
-            const rates = [
-                { period: 'Year 1', rate: pkg.interest_rate_year_1 },
-                { period: 'Year 2', rate: pkg.interest_rate_year_2 },
-                { period: 'Year 3', rate: pkg.interest_rate_year_3 },
-                { period: 'Year 4', rate: pkg.interest_rate_year_4 },
-                { period: 'Year 5', rate: pkg.interest_rate_year_5 }
-            ].filter(item => item.rate != null);
+            const rates = [];
+            
+            for (let year = 1; year <= 5; year++) {
+                const rate = calculateInterestRate(pkg, year);
+                if (rate > 0) {
+                    rates.push(`
+                        <div class="rate-item">
+                            <div class="rate-period">Year ${year}</div>
+                            <div class="rate-value">${formatPercentage(rate)}</div>
+                        </div>
+                    `);
+                }
+            }
 
-            if (rates.length === 0) return null;
+            const thereafterRate = calculateInterestRate(pkg, 'thereafter');
+            if (thereafterRate > 0) {
+                rates.push(`
+                    <div class="rate-item">
+                        <div class="rate-period">Thereafter</div>
+                        <div class="rate-value">${formatPercentage(thereafterRate)}</div>
+                    </div>
+                `);
+            }
 
-            return rates.map(item => `
-                <div class="rate-item">
-                    <div class="rate-period">${item.period}</div>
-                    <div class="rate-value">${formatPercentage(item.rate)}</div>
-                </div>
-            `).join('');
+            return rates.length > 0 ? rates.join('') : null;
         }
 
-        function generateFeatures(pkg) {
+        function generatePackageFeatures(pkg) {
             const features = [];
             
-            if (pkg.legal_fee_subsidy) {
+            if (pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) {
                 features.push(`
                     <div class="feature-tag">
                         <i data-lucide="shield-check"></i>
@@ -1312,7 +1475,7 @@
                 `);
             }
             
-            if (pkg.cash_rebate) {
+            if (pkg.cash_rebate === 'true' || pkg.cash_rebate === true) {
                 features.push(`
                     <div class="feature-tag">
                         <i data-lucide="dollar-sign"></i>
@@ -1321,25 +1484,37 @@
                 `);
             }
             
-            if (pkg.free_package_conversion) {
+            if (pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true) {
                 features.push(`
                     <div class="feature-tag">
                         <i data-lucide="refresh-cw"></i>
-                        Free Package Conversion
+                        Free Conversion (12M)
                     </div>
                 `);
             }
 
-            return features.join('');
+            if (pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true) {
+                features.push(`
+                    <div class="feature-tag">
+                        <i data-lucide="refresh-cw"></i>
+                        Free Conversion (24M)
+                    </div>
+                `);
+            }
+
+            return features.length > 0 ? features.join('') : null;
         }
 
+        // ===================================
+        // UTILITY FUNCTIONS - PRESERVED FROM ORIGINAL
+        // ===================================
         function formatPercentage(value) {
-            if (value == null) return 'N/A';
+            if (value == null || value === 0) return 'N/A';
             return `${value.toFixed(2)}%`;
         }
 
         function formatCurrency(value) {
-            if (!value) return '$0';
+            if (!value || value === 0) return '$0';
             return new Intl.NumberFormat('en-SG', {
                 style: 'currency',
                 currency: 'SGD',
@@ -1348,21 +1523,69 @@
             }).format(value);
         }
 
-        function resetSearchForm() {
-            document.getElementById('searchForm').reset();
-            document.getElementById('resultsSection').style.display = 'none';
+        // Clear all filters - PRESERVED FROM ORIGINAL
+        function clearFilters() {
+            document.getElementById('propertyType').value = '';
+            document.getElementById('propertyStatus').value = '';
+            document.getElementById('buyUnder').value = '';
+            document.getElementById('loanAmount').value = '';
+            document.getElementById('loanTenure').value = '';
+            
+            // Clear results
+            document.getElementById('resultsContainer').style.display = 'none';
+            currentResults = [];
+            searchCriteria = {};
         }
 
+        // Download packages list - PRESERVED FROM ORIGINAL
         function downloadPackagesList() {
+            if (!currentResults.length) {
+                showNotification('No results to download. Please search for packages first.', 'error');
+                return;
+            }
+
             showNotification('Package list download started', 'success');
-            // Implementation for downloading packages list
+            // Implementation for downloading packages list would go here
         }
 
         function enquirePackage(packageId) {
             window.location.href = `enquiry.html?package=${packageId}`;
         }
 
-        // Utility functions for loading and notifications
+        // ===================================
+        // SIGN OUT FUNCTIONS - PRESERVED FROM ORIGINAL  
+        // ===================================
+        function confirmSignOut() {
+            if (confirm('Are you sure you want to sign out?')) {
+                performSignOut();
+            }
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                // Clear any stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login
+                window.location.href = 'login.html';
+                
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showNotification('Sign out failed: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ===================================
+        // LOADING AND NOTIFICATION FUNCTIONS - PRESERVED FROM ORIGINAL
+        // ===================================
         function showLoading(message = 'Loading...') {
             const loadingOverlay = document.getElementById('loadingOverlay');
             const loadingText = loadingOverlay.querySelector('span');
@@ -1371,7 +1594,10 @@
         }
 
         function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
         }
 
         function showNotification(message, type = 'info') {
@@ -1379,7 +1605,9 @@
             // You can implement a proper notification system here
         }
 
-        // Sidebar functions - SAME AS OTHER PAGES
+        // ===================================
+        // SIDEBAR FUNCTIONS - PRESERVED FROM ORIGINAL
+        // ===================================
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
@@ -1394,12 +1622,6 @@
             
             sidebar?.classList.remove('open');
             overlay?.classList.remove('active');
-        }
-
-        function confirmSignOut() {
-            if (confirm('Are you sure you want to sign out?')) {
-                window.location.href = 'login.html';
-            }
         }
     </script>
 </body>
