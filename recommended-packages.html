@@ -990,12 +990,7 @@
             </header>
             
             <div class="content-area">
-                <!-- Page Header -->
-                <div class="page-header">
-                    <h1><i data-lucide="award"></i> Find Your Perfect Home Loan</h1>
-                    <p>Discover the best mortgage packages tailored to your needs with our smart recommendation engine</p>
-                </div>
-
+                
                 <!-- Loan Type Tabs -->
                 <div class="loan-type-tabs">
                     <button class="loan-tab active" onclick="selectLoanType('New Home Loan')" data-loan-type="New Home Loan">
@@ -1014,10 +1009,7 @@
 
                 <!-- Search Section -->
                 <div class="search-section">
-                    <h2 class="search-title">
-                        <i data-lucide="search"></i>
-                        Enter Your Requirements
-                    </h2>
+                   
                     <form class="search-form" id="searchForm" onsubmit="searchPackages(event)">
                         <div class="form-group">
                             <label class="form-label">Property Type</label>
@@ -1944,17 +1936,17 @@
                         <div style="display: flex; align-items: center; gap: 20px;">
                             <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #dc2626, #1e40af); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
                                 <div style="color: white; font-weight: bold; font-size: 24px; text-align: center; line-height: 1.2;">
-                                    K<br>M
+                                    <img src="https://ik.imagekit.io/hst9jooux/KeyQuest%20Logo.jpeg?updatedAt=1748073687798" 
+                                     alt="KeyQuest Mortgage Logo" 
+                                     style="height: 80px; width: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                                 </div>
                             </div>
-                            <div>
-                                <div style="font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 4px;">KEYQUEST</div>
-                                <div style="font-size: 14px; color: #6b7280;">M O R T G A G E</div>
-                            </div>
+                          
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 32px; font-weight: bold; color: #1e40af; margin-bottom: 8px;">TOP MORTGAGE PACKAGES</div>
-                            <div style="font-size: 16px; color: #6b7280;">Professional Mortgage Report</div>
+                            <div style="font-size: 32px; font-weight: bold; color: #1e40af; margin-bottom: 8px;">Top Interest Rate Packages</div>
+                            
                             ${clientName ? `<div style="font-size: 18px; color: #1f2937; margin-top: 8px; font-weight: 600;">Prepared for: ${clientName}</div>` : ''}
                             <div style="font-size: 14px; color: #9ca3af; margin-top: 4px;">Generated on ${reportDate}</div>
                         </div>
@@ -1976,7 +1968,7 @@
 
                     <!-- Interest Rate Comparison Table -->
                     <div style="margin-bottom: 40px;">
-                        <h3 style="color: #1f2937; margin-bottom: 20px; font-size: 20px;">Interest Rate Comparison</h3>
+                       
                         <table style="width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; font-size: 12px; table-layout: fixed;">
                             <colgroup>
                                 <col style="width: 15%;">
