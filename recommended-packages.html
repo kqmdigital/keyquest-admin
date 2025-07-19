@@ -1781,232 +1781,143 @@
 
             console.log('📄 Generating professional report for', selectedPackages.length, 'packages');
 
-            // Generate comprehensive report content
+            // Generate simple report content matching original PDF
             const content = `
-                <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 0;">
+                <div style="font-family: Arial, sans-serif; line-height: 1.4; color: #333; max-width: 800px; margin: 0 auto; padding: 20px;">
                     
-                    <!-- Professional Header -->
-                    <div style="text-align: center; padding: 40px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px; margin-bottom: 30px; position: relative; overflow: hidden;">
-                        <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-                        <h1 style="margin: 0 0 10px 0; font-size: 32px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2); position: relative; z-index: 1;">
-                            Professional Mortgage Recommendations
+                    <!-- Header -->
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h1 style="margin: 0 0 10px 0; font-size: 36px; font-weight: bold; color: #2563eb;">
+                            Top Interest Rate Packages
                         </h1>
-                        <p style="margin: 0; font-size: 16px; opacity: 0.95; position: relative; z-index: 1;">
-                            Comprehensive Analysis & Comparison Report
-                        </p>
                         ${clientName ? `
-                            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 12px; margin-top: 20px; position: relative; z-index: 1;">
-                                <h2 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 600;">Prepared for: ${clientName}</h2>
-                                <p style="margin: 0; font-size: 14px; opacity: 0.9;">Report Date: ${new Date().toLocaleDateString('en-SG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                            <div style="text-align: right; margin: 20px 0;">
+                                <p style="margin: 0; font-size: 16px; font-weight: bold;">Prepared for: ${clientName}</p>
+                                <p style="margin: 0; font-size: 14px; color: #666;">Generated on ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                             </div>
                         ` : ''}
                     </div>
 
-                    <!-- Search Criteria Summary -->
-                    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); padding: 25px; border-radius: 16px; margin-bottom: 30px; border-left: 5px solid #667eea;">
-                        <h3 style="margin: 0 0 20px 0; color: #1e293b; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                            <span style="display: inline-block; width: 8px; height: 8px; background: #667eea; border-radius: 50%;"></span>
-                            Search Criteria Applied
-                        </h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; font-size: 14px;">
-                            <div><strong>Loan Type:</strong> ${searchCriteria.loanType}</div>
-                            <div><strong>Property Type:</strong> ${searchCriteria.propertyType || 'Any'}</div>
-                            <div><strong>Property Status:</strong> ${searchCriteria.propertyStatus || 'Any'}</div>
-                            <div><strong>Buy Under:</strong> ${searchCriteria.buyUnder || 'Any'}</div>
+                    <!-- Loan Details -->
+                    <div style="margin-bottom: 30px; padding: 15px; border-left: 4px solid #2563eb; background: #f8fafc;">
+                        <div style="display: flex; justify-content: space-between;">
                             <div><strong>Loan Amount:</strong> ${formatCurrency(searchCriteria.loanAmount)}</div>
                             <div><strong>Loan Tenure:</strong> ${searchCriteria.loanTenure} years</div>
                         </div>
                     </div>
 
-                    <!-- Executive Summary Table -->
-                    <div style="margin-bottom: 30px; overflow-x: auto;">
-                        <h3 style="margin: 0 0 20px 0; color: #1e293b; font-size: 24px; font-weight: 700; text-align: center;">
-                            📊 Executive Summary & Comparison
-                        </h3>
-                        <table style="width: 100%; border-collapse: collapse; box-shadow: 0 8px 32px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden; background: white;">
-                            <thead>
-                                <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                                    <th style="padding: 16px; text-align: left; font-weight: 700; border-right: 1px solid rgba(255,255,255,0.2);">Criteria</th>
-                                    ${selectedPackages.map((pkg, index) => {
-                                        const bankDisplay = hideBankNames ? `Option ${index + 1}` : pkg.bank_name;
-                                        return `<th style="padding: 16px; text-align: center; font-weight: 700; border-right: 1px solid rgba(255,255,255,0.2); min-width: 160px;">${bankDisplay}</th>`;
-                                    }).join('')}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Ranking Row -->
-                                <tr style="background: #fef3c7;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #f59e0b; background: #f59e0b; color: white;">🏆 Ranking</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #f59e0b; font-weight: bold; font-size: 18px; background: ${index === 0 ? '#fef3c7' : '#fffbeb'}; color: ${index === 0 ? '#92400e' : '#d97706'};">
-                                            #${currentResults.findIndex(p => p.id === pkg.id) + 1}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Average Rate Row -->
-                                <tr style="background: #dcfce7;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #16a34a; background: #16a34a; color: white;">📈 Avg First 2 Years</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #16a34a; font-weight: bold; font-size: 18px; color: #15803d; background: ${index === 0 ? '#dcfce7' : '#f0fdf4'};">
-                                            ${formatPercentage(pkg.avgFirst2Years)}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Monthly Payment Row -->
-                                <tr style="background: #dbeafe;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #2563eb; background: #2563eb; color: white;">💰 Monthly Payment</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #2563eb; font-weight: bold; font-size: 16px; color: #1d4ed8; background: ${index === 0 ? '#dbeafe' : '#eff6ff'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${formatCurrency(pkg.monthlyInstallment)}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Property Type Row -->
-                                <tr style="background: #f3e8ff;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #9333ea; background: #9333ea; color: white;">🏠 Property Type</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #9333ea; background: ${index === 0 ? '#f3e8ff' : '#faf5ff'}; word-wrap: break-word; vertical-align: middle;">
-                                            ${pkg.property_type}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Property Status Row -->
-                                <tr style="background: #fef2f2;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #dc2626; background: #dc2626; color: white;">🏗️ Property Status</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #dc2626; background: ${index === 0 ? '#fef2f2' : '#fef5f5'}; word-wrap: break-word; vertical-align: middle;">
-                                            ${pkg.property_status}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Buy Under Row -->
-                                <tr style="background: #ecfdf5;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #059669; background: #059669; color: white;">👤 Buy Under</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #059669; background: ${index === 0 ? '#ecfdf5' : '#f0fdf4'}; word-wrap: break-word; vertical-align: middle;">
-                                            ${pkg.buy_under}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Rate Type Row -->
-                                <tr style="background: #fef7cd;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #d97706; background: #d97706; color: white;">📊 Rate Type</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #d97706; background: ${index === 0 ? '#fef7cd' : '#fffbeb'}; word-wrap: break-word; vertical-align: middle;">
-                                            ${pkg.rate_type_category}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Lock Period Row -->
-                                <tr style="background: #f0f9ff;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #0284c7; background: #0284c7; color: white;">🔒 Lock Period</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #0284c7; background: ${index === 0 ? '#f0f9ff' : '#f8fafc'}; word-wrap: break-word; vertical-align: middle;">
-                                            ${pkg.lock_period || 'No Lock-in'}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Min Loan Size Row -->
-                                <tr style="background: #fdf2f8;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #be185d; background: #be185d; color: white;">💵 Min Loan Size</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: center; border: 1px solid #be185d; background: ${index === 0 ? '#fdf2f8' : '#fef7f3'}; font-weight: bold; color: #be185d; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                            ${formatCurrency(pkg.minimum_loan_size || 0)}
-                                        </td>
-                                    `).join('')}
-                                </tr>
-
-                                <!-- Interest Rate Details -->
-                                ${(() => {
-                                    const rateRows = [];
-                                    
-                                    // Generate rate rows for years 1-5 and thereafter
-                                    for (let year = 1; year <= 5; year++) {
-                                        const hasRates = selectedPackages.some(pkg => calculateInterestRate(pkg, year) > 0);
-                                        if (hasRates) {
-                                            rateRows.push(`
-                                                <tr style="background: #e0f2fe;">
-                                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #0369a1; background: #0369a1; color: white;">📅 Year ${year} Rate</td>
-                                                    ${selectedPackages.map((pkg, index) => {
-                                                        const rate = calculateInterestRate(pkg, year);
-                                                        return `
-                                                            <td style="padding: 12px; text-align: center; border: 1px solid #0369a1; background: ${index === 0 ? '#e0f2fe' : '#f0f9ff'}; font-weight: bold; color: #0369a1; word-wrap: break-word; vertical-align: middle;">
-                                                                ${rate > 0 ? formatPercentage(rate) : 'N/A'}
-                                                            </td>
-                                                        `;
-                                                    }).join('')}
-                                                </tr>
-                                            `);
-                                        }
-                                    }
-                                    
-                                    // Thereafter rate
-                                    const hasThereafterRates = selectedPackages.some(pkg => calculateInterestRate(pkg, 'thereafter') > 0);
-                                    if (hasThereafterRates) {
-                                        rateRows.push(`
-                                            <tr style="background: #f3e8ff;">
-                                                <td style="padding: 12px; font-weight: bold; border: 1px solid #7c3aed; background: #7c3aed; color: white;">🔮 Thereafter Rate</td>
-                                                ${selectedPackages.map((pkg, index) => {
-                                                    const rate = calculateInterestRate(pkg, 'thereafter');
-                                                    return `
-                                                        <td style="padding: 12px; text-align: center; border: 1px solid #7c3aed; background: ${index === 0 ? '#f3e8ff' : '#faf5ff'}; font-weight: bold; color: #7c3aed; word-wrap: break-word; vertical-align: middle;">
-                                                            ${rate > 0 ? formatPercentage(rate) : 'N/A'}
-                                                        </td>
-                                                    `;
+                    <!-- Main Comparison Table -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <thead>
+                            <tr style="background: #f8fafc;">
+                                <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0; font-weight: bold; background: #f1f5f9;">Period</th>
+                                ${selectedPackages.map((pkg, index) => {
+                                    const bankDisplay = hideBankNames ? `Bank ${String.fromCharCode(65 + index)}` : pkg.bank_name;
+                                    const rateCategory = pkg.rate_type_category || 'Fixed Rate';
+                                    return `
+                                        <th style="padding: 12px; text-align: center; border: 1px solid #e2e8f0; font-weight: bold; background: #f1f5f9;">
+                                            ${bankDisplay}<br>
+                                            <small style="font-weight: normal; color: #666;">${rateCategory}</small>
+                                        </th>
+                                    `;
+                                }).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Interest Rate Rows -->
+                            ${(() => {
+                                const rows = [];
+                                
+                                // Year 1-5 rates
+                                for (let year = 1; year <= 5; year++) {
+                                    const hasRates = selectedPackages.some(pkg => calculateInterestRate(pkg, year) > 0);
+                                    if (hasRates) {
+                                        rows.push(`
+                                            <tr>
+                                                <td style="padding: 12px; border: 1px solid #e2e8f0; font-weight: bold;">Year ${year}</td>
+                                                ${selectedPackages.map(pkg => {
+                                                    const rate = calculateInterestRate(pkg, year);
+                                                    const display = rate > 0 ? formatRateDisplay(pkg, year) : '-';
+                                                    return `<td style="padding: 12px; border: 1px solid #e2e8f0; text-align: center;">${display}</td>`;
                                                 }).join('')}
                                             </tr>
                                         `);
                                     }
-                                    
-                                    return rateRows.join('');
-                                })()}
+                                }
+                                
+                                // Thereafter rate
+                                const hasThereafterRates = selectedPackages.some(pkg => calculateInterestRate(pkg, 'thereafter') > 0);
+                                if (hasThereafterRates) {
+                                    rows.push(`
+                                        <tr>
+                                            <td style="padding: 12px; border: 1px solid #e2e8f0; font-weight: bold;">Thereafter</td>
+                                            ${selectedPackages.map(pkg => {
+                                                const rate = calculateInterestRate(pkg, 'thereafter');
+                                                const display = rate > 0 ? formatRateDisplay(pkg, 'thereafter') : '-';
+                                                return `<td style="padding: 12px; border: 1px solid #e2e8f0; text-align: center;">${display}</td>`;
+                                            }).join('')}
+                                        </tr>
+                                    `);
+                                }
+                                
+                                return rows.join('');
+                            })()}
 
-                                <!-- Remarks Row -->
-                                <tr style="background: #f0f9ff;">
-                                    <td style="padding: 12px; font-weight: bold; border: 1px solid #0ea5e9; background: #0ea5e9; color: white; word-wrap: break-word; vertical-align: top;">📝 Important Notes</td>
-                                    ${selectedPackages.map((pkg, index) => `
-                                        <td style="padding: 12px; text-align: left; border: 1px solid #0ea5e9; font-size: 11px; line-height: 1.4; background: ${index === 0 ? '#e0f2fe' : '#f0f9ff'}; vertical-align: top; word-wrap: break-word; white-space: normal; overflow-wrap: break-word; max-width: 0;">
-                                            <div style="word-wrap: break-word; overflow-wrap: break-word;">
-                                                ${(pkg.custom_remarks || pkg.remarks || 'NIL').replace(/\n/g, '<br>')}
-                                            </div>
-                                        </td>
-                                    `).join('')}
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                            <!-- Lock-in Period Row -->
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #e2e8f0; font-weight: bold;">Lock-in Period</td>
+                                ${selectedPackages.map(pkg => `
+                                    <td style="padding: 12px; border: 1px solid #e2e8f0; text-align: center;">
+                                        ${pkg.lock_period || 'No Lock-in'}
+                                    </td>
+                                `).join('')}
+                            </tr>
 
-                    <!-- Professional Recommendation -->
-                    <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); padding: 25px; border-radius: 16px; border-left: 5px solid #10b981; margin-bottom: 30px;">
-                        <h3 style="margin: 0 0 15px 0; color: #065f46; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                            💡 Professional Recommendation
-                        </h3>
-                        <p style="margin: 0; color: #047857; font-size: 14px; line-height: 1.6;">
-                            Based on your search criteria, <strong>${hideBankNames ? 'Option 1' : selectedPackages[0].bank_name}</strong> offers the most competitive package with an average rate of <strong>${formatPercentage(selectedPackages[0].avgFirst2Years)}</strong> for the first 2 years and monthly installments of <strong>${formatCurrency(selectedPackages[0].monthlyInstallment)}</strong>. 
-                            However, we recommend comparing all options carefully and considering factors beyond just the interest rate, such as lock-in periods, conversion options, and additional features.
-                        </p>
-                    </div>
+                            <!-- Average First 2 Years Row -->
+                            <tr style="background: #dcfce7;">
+                                <td style="padding: 12px; border: 1px solid #16a34a; font-weight: bold; background: #16a34a; color: white;">Avg First 2 Years</td>
+                                ${selectedPackages.map(pkg => `
+                                    <td style="padding: 12px; border: 1px solid #16a34a; text-align: center; font-weight: bold; color: #15803d;">
+                                        ${formatPercentage(pkg.avgFirst2Years)}
+                                    </td>
+                                `).join('')}
+                            </tr>
+
+                            <!-- Monthly Installment Row -->
+                            <tr style="background: #e0e7ff;">
+                                <td style="padding: 12px; border: 1px solid #6366f1; font-weight: bold; background: #6366f1; color: white;">Monthly Installment</td>
+                                ${selectedPackages.map(pkg => `
+                                    <td style="padding: 12px; border: 1px solid #6366f1; text-align: center; font-weight: bold; color: #4338ca;">
+                                        ${formatCurrency(pkg.monthlyInstallment)}
+                                    </td>
+                                `).join('')}
+                            </tr>
+
+                            <!-- Remarks Row -->
+                            <tr style="background: #e0f2fe;">
+                                <td style="padding: 12px; border: 1px solid #0ea5e9; font-weight: bold; background: #0ea5e9; color: white; vertical-align: top;">Remarks</td>
+                                ${selectedPackages.map(pkg => `
+                                    <td style="padding: 12px; border: 1px solid #0ea5e9; text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4;">
+                                        ${(pkg.custom_remarks || pkg.remarks || 'N/A').replace(/\n/g, '<br>')}
+                                    </td>
+                                `).join('')}
+                            </tr>
+                        </tbody>
+                    </table>
 
                     <!-- Disclaimer -->
-                    <div style="background: #fef2f2; padding: 20px; border-radius: 12px; border-left: 4px solid #ef4444; margin-bottom: 30px;">
-                        <h4 style="margin: 0 0 12px 0; color: #dc2626; font-size: 16px; font-weight: 700;">⚠️ Important Disclaimer</h4>
-                        <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #7f1d1d;">
-                            All interest rates are subject to bank's final approval and may vary based on individual credit assessment. 
-                            This report is for informational purposes only and does not constitute a binding offer.
+                    <div style="background: #fef2f2; padding: 15px; border-radius: 8px; border-left: 4px solid #ef4444; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 8px 0; color: #dc2626; font-size: 14px; font-weight: bold;">Important Disclaimer</h4>
+                        <p style="margin: 0; font-size: 11px; line-height: 1.4; color: #7f1d1d;">
+                            All interest rates are subject to bank's final approval and may vary based on individual credit assessment. Terms and conditions apply. 
+                            This report is for informational purposes only and does not constitute a binding offer. 
+                            Please consult with our mortgage specialists for personalized advice.
                         </p>
                     </div>
 
                     <!-- Report Generation Info -->
-                    <div style="text-align: center; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                        <p style="margin: 0; font-size: 12px; color: #6b7280;">
+                    <div style="text-align: center; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+                        <p style="margin: 0; font-size: 11px; color: #6b7280;">
                             Report generated by Keyquest Mortgage on ${new Date().toLocaleString('en-SG')}
                         </p>
                     </div>
