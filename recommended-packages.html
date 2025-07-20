@@ -1097,8 +1097,8 @@
                         <i data-lucide="repeat"></i>
                         Refinancing Home Loan
                     </button>
-                    <button class="loan-tab" onclick="selectLoanType('Commercial/Industrial,Commercial,Industrial')" 
-        data-loan-type="Commercial/Industrial,Commercial,Industrial">
+                  <button class="loan-tab" onclick="selectLoanType('Commercial/Industrial', 'Commercial', 'Industrial')" 
+        data-loan-type="Commercial/Industrial, Commercial, Industrial">
     <i data-lucide="briefcase"></i>
     Commercial/Industrial
 </button>
@@ -1342,19 +1342,17 @@
         // ===================================
         // LOAN TYPE SELECTION - PRESERVED FROM ORIGINAL
         // ===================================
-        function selectLoanType(loanType) {
-    // Store both the raw value and parsed array
-    currentLoanType = loanType;
+        function selectLoanType(...loanTypes) {
+    // Store the array of loan types for data filtering
+    window.selectedLoanTypes = loanTypes;
     
-    // Parse multiple loan types into an array for filtering
-    window.selectedLoanTypes = loanType.includes(',') 
-        ? loanType.split(',').map(type => type.trim())
-        : [loanType];
+    // Create string for tab matching and logging (same format as data-loan-type)
+    currentLoanType = loanTypes.join(', ');
     
     // Update tab appearance
     document.querySelectorAll('.loan-tab').forEach(tab => {
         tab.classList.remove('active');
-        if (tab.getAttribute('data-loan-type') === loanType) {
+        if (tab.getAttribute('data-loan-type') === currentLoanType) {
             tab.classList.add('active');
         }
     });
@@ -1363,31 +1361,27 @@
     clearResults();
     
     // Enhanced logging
-    console.log(`📋 Selected loan types for filtering:`, window.selectedLoanTypes);
-    console.log(`📋 Will match data with any of these loan types: ${window.selectedLoanTypes.join(', ')}`);
+    if (loanTypes.length > 1) {
+        console.log(`📋 Selected multiple loan types: [${loanTypes.join(', ')}]`);
+    } else {
+        console.log(`📋 Selected loan type: ${loanTypes[0]}`);
+    }
+    
+    console.log(`📋 Will filter data matching any of: ${window.selectedLoanTypes.join(', ')}`);
 }
 
-// Helper function to check if a data item's loan type should be included
+// Helper function for data filtering
 function shouldIncludeLoanType(dataLoanType) {
-    // Check if the data's loan type matches any of the selected types
-    return window.selectedLoanTypes.includes(dataLoanType);
+    return window.selectedLoanTypes && window.selectedLoanTypes.includes(dataLoanType);
 }
 
-// Example usage in your data filtering:
+// Example of how to use in your data filtering
 function filterDataByLoanType(dataArray) {
-    return dataArray.filter(item => {
-        // item.loan_type could be "Commercial", "Industrial", or "Commercial/Industrial"
-        return shouldIncludeLoanType(item.loan_type);
-    });
-}
-
-// Alternative: More flexible matching (if you want partial matches)
-function shouldIncludeLoanTypeFlexible(dataLoanType) {
-    // This will match if any selected type is contained in the data's loan type
-    // or if the data's loan type is contained in any selected type
-    return window.selectedLoanTypes.some(selectedType => {
-        return selectedType.includes(dataLoanType) || dataLoanType.includes(selectedType);
-    });
+    if (!window.selectedLoanTypes || window.selectedLoanTypes.length === 0) {
+        return dataArray; // Return all data if no filter selected
+    }
+    
+    return dataArray.filter(item => shouldIncludeLoanType(item.loan_type));
 }
 
         // ===================================
@@ -1442,7 +1436,7 @@ function shouldIncludeLoanTypeFlexible(dataLoanType) {
                 // Filter packages based on criteria
                 let filteredPackages = allPackages.filter(pkg => {
                     // Filter by loan type
-                    if (pkg.loan_type !== currentLoanType) return false;
+                    if (!shouldIncludeLoanType(pkg.loan_type)) return false;
                     
                     // Filter by property type
                     if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
@@ -1548,7 +1542,7 @@ function performLiveFilter() {
             // Filter packages based on criteria
             let filteredPackages = allPackages.filter(pkg => {
                 // Filter by loan type
-                if (pkg.loan_type !== currentLoanType) return false;
+                if (!shouldIncludeLoanType(pkg.loan_type)) return false;
                 
                 // Filter by property type
                 if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
