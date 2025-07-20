@@ -1372,7 +1372,9 @@
 
 // Helper function for data filtering
 function shouldIncludeLoanType(dataLoanType) {
-    return window.selectedLoanTypes && window.selectedLoanTypes.includes(dataLoanType);
+    const result = window.selectedLoanTypes && window.selectedLoanTypes.includes(dataLoanType);
+    console.log(`🔍 Checking "${dataLoanType}" against [${window.selectedLoanTypes}] = ${result}`);
+    return result;
 }
 
 // Example of how to use in your data filtering
@@ -1472,7 +1474,21 @@ function filterDataByLoanType(dataArray) {
                 currentResults = filteredPackages;
                 displayResults(filteredPackages, true);
                 
-                console.log(`🔍 Found ${filteredPackages.length} matching packages`);
+                // Add this RIGHT AFTER your filtering, before the console.log
+console.log("🔍 Debug Info:");
+console.log("📦 Total packages in allPackages:", allPackages.length);
+console.log("🎯 Selected loan types:", window.selectedLoanTypes);
+console.log("📋 Available loan types in data:", 
+    [...new Set(allPackages.map(pkg => pkg.loan_type))]);
+
+// Test the first few packages manually
+console.log("🧪 Testing first 5 packages:");
+allPackages.slice(0, 5).forEach((pkg, i) => {
+    const shouldInclude = shouldIncludeLoanType(pkg.loan_type);
+    console.log(`Package ${i}: loan_type="${pkg.loan_type}" -> Include: ${shouldInclude}`);
+});
+
+console.log(`🔍 Found ${filteredPackages.length} matching packages`);
                 
             } catch (error) {
                 console.error('💥 Search error:', error);
