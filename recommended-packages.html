@@ -1942,9 +1942,36 @@ function displayResults(packages, shouldScroll = true) {
         function generateRateSchedule(pkg) {
     const rates = [];
     
+    // Always show Years 1-5 (auto-populate empty years with thereafter rate)
     for (let year = 1; year <= 5; year++) {
-        const rate = calculateInterestRate(pkg, year);
-        if (rate > 0) {
+        let rateType, operator, value;
+        
+        // Check if this year has actual data
+        rateType = pkg[`year${year}_rate_type`];
+        operator = pkg[`year${year}_operator`];
+        value = pkg[`year${year}_value`];
+        
+        // If no data for this year, check if we can use thereafter rate
+        if (!rateType || value === null || value === undefined) {
+            // Use thereafter rate if available
+            if (pkg.thereafter_rate_type && pkg.thereafter_value !== null && pkg.thereafter_value !== undefined) {
+                rates.push(`
+                    <div class="rate-item">
+                        <div class="rate-period">Year ${year}</div>
+                        <div class="rate-value">${formatDetailedRateDisplay(pkg, 'thereafter')}</div>
+                    </div>
+                `);
+            } else {
+                // Only show dash if no thereafter rate exists
+                rates.push(`
+                    <div class="rate-item">
+                        <div class="rate-period">Year ${year}</div>
+                        <div class="rate-value">-</div>
+                    </div>
+                `);
+            }
+        } else {
+            // Show actual data for this year
             rates.push(`
                 <div class="rate-item">
                     <div class="rate-period">Year ${year}</div>
@@ -1954,6 +1981,7 @@ function displayResults(packages, shouldScroll = true) {
         }
     }
 
+    // Always show thereafter row
     const thereafterRate = calculateInterestRate(pkg, 'thereafter');
     if (thereafterRate > 0) {
         rates.push(`
@@ -1966,6 +1994,7 @@ function displayResults(packages, shouldScroll = true) {
 
     return rates.length > 0 ? rates.join('') : null;
 }
+
 
         function generatePackageFeatures(pkg) {
             const features = [];
