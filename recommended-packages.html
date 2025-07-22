@@ -132,17 +132,199 @@
         }
 
         .search-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            align-items: end;
-        }
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    align-items: end;
+    max-width: none; /* Remove width restriction for more filters */
+}
+        /* Special styling for action buttons */
+.form-group:has(.search-button) {
+    grid-column: span 1;
+    min-width: auto;
+}
 
+/* Button group for search and clear actions */
+.button-group {
+    display: flex;
+    gap: 12px;
+    grid-column: span 2;
+    justify-content: flex-start;
+    align-items: end;
+}
+
+        /* Enhanced filter section organization */
+.filter-section {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid #667eea;
+}
+
+.filter-section h4 {
+    margin: 0 0 16px 0;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+        /* Enhanced form labels with icons */
+.form-label.with-icon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.form-label.with-icon i {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+}
+
+        /* Filter indicator badges */
+.filter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    margin-left: 8px;
+}
+
+.filter-badge.active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* Clear button enhanced styling */
+.search-button.clear-button {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+}
+
+.search-button.clear-button:hover {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    transform: translateY(-2px);
+}
+
+/* Active filter indication */
+.form-select.has-value {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+}
+
+.form-input.has-value {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+}
+
+/* Filter summary section */
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 12px 0;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #e0f2fe;
+    color: #0c4a6e;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 16px;
+    border: 1px solid #bae6fd;
+}
+
+.filter-chip .remove-filter {
+    cursor: pointer;
+    color: #64748b;
+    transition: color 0.2s;
+}
+
+.filter-chip .remove-filter:hover {
+    color: #dc2626;
+}
+
+        /* Responsive adjustments for enhanced filters */
+@media (max-width: 1200px) {
+    .search-form {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-form {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .button-group {
+        grid-column: span 1;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .filter-chip {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+}
+
+/* Loading state for individual filters */
+.form-select.loading {
+    background-image: url("data:image/svg+xml,%3csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M10 3.5a6.5 6.5 0 1 0 6.5 6.5h-1.5a5 5 0 1 1-5-5v1.5z' fill='%236b7280'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    animation: spin 1s linear infinite;
+}
+
+/* Enhanced search section header */
+.search-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.search-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-count {
+    background: #667eea;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+        
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px; /* Ensure consistent minimum width */
+}
 
         .form-label {
             font-weight: 600;
@@ -1358,59 +1540,81 @@
         timeout = setTimeout(later, wait);
     };
 }
-        // ===================================
-        // EVENT LISTENERS SETUP - PRESERVED FROM ORIGINAL
-        // ===================================
-        function setupEventListeners() {
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+        // Updated setupEventListeners function to include new filters
+function setupEventListeners() {
+    // Initialize Lucide icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(event) {
-                const userDropdown = document.getElementById('userDropdown');
-                const userInfo = document.querySelector('.user-info');
-                
-                if (userInfo && !userInfo.contains(event.target) && userDropdown) {
-                    userDropdown.style.display = 'none';
-                }
-            });
+    // Existing event listeners...
+    document.addEventListener('click', function(event) {
+        const userDropdown = document.getElementById('userDropdown');
+        const userInfo = document.querySelector('.user-info');
+        
+        if (userInfo && !userInfo.contains(event.target) && userDropdown) {
+            userDropdown.style.display = 'none';
+        }
+    });
 
-            // Loan type tab interactions
-            const loanTabs = document.querySelectorAll('.loan-tab');
-            loanTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const loanType = this.getAttribute('data-loan-type');
-                    selectLoanType(loanType);
-                });
-            });
+    const loanTabs = document.querySelectorAll('.loan-tab');
+    loanTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const loanType = this.getAttribute('data-loan-type');
+            selectLoanType(loanType);
+        });
+    });
 
-            // Form submission
-            const searchForm = document.getElementById('searchForm');
-            if (searchForm) {
-                searchForm.addEventListener('submit', searchPackages);
-            }
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', searchPackages);
+    }
 
-            // Live filtering event listeners
+    // Enhanced live filtering event listeners - INCLUDING NEW FILTERS
     const filterInputs = [
         'propertyType',
         'propertyStatus', 
         'buyUnder',
         'loanAmount',
-        'loanTenure'
+        'loanTenure',
+        // NEW FILTER IDs
+        'bankFilter',
+        'rateTypeFilter',
+        'lockPeriodFilter',
+        'packageFeatures'
     ];
 
     filterInputs.forEach(inputId => {
         const element = document.getElementById(inputId);
         if (element) {
-            // Add debounced live filtering
             element.addEventListener('input', debounce(performLiveFilter, 300));
             element.addEventListener('change', performLiveFilter);
         }
     });
 
-    console.log('✅ Event listeners set up successfully');
+    console.log('✅ Enhanced event listeners set up successfully');
+}
+
+// New function to clear all filters
+function clearAllFilters() {
+    // Clear existing filters
+    document.getElementById('propertyType').value = '';
+    document.getElementById('propertyStatus').value = '';
+    document.getElementById('buyUnder').value = '';
+    document.getElementById('loanAmount').value = '';
+    document.getElementById('loanTenure').value = '';
+    
+    // Clear new enhanced filters
+    document.getElementById('bankFilter').value = '';
+    document.getElementById('rateTypeFilter').value = '';
+    document.getElementById('lockPeriodFilter').value = '';
+    document.getElementById('packageFeatures').value = '';
+    
+    // Clear results
+    clearResults();
+    searchCriteria = {};
+    
+    showNotification('All filters cleared', 'info');
 }
 
         // ===================================
@@ -1465,152 +1669,164 @@
         // ===================================
         // SEARCH FUNCTIONS - PRESERVED FROM ORIGINAL  
         // ===================================
-        async function searchPackages(event) {
-            if (event) event.preventDefault();
+        // Updated searchPackages function
+async function searchPackages(event) {
+    if (event) event.preventDefault();
+    
+    try {
+        showLoading('Searching for the best packages...');
+        
+        // Get form values - INCLUDING NEW FILTERS
+        const formData = {
+            propertyType: document.getElementById('propertyType').value,
+            propertyStatus: document.getElementById('propertyStatus').value,
+            buyUnder: document.getElementById('buyUnder').value,
+            loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
+            loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
+            // NEW FILTER OPTIONS
+            bankFilter: document.getElementById('bankFilter').value,
+            rateTypeFilter: document.getElementById('rateTypeFilter').value,
+            lockPeriodFilter: document.getElementById('lockPeriodFilter').value,
+            packageFeatures: document.getElementById('packageFeatures').value
+        };
+
+        searchCriteria = { ...formData, loanType: currentLoanType };
+        
+        // Enhanced filter logic
+        let filteredPackages = allPackages.filter(pkg => {
+            // Existing filters
+            if (pkg.loan_type !== currentLoanType) return false;
+            if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
+            if (formData.propertyStatus && pkg.property_status !== formData.propertyStatus) return false;
+            if (formData.buyUnder && pkg.buy_under !== formData.buyUnder) return false;
+            if (formData.loanAmount > 0 && pkg.minimum_loan_size && formData.loanAmount < pkg.minimum_loan_size) return false;
             
-            try {
-                showLoading('Searching for the best packages...');
-                
-                // Get form values
-                const formData = {
-                    propertyType: document.getElementById('propertyType').value,
-                    propertyStatus: document.getElementById('propertyStatus').value,
-                    buyUnder: document.getElementById('buyUnder').value,
-                    loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
-                    loanTenure: parseInt(document.getElementById('loanTenure').value) || 25
-                };
-
-                searchCriteria = { ...formData, loanType: currentLoanType };
-                
-                // Filter packages based on criteria
-                let filteredPackages = allPackages.filter(pkg => {
-                    // Filter by loan type
-                    if (pkg.loan_type !== currentLoanType) return false;
-                    
-                    // Filter by property type
-                    if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
-                    
-                    // Filter by property status
-                    if (formData.propertyStatus && pkg.property_status !== formData.propertyStatus) return false;
-                    
-                    // Filter by buy under
-                    if (formData.buyUnder && pkg.buy_under !== formData.buyUnder) return false;
-                    
-                    // Filter by minimum loan size
-                    if (formData.loanAmount > 0 && pkg.minimum_loan_size && formData.loanAmount < pkg.minimum_loan_size) return false;
-                    
-                    return true;
-                });
-
-                // Calculate metrics for each package
-                filteredPackages = filteredPackages.map(pkg => {
-                    const avgFirst2Years = calculateAverageFirst2Years(pkg);
-                    const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
-                    
-                    return {
-                        ...pkg,
-                        avgFirst2Years,
-                        monthlyInstallment,
-                        selected: true // Default to selected for report
-                    };
-                });
-
-                // Sort by average rate (ascending - best rates first)
-                filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
-
-                currentResults = filteredPackages;
-                displayResults(filteredPackages, true);
-                
-                console.log(`🔍 Found ${filteredPackages.length} matching packages`);
-                
-            } catch (error) {
-                console.error('💥 Search error:', error);
-                showNotification('Search failed: ' + error.message, 'error');
-            } finally {
-                hideLoading();
+            // NEW ENHANCED FILTERS
+            
+            // Bank filter
+            if (formData.bankFilter && pkg.bank_name !== formData.bankFilter) return false;
+            
+            // Rate Type filter  
+            if (formData.rateTypeFilter && pkg.rate_type_category !== formData.rateTypeFilter) return false;
+            
+            // Lock-in Period filter
+            if (formData.lockPeriodFilter) {
+                const pkgLockPeriod = pkg.lock_period || '0 Year';
+                if (pkgLockPeriod !== formData.lockPeriodFilter) return false;
             }
-        }
+            
+            // Package Features filter
+            if (formData.packageFeatures) {
+                const featureField = formData.packageFeatures;
+                const featureValue = pkg[featureField];
+                // Check if the feature is enabled (true or 'true')
+                if (featureValue !== 'true' && featureValue !== true) return false;
+            }
+            
+            return true;
+        });
 
-        // Live filtering function (lightweight version of search)
-// Debug version of live filtering function
+        // Calculate metrics for each package
+        filteredPackages = filteredPackages.map(pkg => {
+            const avgFirst2Years = calculateAverageFirst2Years(pkg);
+            const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
+            
+            return {
+                ...pkg,
+                avgFirst2Years,
+                monthlyInstallment,
+                selected: true // Default to selected for report
+            };
+        });
+
+        // Sort by average rate (ascending - best rates first)
+        filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
+
+        currentResults = filteredPackages;
+        displayResults(filteredPackages, true);
+        
+        console.log(`🔍 Found ${filteredPackages.length} matching packages`);
+        
+    } catch (error) {
+        console.error('💥 Search error:', error);
+        showNotification('Search failed: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+        // Updated performLiveFilter function
 function performLiveFilter() {
     console.log('🔄 Live filter started');
-    console.log('📦 allPackages.length:', allPackages.length);
-    console.log('📋 currentLoanType:', currentLoanType);
     
-    // Only perform live filtering if we have initial results
     if (!allPackages.length || !currentLoanType) {
         console.log('❌ Early return - no packages or loan type');
         return;
     }
 
     try {
-        // Get current form values
+        // Get current form values - INCLUDING NEW FILTERS
         const formData = {
             propertyType: document.getElementById('propertyType').value,
             propertyStatus: document.getElementById('propertyStatus').value,
             buyUnder: document.getElementById('buyUnder').value,
             loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
-            loanTenure: parseInt(document.getElementById('loanTenure').value) || 25
+            loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
+            // NEW FILTER OPTIONS
+            bankFilter: document.getElementById('bankFilter').value,
+            rateTypeFilter: document.getElementById('rateTypeFilter').value,
+            lockPeriodFilter: document.getElementById('lockPeriodFilter').value,
+            packageFeatures: document.getElementById('packageFeatures').value
         };
 
-        console.log('📝 Form data:', formData);
-
-        // Only filter if at least one field has a value
+        // Check if any filters are applied
         const hasFilters = Object.values(formData).some(value => 
             value !== '' && value !== 0
         );
 
-        console.log('🔍 Has filters:', hasFilters);
-
         if (!hasFilters) {
-            console.log('🧹 Clearing results - no filters');
             clearResults();
             return;
         }
 
-        // Show subtle loading indicator
         const searchButton = document.querySelector('.search-button');
-        if (!searchButton) {
-            console.error('❌ Search button not found!');
-            return;
-        }
+        if (!searchButton) return;
 
         const originalText = searchButton.innerHTML;
-        console.log('💾 Original button text saved');
-        
         searchButton.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Filtering...';
         searchButton.disabled = true;
 
-        // Small delay to show loading state
         setTimeout(() => {
-            console.log('⏰ Timeout started');
-            
             searchCriteria = { ...formData, loanType: currentLoanType };
             
-            // Filter packages based on criteria
+            // Enhanced filter logic (same as searchPackages)
             let filteredPackages = allPackages.filter(pkg => {
-                // Filter by loan type
+                // Existing filters
                 if (pkg.loan_type !== currentLoanType) return false;
-                
-                // Filter by property type
                 if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
-                
-                // Filter by property status
                 if (formData.propertyStatus && pkg.property_status !== formData.propertyStatus) return false;
-                
-                // Filter by buy under
                 if (formData.buyUnder && pkg.buy_under !== formData.buyUnder) return false;
-                
-                // Filter by minimum loan size
                 if (formData.loanAmount > 0 && pkg.minimum_loan_size && formData.loanAmount < pkg.minimum_loan_size) return false;
+                
+                // NEW ENHANCED FILTERS
+                if (formData.bankFilter && pkg.bank_name !== formData.bankFilter) return false;
+                if (formData.rateTypeFilter && pkg.rate_type_category !== formData.rateTypeFilter) return false;
+                
+                if (formData.lockPeriodFilter) {
+                    const pkgLockPeriod = pkg.lock_period || '0 Year';
+                    if (pkgLockPeriod !== formData.lockPeriodFilter) return false;
+                }
+                
+                if (formData.packageFeatures) {
+                    const featureField = formData.packageFeatures;
+                    const featureValue = pkg[featureField];
+                    if (featureValue !== 'true' && featureValue !== true) return false;
+                }
                 
                 return true;
             });
 
-            console.log('✅ Filtered packages count:', filteredPackages.length);
-
-            // Calculate metrics for each package
+            // Calculate metrics
             filteredPackages = filteredPackages.map(pkg => {
                 const avgFirst2Years = calculateAverageFirst2Years(pkg);
                 const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
@@ -1623,22 +1839,16 @@ function performLiveFilter() {
                 };
             });
 
-            console.log('💰 Packages with calculations ready');
-
-            // Sort by average rate (ascending - best rates first)
+            // Sort by average rate
             filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
 
             currentResults = filteredPackages;
-            console.log('📊 Displaying results...');
-            
             displayResults(filteredPackages, false);
 
             // Restore search button
-            console.log('🔄 Restoring button state');
             searchButton.innerHTML = originalText;
             searchButton.disabled = false;
             
-            // Re-initialize Lucide icons
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
@@ -1648,7 +1858,6 @@ function performLiveFilter() {
         
     } catch (error) {
         console.error('💥 Live filter error:', error);
-        // Restore search button in case of error
         const searchButton = document.querySelector('.search-button');
         if (searchButton) {
             searchButton.innerHTML = '<i data-lucide="search"></i> Find Best Packages';
