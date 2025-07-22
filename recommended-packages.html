@@ -1634,67 +1634,92 @@ function performLiveFilter() {
 
         // Calculate interest rate for a specific year - PRESERVED FROM ORIGINAL
         function calculateInterestRate(pkg, year) {
-            let rateType, operator, value;
-            
-            if (year === 'thereafter') {
-                rateType = pkg.thereafter_rate_type;
-                operator = pkg.thereafter_operator;
-                value = pkg.thereafter_value;
-            } else {
-                rateType = pkg[`year${year}_rate_type`];
-                operator = pkg[`year${year}_operator`];
-                value = pkg[`year${year}_value`];
-            }
+    let rateType, operator, value;
+    
+    if (year === 'thereafter') {
+        rateType = pkg.thereafter_rate_type;
+        operator = pkg.thereafter_operator;
+        value = pkg.thereafter_value;
+    } else {
+        rateType = pkg[`year${year}_rate_type`];
+        operator = pkg[`year${year}_operator`];
+        value = pkg[`year${year}_value`];
+    }
 
-            if (!rateType || value === null || value === undefined) return 0;
-
-            if (rateType === 'FIXED') {
-                return parseFloat(value) || 0;
-            } else {
-                // Find the reference rate
-                const referenceRate = rateTypes.find(rt => rt.rate_type === rateType);
-                if (!referenceRate) {
-                    console.warn(`❌ Reference rate type not found: ${rateType}`);
-                    return 0;
-                }
-
-                const baseRate = parseFloat(referenceRate.rate_value) || 0;
-                const adjustment = parseFloat(value) || 0;
-                
-                if (operator === '+') {
-                    return baseRate + adjustment;
-                } else if (operator === '-') {
-                    return Math.max(0, baseRate - adjustment);
-                } else {
-                    return baseRate;
-                }
-            }
+    // NEW LOGIC: If no data for this year, use thereafter rate
+    if (!rateType || value === null || value === undefined) {
+        if (pkg.thereafter_rate_type && pkg.thereafter_value !== null && pkg.thereafter_value !== undefined) {
+            return calculateInterestRate(pkg, 'thereafter');
         }
+        return 0;
+    }
+
+    // Original calculation logic
+    if (rateType === 'FIXED') {
+        return parseFloat(value) || 0;
+    } else {
+        // Find the reference rate
+        const referenceRate = rateTypes.find(rt => rt.rate_type === rateType);
+        if (!referenceRate) {
+            console.warn(`❌ Reference rate type not found: ${rateType}`);
+            return 0;
+        }
+
+        const baseRate = parseFloat(referenceRate.rate_value) || 0;
+        const adjustment = parseFloat(value) || 0;
+        
+        if (operator === '+') {
+            return baseRate + adjustment;
+        } else if (operator === '-') {
+            return Math.max(0, baseRate - adjustment);
+        } else {
+            return baseRate;
+        }
+    }
+}
 
         // Format rate display for tables - PRESERVED FROM ORIGINAL
-        function formatRateDisplay(pkg, year) {
-            let rateType, operator, value;
+       function formatRateDisplay(pkg, year) {
+    let rateType, operator, value;
+    
+    if (year === 'thereafter') {
+        rateType = pkg.thereafter_rate_type;
+        operator = pkg.thereafter_operator;
+        value = pkg.thereafter_value;
+    } else {
+        rateType = pkg[`year${year}_rate_type`];
+        operator = pkg[`year${year}_operator`];
+        value = pkg[`year${year}_value`];
+    }
+
+    // NEW LOGIC: If no data for this year, use thereafter rate
+    if (!rateType || value === null || value === undefined) {
+        // Check if thereafter rate exists
+        if (pkg.thereafter_rate_type && pkg.thereafter_value !== null && pkg.thereafter_value !== undefined) {
+            const thereafterType = pkg.thereafter_rate_type;
+            const thereafterOp = pkg.thereafter_operator;
+            const thereafterVal = pkg.thereafter_value;
             
-            if (year === 'thereafter') {
-                rateType = pkg.thereafter_rate_type;
-                operator = pkg.thereafter_operator;
-                value = pkg.thereafter_value;
-            } else {
-                rateType = pkg[`year${year}_rate_type`];
-                operator = pkg[`year${year}_operator`];
-                value = pkg[`year${year}_value`];
-            }
-
-            if (!rateType || value === null || value === undefined) return '-';
-
-            if (rateType === 'FIXED') {
-                const rate = calculateInterestRate(pkg, year);
+            if (thereafterType === 'FIXED') {
+                const rate = parseFloat(thereafterVal) || 0;
                 return `${formatPercentage(rate)} Fixed`;
             } else {
-                const operatorSymbol = operator === '+' ? '+' : '-';
-                return `${rateType} ${operatorSymbol} ${value}%`;
+                const operatorSymbol = thereafterOp === '+' ? '+' : '-';
+                return `${thereafterType} ${operatorSymbol} ${thereafterVal}%`;
             }
         }
+        return '-'; // Only show dash if no thereafter rate exists
+    }
+
+    // Original logic for years with actual data
+    if (rateType === 'FIXED') {
+        const rate = calculateInterestRate(pkg, year);
+        return `${formatPercentage(rate)} Fixed`;
+    } else {
+        const operatorSymbol = operator === '+' ? '+' : '-';
+        return `${rateType} ${operatorSymbol} ${value}%`;
+    }
+}
 
         // Enhanced rate display with reference rate values
 function formatDetailedRateDisplay(pkg, year) {
@@ -2131,16 +2156,8 @@ function displayResults(packages, shouldScroll = true) {
             });
 
             // Determine which years have data across all packages
-            const yearsToShow = [];
-            for (let year = 1; year <= 5; year++) {
-                const hasData = selectedPackages.some(pkg => {
-                    const rate = calculateInterestRate(pkg, year);
-                    return rate > 0;
-                });
-                if (hasData) {
-                    yearsToShow.push(year);
-                }
-            }
+           const yearsToShow = [1, 2, 3, 4, 5]; // Always show all 5 years
+const hasThereafterData = true; // Always show thereafter row
 
             // Check if thereafter has data
             const hasThereafterData = selectedPackages.some(pkg => {
