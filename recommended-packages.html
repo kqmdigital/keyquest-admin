@@ -1875,17 +1875,29 @@ function performLiveFilter() {
             });
 
             // Calculate metrics
-            filteredPackages = filteredPackages.map(pkg => {
-                const avgFirst2Years = calculateAverageFirst2Years(pkg);
-                const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
-                
-                return {
-                    ...pkg,
-                    avgFirst2Years,
-                    monthlyInstallment,
-                    selected: true
-                };
-            });
+            // Calculate metrics
+filteredPackages = filteredPackages.map(pkg => {
+    const avgFirst2Years = calculateAverageFirst2Years(pkg);
+    const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
+    
+    // Calculate savings for refinancing based on LOCK-IN PERIOD
+    let monthlySavings = 0;
+    let totalSavings = 0;
+    if (currentLoanType === 'Refinancing Home Loan' && formData.existingInterestRate) {
+        monthlySavings = calculateMonthlySavings(formData.loanAmount, formData.loanTenure, formData.existingInterestRate, avgFirst2Years);
+        totalSavings = calculateTotalSavings(monthlySavings, pkg.lock_period);
+    }
+    
+    return {
+        ...pkg,
+        avgFirst2Years,
+        monthlyInstallment,
+        monthlySavings,
+        totalSavings,
+        lockInYears: parseLockInPeriod(pkg.lock_period),
+        selected: true
+    };
+});
 
             // Sort by average rate
             filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
@@ -2293,13 +2305,7 @@ function displayResults(packages, shouldScroll = true) {
 ` : ''}
 
 
-${pkg.monthlySavings ? `
-<div class="package-metric">
-    <div class="metric-label">Monthly Savings</div>
-    <div class="metric-value ${pkg.monthlySavings > 0 ? 'savings-highlight' : 'savings-negative'}">
-        ${formatSavings(pkg.monthlySavings)}
-    </div>
-</div>
+${pkg.totalSavings ? `
 <div class="package-metric">
     <div class="metric-label">Total Savings (${pkg.lockInYears || 'N/A'} year lock-in)</div>
     <div class="metric-value ${pkg.totalSavings > 0 ? 'savings-highlight' : 'savings-negative'}">
@@ -2691,15 +2697,16 @@ function generateProfessionalReport() {
                             `).join('')}
                         </tr>
 
-                        <!-- Existing Interest Rate Saving Row -->
-                        <tr style="background: white;">
-                                <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Monthly Installment</td>
-                            ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                    ${formatSavings(pkg.totalSavings, pkg.lock_period)}
-                                </td>
-                            `).join('')}
-                        </tr>
+                     <!-- Total Savings Row (Only if refinancing) -->
+${searchCriteria.existingInterestRate ? `
+<tr style="background: #f0fdf4;">
+    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; background: #ecfdf5; color: #065f46; word-wrap: break-word; vertical-align: middle;">Total Savings (Lock-in Period)</td>
+    ${selectedPackages.map((pkg, index) => `
+        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#f0fdf4' : '#f9fafb'}; color: ${pkg.totalSavings > 0 ? '#065f46' : '#dc2626'}; font-weight: bold; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
+            ${formatSavings(pkg.totalSavings, pkg.lock_period)}
+        </td>
+    `).join('')}
+</tr>
 
                     
                         <!-- Remarks Row -->
