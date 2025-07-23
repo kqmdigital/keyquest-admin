@@ -321,6 +321,18 @@
         font-size: 11px;
         padding: 4px 8px;
     }
+        .package-header {
+        margin-bottom: 8px;
+        min-height: auto;
+    }
+    
+    .rate-schedule {
+        margin: 8px 0;
+    }
+    
+    .rate-schedule-title {
+        margin-bottom: 8px;
+    }
 }
 
 /* Loading state for individual filters */
@@ -675,7 +687,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 12px; /* Reduced from 24px */
     flex-wrap: nowrap;
     gap: 16px;
     min-height: 75px;
@@ -767,13 +779,13 @@
 
         /* Enhanced Rate Schedule */
         .rate-schedule {
-            margin: 24px 0;
+            margin: 12px 0;
         }
 
         .rate-schedule-title {
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             font-size: 16px;
             display: flex;
             align-items: center;
@@ -2008,7 +2020,7 @@ function formatSavings(savings, lockInPeriod = null) {
     if (savings === 0) return 'No savings';
     
     const lockInYears = lockInPeriod ? parseLockInPeriod(lockInPeriod) : null;
-    const periodText = lockInYears ? ` (${lockInYears}yr lock-in)` : '';
+    const periodText = lockInYears ? ` Over ${lockInYears} Year${lockInYears > 1 ? 's' : ''} Lock-in` : '';
     
     if (savings > 0) {
         return `Save ${formatCurrency(Math.abs(savings))}${periodText}`;
