@@ -2289,15 +2289,16 @@ function displayResults(packages, shouldScroll = true) {
             <span class="detail-label-inline">Min Loan:</span>
             <span class="detail-value-inline">${formatCurrency(pkg.minimum_loan_size || 0)}</span>
         </div>
-    </div>
-    <div class="rate-info">
-    <div class="avg-rate">${formatPercentage(pkg.avgFirst2Years)}</div>
-    <div class="monthly-payment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
-    ${pkg.totalSavings ? `
+        ${pkg.totalSavings ? `
         <div class="total-savings-compact ${pkg.totalSavings > 0 ? '' : 'negative'}">
             ${formatSavings(pkg.totalSavings, pkg.lock_period)}
         </div>
     ` : ''}
+    </div>
+    <div class="rate-info">
+    <div class="avg-rate">${formatPercentage(pkg.avgFirst2Years)}</div>
+    <div class="monthly-payment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
+    
 </div>
 </div>
 
