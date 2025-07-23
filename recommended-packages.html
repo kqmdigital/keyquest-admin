@@ -144,6 +144,28 @@
     min-width: auto;
 }
 
+        .form-hint {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.savings-highlight {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-block;
+    margin-top: 8px;
+}
+
+.savings-negative {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
 /* Button group for search and clear actions */
 .button-group {
     display: flex;
@@ -1328,15 +1350,16 @@
         </div>
         
         <div class="form-group">
-            <label class="form-label">Loan Tenure</label>
-            <select class="form-select" id="loanTenure">
-                <option value="">Select Tenure</option>
-                <option value="20">20 years</option>
-                <option value="25">25 years</option>
-                <option value="30">30 years</option>
-                <option value="35">35 years</option>
-            </select>
-        </div>
+    <label class="form-label">Loan Tenure (Years)</label>
+    <input type="number" class="form-input" id="loanTenure" placeholder="25" min="1" max="50" step="1">
+</div>
+
+<!-- NEW: Existing Interest Rate for Refinancing -->
+<div class="form-group" id="existingRateGroup" style="display: none;">
+    <label class="form-label">Current Interest Rate (%)</label>
+    <input type="number" class="form-input" id="existingInterestRate" placeholder="3.50" min="0" max="20" step="0.01">
+    <small class="form-hint">Enter your current loan's interest rate for savings calculation</small>
+</div>
 
         <!-- Row 3: New Enhanced Filters -->
         <div class="form-group">
@@ -1577,6 +1600,7 @@ function setupEventListeners() {
         'buyUnder',
         'loanAmount',
         'loanTenure',
+        'existingInterestRate', // ADD THIS LINE
         // NEW FILTER IDs
         'bankFilter',
         'rateTypeFilter',
@@ -1603,7 +1627,7 @@ function clearAllFilters() {
     document.getElementById('buyUnder').value = '';
     document.getElementById('loanAmount').value = '';
     document.getElementById('loanTenure').value = '';
-    
+    document.getElementById('existingInterestRate').value = '';
     // Clear new enhanced filters
     document.getElementById('bankFilter').value = '';
     document.getElementById('rateTypeFilter').value = '';
@@ -1621,21 +1645,32 @@ function clearAllFilters() {
         // LOAN TYPE SELECTION - PRESERVED FROM ORIGINAL
         // ===================================
         function selectLoanType(loanType) {
-            currentLoanType = loanType;
-            
-            // Update tab appearance
-            document.querySelectorAll('.loan-tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('data-loan-type') === loanType) {
-                    tab.classList.add('active');
-                }
-            });
-            
-            // Clear previous results
-            clearResults();
-            
-            console.log(`📋 Selected loan type: ${loanType}`);
+    currentLoanType = loanType;
+    
+    // Update tab appearance
+    document.querySelectorAll('.loan-tab').forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-loan-type') === loanType) {
+            tab.classList.add('active');
         }
+    });
+    
+    // Show/hide existing rate input for refinancing
+    const existingRateGroup = document.getElementById('existingRateGroup');
+    if (existingRateGroup) {
+        if (loanType === 'Refinancing Home Loan') {
+            existingRateGroup.style.display = 'block';
+        } else {
+            existingRateGroup.style.display = 'none';
+            document.getElementById('existingInterestRate').value = '';
+        }
+    }
+    
+    // Clear previous results
+    clearResults();
+    
+    console.log(`📋 Selected loan type: ${loanType}`);
+}
 
         // ===================================
         // DATA LOADING FUNCTIONS - PRESERVED FROM ORIGINAL
@@ -1683,6 +1718,7 @@ async function searchPackages(event) {
             buyUnder: document.getElementById('buyUnder').value,
             loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
             loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
+            existingInterestRate: parseFloat(document.getElementById('existingInterestRate').value) || 0,
             // NEW FILTER OPTIONS
             bankFilter: document.getElementById('bankFilter').value,
             rateTypeFilter: document.getElementById('rateTypeFilter').value,
@@ -1727,17 +1763,28 @@ async function searchPackages(event) {
         });
 
         // Calculate metrics for each package
-        filteredPackages = filteredPackages.map(pkg => {
-            const avgFirst2Years = calculateAverageFirst2Years(pkg);
-            const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
-            
-            return {
-                ...pkg,
-                avgFirst2Years,
-                monthlyInstallment,
-                selected: true // Default to selected for report
-            };
-        });
+        // Calculate metrics for each package
+filteredPackages = filteredPackages.map(pkg => {
+    const avgFirst2Years = calculateAverageFirst2Years(pkg);
+    const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
+    
+    // Calculate savings for refinancing
+    let monthlySavings = 0;
+    let totalSavings = 0;
+    if (currentLoanType === 'Refinancing Home Loan' && formData.existingInterestRate) {
+        monthlySavings = calculateMonthlySavings(formData.loanAmount, formData.loanTenure, formData.existingInterestRate, avgFirst2Years);
+        totalSavings = calculateTotalSavings(monthlySavings, formData.loanTenure);
+    }
+    
+    return {
+        ...pkg,
+        avgFirst2Years,
+        monthlyInstallment,
+        monthlySavings,
+        totalSavings,
+        selected: true // Default to selected for report
+    };
+});
 
         // Sort by average rate (ascending - best rates first)
         filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
@@ -1772,6 +1819,7 @@ function performLiveFilter() {
             buyUnder: document.getElementById('buyUnder').value,
             loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
             loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
+            existingInterestRate: parseFloat(document.getElementById('existingInterestRate').value) || 0,
             // NEW FILTER OPTIONS
             bankFilter: document.getElementById('bankFilter').value,
             rateTypeFilter: document.getElementById('rateTypeFilter').value,
@@ -1902,6 +1950,32 @@ function performLiveFilter() {
             
             return monthlyPayment;
         }
+
+        // Calculate potential monthly savings for refinancing
+function calculateMonthlySavings(loanAmount, tenure, existingRate, newRate) {
+    if (!loanAmount || !tenure || !existingRate || !newRate) return 0;
+    
+    const existingPayment = calculateMonthlyInstallment(loanAmount, tenure, existingRate);
+    const newPayment = calculateMonthlyInstallment(loanAmount, tenure, newRate);
+    
+    return existingPayment - newPayment;
+}
+
+// Calculate total savings over loan tenure
+function calculateTotalSavings(monthlySavings, tenure) {
+    if (!monthlySavings || !tenure) return 0;
+    return monthlySavings * tenure * 12;
+}
+
+// Format savings display
+function formatSavings(savings) {
+    if (savings === 0) return 'No savings';
+    if (savings > 0) {
+        return `Save ${formatCurrency(Math.abs(savings))}`;
+    } else {
+        return `Higher by ${formatCurrency(Math.abs(savings))}`;
+    }
+}
 
         function formatCurrency(amount) {
             return new Intl.NumberFormat('en-SG', {
