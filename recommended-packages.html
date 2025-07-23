@@ -166,6 +166,23 @@
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
+        .total-savings-compact {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white !important;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px !important;
+    font-weight: 700;
+    text-align: right;
+    margin-top: 8px;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    white-space: nowrap;
+}
+
+.total-savings-compact.negative {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
 /* Button group for search and clear actions */
 .button-group {
     display: flex;
@@ -2274,9 +2291,14 @@ function displayResults(packages, shouldScroll = true) {
         </div>
     </div>
     <div class="rate-info">
-        <div class="avg-rate">${formatPercentage(pkg.avgFirst2Years)}</div>
-        <div class="monthly-payment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
-    </div>
+    <div class="avg-rate">${formatPercentage(pkg.avgFirst2Years)}</div>
+    <div class="monthly-payment">${formatCurrency(pkg.monthlyInstallment)}/mo</div>
+    ${pkg.totalSavings ? `
+        <div class="total-savings-compact ${pkg.totalSavings > 0 ? '' : 'negative'}">
+            ${formatSavings(pkg.totalSavings, pkg.lock_period)}
+        </div>
+    ` : ''}
+</div>
 </div>
 
                    
@@ -2304,14 +2326,7 @@ function displayResults(packages, shouldScroll = true) {
 ` : ''}
 
 
-${pkg.totalSavings ? `
-<div class="package-metric">
-    <div class="metric-label">Total Savings (${pkg.lockInYears || 'N/A'} year lock-in)</div>
-    <div class="metric-value ${pkg.totalSavings > 0 ? 'savings-highlight' : 'savings-negative'}">
-        ${formatSavings(pkg.totalSavings, pkg.lock_period)}
-    </div>
-</div>
-` : ''}
+
 
 
                     <div class="package-remarks-editor">
