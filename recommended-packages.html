@@ -1874,8 +1874,7 @@ function performLiveFilter() {
                 return true;
             });
 
-            // Calculate metrics
-            // Calculate metrics
+           // Calculate metrics
 filteredPackages = filteredPackages.map(pkg => {
     const avgFirst2Years = calculateAverageFirst2Years(pkg);
     const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
@@ -2688,16 +2687,16 @@ function generateProfessionalReport() {
                         </tr>
 
                         <!-- Monthly Installment Row -->
-                        <tr style="background: white;">
-                                <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Monthly Installment</td>
-                            ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-                                    ${formatCurrency(pkg.monthlyInstallment)}
-                                </td>
-                            `).join('')}
-                        </tr>
+<tr style="background: white;">
+    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Monthly Installment</td>
+    ${selectedPackages.map((pkg, index) => `
+        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
+            ${formatCurrency(pkg.monthlyInstallment)}
+        </td>
+    `).join('')}
+</tr>
 
-                     <!-- Total Savings Row (Only if refinancing) -->
+<!-- Total Savings Row (Only if refinancing) -->
 ${searchCriteria.existingInterestRate ? `
 <tr style="background: #f0fdf4;">
     <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; background: #ecfdf5; color: #065f46; word-wrap: break-word; vertical-align: middle;">Total Savings (Lock-in Period)</td>
@@ -2707,6 +2706,7 @@ ${searchCriteria.existingInterestRate ? `
         </td>
     `).join('')}
 </tr>
+` : ''}
 
                     
                         <!-- Remarks Row -->
