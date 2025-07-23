@@ -1763,17 +1763,16 @@ async function searchPackages(event) {
         });
 
         // Calculate metrics for each package
-        // Calculate metrics for each package
 filteredPackages = filteredPackages.map(pkg => {
     const avgFirst2Years = calculateAverageFirst2Years(pkg);
     const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
     
-    // Calculate savings for refinancing
+    // Calculate savings for refinancing based on LOCK-IN PERIOD
     let monthlySavings = 0;
     let totalSavings = 0;
     if (currentLoanType === 'Refinancing Home Loan' && formData.existingInterestRate) {
         monthlySavings = calculateMonthlySavings(formData.loanAmount, formData.loanTenure, formData.existingInterestRate, avgFirst2Years);
-        totalSavings = calculateTotalSavings(monthlySavings, formData.loanTenure);
+        totalSavings = calculateTotalSavings(monthlySavings, pkg.lock_period); // Use lock_period instead of tenure
     }
     
     return {
@@ -1782,6 +1781,7 @@ filteredPackages = filteredPackages.map(pkg => {
         monthlyInstallment,
         monthlySavings,
         totalSavings,
+        lockInYears: parseLockInPeriod(pkg.lock_period), // Add for display
         selected: true // Default to selected for report
     };
 });
@@ -1951,6 +1951,13 @@ function performLiveFilter() {
             return monthlyPayment;
         }
 
+        // Extract numeric value from lock-in period (e.g., "3 Years" -> 3)
+function parseLockInPeriod(lockPeriod) {
+    if (!lockPeriod) return 0;
+    const match = lockPeriod.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 0;
+}
+
         // Calculate potential monthly savings for refinancing
 function calculateMonthlySavings(loanAmount, tenure, existingRate, newRate) {
     if (!loanAmount || !tenure || !existingRate || !newRate) return 0;
@@ -1961,22 +1968,26 @@ function calculateMonthlySavings(loanAmount, tenure, existingRate, newRate) {
     return existingPayment - newPayment;
 }
 
-// Calculate total savings over loan tenure
-function calculateTotalSavings(monthlySavings, tenure) {
-    if (!monthlySavings || !tenure) return 0;
-    return monthlySavings * tenure * 12;
+// Calculate total savings over LOCK-IN PERIOD (not full tenure)
+function calculateTotalSavings(monthlySavings, lockInPeriod) {
+    if (!monthlySavings || !lockInPeriod) return 0;
+    const lockInYears = parseLockInPeriod(lockInPeriod);
+    return monthlySavings * lockInYears * 12;
 }
 
-// Format savings display
-function formatSavings(savings) {
+// Format savings display with lock-in period context
+function formatSavings(savings, lockInPeriod = null) {
     if (savings === 0) return 'No savings';
+    
+    const lockInYears = lockInPeriod ? parseLockInPeriod(lockInPeriod) : null;
+    const periodText = lockInYears ? ` (${lockInYears}yr lock-in)` : '';
+    
     if (savings > 0) {
-        return `Save ${formatCurrency(Math.abs(savings))}`;
+        return `Save ${formatCurrency(Math.abs(savings))}${periodText}`;
     } else {
-        return `Higher by ${formatCurrency(Math.abs(savings))}`;
+        return `Higher by ${formatCurrency(Math.abs(savings))}${periodText}`;
     }
 }
-
         function formatCurrency(amount) {
             return new Intl.NumberFormat('en-SG', {
                 style: 'currency',
@@ -2280,6 +2291,23 @@ function displayResults(packages, shouldScroll = true) {
         ${features}
     </div>
 ` : ''}
+
+
+${pkg.monthlySavings ? `
+<div class="package-metric">
+    <div class="metric-label">Monthly Savings</div>
+    <div class="metric-value ${pkg.monthlySavings > 0 ? 'savings-highlight' : 'savings-negative'}">
+        ${formatSavings(pkg.monthlySavings)}
+    </div>
+</div>
+<div class="package-metric">
+    <div class="metric-label">Total Savings (${pkg.lockInYears || 'N/A'} year lock-in)</div>
+    <div class="metric-value ${pkg.totalSavings > 0 ? 'savings-highlight' : 'savings-negative'}">
+        ${formatSavings(pkg.totalSavings, pkg.lock_period)}
+    </div>
+</div>
+` : ''}
+
 
                     <div class="package-remarks-editor">
                         <div class="remarks-editor-title">
@@ -2659,6 +2687,16 @@ function generateProfessionalReport() {
                             ${selectedPackages.map((pkg, index) => `
                                 <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
                                     ${formatCurrency(pkg.monthlyInstallment)}
+                                </td>
+                            `).join('')}
+                        </tr>
+
+                        <!-- Existing Interest Rate Saving Row -->
+                        <tr style="background: white;">
+                                <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; word-wrap: break-word; vertical-align: middle;">Monthly Installment</td>
+                            ${selectedPackages.map((pkg, index) => `
+                                <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fef3c7' : 'white'}; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
+                                    ${formatSavings(pkg.totalSavings, pkg.lock_period)}
                                 </td>
                             `).join('')}
                         </tr>
