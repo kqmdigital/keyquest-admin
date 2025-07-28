@@ -110,16 +110,31 @@
         }
 
         /* Enhanced Search Section */
-        .search-section {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 20px;
-            padding: 32px;
-            margin-bottom: 32px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            position: relative;
-            overflow: hidden;
-        }
+       .search-section {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 32px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: visible; /* CHANGED from hidden to visible */
+}
+
+        
+
+        .multi-select-filter.open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    backdrop-filter: blur(2px);
+    pointer-events: none; /* Allow clicking through */
+}
 
         .search-section::before {
             content: '';
@@ -136,12 +151,14 @@
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
     align-items: end;
-    max-width: none; /* Remove width restriction for more filters */
+    max-width: none;
+    overflow: visible; /* ADD THIS */
 }
         /* Special styling for action buttons */
 .form-group:has(.search-button) {
     grid-column: span 1;
     min-width: auto;
+    
 }
 
         .form-hint {
@@ -374,7 +391,50 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    min-width: 200px; /* Ensure consistent minimum width */
+    min-width: 200px;
+    position: relative; /* ADD THIS */
+    overflow: visible; /* ADD THIS */
+}
+        /* Enhanced multi-select dropdown positioning */
+.multi-select-filter {
+    position: relative;
+    min-width: 180px;
+    flex: 1;
+    max-width: 250px;
+    z-index: 100; /* ADD THIS */
+}
+
+.multi-select-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+    z-index: 1000; /* Increased z-index */
+    max-height: 250px;
+    overflow-y: auto;
+    margin-top: 4px;
+    min-width: 200px; /* ADD THIS to prevent narrow dropdowns */
+}
+
+/* Ensure dropdown appears above everything */
+.multi-select-filter.open .multi-select-dropdown {
+    z-index: 9999; /* Even higher when open */
+}
+
+/* Fix for mobile/responsive - ensure dropdown doesn't get cut off */
+@media (max-width: 768px) {
+    .multi-select-dropdown {
+        position: fixed; /* Use fixed positioning on mobile */
+        left: 10px;
+        right: 10px;
+        max-width: calc(100vw - 20px);
+        z-index: 9999;
+    }
 }
 
         .form-label {
@@ -1772,7 +1832,7 @@ function toggleMultiSelect(selectId) {
     const dropdown = container.querySelector('.multi-select-dropdown');
     const isOpen = container.classList.contains('open');
     
-    // Close all other dropdowns
+    // Close all other dropdowns first
     document.querySelectorAll('.multi-select-filter').forEach(filter => {
         filter.classList.remove('open');
         filter.querySelector('.multi-select-dropdown').style.display = 'none';
@@ -1781,9 +1841,29 @@ function toggleMultiSelect(selectId) {
     if (!isOpen) {
         container.classList.add('open');
         dropdown.style.display = 'block';
+        
+        // Ensure dropdown is positioned correctly
+        const rect = container.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const dropdownHeight = 250; // max-height from CSS
+        
+        // Check if there's enough space below
+        if (rect.bottom + dropdownHeight > viewportHeight) {
+            // Not enough space below, show above instead
+            dropdown.style.top = 'auto';
+            dropdown.style.bottom = '100%';
+            dropdown.style.marginTop = '0';
+            dropdown.style.marginBottom = '4px';
+        } else {
+            // Enough space below, show normally
+            dropdown.style.top = '100%';
+            dropdown.style.bottom = 'auto';
+            dropdown.style.marginTop = '4px';
+            dropdown.style.marginBottom = '0';
+        }
     }
 }
-
+        
 function selectAllBanks() {
     const allCheckbox = document.getElementById('bankAll');
     const checkboxes = document.querySelectorAll('#bankMultiSelect input[type="checkbox"]:not(#bankAll)');
