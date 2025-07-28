@@ -1387,30 +1387,59 @@
 <div class="form-group" id="existingRateGroup" style="display: none;">
     <label class="form-label">Current Interest Rate (%)</label>
     <input type="number" class="form-input" id="existingInterestRate" placeholder="3.50" min="0" max="20" step="0.01">
-    <small class="form-hint">Enter your current loan's interest rate for savings calculation</small>
+    
 </div>
+        <div class="form-group" id="existingBankGroup" style="display: none;">
+    <label class="form-label">Current Bank</label>
+    <select class="form-select" id="existingBank">
+        <option value="">Select Current Bank</option>
+        <option value="CIMB">CIMB</option>
+        <option value="OCBC">OCBC</option>
+        <option value="UOB">UOB</option>
+        <option value="DBS">DBS</option>
+        <option value="MBB">MBB</option>
+        <option value="SCB">SCB</option>
+        <option value="HSBC">HSBC</option>
+        <option value="SBI">SBI</option>
+        <option value="BOC">BOC</option>
+        <option value="HLF">HLF</option>
+        <option value="SF">SF</option>
+        <option value="RHB">RHB</option>
+        <option value="SIF">SIF</option>
+        <option value="Citibank">Citibank</option>
+    </select>
+   </div>
 
         <!-- Row 3: New Enhanced Filters -->
-        <div class="form-group">
-            <label class="form-label">Bank</label>
-            <select class="form-select" id="bankFilter">
-                <option value="">Select Bank</option>
-                <option value="CIMB">CIMB</option>
-                <option value="OCBC">OCBC</option>
-                <option value="UOB">UOB</option>
-                <option value="DBS">DBS</option>
-                <option value="MBB">MBB</option>
-                <option value="SCB">SCB</option>
-                <option value="HSBC">HSBC</option>
-                <option value="SBI">SBI</option>
-                <option value="BOC">BOC</option>
-                <option value="HLF">HLF</option>
-                <option value="SF">SF</option>
-                <option value="RHB">RHB</option>
-                <option value="SIF">SIF</option>
-                <option value="Citibank">Citibank</option>
-            </select>
+       <div class="form-group">
+    <label class="form-label">Bank (Multiple Selection)</label>
+    <div class="multi-select-filter" id="bankMultiSelect">
+        <button type="button" class="filter-select-btn" onclick="toggleMultiSelect('bankMultiSelect')">
+            <span id="bankSelected">Select Banks</span>
+            <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="multi-select-dropdown">
+            <label data-all="true">
+                <input type="checkbox" id="bankAll" onchange="selectAllBanks()">
+                Select All Banks
+            </label>
+            <label><input type="checkbox" value="CIMB"> CIMB</label>
+            <label><input type="checkbox" value="OCBC"> OCBC</label>
+            <label><input type="checkbox" value="UOB"> UOB</label>
+            <label><input type="checkbox" value="DBS"> DBS</label>
+            <label><input type="checkbox" value="MBB"> MBB</label>
+            <label><input type="checkbox" value="SCB"> SCB</label>
+            <label><input type="checkbox" value="HSBC"> HSBC</label>
+            <label><input type="checkbox" value="SBI"> SBI</label>
+            <label><input type="checkbox" value="BOC"> BOC</label>
+            <label><input type="checkbox" value="HLF"> HLF</label>
+            <label><input type="checkbox" value="SF"> SF</label>
+            <label><input type="checkbox" value="RHB"> RHB</label>
+            <label><input type="checkbox" value="SIF"> SIF</label>
+            <label><input type="checkbox" value="Citibank"> Citibank</label>
         </div>
+    </div>
+</div>
         
         <div class="form-group">
             <label class="form-label">Rate Type</label>
@@ -1418,7 +1447,6 @@
                 <option value="">Select Rate Type</option>
                 <option value="Fixed">Fixed</option>
                 <option value="Floating">Floating</option>
-                <option value="Hybrid">Hybrid</option>
             </select>
         </div>
         
@@ -1442,18 +1470,27 @@
 
         <!-- Row 4: Package Features -->
         <div class="form-group">
-            <label class="form-label">Package Features</label>
-            <select class="form-select" id="packageFeatures">
-                <option value="">Select Feature</option>
-                <option value="legal_fee_subsidy">Legal Fee Subsidy</option>
-                <option value="cash_rebate">Cash Rebate</option>
-                <option value="free_package_conversion_12m">Free Conversion (12M)</option>
-                <option value="free_package_conversion_24m">Free Conversion (24M)</option>
-                <option value="valuation_subsidy">Valuation Subsidy</option>
-                <option value="partial_repayment">Partial Repayment</option>
-                <option value="waiver_due_to_sales">Waiver Due to Sales</option>
-            </select>
+    <label class="form-label">Package Features (Multiple Selection)</label>
+    <div class="multi-select-filter" id="featuresMultiSelect">
+        <button type="button" class="filter-select-btn" onclick="toggleMultiSelect('featuresMultiSelect')">
+            <span id="featuresSelected">Select Features</span>
+            <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="multi-select-dropdown">
+            <label data-all="true">
+                <input type="checkbox" id="featuresAll" onchange="selectAllFeatures()">
+                Select All Features
+            </label>
+            <label><input type="checkbox" value="legal_fee_subsidy"> Legal Fee Subsidy</label>
+            <label><input type="checkbox" value="cash_rebate"> Cash Rebate</label>
+            <label><input type="checkbox" value="free_package_conversion_12m"> Free Conversion (12M)</label>
+            <label><input type="checkbox" value="free_package_conversion_24m"> Free Conversion (24M)</label>
+            <label><input type="checkbox" value="valuation_subsidy"> Valuation Subsidy</label>
+            <label><input type="checkbox" value="partial_repayment"> Partial Repayment</label>
+            <label><input type="checkbox" value="waiver_due_to_sales"> Waiver Due to Sales</label>
         </div>
+    </div>
+</div>
 
         <!-- Action Buttons -->
         <div class="form-group">
@@ -1592,7 +1629,7 @@
         timeout = setTimeout(later, wait);
     };
 }
-        // Updated setupEventListeners function to include new filters
+        
 function setupEventListeners() {
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
@@ -1629,12 +1666,9 @@ function setupEventListeners() {
         'buyUnder',
         'loanAmount',
         'loanTenure',
-        'existingInterestRate', // ADD THIS LINE
-        // NEW FILTER IDs
-        'bankFilter',
+        'existingInterestRate',
         'rateTypeFilter',
-        'lockPeriodFilter',
-        'packageFeatures'
+        'lockPeriodFilter'
     ];
 
     filterInputs.forEach(inputId => {
@@ -1644,6 +1678,34 @@ function setupEventListeners() {
             element.addEventListener('change', performLiveFilter);
         }
     });
+
+    // Add event listeners for multi-select changes
+    document.addEventListener('change', function(event) {
+        if (event.target.matches('#bankMultiSelect input[type="checkbox"]:not(#bankAll)')) {
+            updateBankDisplay();
+            performLiveFilter();
+        }
+        if (event.target.matches('#featuresMultiSelect input[type="checkbox"]:not(#featuresAll)')) {
+            updateFeaturesDisplay();
+            performLiveFilter();
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.multi-select-filter')) {
+            document.querySelectorAll('.multi-select-filter').forEach(filter => {
+                filter.classList.remove('open');
+                filter.querySelector('.multi-select-dropdown').style.display = 'none';
+            });
+        }
+    });
+    
+    // Add existing bank filter listener
+    const existingBankSelect = document.getElementById('existingBank');
+    if (existingBankSelect) {
+        existingBankSelect.addEventListener('change', performLiveFilter);
+    }
 
     console.log('✅ Enhanced event listeners set up successfully');
 }
@@ -1657,11 +1719,17 @@ function clearAllFilters() {
     document.getElementById('loanAmount').value = '';
     document.getElementById('loanTenure').value = '';
     document.getElementById('existingInterestRate').value = '';
-    // Clear new enhanced filters
-    document.getElementById('bankFilter').value = '';
+    document.getElementById('existingBank').value = '';
     document.getElementById('rateTypeFilter').value = '';
     document.getElementById('lockPeriodFilter').value = '';
-    document.getElementById('packageFeatures').value = '';
+    
+    // Clear multi-select banks
+    document.querySelectorAll('#bankMultiSelect input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.getElementById('bankSelected').textContent = 'Select Banks';
+    
+    // Clear multi-select features
+    document.querySelectorAll('#featuresMultiSelect input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.getElementById('featuresSelected').textContent = 'Select Features';
     
     // Clear results
     clearResults();
@@ -1684,21 +1752,103 @@ function clearAllFilters() {
         }
     });
     
-    // Show/hide existing rate input for refinancing
+    // Show/hide existing rate input and existing bank for refinancing
     const existingRateGroup = document.getElementById('existingRateGroup');
-    if (existingRateGroup) {
-        if (loanType === 'Refinancing Home Loan') {
-            existingRateGroup.style.display = 'block';
-        } else {
-            existingRateGroup.style.display = 'none';
-            document.getElementById('existingInterestRate').value = '';
-        }
+    const existingBankGroup = document.getElementById('existingBankGroup');
+    
+    if (loanType === 'Refinancing Home Loan') {
+        if (existingRateGroup) existingRateGroup.style.display = 'block';
+        if (existingBankGroup) existingBankGroup.style.display = 'block';
+    } else {
+        if (existingRateGroup) existingRateGroup.style.display = 'none';
+        if (existingBankGroup) existingBankGroup.style.display = 'none';
+        document.getElementById('existingInterestRate').value = '';
+        document.getElementById('existingBank').value = '';
     }
     
     // Clear previous results
     clearResults();
     
     console.log(`📋 Selected loan type: ${loanType}`);
+}
+
+        // Multi-select functionality for banks
+function toggleMultiSelect(selectId) {
+    const container = document.getElementById(selectId);
+    const dropdown = container.querySelector('.multi-select-dropdown');
+    const isOpen = container.classList.contains('open');
+    
+    // Close all other dropdowns
+    document.querySelectorAll('.multi-select-filter').forEach(filter => {
+        filter.classList.remove('open');
+        filter.querySelector('.multi-select-dropdown').style.display = 'none';
+    });
+    
+    if (!isOpen) {
+        container.classList.add('open');
+        dropdown.style.display = 'block';
+    }
+}
+
+function selectAllBanks() {
+    const allCheckbox = document.getElementById('bankAll');
+    const checkboxes = document.querySelectorAll('#bankMultiSelect input[type="checkbox"]:not(#bankAll)');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = allCheckbox.checked;
+    });
+    
+    updateBankDisplay();
+    performLiveFilter();
+}
+
+function selectAllFeatures() {
+    const allCheckbox = document.getElementById('featuresAll');
+    const checkboxes = document.querySelectorAll('#featuresMultiSelect input[type="checkbox"]:not(#featuresAll)');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = allCheckbox.checked;
+    });
+    
+    updateFeaturesDisplay();
+    performLiveFilter();
+}
+
+function updateBankDisplay() {
+    const checkboxes = document.querySelectorAll('#bankMultiSelect input[type="checkbox"]:checked:not(#bankAll)');
+    const selectedText = document.getElementById('bankSelected');
+    
+    if (checkboxes.length === 0) {
+        selectedText.textContent = 'Select Banks';
+    } else if (checkboxes.length === 1) {
+        selectedText.textContent = checkboxes[0].value;
+    } else {
+        selectedText.textContent = `${checkboxes.length} banks selected`;
+    }
+}
+
+function updateFeaturesDisplay() {
+    const checkboxes = document.querySelectorAll('#featuresMultiSelect input[type="checkbox"]:checked:not(#featuresAll)');
+    const selectedText = document.getElementById('featuresSelected');
+    
+    if (checkboxes.length === 0) {
+        selectedText.textContent = 'Select Features';
+    } else if (checkboxes.length === 1) {
+        const value = checkboxes[0].value;
+        selectedText.textContent = value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    } else {
+        selectedText.textContent = `${checkboxes.length} features selected`;
+    }
+}
+
+function getSelectedBanks() {
+    const checkboxes = document.querySelectorAll('#bankMultiSelect input[type="checkbox"]:checked:not(#bankAll)');
+    return Array.from(checkboxes).map(cb => cb.value);
+}
+
+function getSelectedFeatures() {
+    const checkboxes = document.querySelectorAll('#featuresMultiSelect input[type="checkbox"]:checked:not(#featuresAll)');
+    return Array.from(checkboxes).map(cb => cb.value);
 }
 
         // ===================================
@@ -1740,7 +1890,11 @@ async function searchPackages(event) {
     try {
         showLoading('Searching for the best packages...');
         
-        // Get form values - INCLUDING NEW FILTERS
+        // Get form values - INCLUDING NEW MULTI-SELECT FILTERS
+        const selectedBanks = getSelectedBanks();
+        const selectedFeatures = getSelectedFeatures();
+        const existingBank = document.getElementById('existingBank').value;
+        
         const formData = {
             propertyType: document.getElementById('propertyType').value,
             propertyStatus: document.getElementById('propertyStatus').value,
@@ -1748,11 +1902,11 @@ async function searchPackages(event) {
             loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
             loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
             existingInterestRate: parseFloat(document.getElementById('existingInterestRate').value) || 0,
-            // NEW FILTER OPTIONS
-            bankFilter: document.getElementById('bankFilter').value,
+            existingBank: existingBank,
+            selectedBanks: selectedBanks,
+            selectedFeatures: selectedFeatures,
             rateTypeFilter: document.getElementById('rateTypeFilter').value,
-            lockPeriodFilter: document.getElementById('lockPeriodFilter').value,
-            packageFeatures: document.getElementById('packageFeatures').value
+            lockPeriodFilter: document.getElementById('lockPeriodFilter').value
         };
 
         searchCriteria = { ...formData, loanType: currentLoanType };
@@ -1766,10 +1920,15 @@ async function searchPackages(event) {
             if (formData.buyUnder && pkg.buy_under !== formData.buyUnder) return false;
             if (formData.loanAmount > 0 && pkg.minimum_loan_size && formData.loanAmount < pkg.minimum_loan_size) return false;
             
-            // NEW ENHANCED FILTERS
+            // NEW: Exclude existing bank for refinancing
+            if (currentLoanType === 'Refinancing Home Loan' && formData.existingBank && pkg.bank_name === formData.existingBank) {
+                return false;
+            }
             
-            // Bank filter
-            if (formData.bankFilter && pkg.bank_name !== formData.bankFilter) return false;
+            // NEW: Multi-select Bank filter
+            if (formData.selectedBanks.length > 0 && !formData.selectedBanks.includes(pkg.bank_name)) {
+                return false;
+            }
             
             // Rate Type filter  
             if (formData.rateTypeFilter && pkg.rate_type_category !== formData.rateTypeFilter) return false;
@@ -1780,12 +1939,13 @@ async function searchPackages(event) {
                 if (pkgLockPeriod !== formData.lockPeriodFilter) return false;
             }
             
-            // Package Features filter
-            if (formData.packageFeatures) {
-                const featureField = formData.packageFeatures;
-                const featureValue = pkg[featureField];
-                // Check if the feature is enabled (true or 'true')
-                if (featureValue !== 'true' && featureValue !== true) return false;
+            // NEW: Multi-select Package Features filter
+            if (formData.selectedFeatures.length > 0) {
+                const hasAnyFeature = formData.selectedFeatures.some(featureField => {
+                    const featureValue = pkg[featureField];
+                    return featureValue === 'true' || featureValue === true;
+                });
+                if (!hasAnyFeature) return false;
             }
             
             return true;
@@ -1831,7 +1991,6 @@ filteredPackages = filteredPackages.map(pkg => {
     }
 }
 
-        // Updated performLiveFilter function
 function performLiveFilter() {
     console.log('🔄 Live filter started');
     
@@ -1841,7 +2000,10 @@ function performLiveFilter() {
     }
 
     try {
-        // Get current form values - INCLUDING NEW FILTERS
+        const selectedBanks = getSelectedBanks();
+        const selectedFeatures = getSelectedFeatures();
+        const existingBank = document.getElementById('existingBank').value;
+        
         const formData = {
             propertyType: document.getElementById('propertyType').value,
             propertyStatus: document.getElementById('propertyStatus').value,
@@ -1849,108 +2011,108 @@ function performLiveFilter() {
             loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
             loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
             existingInterestRate: parseFloat(document.getElementById('existingInterestRate').value) || 0,
-            // NEW FILTER OPTIONS
-            bankFilter: document.getElementById('bankFilter').value,
+            existingBank: existingBank,
+            selectedBanks: selectedBanks,
+            selectedFeatures: selectedFeatures,
             rateTypeFilter: document.getElementById('rateTypeFilter').value,
-            lockPeriodFilter: document.getElementById('lockPeriodFilter').value,
-            packageFeatures: document.getElementById('packageFeatures').value
+            lockPeriodFilter: document.getElementById('lockPeriodFilter').value
         };
 
-        // Check if any filters are applied
-        const hasFilters = Object.values(formData).some(value => 
-            value !== '' && value !== 0
-        );
+        // Check if any filters are applied (updated to handle arrays properly)
+        const hasFilters = Object.values(formData).some(value => {
+            if (Array.isArray(value)) {
+                return value.length > 0;
+            }
+            return value !== '' && value !== 0;
+        });
 
         if (!hasFilters) {
             clearResults();
             return;
         }
 
-        const searchButton = document.querySelector('.search-button');
-        if (!searchButton) return;
-
-        const originalText = searchButton.innerHTML;
-        searchButton.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Filtering...';
-        searchButton.disabled = true;
-
-        setTimeout(() => {
-            searchCriteria = { ...formData, loanType: currentLoanType };
+        // Apply filtering logic
+        let filteredPackages = allPackages.filter(pkg => {
+            // Basic loan type filter
+            if (pkg.loan_type !== currentLoanType) return false;
             
-            // Enhanced filter logic (same as searchPackages)
-            let filteredPackages = allPackages.filter(pkg => {
-                // Existing filters
-                if (pkg.loan_type !== currentLoanType) return false;
-                if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
-                if (formData.propertyStatus && pkg.property_status !== formData.propertyStatus) return false;
-                if (formData.buyUnder && pkg.buy_under !== formData.buyUnder) return false;
-                if (formData.loanAmount > 0 && pkg.minimum_loan_size && formData.loanAmount < pkg.minimum_loan_size) return false;
-                
-                // NEW ENHANCED FILTERS
-                if (formData.bankFilter && pkg.bank_name !== formData.bankFilter) return false;
-                if (formData.rateTypeFilter && pkg.rate_type_category !== formData.rateTypeFilter) return false;
-                
-                if (formData.lockPeriodFilter) {
-                    const pkgLockPeriod = pkg.lock_period || '0 Year';
-                    if (pkgLockPeriod !== formData.lockPeriodFilter) return false;
-                }
-                
-                if (formData.packageFeatures) {
-                    const featureField = formData.packageFeatures;
-                    const featureValue = pkg[featureField];
-                    if (featureValue !== 'true' && featureValue !== true) return false;
-                }
-                
-                return true;
-            });
-
-           // Calculate metrics
-filteredPackages = filteredPackages.map(pkg => {
-    const avgFirst2Years = calculateAverageFirst2Years(pkg);
-    const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
-    
-    // Calculate savings for refinancing based on LOCK-IN PERIOD
-    let monthlySavings = 0;
-    let totalSavings = 0;
-    if (currentLoanType === 'Refinancing Home Loan' && formData.existingInterestRate) {
-        monthlySavings = calculateMonthlySavings(formData.loanAmount, formData.loanTenure, formData.existingInterestRate, avgFirst2Years);
-        totalSavings = calculateTotalSavings(monthlySavings, pkg.lock_period);
-    }
-    
-    return {
-        ...pkg,
-        avgFirst2Years,
-        monthlyInstallment,
-        monthlySavings,
-        totalSavings,
-        lockInYears: parseLockInPeriod(pkg.lock_period),
-        selected: true
-    };
-});
-
-            // Sort by average rate
-            filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
-
-            currentResults = filteredPackages;
-            displayResults(filteredPackages, false);
-
-            // Restore search button
-            searchButton.innerHTML = originalText;
-            searchButton.disabled = false;
+            // Property type filter
+            if (formData.propertyType && pkg.property_type !== formData.propertyType) return false;
             
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            // Property status filter
+            if (formData.propertyStatus && pkg.property_status !== formData.propertyStatus) return false;
+            
+            // Buy under filter
+            if (formData.buyUnder && pkg.buy_under !== formData.buyUnder) return false;
+            
+            // Minimum loan amount filter
+            if (formData.loanAmount > 0 && pkg.minimum_loan_size && formData.loanAmount < pkg.minimum_loan_size) return false;
+            
+            // NEW: Exclude existing bank for refinancing
+            if (currentLoanType === 'Refinancing Home Loan' && formData.existingBank && pkg.bank_name === formData.existingBank) {
+                return false;
             }
+            
+            // NEW: Multi-select Bank filter
+            if (formData.selectedBanks.length > 0 && !formData.selectedBanks.includes(pkg.bank_name)) {
+                return false;
+            }
+            
+            // Rate Type filter  
+            if (formData.rateTypeFilter && pkg.rate_type_category !== formData.rateTypeFilter) return false;
+            
+            // Lock-in Period filter
+            if (formData.lockPeriodFilter) {
+                const pkgLockPeriod = pkg.lock_period || '0 Year';
+                if (pkgLockPeriod !== formData.lockPeriodFilter) return false;
+            }
+            
+            // NEW: Multi-select Package Features filter
+            if (formData.selectedFeatures.length > 0) {
+                const hasAnyFeature = formData.selectedFeatures.some(featureField => {
+                    const featureValue = pkg[featureField];
+                    return featureValue === 'true' || featureValue === true;
+                });
+                if (!hasAnyFeature) return false;
+            }
+            
+            return true;
+        });
 
-            console.log(`✅ Live filtered to ${filteredPackages.length} packages`);
-        }, 100);
+        // Calculate metrics for each package (same as searchPackages)
+        filteredPackages = filteredPackages.map(pkg => {
+            const avgFirst2Years = calculateAverageFirst2Years(pkg);
+            const monthlyInstallment = calculateMonthlyInstallment(formData.loanAmount, formData.loanTenure, avgFirst2Years);
+            
+            // Calculate savings for refinancing based on LOCK-IN PERIOD
+            let monthlySavings = 0;
+            let totalSavings = 0;
+            if (currentLoanType === 'Refinancing Home Loan' && formData.existingInterestRate) {
+                monthlySavings = calculateMonthlySavings(formData.loanAmount, formData.loanTenure, formData.existingInterestRate, avgFirst2Years);
+                totalSavings = calculateTotalSavings(monthlySavings, pkg.lock_period);
+            }
+            
+            return {
+                ...pkg,
+                avgFirst2Years,
+                monthlyInstallment,
+                monthlySavings,
+                totalSavings,
+                lockInYears: parseLockInPeriod(pkg.lock_period),
+                selected: true // Default to selected for report
+            };
+        });
+
+        // Sort by average rate (ascending - best rates first)
+        filteredPackages.sort((a, b) => a.avgFirst2Years - b.avgFirst2Years);
+
+        currentResults = filteredPackages;
+        displayResults(filteredPackages, false); // false = don't scroll to results for live filtering
+        
+        console.log(`🔍 Live filter found ${filteredPackages.length} matching packages`);
         
     } catch (error) {
-        console.error('💥 Live filter error:', error);
-        const searchButton = document.querySelector('.search-button');
-        if (searchButton) {
-            searchButton.innerHTML = '<i data-lucide="search"></i> Find Best Packages';
-            searchButton.disabled = false;
-        }
+        console.error('Live filter error:', error);
     }
 }
 
