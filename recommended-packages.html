@@ -2847,12 +2847,6 @@ function generateProfessionalReport() {
     const existingRate = searchCriteria.existingInterestRate || 0;
     const isRefinancing = currentLoanType === 'Refinancing Home Loan' && existingRate > 0;
 
-    // Generate year-by-year analysis
-    const yearlyAnalysis = generateYearlyAnalysis(selectedPackages, loanAmount, loanTenure, existingRate);
-    
-    // Generate visual charts data
-    const chartData = generateChartData(selectedPackages, loanAmount, loanTenure);
-
     const reportContent = `
         <div style="padding: 0; background: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #2d3748;">
             
@@ -2908,7 +2902,7 @@ function generateProfessionalReport() {
                 </div>
             </div>
 
-            <!-- Visual Comparison Section -->
+            <!-- Visual Refinancing Comparison -->
             ${isRefinancing ? generateRefinancingComparison(selectedPackages, loanAmount, loanTenure, existingRate) : ''}
 
             <!-- Enhanced Package Comparison Table -->
@@ -2945,8 +2939,8 @@ function generateProfessionalReport() {
                 </div>
             </div>
 
-            <!-- Year-by-Year Analysis -->
-            ${isRefinancing ? generateYearlyAnalysisSection(yearlyAnalysis, selectedPackages, hideBankNames) : ''}
+            <!-- Year-by-Year Analysis for Refinancing -->
+            ${isRefinancing ? generateYearlyAnalysisSection(selectedPackages, hideBankNames, existingRate) : ''}
 
             <!-- Package Features Comparison -->
             <div style="padding: 0 40px 40px 40px;">
@@ -2983,250 +2977,6 @@ function generateProfessionalReport() {
     `;
 
     openReportModal(reportContent);
-}
-
-// Helper function for enhanced comparison rows
-function generateEnhancedComparisonRows(packages, loanAmount, loanTenure, existingRate, hideBankNames, isRefinancing) {
-    const rows = [
-        // Basic Information
-        {
-            label: 'Min Loan Amount',
-            getValue: (pkg) => formatCurrency(pkg.minimum_loan_size || 0),
-            isHighlight: false
-        },
-        {
-            label: 'Lock-in Period',
-            getValue: (pkg) => pkg.lock_period || 'No Lock-in',
-            isHighlight: false
-        },
-        {
-            label: 'Property Type',
-            getValue: (pkg) => pkg.property_type || 'N/A',
-            isHighlight: false
-        },
-        
-        // Interest Rates
-        {
-            label: 'Year 1 Rate',
-            getValue: (pkg) => formatRateDisplay(pkg, 1),
-            isHighlight: true
-        },
-        {
-            label: 'Year 2 Rate',
-            getValue: (pkg) => formatRateDisplay(pkg, 2),
-            isHighlight: true
-        },
-        {
-            label: 'Thereafter Rate',
-            getValue: (pkg) => formatRateDisplay(pkg, 'thereafter'),
-            isHighlight: true
-        },
-        
-        // Financial Calculations
-        {
-            label: 'Monthly Installment (Avg)',
-            getValue: (pkg) => formatCurrency(pkg.monthlyInstallment || 0),
-            isHighlight: true
-        }
-    ];
-    
-    // Add refinancing-specific rows
-    if (isRefinancing) {
-        rows.push({
-            label: 'Monthly Savings',
-            getValue: (pkg) => {
-                const savings = pkg.monthlySavings || 0;
-                return savings > 0 ? `+${formatCurrency(savings)}` : formatCurrency(savings);
-            },
-            isHighlight: true,
-            isGreen: true
-        });
-        
-        rows.push({
-            label: 'Total Savings (Lock-in Period)',
-            getValue: (pkg) => {
-                const savings = pkg.totalSavings || 0;
-                return savings > 0 ? `+${formatCurrency(savings)}` : formatCurrency(savings);
-            },
-            isHighlight: true,
-            isGreen: true
-        });
-    }
-
-    return rows.map((row) => `
-        <tr style="border-bottom: 1px solid #f1f5f9; ${row.isHighlight ? 'background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);' : ''}">
-            <td style="padding: 16px; font-weight: 700; color: #374151; border-right: 1px solid #f1f5f9;">
-                ${row.label}
-            </td>
-            ${packages.map((pkg, index) => {
-                const value = row.getValue(pkg);
-                const isRecommended = index === 0;
-                const cellColor = row.isGreen ? '#065f46' : '#1e293b';
-                const bgColor = isRecommended ? (row.isHighlight ? '#f0fdf4' : '#f8fafc') : 'white';
-                
-                return `
-                    <td style="padding: 16px; text-align: center; border-right: 1px solid #f1f5f9; background: ${bgColor}; color: ${cellColor}; font-weight: 600; font-size: ${row.isHighlight ? '14px' : '13px'};">
-                        ${value}
-                    </td>
-                `;
-            }).join('')}
-        </tr>
-    `).join('');
-}
-
-// Helper function for refinancing comparison
-function generateRefinancingComparison(packages, loanAmount, loanTenure, existingRate) {
-    if (!existingRate || existingRate <= 0) return '';
-    
-    const bestPackage = packages[0];
-    const currentMonthly = calculateMonthlyInstallment(loanAmount, loanTenure, existingRate);
-    const newMonthly = bestPackage.monthlyInstallment || 0;
-    const monthlySavings = currentMonthly - newMonthly;
-    
-    return `
-        <div style="padding: 40px; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);">
-            <h2 style="margin: 0 0 24px 0; font-size: 24px; font-weight: 700; color: #065f46; text-align: center;">
-                💰 Refinancing Benefits Analysis
-            </h2>
-            
-            <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 32px; align-items: center; max-width: 800px; margin: 0 auto;">
-                <!-- Current Package -->
-                <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
-                    <div style="font-size: 16px; color: #64748b; font-weight: 600; margin-bottom: 8px;">CURRENT PACKAGE</div>
-                    <div style="font-size: 28px; font-weight: bold; color: #ef4444; margin-bottom: 8px;">${formatPercentage(existingRate)}</div>
-                    <div style="font-size: 14px; color: #64748b;">Monthly: ${formatCurrency(currentMonthly)}</div>
-                </div>
-                
-                <!-- Arrow -->
-                <div style="text-align: center;">
-                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
-                        →
-                    </div>
-                    <div style="font-size: 12px; color: #10b981; font-weight: 600; margin-top: 8px;">SAVE</div>
-                </div>
-                
-                <!-- Recommended Package -->
-                <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; border: 2px solid #10b981;">
-                    <div style="font-size: 16px; color: #64748b; font-weight: 600; margin-bottom: 8px;">RECOMMENDED</div>
-                    <div style="font-size: 28px; font-weight: bold; color: #10b981; margin-bottom: 8px;">${formatPercentage(bestPackage.avgFirst2Years)}</div>
-                    <div style="font-size: 14px; color: #64748b;">Monthly: ${formatCurrency(newMonthly)}</div>
-                </div>
-            </div>
-            
-            <!-- Savings Summary -->
-            <div style="text-align: center; margin-top: 32px;">
-                <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: inline-block; border: 2px solid #10b981;">
-                    <div style="font-size: 18px; color: #065f46; font-weight: 700; margin-bottom: 8px;">POTENTIAL MONTHLY SAVINGS</div>
-                    <div style="font-size: 36px; font-weight: bold; color: #10b981;">${formatCurrency(monthlySavings)}</div>
-                    <div style="font-size: 14px; color: #064e3b; margin-top: 8px;">
-                        Total savings over lock-in period: ${formatCurrency(bestPackage.totalSavings || 0)}
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-// Helper function for yearly analysis section
-function generateYearlyAnalysisSection(yearlyData, packages, hideBankNames) {
-    return `
-        <div style="padding: 40px;">
-            <h2 style="margin: 0 0 24px 0; font-size: 24px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
-                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                    <span style="color: white; font-size: 16px;">📈</span>
-                </div>
-                5-Year Interest Cost Analysis
-            </h2>
-            
-            <div style="overflow-x: auto; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
-                <table style="width: 100%; border-collapse: collapse; background: white; font-size: 13px;">
-                    <thead>
-                        <tr style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
-                            <th style="padding: 16px; text-align: left; font-weight: 700;">YEAR</th>
-                            <th style="padding: 16px; text-align: center; font-weight: 700;">CURRENT RATE</th>
-                            ${packages.map((pkg, index) => `
-                                <th style="padding: 16px; text-align: center; font-weight: 700; border-left: 1px solid rgba(255,255,255,0.2);">
-                                    ${hideBankNames ? `PKG ${String.fromCharCode(65 + index)}` : pkg.bank_name}
-                                </th>
-                            `).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${[1,2,3,4,5].map(year => `
-                            <tr style="border-bottom: 1px solid #f1f5f9;">
-                                <td style="padding: 16px; font-weight: 700; color: #374151;">Year ${year}</td>
-                                <td style="padding: 16px; text-align: center; background: #fef2f2; color: #dc2626; font-weight: 600;">
-                                    ${formatPercentage(searchCriteria.existingInterestRate || 0)}
-                                </td>
-                                ${packages.map((pkg, index) => `
-                                    <td style="padding: 16px; text-align: center; background: ${index === 0 ? '#f0fdf4' : 'white'}; color: ${index === 0 ? '#065f46' : '#1e293b'}; font-weight: 600;">
-                                        ${formatRateDisplay(pkg, year)}
-                                    </td>
-                                `).join('')}
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-}
-
-// Helper function for features comparison
-function generateFeaturesComparison(packages, hideBankNames) {
-    const features = [
-        { key: 'legal_fee_subsidy', label: 'Legal Fee Subsidy', icon: '⚖️' },
-        { key: 'cash_rebate', label: 'Cash Rebate', icon: '💰' },
-        { key: 'free_package_conversion_12m', label: 'Free Conversion (12M)', icon: '🔄' },
-        { key: 'free_package_conversion_24m', label: 'Free Conversion (24M)', icon: '🔄' },
-        { key: 'valuation_subsidy', label: 'Valuation Subsidy', icon: '🏠' },
-        { key: 'partial_repayment', label: 'Partial Repayment', icon: '💳' },
-        { key: 'waiver_due_to_sales', label: 'Waiver Due to Sales', icon: '🏷️' }
-    ];
-
-    return `
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-            ${packages.map((pkg, index) => `
-                <div style="background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; ${index === 0 ? 'border: 2px solid #10b981;' : 'border: 1px solid #e2e8f0;'}">
-                    <div style="background: ${index === 0 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}; color: white; padding: 20px; text-align: center;">
-                        <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700;">
-                            ${hideBankNames ? `Package ${String.fromCharCode(65 + index)}` : pkg.bank_name}
-                        </h3>
-                        <div style="font-size: 14px; opacity: 0.9;">${pkg.rate_type_category} Rate Package</div>
-                        ${index === 0 ? '<div style="margin-top: 8px; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;">RECOMMENDED</div>' : ''}
-                    </div>
-                    
-                    <div style="padding: 24px;">
-                        <div style="space-y: 12px;">
-                            ${features.map(feature => {
-                                const hasFeature = pkg[feature.key] === 'true' || pkg[feature.key] === true;
-                                return `
-                                    <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
-                                        <span style="font-size: 16px; opacity: ${hasFeature ? '1' : '0.3'};">${feature.icon}</span>
-                                        <span style="flex: 1; color: ${hasFeature ? '#10b981' : '#9ca3af'}; font-weight: ${hasFeature ? '600' : '400'}; font-size: 14px;">
-                                            ${feature.label}
-                                        </span>
-                                        <span style="font-size: 18px; color: ${hasFeature ? '#10b981' : '#ef4444'};">
-                                            ${hasFeature ? '✓' : '✗'}
-                                        </span>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                        
-                        ${pkg.custom_remarks || pkg.remarks ? `
-                            <div style="margin-top: 20px; padding: 16px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #667eea;">
-                                <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Remarks</div>
-                                <div style="font-size: 13px; color: #374151; line-height: 1.5;">
-                                    ${(pkg.custom_remarks || pkg.remarks || '').replace(/\n/g, '<br>')}
-                                </div>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
-            `).join('')}
-        </div>
-    `;
 }
 
         function openReportModal(content) {
@@ -3438,6 +3188,249 @@ function hideLoading() {
             sidebar?.classList.remove('open');
             overlay?.classList.remove('active');
         }
+        // Helper function for enhanced comparison rows
+function generateEnhancedComparisonRows(packages, loanAmount, loanTenure, existingRate, hideBankNames, isRefinancing) {
+    const rows = [
+        // Basic Information
+        {
+            label: 'Min Loan Amount',
+            getValue: (pkg) => formatCurrency(pkg.minimum_loan_size || 0),
+            isHighlight: false
+        },
+        {
+            label: 'Lock-in Period',
+            getValue: (pkg) => pkg.lock_period || 'No Lock-in',
+            isHighlight: false
+        },
+        {
+            label: 'Property Type',
+            getValue: (pkg) => pkg.property_type || 'N/A',
+            isHighlight: false
+        },
+        
+        // Interest Rates
+        {
+            label: 'Year 1 Rate',
+            getValue: (pkg) => formatRateDisplay(pkg, 1),
+            isHighlight: true
+        },
+        {
+            label: 'Year 2 Rate',
+            getValue: (pkg) => formatRateDisplay(pkg, 2),
+            isHighlight: true
+        },
+        {
+            label: 'Thereafter Rate',
+            getValue: (pkg) => formatRateDisplay(pkg, 'thereafter'),
+            isHighlight: true
+        },
+        
+        // Financial Calculations
+        {
+            label: 'Monthly Installment (Avg)',
+            getValue: (pkg) => formatCurrency(pkg.monthlyInstallment || 0),
+            isHighlight: true
+        }
+    ];
+    
+    // Add refinancing-specific rows
+    if (isRefinancing) {
+        rows.push({
+            label: 'Monthly Savings',
+            getValue: (pkg) => {
+                const savings = pkg.monthlySavings || 0;
+                return savings > 0 ? `+${formatCurrency(savings)}` : formatCurrency(savings);
+            },
+            isHighlight: true,
+            isGreen: true
+        });
+        
+        rows.push({
+            label: 'Total Savings (Lock-in Period)',
+            getValue: (pkg) => {
+                const savings = pkg.totalSavings || 0;
+                return savings > 0 ? `+${formatCurrency(savings)}` : formatCurrency(savings);
+            },
+            isHighlight: true,
+            isGreen: true
+        });
+    }
+
+    return rows.map((row) => `
+        <tr style="border-bottom: 1px solid #f1f5f9; ${row.isHighlight ? 'background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);' : ''}">
+            <td style="padding: 16px; font-weight: 700; color: #374151; border-right: 1px solid #f1f5f9;">
+                ${row.label}
+            </td>
+            ${packages.map((pkg, index) => {
+                const value = row.getValue(pkg);
+                const isRecommended = index === 0;
+                const cellColor = row.isGreen ? '#065f46' : '#1e293b';
+                const bgColor = isRecommended ? (row.isHighlight ? '#f0fdf4' : '#f8fafc') : 'white';
+                
+                return `
+                    <td style="padding: 16px; text-align: center; border-right: 1px solid #f1f5f9; background: ${bgColor}; color: ${cellColor}; font-weight: 600; font-size: ${row.isHighlight ? '14px' : '13px'};">
+                        ${value}
+                    </td>
+                `;
+            }).join('')}
+        </tr>
+    `).join('');
+}
+
+// Helper function for refinancing comparison
+function generateRefinancingComparison(packages, loanAmount, loanTenure, existingRate) {
+    if (!existingRate || existingRate <= 0) return '';
+    
+    const bestPackage = packages[0];
+    const currentMonthly = calculateMonthlyInstallment(loanAmount, loanTenure, existingRate);
+    const newMonthly = bestPackage.monthlyInstallment || 0;
+    const monthlySavings = currentMonthly - newMonthly;
+    
+    return `
+        <div style="padding: 40px; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);">
+            <h2 style="margin: 0 0 24px 0; font-size: 24px; font-weight: 700; color: #065f46; text-align: center;">
+                💰 Refinancing Benefits Analysis
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 32px; align-items: center; max-width: 800px; margin: 0 auto;">
+                <!-- Current Package -->
+                <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center;">
+                    <div style="font-size: 16px; color: #64748b; font-weight: 600; margin-bottom: 8px;">CURRENT PACKAGE</div>
+                    <div style="font-size: 28px; font-weight: bold; color: #ef4444; margin-bottom: 8px;">${formatPercentage(existingRate)}</div>
+                    <div style="font-size: 14px; color: #64748b;">Monthly: ${formatCurrency(currentMonthly)}</div>
+                </div>
+                
+                <!-- Arrow -->
+                <div style="text-align: center;">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">
+                        →
+                    </div>
+                    <div style="font-size: 12px; color: #10b981; font-weight: 600; margin-top: 8px;">SAVE</div>
+                </div>
+                
+                <!-- Recommended Package -->
+                <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; border: 2px solid #10b981;">
+                    <div style="font-size: 16px; color: #64748b; font-weight: 600; margin-bottom: 8px;">RECOMMENDED</div>
+                    <div style="font-size: 28px; font-weight: bold; color: #10b981; margin-bottom: 8px;">${formatPercentage(bestPackage.avgFirst2Years)}</div>
+                    <div style="font-size: 14px; color: #64748b;">Monthly: ${formatCurrency(newMonthly)}</div>
+                </div>
+            </div>
+            
+            <!-- Savings Summary -->
+            <div style="text-align: center; margin-top: 32px;">
+                <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: inline-block; border: 2px solid #10b981;">
+                    <div style="font-size: 18px; color: #065f46; font-weight: 700; margin-bottom: 8px;">POTENTIAL MONTHLY SAVINGS</div>
+                    <div style="font-size: 36px; font-weight: bold; color: #10b981;">${formatCurrency(monthlySavings)}</div>
+                    <div style="font-size: 14px; color: #064e3b; margin-top: 8px;">
+                        Total savings over lock-in period: ${formatCurrency(bestPackage.totalSavings || 0)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Helper function for yearly analysis section
+function generateYearlyAnalysisSection(packages, hideBankNames, existingRate) {
+    return `
+        <div style="padding: 40px;">
+            <h2 style="margin: 0 0 24px 0; font-size: 24px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 12px;">
+                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: white; font-size: 16px;">📈</span>
+                </div>
+                5-Year Interest Rate Analysis
+            </h2>
+            
+            <div style="overflow-x: auto; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);">
+                <table style="width: 100%; border-collapse: collapse; background: white; font-size: 13px;">
+                    <thead>
+                        <tr style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">
+                            <th style="padding: 16px; text-align: left; font-weight: 700;">YEAR</th>
+                            <th style="padding: 16px; text-align: center; font-weight: 700;">CURRENT RATE</th>
+                            ${packages.map((pkg, index) => `
+                                <th style="padding: 16px; text-align: center; font-weight: 700; border-left: 1px solid rgba(255,255,255,0.2);">
+                                    ${hideBankNames ? `PKG ${String.fromCharCode(65 + index)}` : pkg.bank_name}
+                                </th>
+                            `).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${[1,2,3,4,5].map(year => `
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                                <td style="padding: 16px; font-weight: 700; color: #374151;">Year ${year}</td>
+                                <td style="padding: 16px; text-align: center; background: #fef2f2; color: #dc2626; font-weight: 600;">
+                                    ${formatPercentage(existingRate)}
+                                </td>
+                                ${packages.map((pkg, index) => `
+                                    <td style="padding: 16px; text-align: center; background: ${index === 0 ? '#f0fdf4' : 'white'}; color: ${index === 0 ? '#065f46' : '#1e293b'}; font-weight: 600;">
+                                        ${formatRateDisplay(pkg, year)}
+                                    </td>
+                                `).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// Helper function for features comparison
+function generateFeaturesComparison(packages, hideBankNames) {
+    const features = [
+        { key: 'legal_fee_subsidy', label: 'Legal Fee Subsidy', icon: '⚖️' },
+        { key: 'cash_rebate', label: 'Cash Rebate', icon: '💰' },
+        { key: 'free_package_conversion_12m', label: 'Free Conversion (12M)', icon: '🔄' },
+        { key: 'free_package_conversion_24m', label: 'Free Conversion (24M)', icon: '🔄' },
+        { key: 'valuation_subsidy', label: 'Valuation Subsidy', icon: '🏠' },
+        { key: 'partial_repayment', label: 'Partial Repayment', icon: '💳' },
+        { key: 'waiver_due_to_sales', label: 'Waiver Due to Sales', icon: '🏷️' }
+    ];
+
+    return `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+            ${packages.map((pkg, index) => `
+                <div style="background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; ${index === 0 ? 'border: 2px solid #10b981;' : 'border: 1px solid #e2e8f0;'}">
+                    <div style="background: ${index === 0 ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}; color: white; padding: 20px; text-align: center;">
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 700;">
+                            ${hideBankNames ? `Package ${String.fromCharCode(65 + index)}` : pkg.bank_name}
+                        </h3>
+                        <div style="font-size: 14px; opacity: 0.9;">${pkg.rate_type_category} Rate Package</div>
+                        ${index === 0 ? '<div style="margin-top: 8px; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;">RECOMMENDED</div>' : ''}
+                    </div>
+                    
+                    <div style="padding: 24px;">
+                        <div style="space-y: 12px;">
+                            ${features.map(feature => {
+                                const hasFeature = pkg[feature.key] === 'true' || pkg[feature.key] === true;
+                                return `
+                                    <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f1f5f9;">
+                                        <span style="font-size: 16px; opacity: ${hasFeature ? '1' : '0.3'};">${feature.icon}</span>
+                                        <span style="flex: 1; color: ${hasFeature ? '#10b981' : '#9ca3af'}; font-weight: ${hasFeature ? '600' : '400'}; font-size: 14px;">
+                                            ${feature.label}
+                                        </span>
+                                        <span style="font-size: 18px; color: ${hasFeature ? '#10b981' : '#ef4444'};">
+                                            ${hasFeature ? '✓' : '✗'}
+                                        </span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        
+                        ${pkg.custom_remarks || pkg.remarks ? `
+                            <div style="margin-top: 20px; padding: 16px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #667eea;">
+                                <div style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 8px;">Remarks</div>
+                                <div style="font-size: 13px; color: #374151; line-height: 1.5;">
+                                    ${(pkg.custom_remarks || pkg.remarks || '').replace(/\n/g, '<br>')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
     </script>
 </body>
 </html>
