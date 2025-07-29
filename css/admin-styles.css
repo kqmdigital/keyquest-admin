@@ -83,6 +83,18 @@ body {
     background: #6d28d9;
 }
 
+.logo-image {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.logo:hover .logo-image {
+    transform: scale(1.05);
+}
+
 .nav-menu {
     display: flex;
     align-items: center;
