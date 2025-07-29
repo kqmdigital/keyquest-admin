@@ -478,6 +478,8 @@
                 filteredRateTypes = [...rateTypes];
                 displayRateTypes();
                 updatePagination();
+                
+                showNotification(`Loaded ${rateTypes.length} rate types successfully`, 'success');
 
             } catch (error) {
                 console.error('Error loading rate types:', error);

@@ -344,6 +344,8 @@
                 
                 displayBanks();
                 updatePagination();
+                
+                showNotification(`Loaded ${banks.length} banks successfully`, 'success');
 
             } catch (error) {
                 console.error('Error loading banks:', error);

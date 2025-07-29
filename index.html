@@ -387,6 +387,8 @@
                 updateCounter('bankersCount', bankers);
                 updateCounter('agentsCount', agents);
                 updateCounter('enquiriesCount', enquiries);
+                
+                showNotification('Dashboard data loaded successfully', 'success');
 
             } catch (error) {
                 console.error('Data loading error:', error.message);

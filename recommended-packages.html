@@ -1942,6 +1942,7 @@ function getSelectedFeatures() {
                 rateTypes = rateTypesResult.data || [];
 
                 console.log(`📦 Loaded ${allPackages.length} packages and ${rateTypes.length} rate types`);
+                showNotification(`Loaded ${allPackages.length} recommended packages successfully`, 'success');
                 
             } catch (error) {
                 console.error('💥 Error loading data:', error);

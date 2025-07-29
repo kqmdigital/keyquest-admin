@@ -799,6 +799,8 @@
                 filteredPackages = [...packages];
                 displayPackages();
                 updatePagination();
+                
+                showNotification(`Loaded ${packages.length} rate packages successfully`, 'success');
 
             } catch (error) {
                 console.error('Error loading packages:', error);
