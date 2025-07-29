@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banks - Keyquest Mortgage Admin</title>
+    <link rel="stylesheet" href="css/admin-styles.css">
+    <!-- Required Scripts in correct order -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/lucide.min.js"></script>
+    <script src="config/supabase.js"></script>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i data-lucide="building-2"></i>
+                    </div>
+                    <span>KEYQUEST</span>
+                </a>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="rate-packages.html" class="nav-item">
+                    <i data-lucide="package"></i>
+                    <span>Rate Package</span>
+                </a>
+                <a href="rate-types.html" class="nav-item">
+                    <i data-lucide="percent"></i>
+                    <span>Rate Type</span>
+                </a>
+                <a href="banks.html" class="nav-item active">
+                    <i data-lucide="landmark"></i>
+                    <span>Bank</span>
+                </a>
+                <a href="bankers.html" class="nav-item">
+                    <i data-lucide="briefcase"></i>
+                    <span>Bankers</span>
+                </a>
+                <a href="agents.html" class="nav-item">
+                    <i data-lucide="users"></i>
+                    <span>Agents</span>
+                </a>
+                <a href="enquiry.html" class="nav-item">
+                    <i data-lucide="help-circle"></i>
+                    <span>Enquiry</span>
+                </a>
+                <a href="recommended-packages.html" class="nav-item">
+                <i data-lucide="star"></i>
+                <span>Recommended Packages</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="header-title">Banks</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openAddBankModal()">
+                        <i data-lucide="plus"></i>
+                        Add Bank
+                    </button>
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">admin</div>
+                            <div class="user-role">Super Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Search and Filter Bar -->
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search banks..." id="searchInput">
+                    </div>
+
+                    <button class="btn btn-secondary" onclick="clearAllFilters()" id="clearFiltersBtn">
+                        <i data-lucide="x"></i>
+                        <span>Clear</span>
+                    </button>
+                    
+                    <button class="btn btn-secondary" onclick="exportToCSV('banks.csv')">
+                        <i data-lucide="download"></i>
+                        <span>Export</span>
+                    </button>
+                </div>
+
+                <!-- Data Table -->
+                <div class="data-table">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>BANK NAME</th>
+                                    <th>ABBREVIATION</th>
+                                    <th>STATUS</th>
+                                    <th>RATE TYPES COUNT</th>
+                                    <th>PACKAGES COUNT</th>
+                                    <th>CREATED DATE</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="banksTable">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px;">
+                                        <div class="loading-spinner"></div>
+                                        <div style="margin-top: 10px;">Loading banks...</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Enhanced Pagination -->
+                <div class="pagination">
+                    <div class="pagination-info">
+                        <span id="paginationInfo">Showing 0 of 0</span>
+                    </div>
+                    <div class="pagination-controls" id="paginationControls">
+                        <!-- Pagination buttons will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Recent Actions Section -->
+                <div class="recent-actions-section">
+                    <h3>Recent Actions</h3>
+                    <div class="recent-actions-list" id="recentActionsList">
+                        <div class="no-actions">No recent actions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bank Modal -->
+    <div class="modal" id="add-bank-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Bank</h3>
+                <button class="modal-close" onclick="closeModal('add-bank-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="addBankForm" onsubmit="handleFormSubmit(event)">
+                <div class="modal-body">
+                    <div class="form-section">
+                        <h4>Bank Information</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="bankName">Bank Name</label>
+                                <select id="bankName" name="name" class="form-select" required onchange="updateAbbreviation()">
+                                    <option value="">Select standardized bank name</option>
+                                    <option value="CIMB">CIMB</option>
+                                    <option value="OCBC">OCBC</option>
+                                    <option value="UOB">UOB</option>
+                                    <option value="DBS">DBS</option>
+                                    <option value="Maybank">Maybank (MBB)</option>
+                                    <option value="Standard Chartered">Standard Chartered (SCB)</option>
+                                    <option value="HSBC">HSBC</option>
+                                    <option value="SBI">SBI</option>
+                                    <option value="Bank Of China">Bank Of China (BOC)</option>
+                                    <option value="Hong Leong Finance">Hong Leong Finance (HLF)</option>
+                                    <option value="Singapura Finance">Singapura Finance (SF)</option>
+                                    <option value="RHB Bank">RHB Bank (RHB)</option>
+                                    <option value="Sing Investments & Finance">Sing Investments & Finance (SIF)</option>
+                                    <option value="Citibank">Citibank</option>
+                                </select>
+                                <small style="color: #6b7280; font-size: 12px;">Select from standardized bank names</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="bankAbbreviation">Abbreviation</label>
+                                <input type="text" id="bankAbbreviation" name="abbreviation" class="form-input" readonly placeholder="Auto-generated">
+                                <small style="color: #6b7280; font-size: 12px;">Automatically generated from bank name</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('add-bank-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Bank</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Bank Modal -->
+    <div class="modal" id="edit-bank-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Bank</h3>
+                <button class="modal-close" onclick="closeModal('edit-bank-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="editBankForm" onsubmit="handleEditFormSubmit(event)">
+                <input type="hidden" id="editBankId" name="id">
+                <div class="modal-body">
+                    <div class="form-section">
+                        <h4>Bank Information</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="editBankName">Bank Name</label>
+                                <select id="editBankName" name="name" class="form-select" required onchange="updateEditAbbreviation()">
+                                    <option value="">Select standardized bank name</option>
+                                    <option value="CIMB">CIMB</option>
+                                    <option value="OCBC">OCBC</option>
+                                    <option value="UOB">UOB</option>
+                                    <option value="DBS">DBS</option>
+                                    <option value="Maybank">Maybank (MBB)</option>
+                                    <option value="Standard Chartered">Standard Chartered (SCB)</option>
+                                    <option value="HSBC">HSBC</option>
+                                    <option value="SBI">SBI</option>
+                                    <option value="Bank Of China">Bank Of China (BOC)</option>
+                                    <option value="Hong Leong Finance">Hong Leong Finance (HLF)</option>
+                                    <option value="Singapura Finance">Singapura Finance (SF)</option>
+                                    <option value="RHB Bank">RHB Bank (RHB)</option>
+                                    <option value="Sing Investments & Finance">Sing Investments & Finance (SIF)</option>
+                                    <option value="Citibank">Citibank</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="editBankAbbreviation">Abbreviation</label>
+                                <input type="text" id="editBankAbbreviation" name="abbreviation" class="form-input" readonly placeholder="Auto-generated">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('edit-bank-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Bank</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sign Out Confirmation Modal -->
+    <div class="modal" id="signout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Sign Out</h3>
+                <button class="modal-close" onclick="closeModal('signout-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to sign out?</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="performSignOut()">Sign Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/admin-scripts.js"></script>
+    <script>
+        // Global variables
+        let banks = [];
+        let filteredBanks = [];
+        let rateTypes = [];
+        let ratePackages = [];
+        let editingItemId = null;
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Bank name mappings for standardization
+        const BANK_MAPPINGS = {
+            'CIMB': 'CIMB',
+            'OCBC': 'OCBC',
+            'UOB': 'UOB',
+            'DBS': 'DBS',
+            'Maybank': 'MBB',
+            'Standard Chartered': 'SCB',
+            'HSBC': 'HSBC',
+            'SBI': 'SBI',
+            'Bank Of China': 'BOC',
+            'Hong Leong Finance': 'HLF',
+            'Singapura Finance': 'SF',
+            'RHB Bank': 'RHB',
+            'Sing Investments & Finance': 'SIF',
+            'Citibank': 'Citibank'
+        };
+
+        // Get abbreviation from full bank name
+        function getBankAbbreviation(fullName) {
+            return BANK_MAPPINGS[fullName] || fullName;
+        }
+
+        // Update abbreviation when bank name is selected
+        function updateAbbreviation() {
+            const bankName = document.getElementById('bankName').value;
+            const abbreviation = getBankAbbreviation(bankName);
+            document.getElementById('bankAbbreviation').value = abbreviation;
+        }
+
+        // Update abbreviation in edit form
+        function updateEditAbbreviation() {
+            const bankName = document.getElementById('editBankName').value;
+            const abbreviation = getBankAbbreviation(bankName);
+            document.getElementById('editBankAbbreviation').value = abbreviation;
+        }
+
+        // Load banks from database
+        async function loadBanks() {
+            try {
+                showLoading();
+                const { data, error } = await supabaseClient
+                    .from('banks')
+                    .select('*')
+                    .order('name');
+
+                if (error) throw error;
+
+                banks = data || [];
+                filteredBanks = [...banks];
+                
+                // Load related data for counts
+                await Promise.all([loadRateTypes(), loadRatePackages()]);
+                
+                displayBanks();
+                updatePagination();
+
+            } catch (error) {
+                console.error('Error loading banks:', error);
+                const tbody = document.getElementById('banksTable');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: #ef4444;">
+                                <div style="margin-bottom: 12px;">Failed to load data</div>
+                                <div style="font-size: 12px; color: #6b7280;">${error.message}</div>
+                                <button onclick="loadBanks()" style="margin-top: 12px; padding: 8px 16px; background: #4338ca; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                                    Try Again
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load rate types for counting
+        async function loadRateTypes() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('rate_types')
+                    .select('bank_names');
+
+                if (error) throw error;
+                rateTypes = data || [];
+
+            } catch (error) {
+                console.error('Error loading rate types:', error);
+            }
+        }
+
+        // Load rate packages for counting
+        async function loadRatePackages() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('rate_packages')
+                    .select('bank_name');
+
+                if (error) throw error;
+                ratePackages = data || [];
+
+            } catch (error) {
+                console.error('Error loading rate packages:', error);
+            }
+        }
+
+        // Count rate types for a bank
+        function countRateTypesForBank(bankName) {
+            return rateTypes.filter(rt => 
+                rt.bank_names && 
+                Array.isArray(rt.bank_names) && 
+                rt.bank_names.includes(bankName)
+            ).length;
+        }
+
+        // Count rate packages for a bank (using abbreviation)
+        function countPackagesForBank(bankName) {
+            const abbreviation = getBankAbbreviation(bankName);
+            return ratePackages.filter(pkg => pkg.bank_name === abbreviation).length;
+        }
+
+        // Display banks in table
+        function displayBanks() {
+            const tbody = document.getElementById('banksTable');
+            if (!tbody) return;
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageBanks = filteredBanks.slice(startIndex, endIndex);
+
+            if (pageBanks.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
+                            ${filteredBanks.length === 0 ? 'No banks found' : 'No banks match your filters'}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = pageBanks.map(bank => {
+                const abbreviation = getBankAbbreviation(bank.name);
+                const rateTypesCount = countRateTypesForBank(bank.name);
+                const packagesCount = countPackagesForBank(bank.name);
+                const isActive = rateTypesCount > 0 || packagesCount > 0;
+
+                return `
+                    <tr>
+                        <td><strong>${bank.name || 'N/A'}</strong></td>
+                        <td><span class="bank-abbr">${abbreviation}</span></td>
+                        <td>
+                            <span class="status-badge ${isActive ? 'status-completed' : 'status-inactive'}">
+                                ${isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="count-badge">${rateTypesCount}</span>
+                            ${rateTypesCount > 0 ? '<small>rate types</small>' : ''}
+                        </td>
+                        <td>
+                            <span class="count-badge">${packagesCount}</span>
+                            ${packagesCount > 0 ? '<small>packages</small>' : ''}
+                        </td>
+                        <td>${formatDate(bank.created_at)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-edit" onclick="editBank('${bank.id}')" title="Edit" style="background: #3b82f6; color: white; border: none;">
+                                    <i data-lucide="edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-delete" onclick="deleteBank('${bank.id}')" title="Delete" 
+                                        ${isActive ? 'disabled' : ''}>
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Reinitialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // Filter banks
+        function filterBanks() {
+            const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+
+            filteredBanks = banks.filter(bank => {
+                const matchesSearch = !searchTerm || 
+                    (bank.name && bank.name.toLowerCase().includes(searchTerm)) ||
+                    (getBankAbbreviation(bank.name).toLowerCase().includes(searchTerm));
+
+                return matchesSearch;
+            });
+
+            currentPage = 1;
+            displayBanks();
+            updatePagination();
+        }
+
+        // Update pagination
+        function updatePagination() {
+            const paginationInfo = document.getElementById('paginationInfo');
+            const paginationControls = document.getElementById('paginationControls');
+            
+            if (paginationInfo) {
+                const totalItems = filteredBanks.length;
+                const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+                const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+                paginationInfo.textContent = `Showing ${startItem}-${endItem} of ${totalItems}`;
+            }
+
+            if (paginationControls) {
+                const totalPages = Math.ceil(filteredBanks.length / itemsPerPage);
+                
+                if (totalPages > 1) {
+                    let controls = '';
+                    
+                    // Previous button
+                    controls += `<button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                        <i data-lucide="chevron-left"></i> Previous
+                    </button>`;
+                    
+                    // Page numbers
+                    for (let i = 1; i <= totalPages; i++) {
+                        if (i === currentPage || i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                            controls += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                        } else if (i === currentPage - 2 || i === currentPage + 2) {
+                            controls += '<span class="pagination-ellipsis">...</span>';
+                        }
+                    }
+                    
+                    // Next button
+                    controls += `<button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                        Next <i data-lucide="chevron-right"></i>
+                    </button>`;
+
+                    paginationControls.innerHTML = controls;
+                    
+                    // Reinitialize icons
+                    if (typeof lucide !== 'undefined') {
+                        lucide.createIcons();
+                    }
+                } else {
+                    paginationControls.innerHTML = '';
+                }
+            }
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredBanks.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                displayBanks();
+                updatePagination();
+                
+                // Scroll to top of table
+                document.querySelector('.data-table').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Open add bank modal
+        function openAddBankModal() {
+            document.getElementById('addBankForm').reset();
+            document.getElementById('bankAbbreviation').value = '';
+            editingItemId = null;
+            openModal('add-bank-modal');
+        }
+
+        // Handle add form submission
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(e.target);
+                const bankData = {
+                    name: formData.get('name')
+                };
+
+                // Check if bank already exists
+                const existingBank = banks.find(bank => bank.name === bankData.name);
+                if (existingBank) {
+                    throw new Error('A bank with this name already exists');
+                }
+
+                const { data, error } = await supabaseClient
+                    .from('banks')
+                    .insert([bankData])
+                    .select();
+                
+                if (error) throw error;
+
+                showNotification('Bank added successfully', 'success');
+                closeModal('add-bank-modal');
+                loadBanks();
+                addRecentAction('add', `Added bank: ${bankData.name}`);
+                
+            } catch (error) {
+                console.error('Error adding bank:', error);
+                showNotification('Failed to add bank: ' + error.message, 'error');
+            }
+        }
+
+        // Handle edit form submission
+        async function handleEditFormSubmit(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(e.target);
+                const id = formData.get('id');
+                const bankData = {
+                    name: formData.get('name')
+                };
+
+                // Check if bank name already exists (excluding current bank)
+                const existingBank = banks.find(bank => bank.name === bankData.name && bank.id !== id);
+                if (existingBank) {
+                    throw new Error('A bank with this name already exists');
+                }
+
+                const { data, error } = await supabaseClient
+                    .from('banks')
+                    .update(bankData)
+                    .eq('id', id)
+                    .select();
+                
+                if (error) throw error;
+
+                showNotification('Bank updated successfully', 'success');
+                closeModal('edit-bank-modal');
+                loadBanks();
+                addRecentAction('edit', `Updated bank: ${bankData.name}`);
+                
+            } catch (error) {
+                console.error('Error updating bank:', error);
+                showNotification('Failed to update bank: ' + error.message, 'error');
+            }
+        }
+
+        // Edit bank
+        function editBank(id) {
+            const bank = banks.find(b => b.id === id);
+            if (!bank) return;
+
+            // Populate edit form
+            document.getElementById('editBankId').value = id;
+            document.getElementById('editBankName').value = bank.name || '';
+            document.getElementById('editBankAbbreviation').value = getBankAbbreviation(bank.name);
+
+            editingItemId = id;
+            openModal('edit-bank-modal');
+            addRecentAction('edit', `Started editing bank: ${bank.name}`);
+        }
+
+        // Delete bank
+        async function deleteBank(id) {
+            const bank = banks.find(b => b.id === id);
+            if (!bank) return;
+
+            // Check if bank is used in rate types or packages
+            const rateTypesCount = countRateTypesForBank(bank.name);
+            const packagesCount = countPackagesForBank(bank.name);
+
+            if (rateTypesCount > 0 || packagesCount > 0) {
+                showNotification(`Cannot delete bank: ${bank.name} is used in ${rateTypesCount} rate types and ${packagesCount} packages. Please remove these first.`, 'error');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete "${bank.name}"?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('banks')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+
+                showNotification('Bank deleted successfully', 'success');
+                loadBanks();
+                addRecentAction('delete', `Deleted bank: ${bank.name}`);
+                
+            } catch (error) {
+                console.error('Error deleting bank:', error);
+                showNotification('Failed to delete bank: ' + error.message, 'error');
+            }
+        }
+
+        // Clear all filters
+        function clearAllFilters() {
+            document.getElementById('searchInput').value = '';
+            filterBanks();
+        }
+
+        // Export banks to CSV
+        function exportToCSV(filename) {
+            if (filteredBanks.length === 0) {
+                showNotification('No data to export', 'warning');
+                return;
+            }
+
+            const headers = ['Bank Name', 'Abbreviation', 'Status', 'Rate Types Count', 'Packages Count', 'Created Date'];
+
+            const csvContent = [
+                headers.join(','),
+                ...filteredBanks.map(bank => {
+                    const abbreviation = getBankAbbreviation(bank.name);
+                    const rateTypesCount = countRateTypesForBank(bank.name);
+                    const packagesCount = countPackagesForBank(bank.name);
+                    const isActive = rateTypesCount > 0 || packagesCount > 0;
+
+                    return [
+                        `"${bank.name || ''}"`,
+                        abbreviation,
+                        isActive ? 'Active' : 'Inactive',
+                        rateTypesCount,
+                        packagesCount,
+                        bank.created_at ? new Date(bank.created_at).toLocaleDateString() : ''
+                    ].join(',');
+                })
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Data exported successfully', 'success');
+        }
+
+        // Sign out functions
+        function confirmSignOut() {
+            openModal('signout-modal');
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                // Clear any stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login
+                window.location.href = 'login.html';
+                
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showNotification('Sign out failed: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                closeModal('signout-modal');
+            }
+        }
+
+        // Utility functions
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString();
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            // Setup event listeners
+            document.getElementById('searchInput').addEventListener('input', debounce(filterBanks, 300));
+
+            // Load initial data
+            loadBanks();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal:not([style*="display: none"])');
+                openModals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                closeSidebar();
+            }
+        });
+    </script>
+</body>
+</html>

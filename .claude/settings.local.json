@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude config set --global preferredNotifChannel terminal_bell)"
+    ],
+    "deny": []
+  }
+}
