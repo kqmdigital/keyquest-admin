@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(claude config set --global preferredNotifChannel terminal_bell)"
+      "Bash(claude config set --global preferredNotifChannel terminal_bell)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(gh:*)",
+      "Bash(winget install:*)",
+      "Bash(where gh)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
