@@ -1396,7 +1396,8 @@
                 openModals.forEach(modal => {
                     modal.style.display = 'none';
                 });
-                closeSidebar();
+                const navMenu = document.getElementById('navMenu');
+                if (navMenu) navMenu.classList.remove('active');
             }
         });
 

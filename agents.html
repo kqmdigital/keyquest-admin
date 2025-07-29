@@ -15,65 +15,56 @@
     <script src="js/admin-scripts.js"></script>
 </head>
 <body>
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-    
     <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">
-                        <i data-lucide="building-2"></i>
+        <!-- Top Navigation -->
+        <nav class="top-nav" id="topNav">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="index.html" class="logo">
+                        <div class="logo-icon">
+                            <i data-lucide="building-2"></i>
+                        </div>
+                        <span>Keyquest</span>
+                    </a>
+                    <div class="nav-menu" id="navMenu">
+                        <a href="index.html" class="nav-item">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="rate-packages.html" class="nav-item">
+                            <i data-lucide="package"></i>
+                            <span>Rate Package</span>
+                        </a>
+                        <a href="rate-types.html" class="nav-item">
+                            <i data-lucide="percent"></i>
+                            <span>Rate Type</span>
+                        </a>
+                        <a href="banks.html" class="nav-item">
+                            <i data-lucide="landmark"></i>
+                            <span>Bank</span>
+                        </a>
+                        <a href="bankers.html" class="nav-item">
+                            <i data-lucide="briefcase"></i>
+                            <span>Bankers</span>
+                        </a>
+                        <a href="agents.html" class="nav-item active">
+                            <i data-lucide="users"></i>
+                            <span>Agents</span>
+                        </a>
+                        <a href="enquiry.html" class="nav-item">
+                            <i data-lucide="help-circle"></i>
+                            <span>Enquiry</span>
+                        </a>
+                        <a href="recommended-packages.html" class="nav-item">
+                            <i data-lucide="star"></i>
+                            <span>Recommended</span>
+                        </a>
                     </div>
-                    <span>KEYQUEST</span>
-                </a>
-            </div>
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item">
-                    <i data-lucide="layout-dashboard"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="rate-packages.html" class="nav-item">
-                    <i data-lucide="package"></i>
-                    <span>Rate Package</span>
-                </a>
-                <a href="rate-types.html" class="nav-item">
-                    <i data-lucide="percent"></i>
-                    <span>Rate Type</span>
-                </a>
-                <a href="banks.html" class="nav-item">
-                    <i data-lucide="landmark"></i>
-                    <span>Bank</span>
-                </a>
-                <a href="bankers.html" class="nav-item">
-                    <i data-lucide="briefcase"></i>
-                    <span>Bankers</span>
-                </a>
-                <a href="agents.html" class="nav-item active">
-                    <i data-lucide="users"></i>
-                    <span>Agents</span>
-                </a>
-                <a href="enquiry.html" class="nav-item">
-                    <i data-lucide="help-circle"></i>
-                    <span>Enquiry</span>
-                </a>
-                <a href="recommended-packages.html" class="nav-item">
-                <i data-lucide="star"></i>
-                <span>Recommended Packages</span>
-                </a>
-            </nav>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content" id="mainContent">
-            <header class="header">
-                <div class="header-left">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
+                </div>
+                <div class="nav-right">
+                    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                         <i data-lucide="menu"></i>
                     </button>
-                    <h1 class="header-title">Agents</h1>
-                </div>
-                <div class="header-actions">
                     <button class="btn btn-primary" onclick="openModal('agent-modal')">
                         <i data-lucide="plus"></i>
                         <span>Add Agent</span>
@@ -90,9 +81,17 @@
                         </div>
                     </div>
                 </div>
-            </header>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
 
             <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Agents</h1>
+                    <p class="page-subtitle">Manage agent accounts and status information</p>
+                </div>
                 <!-- Enhanced Search and Filter Bar -->
                 <div class="search-filter-bar">
                     <div class="search-box">
@@ -709,13 +708,10 @@
         // ===================================
         function showLoading(message = 'Loading...') {
             // Remove existing loader
-            const existingLoader = document.getElementById('global-loader');
-            if (existingLoader) {
-                existingLoader.remove();
-            }
-
+            hideLoading();
+            
             const loader = document.createElement('div');
-            loader.id = 'global-loader';
+            loader.id = 'keyquest-loader';
             loader.innerHTML = `
                 <div style="
                     position: fixed;
@@ -723,35 +719,39 @@
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background: rgba(255, 255, 255, 0.9);
-                    z-index: 9999;
+                    background: rgba(0, 0, 0, 0.6);
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    z-index: 10000;
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    backdrop-filter: blur(2px);
                 ">
                     <div style="
                         background: white;
-                        padding: 24px;
-                        border-radius: 12px;
+                        padding: 32px;
+                        border-radius: 16px;
                         display: flex;
+                        flex-direction: column;
                         align-items: center;
                         gap: 16px;
-                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                        min-width: 200px;
+                        text-align: center;
                     ">
                         <div style="
-                            width: 20px;
-                            height: 20px;
-                            border: 2px solid #e2e8f0;
-                            border-top: 2px solid #4338ca;
+                            width: 40px;
+                            height: 40px;
+                            border: 3px solid #e5e7eb;
+                            border-top: 3px solid #7c3aed;
                             border-radius: 50%;
-                            animation: spin 1s linear infinite;
+                            animation: keyquest-spin 1s linear infinite;
                         "></div>
-                        <span style="color: #374151; font-weight: 500;">${message}</span>
+                        <span style="color: #1f2937; font-weight: 600; font-size: 16px;">${message}</span>
                     </div>
                 </div>
                 <style>
-                    @keyframes spin {
+                    @keyframes keyquest-spin {
                         0% { transform: rotate(0deg); }
                         100% { transform: rotate(360deg); }
                     }
@@ -761,51 +761,54 @@
         }
 
         function hideLoading() {
-            const loader = document.getElementById('global-loader');
+            const loader = document.getElementById('keyquest-loader');
             if (loader) {
                 loader.remove();
             }
         }
 
-        function showNotification(message, type = 'success') {
+        function showNotification(message, type = 'info') {
             // Remove existing notifications
-            const existing = document.querySelectorAll('.toast-notification');
+            const existing = document.querySelectorAll('.keyquest-notification');
             existing.forEach(n => n.remove());
 
             const colors = {
-                success: { bg: '#dcfce7', border: '#16a34a', text: '#15803d' },
-                error: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626' },
-                warning: { bg: '#fef3c7', border: '#d97706', text: '#b45309' },
-                info: { bg: '#dbeafe', border: '#2563eb', text: '#1d4ed8' }
+                success: { bg: '#f0fdf4', border: '#10b981', text: '#065f46', icon: 'check-circle' },
+                error: { bg: '#fef2f2', border: '#ef4444', text: '#991b1b', icon: 'x-circle' },
+                warning: { bg: '#fffbeb', border: '#f59e0b', text: '#92400e', icon: 'alert-triangle' },
+                info: { bg: '#eff6ff', border: '#3b82f6', text: '#1e40af', icon: 'info' }
             };
 
-            const color = colors[type] || colors.success;
+            const color = colors[type] || colors.info;
 
             const notification = document.createElement('div');
-            notification.className = 'toast-notification';
+            notification.className = 'keyquest-notification';
             notification.style.cssText = `
                 position: fixed;
-                top: 20px;
-                right: 20px;
+                top: 24px;
+                right: 24px;
                 background: ${color.bg};
                 border: 1px solid ${color.border};
                 color: ${color.text};
                 padding: 16px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                z-index: 10000;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                z-index: 10001;
                 font-size: 14px;
                 font-weight: 500;
                 max-width: 400px;
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
                 gap: 12px;
-                animation: slideInFromRight 0.3s ease-out;
+                animation: keyquest-slideIn 0.3s ease-out;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             `;
 
             notification.innerHTML = `
-                <span>${escapeHtml(message)}</span>
+                <div style="flex-shrink: 0;">
+                    <i data-lucide="${color.icon}" style="width: 20px; height: 20px; color: ${color.border};"></i>
+                </div>
+                <span style="flex: 1;">${escapeHtml(message)}</span>
                 <button onclick="this.parentElement.remove()" style="
                     background: none;
                     border: none;
@@ -813,20 +816,21 @@
                     cursor: pointer;
                     padding: 4px;
                     margin: 0;
-                    font-size: 16px;
+                    font-size: 18px;
                     line-height: 1;
-                    opacity: 0.7;
+                    opacity: 0.6;
                     transition: opacity 0.2s;
-                    border-radius: 3px;
-                " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+                    border-radius: 4px;
+                    flex-shrink: 0;
+                " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">×</button>
             `;
 
-            // Add animation keyframes if not already added
-            if (!document.querySelector('#notification-styles')) {
+            // Add animation keyframes
+            if (!document.querySelector('#keyquest-notification-styles')) {
                 const style = document.createElement('style');
-                style.id = 'notification-styles';
+                style.id = 'keyquest-notification-styles';
                 style.textContent = `
-                    @keyframes slideInFromRight {
+                    @keyframes keyquest-slideIn {
                         from { 
                             transform: translateX(100%); 
                             opacity: 0; 
@@ -842,33 +846,36 @@
 
             document.body.appendChild(notification);
 
-            // Auto remove after 5 seconds
+            // Initialize icons for the notification
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+
+            // Auto remove after 6 seconds
             setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
+                if (notification.parentNode) {
+                    notification.style.animation = 'keyquest-slideIn 0.3s ease-out reverse';
+                    setTimeout(() => notification.remove(), 300);
                 }
-            }, 5000);
+            }, 6000);
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            if (sidebar && overlay) {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('active');
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            if (navMenu) {
+                navMenu.classList.toggle('active');
             }
         }
 
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navMenu = document.getElementById('navMenu');
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
             
-            if (sidebar && overlay) {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('active');
+            if (navMenu && !navMenu.contains(event.target) && !mobileToggle.contains(event.target)) {
+                navMenu.classList.remove('active');
             }
-        }
+        });
 
         function escapeHtml(text) {
             const div = document.createElement('div');
