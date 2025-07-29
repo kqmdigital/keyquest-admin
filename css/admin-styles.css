@@ -84,10 +84,10 @@ body {
 }
 
 .logo-image {
-    width: 32px;
-    height: 32px;
+    height: 40px;
+    width: auto;
+    max-width: 180px;
     object-fit: contain;
-    border-radius: 8px;
     transition: all 0.3s ease;
 }
 
