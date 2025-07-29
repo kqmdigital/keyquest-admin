@@ -30,7 +30,7 @@ body {
 /* Sidebar Styling */
 .sidebar {
     width: 256px;
-    background: #ffffff;
+    background: #f8fafc;
     border-right: 1px solid #e2e8f0;
     position: fixed;
     height: 100vh;
@@ -93,9 +93,11 @@ body {
 }
 
 .nav-item.active {
-    background: #f3f4f6;
+    background: #e0e7ff;
     color: #7c3aed;
     font-weight: 600;
+    border-radius: 8px;
+    margin: 0 12px;
 }
 
 .nav-item i {
@@ -855,6 +857,82 @@ body {
 
 .overlay.overlay-active {
     display: block;
+}
+
+/* ===================================
+   QUICK ACTIONS SECTION
+   ================================== */
+
+.quick-actions {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.quick-actions h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 20px;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.action-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.action-card:hover {
+    background: #f9fafb;
+    border-color: #7c3aed;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.packages-icon { background: #7c3aed; }
+.rate-types-icon { background: #f59e0b; }
+.banks-icon { background: #3b82f6; }
+.bankers-icon { background: #10b981; }
+.agents-icon { background: #ef4444; }
+.enquiries-icon { background: #8b5cf6; }
+
+.action-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #111827;
+}
+
+.action-content p {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0;
 }
 
 /* ===================================

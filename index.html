@@ -24,7 +24,7 @@
             <div class="sidebar-header">
                 <a href="index.html" class="logo">
                     <div class="logo-icon">
-                        <i data-lucide="zap"></i>
+                        <i data-lucide="building-2"></i>
                     </div>
                     <span>Keyquest</span>
                 </a>
@@ -59,8 +59,8 @@
                     <span>Enquiry</span>
                 </a>
                 <a href="recommended-packages.html" class="nav-item">
-                <i data-lucide="star"></i>
-                <span>Recommended Packages</span>
+                    <i data-lucide="star"></i>
+                    <span>Recommended Packages</span>
                 </a>
             </nav>
         </div>
@@ -96,10 +96,10 @@
                         Filter
                     </button>
                     <div class="user-profile">
-                        <div class="user-avatar" id="userAvatar">C</div>
+                        <div class="user-avatar" id="userAvatar">A</div>
                         <div class="user-info">
-                            <div class="user-name" id="userName">Cripto Studio</div>
-                            <div class="user-email">cripto@reks.mail</div>
+                            <div class="user-name" id="userName">admin</div>
+                            <div class="user-role">cripto@reks.mail</div>
                         </div>
                     </div>
                 </div>
@@ -108,62 +108,58 @@
             <div class="content-area">
                 <!-- Statistics Overview -->
                 <div class="stats-grid">
-                    <div class="stat-card total-sales">
+                    <div class="stat-card packages-card">
                         <div class="stat-icon">
-                            <i data-lucide="shopping-cart"></i>
+                            <i data-lucide="package"></i>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-title">Total Sales</div>
-                            <div class="stat-value" id="totalSales">2500</div>
+                            <div class="stat-title">Total Rate Packages</div>
+                            <div class="stat-value" id="packagesCount">0</div>
                             <div class="stat-change positive">
                                 <i data-lucide="trending-up"></i>
-                                <span>4.4%</span>
-                                <div class="stat-period">Last month: 2345</div>
+                                <span>Active packages</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="stat-card new-customers">
+                    <div class="stat-card rate-types-card">
                         <div class="stat-icon">
-                            <i data-lucide="user-plus"></i>
+                            <i data-lucide="percent"></i>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-title">New Customer</div>
-                            <div class="stat-value" id="newCustomers">110</div>
+                            <div class="stat-title">Rate Types</div>
+                            <div class="stat-value" id="rateTypesCount">0</div>
                             <div class="stat-change positive">
                                 <i data-lucide="trending-up"></i>
-                                <span>7.5%</span>
-                                <div class="stat-period">Last month: 89</div>
+                                <span>Interest types</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="stat-card return-products">
+                    <div class="stat-card banks-card">
                         <div class="stat-icon">
-                            <i data-lucide="rotate-ccw"></i>
+                            <i data-lucide="landmark"></i>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-title">Return Products</div>
-                            <div class="stat-value" id="returnProducts">72</div>
-                            <div class="stat-change negative">
-                                <i data-lucide="trending-down"></i>
-                                <span>8.0%</span>
-                                <div class="stat-period">Last month: 60</div>
+                            <div class="stat-title">Active Banks</div>
+                            <div class="stat-value" id="banksCount">0</div>
+                            <div class="stat-change positive">
+                                <i data-lucide="check-circle"></i>
+                                <span>Partner banks</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="stat-card total-revenue">
+                    <div class="stat-card bankers-card">
                         <div class="stat-icon">
-                            <i data-lucide="dollar-sign"></i>
+                            <i data-lucide="briefcase"></i>
                         </div>
                         <div class="stat-content">
-                            <div class="stat-title">Total Revenue</div>
-                            <div class="stat-value" id="totalRevenue">$8,220.64</div>
+                            <div class="stat-title">Total Bankers</div>
+                            <div class="stat-value" id="bankersCount">0</div>
                             <div class="stat-change positive">
-                                <i data-lucide="trending-up"></i>
-                                <span>12.3%</span>
-                                <div class="stat-period">Last month: $620.00</div>
+                                <i data-lucide="users"></i>
+                                <span>Active bankers</span>
                             </div>
                         </div>
                     </div>
@@ -278,6 +274,67 @@
                     </div>
                 </div>
 
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-grid">
+                        <a href="rate-packages.html" class="action-card packages-action">
+                            <div class="action-icon packages-icon">
+                                <i data-lucide="package"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Rate Packages</h4>
+                                <p>Manage loan packages</p>
+                            </div>
+                        </a>
+                        <a href="rate-types.html" class="action-card rate-types-action">
+                            <div class="action-icon rate-types-icon">
+                                <i data-lucide="percent"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Rate Types</h4>
+                                <p>Configure interest rates</p>
+                            </div>
+                        </a>
+                        <a href="banks.html" class="action-card banks-action">
+                            <div class="action-icon banks-icon">
+                                <i data-lucide="landmark"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Banks</h4>
+                                <p>Manage partner banks</p>
+                            </div>
+                        </a>
+                        <a href="bankers.html" class="action-card bankers-action">
+                            <div class="action-icon bankers-icon">
+                                <i data-lucide="briefcase"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Bankers</h4>
+                                <p>Manage banker accounts</p>
+                            </div>
+                        </a>
+                        <a href="agents.html" class="action-card agents-action">
+                            <div class="action-icon agents-icon">
+                                <i data-lucide="users"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Agents</h4>
+                                <p>View agent directory</p>
+                            </div>
+                        </a>
+                        <a href="enquiry.html" class="action-card enquiries-action">
+                            <div class="action-icon enquiries-icon">
+                                <i data-lucide="help-circle"></i>
+                            </div>
+                            <div class="action-content">
+                                <h4>Enquiries</h4>
+                                <p>Customer inquiries</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -329,8 +386,11 @@
                 // Load dashboard data
                 await loadDashboardData();
                 
-                // Load mock table data
+                // Load table data with your original functionality
                 loadTableData();
+                
+                // Silent backup system
+                setTimeout(ensureCountersAreCorrect, 1000);
                 
                 // Set up automatic updates
                 setInterval(updateDashboard, 30000);
@@ -607,12 +667,11 @@
                     countRecords('enquiries')
                 ]);
 
+                // Update the stat cards with KeyQuest data
                 updateCounter('packagesCount', packages);
                 updateCounter('rateTypesCount', rateTypes);
                 updateCounter('banksCount', banks);
                 updateCounter('bankersCount', bankers);
-                updateCounter('agentsCount', agents);
-                updateCounter('enquiriesCount', enquiries);
 
             } catch (error) {
                 console.error('Data loading error:', error.message);
@@ -671,6 +730,32 @@
 
         async function updateDashboard() {
             await loadDashboardData();
+        }
+
+        // ===================================
+        // BACKUP SYSTEM
+        // ===================================
+        async function ensureCountersAreCorrect() {
+            try {
+                const counters = [
+                    { id: 'packagesCount', table: 'rate_packages' },
+                    { id: 'rateTypesCount', table: 'rate_types' },
+                    { id: 'banksCount', table: 'banks' },
+                    { id: 'bankersCount', table: 'bankers' }
+                ];
+
+                for (const counter of counters) {
+                    const element = document.getElementById(counter.id);
+                    if (element && (element.textContent === '0' || element.textContent === 'Loading...')) {
+                        const count = await countRecords(counter.table);
+                        if (count > 0) {
+                            updateCounter(counter.id, count);
+                        }
+                    }
+                }
+            } catch (error) {
+                // Silent error handling
+            }
         }
 
         // ===================================
