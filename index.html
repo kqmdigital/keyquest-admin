@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keyquest | Dashboard</title>
+    <title>Keyquest Mortgage Admin - Dashboard</title>
     
-    <!-- Boltshift Modern CSS -->
-    <link rel="stylesheet" href="css/boltshift-styles.css">
+    <!-- Standardized CSS Link -->
+    <link rel="stylesheet" href="css/admin-styles.css">
     
     <!-- External Scripts in proper order -->
     <script src="js/lucide.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="config/supabase.js"></script>
     <script src="js/admin-scripts.js"></script>
@@ -72,34 +71,18 @@
                     <button class="menu-toggle" onclick="toggleSidebar()">
                         <i data-lucide="menu"></i>
                     </button>
-                    <div class="header-info">
-                        <h1 class="header-title">Sales Overview</h1>
-                        <p class="header-subtitle">Your current sales summary and activity</p>
-                    </div>
+                    <h1 class="header-title">Dashboard</h1>
                 </div>
                 <div class="header-actions">
-                    <div class="time-filter">
-                        <select class="time-select">
-                            <option>This Month</option>
-                            <option>Last Month</option>
-                            <option>This Quarter</option>
-                            <option>This Year</option>
-                        </select>
-                        <i data-lucide="chevron-down"></i>
-                    </div>
-                    <button class="btn btn-ghost">
-                        <i data-lucide="download"></i>
-                        Export
-                    </button>
-                    <button class="btn btn-primary">
-                        <i data-lucide="filter"></i>
-                        Filter
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
                     </button>
                     <div class="user-profile">
                         <div class="user-avatar" id="userAvatar">A</div>
                         <div class="user-info">
                             <div class="user-name" id="userName">admin</div>
-                            <div class="user-role">cripto@reks.mail</div>
+                            <div class="user-role">Super Admin</div>
                         </div>
                     </div>
                 </div>
@@ -109,168 +92,87 @@
                 <!-- Statistics Overview -->
                 <div class="stats-grid">
                     <div class="stat-card packages-card">
-                        <div class="stat-icon">
-                            <i data-lucide="package"></i>
-                        </div>
-                        <div class="stat-content">
+                        <div class="stat-header">
                             <div class="stat-title">Total Rate Packages</div>
-                            <div class="stat-value" id="packagesCount">0</div>
-                            <div class="stat-change positive">
-                                <i data-lucide="trending-up"></i>
-                                <span>Active packages</span>
+                            <div class="stat-icon packages-icon">
+                                <i data-lucide="package"></i>
                             </div>
+                        </div>
+                        <div class="stat-value" id="packagesCount">0</div>
+                        <div class="stat-change positive">
+                            <i data-lucide="trending-up"></i>
+                            <span>Active packages</span>
                         </div>
                     </div>
 
                     <div class="stat-card rate-types-card">
-                        <div class="stat-icon">
-                            <i data-lucide="percent"></i>
-                        </div>
-                        <div class="stat-content">
+                        <div class="stat-header">
                             <div class="stat-title">Rate Types</div>
-                            <div class="stat-value" id="rateTypesCount">0</div>
-                            <div class="stat-change positive">
-                                <i data-lucide="trending-up"></i>
-                                <span>Interest types</span>
+                            <div class="stat-icon rate-types-icon">
+                                <i data-lucide="percent"></i>
                             </div>
+                        </div>
+                        <div class="stat-value" id="rateTypesCount">0</div>
+                        <div class="stat-change positive">
+                            <i data-lucide="trending-up"></i>
+                            <span>Interest types</span>
                         </div>
                     </div>
 
                     <div class="stat-card banks-card">
-                        <div class="stat-icon">
-                            <i data-lucide="landmark"></i>
-                        </div>
-                        <div class="stat-content">
+                        <div class="stat-header">
                             <div class="stat-title">Active Banks</div>
-                            <div class="stat-value" id="banksCount">0</div>
-                            <div class="stat-change positive">
-                                <i data-lucide="check-circle"></i>
-                                <span>Partner banks</span>
+                            <div class="stat-icon banks-icon">
+                                <i data-lucide="landmark"></i>
                             </div>
+                        </div>
+                        <div class="stat-value" id="banksCount">0</div>
+                        <div class="stat-change positive">
+                            <i data-lucide="check-circle"></i>
+                            <span>Partner banks</span>
                         </div>
                     </div>
 
                     <div class="stat-card bankers-card">
-                        <div class="stat-icon">
-                            <i data-lucide="briefcase"></i>
-                        </div>
-                        <div class="stat-content">
+                        <div class="stat-header">
                             <div class="stat-title">Total Bankers</div>
-                            <div class="stat-value" id="bankersCount">0</div>
-                            <div class="stat-change positive">
+                            <div class="stat-icon bankers-icon">
+                                <i data-lucide="briefcase"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="bankersCount">0</div>
+                        <div class="stat-change positive">
+                            <i data-lucide="users"></i>
+                            <span>Active bankers</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card agents-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Total Agents</div>
+                            <div class="stat-icon agents-icon">
                                 <i data-lucide="users"></i>
-                                <span>Active bankers</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Charts Section -->
-                <div class="charts-grid">
-                    <div class="chart-card performance-chart">
-                        <div class="chart-header">
-                            <h3>Performance Overview</h3>
-                            <div class="chart-filter">
-                                <select class="chart-select">
-                                    <option>This Week</option>
-                                    <option>This Month</option>
-                                    <option>This Quarter</option>
-                                </select>
-                                <i data-lucide="chevron-down"></i>
-                            </div>
-                        </div>
-                        <div class="chart-content">
-                            <div class="chart-legend">
-                                <div class="legend-item">
-                                    <div class="legend-color sales"></div>
-                                    <span>Total Sales</span>
-                                    <strong>440</strong>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-color revenue"></div>
-                                    <span>Total Revenue</span>
-                                    <strong>$4.5k</strong>
-                                </div>
-                            </div>
-                            <div class="chart-area">
-                                <canvas id="performanceChart" width="400" height="200"></canvas>
-                            </div>
+                        <div class="stat-value" id="agentsCount">0</div>
+                        <div class="stat-change positive">
+                            <i data-lucide="users"></i>
+                            <span>Active agents</span>
                         </div>
                     </div>
 
-                    <div class="chart-card sales-overview">
-                        <div class="chart-header">
-                            <h3>Sales Overview</h3>
-                            <button class="chart-menu">
-                                <i data-lucide="more-horizontal"></i>
-                            </button>
-                        </div>
-                        <div class="sales-stats">
-                            <div class="sales-percentage">
-                                <div class="percentage-circle">
-                                    <canvas id="salesDonut" width="120" height="120"></canvas>
-                                    <div class="percentage-text">
-                                        <span class="percentage-value">70.8%</span>
-                                        <span class="percentage-label">Sales Growth</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="sales-metrics">
-                                <div class="metric-row">
-                                    <span>Number of Sales</span>
-                                    <div class="metric-value">
-                                        <span class="value">2,343</span>
-                                        <span class="change positive">5.4%</span>
-                                    </div>
-                                </div>
-                                <div class="metric-row">
-                                    <span>Total Revenue</span>
-                                    <div class="metric-value">
-                                        <span class="value">$30.9k</span>
-                                        <span class="change negative">1.5%</span>
-                                    </div>
-                                </div>
+                    <div class="stat-card enquiries-card">
+                        <div class="stat-header">
+                            <div class="stat-title">Recent Enquiries</div>
+                            <div class="stat-icon enquiries-icon">
+                                <i data-lucide="help-circle"></i>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Recent Orders Table -->
-                <div class="table-card">
-                    <div class="table-header">
-                        <h3>Recent orders</h3>
-                        <div class="table-actions">
-                            <div class="search-box">
-                                <i data-lucide="search"></i>
-                                <input type="text" placeholder="Search products...">
-                            </div>
-                            <div class="sort-dropdown">
-                                <button class="sort-btn">
-                                    <i data-lucide="arrow-up-down"></i>
-                                    Sort by
-                                </button>
-                            </div>
+                        <div class="stat-value" id="enquiriesCount">0</div>
+                        <div class="stat-change positive">
+                            <i data-lucide="message-circle"></i>
+                            <span>New inquiries</span>
                         </div>
-                    </div>
-                    <div class="table-content">
-                        <table class="modern-table">
-                            <thead>
-                                <tr>
-                                    <th><input type="checkbox"></th>
-                                    <th>Product info</th>
-                                    <th>Order Id</th>
-                                    <th>Date</th>
-                                    <th>Customer</th>
-                                    <th>Category</th>
-                                    <th>Status</th>
-                                    <th>Items</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersTableBody">
-                                <!-- Orders will be loaded here -->
-                            </tbody>
-                        </table>
                     </div>
                 </div>
 
@@ -280,11 +182,11 @@
                     <div class="action-grid">
                         <a href="rate-packages.html" class="action-card packages-action">
                             <div class="action-icon packages-icon">
-                                <i data-lucide="package"></i>
+                                <i data-lucide="plus"></i>
                             </div>
                             <div class="action-content">
-                                <h4>Rate Packages</h4>
-                                <p>Manage loan packages</p>
+                                <h4>Add Rate Package</h4>
+                                <p>Create new loan package</p>
                             </div>
                         </a>
                         <a href="rate-types.html" class="action-card rate-types-action">
@@ -292,7 +194,7 @@
                                 <i data-lucide="percent"></i>
                             </div>
                             <div class="action-content">
-                                <h4>Rate Types</h4>
+                                <h4>Manage Rate Types</h4>
                                 <p>Configure interest rates</p>
                             </div>
                         </a>
@@ -301,8 +203,8 @@
                                 <i data-lucide="landmark"></i>
                             </div>
                             <div class="action-content">
-                                <h4>Banks</h4>
-                                <p>Manage partner banks</p>
+                                <h4>Manage Banks</h4>
+                                <p>View bank directory</p>
                             </div>
                         </a>
                         <a href="bankers.html" class="action-card bankers-action">
@@ -310,8 +212,8 @@
                                 <i data-lucide="briefcase"></i>
                             </div>
                             <div class="action-content">
-                                <h4>Bankers</h4>
-                                <p>Manage banker accounts</p>
+                                <h4>Manage Bankers</h4>
+                                <p>Configure banker access</p>
                             </div>
                         </a>
                         <a href="agents.html" class="action-card agents-action">
@@ -319,8 +221,8 @@
                                 <i data-lucide="users"></i>
                             </div>
                             <div class="action-content">
-                                <h4>Agents</h4>
-                                <p>View agent directory</p>
+                                <h4>View Agents</h4>
+                                <p>Check agent status</p>
                             </div>
                         </a>
                         <a href="enquiry.html" class="action-card enquiries-action">
@@ -328,13 +230,12 @@
                                 <i data-lucide="help-circle"></i>
                             </div>
                             <div class="action-content">
-                                <h4>Enquiries</h4>
-                                <p>Customer inquiries</p>
+                                <h4>View Enquiries</h4>
+                                <p>Check new inquiries</p>
                             </div>
                         </a>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -380,20 +281,14 @@
                 // Check authentication
                 await checkAuthentication();
                 
-                // Initialize charts
-                initializeCharts();
-                
                 // Load dashboard data
                 await loadDashboardData();
                 
-                // Load table data with your original functionality
-                loadTableData();
+                // Set up automatic updates
+                setInterval(updateDashboard, 30000);
                 
                 // Silent backup system
                 setTimeout(ensureCountersAreCorrect, 1000);
-                
-                // Set up automatic updates
-                setInterval(updateDashboard, 30000);
                 
                 console.log('Dashboard ready');
                 
@@ -404,186 +299,7 @@
         });
 
         // ===================================
-        // CHART INITIALIZATION
-        // ===================================
-        let performanceChart = null;
-        let salesDonutChart = null;
-
-        function initializeCharts() {
-            // Performance Chart (Bar Chart)
-            const performanceCtx = document.getElementById('performanceChart');
-            if (performanceCtx) {
-                performanceChart = new Chart(performanceCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                        datasets: [{
-                            label: 'Total Sales',
-                            data: [20, 25, 15, 40, 25, 30, 35, 20],
-                            backgroundColor: '#7c3aed',
-                            borderRadius: 4,
-                            barThickness: 20
-                        }, {
-                            label: 'Total Revenue',
-                            data: [15, 20, 12, 30, 20, 25, 28, 15],
-                            backgroundColor: '#a78bfa',
-                            borderRadius: 4,
-                            barThickness: 20
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            x: {
-                                grid: {
-                                    display: false
-                                },
-                                border: {
-                                    display: false
-                                }
-                            },
-                            y: {
-                                grid: {
-                                    color: '#f3f4f6'
-                                },
-                                border: {
-                                    display: false
-                                },
-                                ticks: {
-                                    display: false
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Sales Donut Chart
-            const salesDonutCtx = document.getElementById('salesDonut');
-            if (salesDonutCtx) {
-                salesDonutChart = new Chart(salesDonutCtx, {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: [70.8, 29.2],
-                            backgroundColor: ['#f59e0b', '#f3f4f6'],
-                            borderWidth: 0,
-                            cutout: '75%'
-                        }]
-                    },
-                    options: {
-                        responsive: false,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        // ===================================
-        // TABLE DATA LOADING
-        // ===================================
-        function loadTableData() {
-            const tableBody = document.getElementById('ordersTableBody');
-            if (!tableBody) return;
-
-            const mockOrders = [
-                {
-                    id: '#12345',
-                    product: 'Premium Package A',
-                    date: '2024-01-15',
-                    customer: 'John Smith',
-                    category: 'Mortgage',
-                    status: 'completed',
-                    items: 1,
-                    total: '$2,450.00'
-                },
-                {
-                    id: '#12346',
-                    product: 'Standard Package B',
-                    date: '2024-01-14',
-                    customer: 'Sarah Johnson',
-                    category: 'Refinance',
-                    status: 'pending',
-                    items: 2,
-                    total: '$1,850.00'
-                },
-                {
-                    id: '#12347',
-                    product: 'Basic Package C',
-                    date: '2024-01-13',
-                    customer: 'Mike Davis',
-                    category: 'Home Equity',
-                    status: 'completed',
-                    items: 1,
-                    total: '$950.00'
-                },
-                {
-                    id: '#12348',
-                    product: 'Premium Package A',
-                    date: '2024-01-12',
-                    customer: 'Emily Brown',
-                    category: 'Mortgage',
-                    status: 'processing',
-                    items: 3,
-                    total: '$3,200.00'
-                },
-                {
-                    id: '#12349',
-                    product: 'Standard Package B',
-                    date: '2024-01-11',
-                    customer: 'David Wilson',
-                    category: 'Refinance',
-                    status: 'completed',
-                    items: 1,
-                    total: '$1,650.00'
-                }
-            ];
-
-            tableBody.innerHTML = mockOrders.map(order => `
-                <tr>
-                    <td><input type="checkbox"></td>
-                    <td><strong>${order.product}</strong></td>
-                    <td>${order.id}</td>
-                    <td>${order.date}</td>
-                    <td>${order.customer}</td>
-                    <td>${order.category}</td>
-                    <td>
-                        <span class="status-badge ${getStatusClass(order.status)}">
-                            ${order.status}
-                        </span>
-                    </td>
-                    <td>${order.items}</td>
-                    <td><strong>${order.total}</strong></td>
-                </tr>
-            `).join('');
-        }
-
-        function getStatusClass(status) {
-            switch(status) {
-                case 'completed':
-                    return 'status-completed';
-                case 'pending':
-                    return 'status-pending';
-                case 'processing':
-                    return 'status-processing';
-                default:
-                    return 'status-default';
-            }
-        }
-
-        // ===================================
-        // AUTHENTICATION - FIXED VERSION
+        // AUTHENTICATION
         // ===================================
         async function checkAuthentication() {
             try {
@@ -613,7 +329,7 @@
         }
 
         // ===================================
-        // SIGN OUT FUNCTIONS - FIXED VERSION
+        // SIGN OUT FUNCTIONS
         // ===================================
         function confirmSignOut() {
             document.getElementById('signout-modal').style.display = 'flex';
@@ -667,11 +383,12 @@
                     countRecords('enquiries')
                 ]);
 
-                // Update the stat cards with KeyQuest data
                 updateCounter('packagesCount', packages);
                 updateCounter('rateTypesCount', rateTypes);
                 updateCounter('banksCount', banks);
                 updateCounter('bankersCount', bankers);
+                updateCounter('agentsCount', agents);
+                updateCounter('enquiriesCount', enquiries);
 
             } catch (error) {
                 console.error('Data loading error:', error.message);
@@ -730,32 +447,6 @@
 
         async function updateDashboard() {
             await loadDashboardData();
-        }
-
-        // ===================================
-        // BACKUP SYSTEM
-        // ===================================
-        async function ensureCountersAreCorrect() {
-            try {
-                const counters = [
-                    { id: 'packagesCount', table: 'rate_packages' },
-                    { id: 'rateTypesCount', table: 'rate_types' },
-                    { id: 'banksCount', table: 'banks' },
-                    { id: 'bankersCount', table: 'bankers' }
-                ];
-
-                for (const counter of counters) {
-                    const element = document.getElementById(counter.id);
-                    if (element && (element.textContent === '0' || element.textContent === 'Loading...')) {
-                        const count = await countRecords(counter.table);
-                        if (count > 0) {
-                            updateCounter(counter.id, count);
-                        }
-                    }
-                }
-            } catch (error) {
-                // Silent error handling
-            }
         }
 
         // ===================================
@@ -836,7 +527,7 @@
             }
         }
 
-        // Notification function - Matching rate-types.html style
+        // Notification function
         function showNotification(message, type = 'info') {
             // Remove existing notifications
             const existing = document.querySelectorAll('.toast-notification');
