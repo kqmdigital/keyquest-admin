@@ -11,68 +11,59 @@
     <script src="config/supabase.js"></script>
 </head>
 <body>
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-    
     <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">
-                        <i data-lucide="building-2"></i>
+        <!-- Top Navigation -->
+        <nav class="top-nav" id="topNav">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="index.html" class="logo">
+                        <div class="logo-icon">
+                            <i data-lucide="building-2"></i>
+                        </div>
+                        <span>Keyquest</span>
+                    </a>
+                    <div class="nav-menu" id="navMenu">
+                        <a href="index.html" class="nav-item">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="rate-packages.html" class="nav-item active">
+                            <i data-lucide="package"></i>
+                            <span>Rate Package</span>
+                        </a>
+                        <a href="rate-types.html" class="nav-item">
+                            <i data-lucide="percent"></i>
+                            <span>Rate Type</span>
+                        </a>
+                        <a href="banks.html" class="nav-item">
+                            <i data-lucide="landmark"></i>
+                            <span>Bank</span>
+                        </a>
+                        <a href="bankers.html" class="nav-item">
+                            <i data-lucide="briefcase"></i>
+                            <span>Bankers</span>
+                        </a>
+                        <a href="agents.html" class="nav-item">
+                            <i data-lucide="users"></i>
+                            <span>Agents</span>
+                        </a>
+                        <a href="enquiry.html" class="nav-item">
+                            <i data-lucide="help-circle"></i>
+                            <span>Enquiry</span>
+                        </a>
+                        <a href="recommended-packages.html" class="nav-item">
+                            <i data-lucide="star"></i>
+                            <span>Recommended</span>
+                        </a>
                     </div>
-                    <span>KEYQUEST</span>
-                </a>
-            </div>
-            <nav class="nav-menu">
-                <a href="index.html" class="nav-item">
-                    <i data-lucide="layout-dashboard"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="rate-packages.html" class="nav-item active">
-                    <i data-lucide="package"></i>
-                    <span>Rate Package</span>
-                </a>
-                <a href="rate-types.html" class="nav-item">
-                    <i data-lucide="percent"></i>
-                    <span>Rate Type</span>
-                </a>
-                <a href="banks.html" class="nav-item">
-                    <i data-lucide="landmark"></i>
-                    <span>Bank</span>
-                </a>
-                <a href="bankers.html" class="nav-item">
-                    <i data-lucide="briefcase"></i>
-                    <span>Bankers</span>
-                </a>
-                <a href="agents.html" class="nav-item">
-                    <i data-lucide="users"></i>
-                    <span>Agents</span>
-                </a>
-                <a href="enquiry.html" class="nav-item">
-                    <i data-lucide="help-circle"></i>
-                    <span>Enquiry</span>
-                </a>
-                <a href="recommended-packages.html" class="nav-item">
-                <i data-lucide="star"></i>
-                <span>Recommended Packages</span>
-                </a>
-            </nav>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <header class="header">
-                <div class="header-left">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
+                </div>
+                <div class="nav-right">
+                    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                         <i data-lucide="menu"></i>
                     </button>
-                    <h1 class="header-title">Rate Packages</h1>
-                </div>
-                <div class="header-actions">
                     <button class="btn btn-primary" onclick="openModal('package-modal')">
                         <i data-lucide="plus"></i>
-                        Add Rate Package
+                        <span>Add Rate Package</span>
                     </button>
                     <button class="btn btn-secondary" onclick="confirmSignOut()">
                         <i data-lucide="log-out"></i>
@@ -86,9 +77,16 @@
                         </div>
                     </div>
                 </div>
-            </header>
+            </div>
+        </nav>
 
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
             <div class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">Rate Packages</h1>
+                    <p class="page-subtitle">Manage rate packages and package information</p>
+                </div>
                 <!-- Search and Filter Bar -->
                 <div class="search-filter-bar">
                     <div class="search-box">
@@ -1388,6 +1386,24 @@
                 timeout = setTimeout(later, wait);
             };
         }
+
+        // Mobile menu toggle function
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            if (navMenu) {
+                navMenu.classList.toggle('active');
+            }
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navMenu = document.getElementById('navMenu');
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (navMenu && !navMenu.contains(event.target) && !mobileToggle.contains(event.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
