@@ -10,27 +10,53 @@ const SUPABASE_CONFIG = {
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
 
-// Auth Helper Functions
+// Auth Helper Functions - Custom admin_users table implementation
 class AuthService {
     static async signIn(email, password) {
         try {
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email,
-                password
+            // Call Supabase database function for secure password verification
+            const { data, error } = await supabaseClient.rpc('authenticate_admin', {
+                user_email: email,
+                user_password: password
             });
             
-            if (error) throw error;
-            return { success: true, data };
+            if (error) {
+                console.error('Authentication error:', error);
+                return { success: false, error: 'Invalid email or password' };
+            }
+
+            if (!data || !data.success) {
+                return { success: false, error: data?.message || 'Invalid credentials' };
+            }
+
+            // Store user session in localStorage (in production, use more secure storage)
+            const userSession = {
+                id: data.user.id,
+                email: data.user.email,
+                name: data.user.name,
+                role: data.user.role,
+                loginTime: new Date().toISOString()
+            };
+            
+            localStorage.setItem('admin_session', JSON.stringify(userSession));
+            localStorage.setItem('session_expires', (Date.now() + (24 * 60 * 60 * 1000)).toString()); // 24 hours
+
+            // Update last login
+            await this.updateLastLogin(data.user.id);
+
+            return { success: true, user: userSession };
         } catch (error) {
             console.error('Sign in error:', error);
-            return { success: false, error: error.message };
+            return { success: false, error: 'Login failed. Please try again.' };
         }
     }
 
     static async signOut() {
         try {
-            const { error } = await supabaseClient.auth.signOut();
-            if (error) throw error;
+            // Clear local session
+            localStorage.removeItem('admin_session');
+            localStorage.removeItem('session_expires');
+            
             return { success: true };
         } catch (error) {
             console.error('Sign out error:', error);
@@ -40,17 +66,41 @@ class AuthService {
 
     static async getCurrentUser() {
         try {
-            const { data: { user }, error } = await supabaseClient.auth.getUser();
-            if (error) throw error;
+            const sessionData = localStorage.getItem('admin_session');
+            const sessionExpires = localStorage.getItem('session_expires');
+            
+            if (!sessionData || !sessionExpires) {
+                return { success: false, user: null };
+            }
+
+            // Check if session is expired
+            if (Date.now() > parseInt(sessionExpires)) {
+                this.signOut();
+                return { success: false, user: null };
+            }
+
+            const user = JSON.parse(sessionData);
             return { success: true, user };
         } catch (error) {
             console.error('Get user error:', error);
+            this.signOut(); // Clear corrupted session
             return { success: false, error: error.message };
         }
     }
 
-    static onAuthStateChange(callback) {
-        return supabaseClient.auth.onAuthStateChange(callback);
+    static async updateLastLogin(userId) {
+        try {
+            await supabaseClient
+                .from('admin_users')
+                .update({ 
+                    last_login: new Date().toISOString(),
+                    failed_login_attempts: 0,
+                    locked_until: null
+                })
+                .eq('id', userId);
+        } catch (error) {
+            console.error('Update last login error:', error);
+        }
     }
 
     static async checkAuthAndRedirect() {
@@ -60,6 +110,13 @@ class AuthService {
             return false;
         }
         return true;
+    }
+
+    static isLoggedIn() {
+        const sessionData = localStorage.getItem('admin_session');
+        const sessionExpires = localStorage.getItem('session_expires');
+        
+        return sessionData && sessionExpires && Date.now() < parseInt(sessionExpires);
     }
 }
 

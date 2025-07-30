@@ -295,9 +295,15 @@
         // ===================================
         async function checkAuthentication() {
             try {
-                const { data: { user }, error } = await supabaseClient.auth.getUser();
+                if (typeof AuthService === 'undefined') {
+                    console.error('AuthService not available');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { success, user } = await AuthService.getCurrentUser();
                 
-                if (error || !user) {
+                if (!success || !user) {
                     window.location.href = 'login.html';
                     return;
                 }
@@ -305,12 +311,11 @@
                 const userNameElement = document.getElementById('userName');
                 const userAvatarElement = document.getElementById('userAvatar');
                 
-                if (userNameElement && user.email) {
-                    const name = user.user_metadata?.full_name || user.email.split('@')[0];
-                    userNameElement.textContent = name;
+                if (userNameElement && user.name) {
+                    userNameElement.textContent = user.name;
                     
                     if (userAvatarElement) {
-                        userAvatarElement.textContent = name.charAt(0).toUpperCase();
+                        userAvatarElement.textContent = user.name.charAt(0).toUpperCase();
                     }
                 }
                 
@@ -331,8 +336,12 @@
             try {
                 showLoading('Signing out...');
                 
-                const { error } = await supabaseClient.auth.signOut();
-                if (error) throw error;
+                if (typeof AuthService !== 'undefined') {
+                    const { success } = await AuthService.signOut();
+                    if (!success) {
+                        console.warn('Sign out service failed, but continuing...');
+                    }
+                }
                 
                 // Clear any stored data
                 localStorage.clear();
@@ -344,6 +353,10 @@
             } catch (error) {
                 console.error('Sign out error:', error);
                 showNotification('Sign out failed: ' + error.message, 'error');
+                // Still redirect to login even if logout fails
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
             } finally {
                 hideLoading();
                 closeModal('signout-modal');
