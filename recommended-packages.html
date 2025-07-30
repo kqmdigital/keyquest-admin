@@ -12,6 +12,42 @@
     <script src="js/admin-scripts.js"></script>
     <style>
         /* Enhanced Recommended Packages Styles */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 32px;
+            border-radius: 20px;
+            margin-bottom: 32px;
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+        }
+
+        .page-header h1 {
+            margin: 0 0 12px 0;
+            font-size: 32px;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 16px;
+            font-weight: 500;
+        }
 
         /* Enhanced Loan Type Tabs */
         .loan-type-tabs {
@@ -1320,6 +1356,27 @@
 
         <!-- Main Content -->
         <div class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="header-title">Recommended Packages</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">admin</div>
+                            <div class="user-role">Super Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
             
             <div class="content-area">
                 
