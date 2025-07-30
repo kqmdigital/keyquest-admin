@@ -1678,7 +1678,7 @@ function generateProfessionalReport() {
             </div>
 
             <!-- Enhanced Loan Information -->
-            <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 24px; border-radius: 16px; margin-bottom: 30px; border: 2px solid #2563eb; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);">
+            <div style="background: #f8fafc; padding: 24px; border-radius: 12px; margin-bottom: 30px; border: 2px solid #2563eb;">
                 <h3 style="margin: 0 0 20px 0; color: #1e40af; font-size: 20px; font-weight: 700;">Loan Summary</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; font-size: 16px;">
                     <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -1713,10 +1713,10 @@ function generateProfessionalReport() {
                         ${selectedPackages.map(() => `<col style="width: ${85/selectedPackages.length}%;">`).join('')}
                     </colgroup>
                     <thead>
-                        <tr style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);">
+                        <tr style="background: #1e40af;">
                             <th style="padding: 16px; text-align: left; border: 1px solid #1e40af; font-weight: 700; color: white; word-wrap: break-word; vertical-align: top; font-size: 14px;">Package Details</th>
                             ${selectedPackages.map((pkg, index) => `
-                                <th style="padding: 16px; text-align: center; border: 1px solid #1e40af; font-weight: 700; background: ${index === 0 ? 'linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)' : 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)'}; color: white; word-wrap: break-word; vertical-align: top; line-height: 1.4;">
+                                <th style="padding: 16px; text-align: center; border: 1px solid #1e40af; font-weight: 700; background: ${index === 0 ? '#f59e0b' : '#1e40af'}; color: white; word-wrap: break-word; vertical-align: top; line-height: 1.4;">
                                     <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">
                                         ${hideBankNames ? `Bank ${String.fromCharCode(65 + index)}` : pkg.bank_name}
                                         ${index === 0 ? '<div style="font-size: 10px; background: rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 6px; margin-top: 4px; display: inline-block;">RECOMMENDED</div>' : ''}
@@ -1784,31 +1784,15 @@ function generateProfessionalReport() {
     `).join('')}
 </tr>
 
-<!-- Total Interest Cost Row -->
-<tr style="background: #fef3c7;">
-    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; background: #fbbf24; color: #92400e; word-wrap: break-word; vertical-align: middle;">Total Interest Cost (${searchCriteria.loanTenure || 25} Years)</td>
-    ${selectedPackages.map((pkg, index) => {
-        const totalInterest = calculateTotalInterestCost(pkg, searchCriteria.loanAmount || 0, searchCriteria.loanTenure || 25);
-        return `
-        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#fbbf24' : '#fef3c7'}; color: #92400e; font-weight: bold; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-            ${formatCurrency(totalInterest)}
-        </td>
-    `;
-    }).join('')}
-</tr>
-
-<!-- Lifetime Savings Row (Only if refinancing) -->
+<!-- Total Savings Row (Only if refinancing) -->
 ${searchCriteria.existingInterestRate ? `
-<tr style="background: #dcfce7;">
-    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; background: #16a34a; color: white; word-wrap: break-word; vertical-align: middle;">Lifetime Savings vs Current Rate</td>
-    ${selectedPackages.map((pkg, index) => {
-        const lifetimeSavings = calculateLifetimeSavings(pkg, searchCriteria.loanAmount || 0, searchCriteria.loanTenure || 25, searchCriteria.existingInterestRate);
-        return `
-        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#16a34a' : '#dcfce7'}; color: ${index === 0 ? 'white' : (lifetimeSavings > 0 ? '#065f46' : '#dc2626')}; font-weight: bold; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
-            ${lifetimeSavings > 0 ? '+' : ''}${formatCurrency(lifetimeSavings)}
+<tr style="background: #f0fdf4;">
+    <td style="padding: 12px; font-weight: bold; border: 1px solid #e5e7eb; background: #ecfdf5; color: #065f46; word-wrap: break-word; vertical-align: middle;">Total Savings (Lock-in Period)</td>
+    ${selectedPackages.map((pkg, index) => `
+        <td style="padding: 12px; text-align: center; border: 1px solid #e5e7eb; background: ${index === 0 ? '#f0fdf4' : '#f9fafb'}; color: ${pkg.totalSavings > 0 ? '#065f46' : '#dc2626'}; font-weight: bold; word-wrap: break-word; vertical-align: middle; line-height: 1.4;">
+            ${formatSavings(pkg.totalSavings, pkg.lock_period)}
         </td>
-    `;
-    }).join('')}
+    `).join('')}
 </tr>
 ` : ''}
 
@@ -1829,7 +1813,7 @@ ${searchCriteria.existingInterestRate ? `
             </div>
 
             <!-- Professional Disclaimer -->
-            <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); padding: 24px; border-radius: 16px; border: 2px solid #dc2626; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);">
+            <div style="background: #fef2f2; padding: 24px; border-radius: 12px; border: 2px solid #dc2626; margin-bottom: 30px;">
                 <h4 style="margin: 0 0 16px 0; color: #dc2626; font-size: 18px; font-weight: 700;">Important Disclaimer</h4>
                 <div style="font-size: 13px; line-height: 1.6; color: #7f1d1d; space-y: 12px;">
                     <p style="margin: 0 0 12px 0;">
