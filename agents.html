@@ -279,9 +279,15 @@
         // ===================================
         async function checkAuthentication() {
             try {
-                const { data: { user }, error } = await supabaseClient.auth.getUser();
+                if (typeof AuthService === 'undefined') {
+                    console.error('AuthService not available');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { success, user } = await AuthService.getCurrentUser();
                 
-                if (error || !user) {
+                if (!success || !user) {
                     window.location.href = 'login.html';
                     return;
                 }
@@ -290,11 +296,11 @@
                 const userName = document.getElementById('userName');
                 const userAvatar = document.getElementById('userAvatar');
                 
-                if (userName && user.email) {
-                    userName.textContent = user.email.split('@')[0];
+                if (userName && user.name) {
+                    userName.textContent = user.name;
                 }
-                if (userAvatar && user.email) {
-                    userAvatar.textContent = user.email.charAt(0).toUpperCase();
+                if (userAvatar && user.name) {
+                    userAvatar.textContent = user.name.charAt(0).toUpperCase();
                 }
             } catch (error) {
                 console.error('Auth check failed:', error);
@@ -313,8 +319,12 @@
             try {
                 showLoading('Signing out...');
                 
-                const { error } = await supabaseClient.auth.signOut();
-                if (error) throw error;
+                if (typeof AuthService !== 'undefined') {
+                    const { success } = await AuthService.signOut();
+                    if (!success) {
+                        console.warn('Sign out service failed, but continuing...');
+                    }
+                }
                 
                 // Clear any stored data
                 localStorage.clear();

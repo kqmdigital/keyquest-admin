@@ -373,17 +373,24 @@
         // ===================================
         async function checkAuthentication() {
             try {
-                const { data: { user } } = await supabaseClient.auth.getUser();
-                if (!user) {
+                if (typeof AuthService === 'undefined') {
+                    console.error('AuthService not available');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { success, user } = await AuthService.getCurrentUser();
+                
+                if (!success || !user) {
                     console.warn('❌ No authenticated user found, redirecting to login');
                     window.location.href = 'login.html';
                     return;
                 }
 
                 // Update user display
-                if (user.email) {
-                    document.getElementById('userName').textContent = user.email.split('@')[0];
-                    document.getElementById('userAvatar').textContent = user.email.charAt(0).toUpperCase();
+                if (user.name) {
+                    document.getElementById('userName').textContent = user.name;
+                    document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
                 }
             } catch (error) {
                 console.error('💥 Auth check failed:', error);
@@ -2045,8 +2052,12 @@ ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existing
             try {
                 showLoading('Signing out...');
                 
-                const { error } = await supabaseClient.auth.signOut();
-                if (error) throw error;
+                if (typeof AuthService !== 'undefined') {
+                    const { success } = await AuthService.signOut();
+                    if (!success) {
+                        console.warn('Sign out service failed, but continuing...');
+                    }
+                }
                 
                 // Clear any stored data
                 localStorage.clear();

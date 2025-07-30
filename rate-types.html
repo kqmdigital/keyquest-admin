@@ -834,8 +834,12 @@
             try {
                 showLoading('Signing out...');
                 
-                const { error } = await supabaseClient.auth.signOut();
-                if (error) throw error;
+                if (typeof AuthService !== 'undefined') {
+                    const { success } = await AuthService.signOut();
+                    if (!success) {
+                        console.warn('Sign out service failed, but continuing...');
+                    }
+                }
                 
                 // Clear any stored data
                 localStorage.clear();
