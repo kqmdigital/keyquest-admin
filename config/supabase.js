@@ -28,44 +28,31 @@ class AuthService {
                 };
             }
 
-            // Use Supabase Auth instead of custom implementation
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email: email,
-                password: password
+            // Use custom authentication with existing password hashes
+            const { data, error } = await supabaseClient.rpc('authenticate_admin', {
+                user_email: email,
+                user_password: password
             });
             
             if (error) {
                 console.error('Authentication error:', error);
                 return { 
                     success: false, 
-                    error: error.message || 'Invalid email or password' 
+                    error: 'Invalid email or password' 
                 };
             }
 
-            if (!data.user) {
-                return { success: false, error: 'Authentication failed' };
+            if (!data || !data.success) {
+                return { success: false, error: data?.message || 'Invalid credentials' };
             }
 
-            // Verify admin privileges from admin_users table
-            const { data: adminData, error: adminError } = await supabaseClient
-                .from('admin_users')
-                .select('id, name, role, is_active')
-                .eq('email', email)
-                .eq('is_active', true)
-                .single();
-
-            if (adminError || !adminData) {
-                await supabaseClient.auth.signOut();
-                return { 
-                    success: false, 
-                    error: 'Admin access required' 
-                };
-            }
+            // Get admin data from the response
+            const adminData = data.user;
 
             // Store secure session data
             const userSession = {
                 id: adminData.id,
-                email: data.user.email,
+                email: adminData.email,
                 name: adminData.name,
                 role: adminData.role,
                 loginTime: new Date().toISOString()
@@ -90,12 +77,6 @@ class AuthService {
 
     static async signOut() {
         try {
-            // Sign out from Supabase Auth
-            const { error } = await supabaseClient.auth.signOut();
-            if (error) {
-                console.warn('Supabase signout error:', error);
-            }
-
             // Clear secure storage
             SecurityUtils.secureStorage.clear();
             
@@ -108,27 +89,11 @@ class AuthService {
 
     static async getCurrentUser() {
         try {
-            // Check Supabase auth session first
-            const { data: { session }, error } = await supabaseClient.auth.getSession();
-            
-            if (error || !session) {
-                SecurityUtils.secureStorage.clear();
-                return { success: false, user: null };
-            }
-
             // Get user data from secure storage
             const userData = SecurityUtils.secureStorage.get('admin_session');
             
             if (!userData) {
                 console.log('❌ No local session data found');
-                await this.signOut();
-                return { success: false, user: null };
-            }
-
-            // Verify token hasn't expired (double check)
-            if (session.expires_at && Date.now() / 1000 > session.expires_at) {
-                console.log('❌ Session expired, clearing...');
-                await this.signOut();
                 return { success: false, user: null };
             }
 
@@ -137,7 +102,7 @@ class AuthService {
         } catch (error) {
             console.error('❌ Get user error:', error);
             console.log('🧹 Clearing corrupted session...');
-            await this.signOut();
+            SecurityUtils.secureStorage.clear();
             return { success: false, error: error.message };
         }
     }
