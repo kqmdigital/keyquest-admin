@@ -84,11 +84,13 @@ body {
 }
 
 .logo-image {
-    height: 120px;
+    height: 45px;
     width: auto;
-    max-width: 400px;
+    max-width: 200px;
     object-fit: contain;
     transition: all 0.3s ease;
+    image-rendering: high-quality;
+    image-rendering: -webkit-optimize-contrast;
 }
 
 .logo:hover .logo-image {
