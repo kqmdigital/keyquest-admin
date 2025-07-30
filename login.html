@@ -6,6 +6,7 @@
     <title>Login - Keyquest Mortgage Admin</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/security-utils.js"></script>
     <script src="config/supabase.js"></script>
     <style>
         * {
@@ -292,7 +293,7 @@
                     placeholder="Enter your email"
                     required
                     autocomplete="email"
-                    value="admin@keyquestmortgage.com.sg"
+                    placeholder="Enter your email"
                 >
             </div>
 
@@ -306,7 +307,7 @@
                         placeholder="Enter your password"
                         required
                         autocomplete="current-password"
-                        value="admin123"
+                        placeholder="Enter your password"
                     >
                     <button type="button" class="password-toggle" onclick="togglePassword()">
                         <i id="eyeIcon" data-lucide="eye"></i>
@@ -442,7 +443,7 @@
             inputs.forEach(input => input.disabled = loading);
         }
 
-        // Handle form submission
+        // Enhanced form submission with validation
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             hideMessages();
@@ -451,9 +452,27 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            // Basic validation
-            if (!email || !password) {
-                showError('Please enter both email and password');
+            // Enhanced validation using SecurityUtils
+            const validationRules = {
+                email: { 
+                    required: true, 
+                    email: true, 
+                    label: 'Email' 
+                },
+                password: { 
+                    required: true, 
+                    length: { min: 6, max: 128 }, 
+                    label: 'Password' 
+                }
+            };
+
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('password', password);
+
+            const validationErrors = SecurityUtils.validateForm(formData, validationRules);
+            if (validationErrors.length > 0) {
+                showError(validationErrors.join('. '));
                 setLoading(false);
                 return;
             }
@@ -472,10 +491,10 @@
             }
 
             try {
-                console.log('Attempting login with:', email);
+                console.log('Attempting login with:', SecurityUtils.escapeHTML(email));
                 
                 const result = await AuthService.signIn(email, password);
-                console.log('Login result:', result);
+                console.log('Login result status:', result.success);
                 
                 if (result.success) {
                     showSuccess('Login successful! Redirecting to dashboard...');
@@ -488,14 +507,20 @@
                     let errorMessage = 'Login failed';
                     
                     if (result.error) {
-                        if (result.error.includes('Invalid login credentials')) {
+                        // Sanitize error message to prevent XSS
+                        const sanitizedError = SecurityUtils.escapeHTML(result.error);
+                        
+                        if (sanitizedError.includes('Invalid login credentials') || 
+                            sanitizedError.includes('Invalid email or password')) {
                             errorMessage = 'Invalid email or password. Please check your credentials and try again.';
-                        } else if (result.error.includes('Email not confirmed')) {
+                        } else if (sanitizedError.includes('Email not confirmed')) {
                             errorMessage = 'Please check your email and click the confirmation link before signing in.';
-                        } else if (result.error.includes('Too many requests')) {
-                            errorMessage = 'Too many login attempts. Please wait a few minutes and try again.';
+                        } else if (sanitizedError.includes('Too many')) {
+                            errorMessage = 'Too many login attempts. Please wait and try again.';
+                        } else if (sanitizedError.includes('Admin access required')) {
+                            errorMessage = 'Admin access required. Please contact your administrator.';
                         } else {
-                            errorMessage = `Login failed: ${result.error}`;
+                            errorMessage = `Login failed: ${sanitizedError}`;
                         }
                     }
                     
@@ -503,7 +528,8 @@
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                showError(`An unexpected error occurred: ${error.message || 'Please try again.'}`);
+                const sanitizedMessage = SecurityUtils.escapeHTML(error.message || 'Please try again.');
+                showError(`An unexpected error occurred: ${sanitizedMessage}`);
             } finally {
                 setLoading(false);
             }

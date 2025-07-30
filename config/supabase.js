@@ -1,48 +1,85 @@
 // config/supabase.js
-// Supabase Configuration
+// Secure Supabase Configuration with Environment Variables
 const SUPABASE_CONFIG = {
-    url: 'https://cuvjbsbvlefirwzngola.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1dmpic2J2bGVmaXJ3em5nb2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MTkwMzQsImV4cCI6MjA2MzI5NTAzNH0.vDA0WrV-Go_EChViXaXF-_0j2EEPJEPTBe7X5tjvLR4',
-    serviceRoleKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1dmpic2J2bGVmaXJ3em5nb2xhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzcxOTAzNCwiZXhwIjoyMDYzMjk1MDM0fQ.9Tp_HbwCBxDFLiw2e5btAg2zQB3xIx897O29AnUotmk'
+    url: import.meta.env.VITE_SUPABASE_URL || 'https://cuvjbsbvlefirwzngola.supabase.co',
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1dmpic2J2bGVmaXJ3em5nb2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MTkwMzQsImV4cCI6MjA2MzI5NTAzNH0.vDA0WrV-Go_EChViXaXF-_0j2EEPJEPTBe7X5tjvLR4'
+};
+
+// Security Configuration
+const SECURITY_CONFIG = {
+    sessionTimeout: parseInt(import.meta.env.VITE_SESSION_TIMEOUT) || 3600000, // 1 hour
+    maxLoginAttempts: parseInt(import.meta.env.VITE_MAX_LOGIN_ATTEMPTS) || 5,
+    tokenRefreshInterval: 300000 // 5 minutes
 };
 
 // Initialize Supabase Client
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
 
-// Auth Helper Functions - Custom admin_users table implementation
+// Enhanced Auth Service with improved security
 class AuthService {
     static async signIn(email, password) {
         try {
-            // Call Supabase database function for secure password verification
-            const { data, error } = await supabaseClient.rpc('authenticate_admin', {
-                user_email: email,
-                user_password: password
+            // Rate limiting check
+            if (!loginRateLimiter(email)) {
+                return { 
+                    success: false, 
+                    error: 'Too many login attempts. Please try again in 15 minutes.' 
+                };
+            }
+
+            // Use Supabase Auth instead of custom implementation
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
             });
             
             if (error) {
                 console.error('Authentication error:', error);
-                return { success: false, error: 'Invalid email or password' };
+                return { 
+                    success: false, 
+                    error: error.message || 'Invalid email or password' 
+                };
             }
 
-            if (!data || !data.success) {
-                return { success: false, error: data?.message || 'Invalid credentials' };
+            if (!data.user) {
+                return { success: false, error: 'Authentication failed' };
             }
 
-            // Store user session in localStorage (in production, use more secure storage)
+            // Verify admin privileges from admin_users table
+            const { data: adminData, error: adminError } = await supabaseClient
+                .from('admin_users')
+                .select('id, name, role, is_active')
+                .eq('email', email)
+                .eq('is_active', true)
+                .single();
+
+            if (adminError || !adminData) {
+                await supabaseClient.auth.signOut();
+                return { 
+                    success: false, 
+                    error: 'Admin access required' 
+                };
+            }
+
+            // Store secure session data
             const userSession = {
-                id: data.user.id,
+                id: adminData.id,
                 email: data.user.email,
-                name: data.user.name,
-                role: data.user.role,
+                name: adminData.name,
+                role: adminData.role,
                 loginTime: new Date().toISOString()
             };
             
-            localStorage.setItem('admin_session', JSON.stringify(userSession));
-            localStorage.setItem('session_expires', (Date.now() + (24 * 60 * 60 * 1000)).toString()); // 24 hours
+            // Use secure storage with expiration
+            SecurityUtils.secureStorage.set(
+                'admin_session', 
+                userSession, 
+                SECURITY_CONFIG.sessionTimeout
+            );
 
             // Update last login
-            await this.updateLastLogin(data.user.id);
+            await this.updateLastLogin(adminData.id);
 
             return { success: true, user: userSession };
         } catch (error) {
@@ -53,9 +90,14 @@ class AuthService {
 
     static async signOut() {
         try {
-            // Clear local session
-            localStorage.removeItem('admin_session');
-            localStorage.removeItem('session_expires');
+            // Sign out from Supabase Auth
+            const { error } = await supabaseClient.auth.signOut();
+            if (error) {
+                console.warn('Supabase signout error:', error);
+            }
+
+            // Clear secure storage
+            SecurityUtils.secureStorage.clear();
             
             return { success: true };
         } catch (error) {
@@ -66,37 +108,36 @@ class AuthService {
 
     static async getCurrentUser() {
         try {
-            const sessionData = localStorage.getItem('admin_session');
-            const sessionExpires = localStorage.getItem('session_expires');
+            // Check Supabase auth session first
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
             
-            console.log('🔍 getCurrentUser Debug:', {
-                hasSessionData: !!sessionData,
-                hasSessionExpires: !!sessionExpires,
-                sessionData: sessionData ? JSON.parse(sessionData) : null,
-                expiresAt: sessionExpires ? new Date(parseInt(sessionExpires)) : null,
-                currentTime: new Date(),
-                isExpired: sessionExpires ? Date.now() > parseInt(sessionExpires) : 'unknown'
-            });
-            
-            if (!sessionData || !sessionExpires) {
-                console.log('❌ No session data found');
+            if (error || !session) {
+                SecurityUtils.secureStorage.clear();
                 return { success: false, user: null };
             }
 
-            // Check if session is expired
-            if (Date.now() > parseInt(sessionExpires)) {
+            // Get user data from secure storage
+            const userData = SecurityUtils.secureStorage.get('admin_session');
+            
+            if (!userData) {
+                console.log('❌ No local session data found');
+                await this.signOut();
+                return { success: false, user: null };
+            }
+
+            // Verify token hasn't expired (double check)
+            if (session.expires_at && Date.now() / 1000 > session.expires_at) {
                 console.log('❌ Session expired, clearing...');
-                this.signOut();
+                await this.signOut();
                 return { success: false, user: null };
             }
 
-            const user = JSON.parse(sessionData);
-            console.log('✅ Session valid, user:', user);
-            return { success: true, user };
+            console.log('✅ Session valid, user:', userData);
+            return { success: true, user: userData };
         } catch (error) {
             console.error('❌ Get user error:', error);
             console.log('🧹 Clearing corrupted session...');
-            this.signOut(); // Clear corrupted session
+            await this.signOut();
             return { success: false, error: error.message };
         }
     }

@@ -13,7 +13,16 @@
       "Bash(git pull:*)",
       "Bash(cp:*)",
       "Bash(rm:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(npm install:*)",
+      "Bash(find:*)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp:*)",
+      "Bash(claude-code mcp:*)",
+      "mcp__context7__resolve-library-id",
+      "Bash(npm info:*)",
+      "Bash(del nul)"
     ],
     "deny": []
   }
