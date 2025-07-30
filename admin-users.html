@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users - Keyquest Admin</title>
+    
+    <!-- Standardized CSS Link -->
+    <link rel="stylesheet" href="css/admin-styles.css">
+    
+    <!-- External Scripts in proper order -->
+    <script src="js/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config/supabase.js"></script>
+    <script src="js/admin-scripts.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav" id="topNav">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="index.html" class="logo">
+                        <img src="https://ik.imagekit.io/hst9jooux/KEYQUEST%20LOGO%20(Black%20Text%20Horizontal).png?updatedAt=1753262438682" alt="Company Logo" class="logo-image">
+                        
+                    </a>
+                    <div class="nav-menu" id="navMenu">
+                        <a href="index.html" class="nav-item">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="rate-packages.html" class="nav-item">
+                            <i data-lucide="package"></i>
+                            <span>Rate Package</span>
+                        </a>
+                        <a href="rate-types.html" class="nav-item">
+                            <i data-lucide="percent"></i>
+                            <span>Rate Type</span>
+                        </a>
+                        <a href="banks.html" class="nav-item">
+                            <i data-lucide="landmark"></i>
+                            <span>Bank</span>
+                        </a>
+                        <a href="bankers.html" class="nav-item">
+                            <i data-lucide="briefcase"></i>
+                            <span>Bankers</span>
+                        </a>
+                        <a href="admin-users.html" class="nav-item active">
+                            <i data-lucide="shield-check"></i>
+                            <span>Admin Users</span>
+                        </a>
+                        <a href="enquiry.html" class="nav-item">
+                            <i data-lucide="help-circle"></i>
+                            <span>Enquiry</span>
+                        </a>
+                        <a href="recommended-packages.html" class="nav-item">
+                            <i data-lucide="star"></i>
+                            <span>Recommended</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <button class="btn btn-primary" onclick="openModal('user-modal')" id="addUserBtn">
+                        <i data-lucide="user-plus"></i>
+                        <span>Add Admin User</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="confirmSignOut()">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">admin</div>
+                            <div class="user-role">Super Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <div class="content-area">
+                <!-- Enhanced Search and Filter Bar -->
+                <div class="search-filter-bar">
+                    <div class="search-box">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" class="search-input" placeholder="Search admin users..." id="searchInput">
+                    </div>
+                    <div class="filter-controls">
+                        <select class="filter-select" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
+                        </select>
+                        <select class="filter-select" id="roleFilter">
+                            <option value="">All Roles</option>
+                            <option value="super_admin">Super Admin</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="clearFilters()">
+                            <i data-lucide="x"></i>
+                            Clear
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportToCSV()">
+                            <i data-lucide="download"></i>
+                            Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="data-table">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Last Login</th>
+                                    <th>Created At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                        
+                        <!-- Loading State -->
+                        <div id="loadingState" class="loading-state">
+                            <div class="loading-spinner"></div>
+                            <p>Loading admin users...</p>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="emptyState" class="empty-state" style="display: none;">
+                            <i data-lucide="shield-check"></i>
+                            <h3>No admin users found</h3>
+                            <p>Start by adding your first admin user.</p>
+                            <button class="btn btn-primary" onclick="openModal('user-modal')">
+                                <i data-lucide="user-plus"></i>
+                                Add Admin User
+                            </button>
+                        </div>
+
+                        <!-- Unauthorized Access Message -->
+                        <div id="unauthorizedState" class="empty-state" style="display: none;">
+                            <i data-lucide="shield-x"></i>
+                            <h3>Access Denied</h3>
+                            <p>Only Super Administrators can manage admin users.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination" id="pagination">
+                        <div class="pagination-info">
+                            <span id="paginationInfo">Showing 0 of 0</span>
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+                                <i data-lucide="chevron-left"></i>
+                            </button>
+                            <span id="pageNumbers"></span>
+                            <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal" id="user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="userModalTitle">Add Admin User</h3>
+                <button class="modal-close" onclick="closeModal('user-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="userName">Full Name *</label>
+                            <input type="text" id="userName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Email Address *</label>
+                            <input type="email" id="userEmail" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userRole">Role *</label>
+                            <select id="userRole" name="role" required>
+                                <option value="admin">Admin</option>
+                                <option value="super_admin">Super Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword">Password *</label>
+                            <input type="password" id="userPassword" name="password" required minlength="8">
+                            <small class="form-help">Minimum 8 characters required</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password *</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="8">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('user-modal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveUser()">
+                    <span id="saveButtonText">Create User</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div class="modal" id="reset-password-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Reset Password</h3>
+                <button class="modal-close" onclick="closeModal('reset-password-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="resetPasswordForm">
+                    <input type="hidden" id="resetUserEmail">
+                    <div class="form-group">
+                        <label>User</label>
+                        <div class="form-static" id="resetUserDisplay"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password *</label>
+                        <input type="password" id="newPassword" name="newPassword" required minlength="8">
+                        <small class="form-help">Minimum 8 characters required</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirm New Password *</label>
+                        <input type="password" id="confirmNewPassword" name="confirmNewPassword" required minlength="8">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('reset-password-modal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="performPasswordReset()">
+                    <i data-lucide="key"></i>
+                    Reset Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Out Confirmation Modal -->
+    <div class="modal" id="signout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Sign Out</h3>
+                <button class="modal-close" onclick="closeModal('signout-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-message">
+                    <i data-lucide="log-out"></i>
+                    <p>Are you sure you want to sign out?<br>
+                    You will be redirected to the login page.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('signout-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="performSignOut()">
+                    <i data-lucide="log-out"></i>
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Admin Users Management Script
+        let users = [];
+        let filteredUsers = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let currentUser = null;
+        let isSuperAdmin = false;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Initializing Admin Users management page...');
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Check authentication first
+            await checkAuthentication();
+            
+            // Check if user is super admin
+            checkSuperAdminAccess();
+            
+            // Load users if authorized
+            if (isSuperAdmin) {
+                loadUsers();
+            }
+            
+            setupEventListeners();
+        });
+
+        // ===================================
+        // AUTHENTICATION
+        // ===================================
+        async function checkAuthentication() {
+            try {
+                if (typeof AuthService === 'undefined') {
+                    console.error('AuthService not available');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { success, user } = await AuthService.getCurrentUser();
+                
+                if (!success || !user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                currentUser = user;
+                isSuperAdmin = user.role === 'super_admin';
+                
+                // Update user info in header
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName && user.name) {
+                    userName.textContent = user.name;
+                }
+                if (userAvatar && user.name) {
+                    userAvatar.textContent = user.name.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = 'login.html';
+            }
+        }
+
+        function checkSuperAdminAccess() {
+            const addUserBtn = document.getElementById('addUserBtn');
+            const unauthorizedState = document.getElementById('unauthorizedState');
+            const loadingState = document.getElementById('loadingState');
+
+            if (!isSuperAdmin) {
+                // Hide add button and show unauthorized message
+                if (addUserBtn) addUserBtn.style.display = 'none';
+                if (loadingState) loadingState.style.display = 'none';
+                if (unauthorizedState) unauthorizedState.style.display = 'block';
+                
+                showNotification('Access denied: Super admin privileges required', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        // ===================================
+        // USER MANAGEMENT FUNCTIONS
+        // ===================================
+        async function loadUsers() {
+            try {
+                showLoading('Loading admin users...');
+                
+                const result = await AuthService.getAllAdminUsers();
+                
+                if (!result.success) {
+                    throw new Error(result.error);
+                }
+
+                users = result.data || [];
+                filteredUsers = [...users];
+                renderUsersTable();
+                updatePagination();
+                
+                showNotification(`Loaded ${users.length} admin users successfully`, 'success');
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showNotification('Failed to load admin users: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function saveUser() {
+            try {
+                const form = document.getElementById('userForm');
+                const formData = new FormData(form);
+                
+                const userData = {
+                    name: formData.get('name')?.trim(),
+                    email: formData.get('email')?.trim(),
+                    role: formData.get('role'),
+                    password: formData.get('password')
+                };
+
+                const confirmPassword = formData.get('confirmPassword');
+
+                // Validation
+                if (!userData.name || !userData.email || !userData.password) {
+                    showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                if (userData.password !== confirmPassword) {
+                    showNotification('Passwords do not match', 'error');
+                    return;
+                }
+
+                if (userData.password.length < 8) {
+                    showNotification('Password must be at least 8 characters long', 'error');
+                    return;
+                }
+
+                showLoading('Creating admin user...');
+
+                const result = await AuthService.createAdminUser(userData);
+
+                if (!result.success) {
+                    throw new Error(result.message || result.error);
+                }
+
+                showNotification('Admin user created successfully', 'success');
+                closeModal('user-modal');
+                loadUsers();
+                resetForm();
+
+            } catch (error) {
+                console.error('Error creating user:', error);
+                showNotification('Failed to create user: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function deactivateUser(email, name) {
+            if (!confirm(`Are you sure you want to deactivate "${name}"? They will no longer be able to log in.`)) {
+                return;
+            }
+
+            try {
+                showLoading('Deactivating user...');
+
+                const result = await AuthService.deactivateUser(email);
+
+                if (!result.success) {
+                    throw new Error(result.message || result.error);
+                }
+
+                showNotification('User deactivated successfully', 'success');
+                loadUsers();
+
+            } catch (error) {
+                console.error('Error deactivating user:', error);
+                showNotification('Failed to deactivate user: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function reactivateUser(email, name) {
+            if (!confirm(`Are you sure you want to reactivate "${name}"?`)) {
+                return;
+            }
+
+            try {
+                showLoading('Reactivating user...');
+
+                const result = await AuthService.reactivateUser(email);
+
+                if (!result.success) {
+                    throw new Error(result.message || result.error);
+                }
+
+                showNotification('User reactivated successfully', 'success');
+                loadUsers();
+
+            } catch (error) {
+                console.error('Error reactivating user:', error);
+                showNotification('Failed to reactivate user: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function openResetPasswordModal(email, name) {
+            document.getElementById('resetUserEmail').value = email;
+            document.getElementById('resetUserDisplay').textContent = `${name} (${email})`;
+            document.getElementById('resetPasswordForm').reset();
+            openModal('reset-password-modal');
+        }
+
+        async function performPasswordReset() {
+            try {
+                const email = document.getElementById('resetUserEmail').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmNewPassword').value;
+
+                if (!newPassword || !confirmPassword) {
+                    showNotification('Please fill in all password fields', 'error');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    showNotification('Passwords do not match', 'error');
+                    return;
+                }
+
+                if (newPassword.length < 8) {
+                    showNotification('Password must be at least 8 characters long', 'error');
+                    return;
+                }
+
+                showLoading('Resetting password...');
+
+                const result = await AuthService.resetUserPassword(email, newPassword);
+
+                if (!result.success) {
+                    throw new Error(result.message || result.error);
+                }
+
+                showNotification('Password reset successfully', 'success');
+                closeModal('reset-password-modal');
+
+            } catch (error) {
+                console.error('Error resetting password:', error);
+                showNotification('Failed to reset password: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ===================================
+        // UI FUNCTIONS
+        // ===================================
+        function renderUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const unauthorizedState = document.getElementById('unauthorizedState');
+
+            // Hide loading state
+            loadingState.style.display = 'none';
+            unauthorizedState.style.display = 'none';
+
+            if (!isSuperAdmin) {
+                return;
+            }
+
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
+            tbody.innerHTML = paginatedUsers.map(user => {
+                const isCurrentUser = user.email === currentUser.email;
+                const canModify = !isCurrentUser; // Don't allow self-modification
+                
+                return `
+                <tr class="${!user.is_active ? 'inactive-row' : ''}">
+                    <td class="user-name">
+                        ${escapeHtml(user.name)}
+                        ${isCurrentUser ? '<span class="badge badge-info">You</span>' : ''}
+                    </td>
+                    <td>${escapeHtml(user.email)}</td>
+                    <td>
+                        <span class="role-badge role-${user.role}">
+                            ${user.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${user.is_active ? 'active' : 'inactive'}">
+                            ${user.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>${user.last_login ? formatDate(user.last_login) : 'Never'}</td>
+                    <td>${formatDate(user.created_at)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            ${canModify ? `
+                                <button class="btn btn-sm btn-secondary" onclick="openResetPasswordModal('${user.email}', '${escapeHtml(user.name)}')" title="Reset Password">
+                                    <i data-lucide="key"></i>
+                                </button>
+                                ${user.is_active ? `
+                                    <button class="btn btn-sm btn-warning" onclick="deactivateUser('${user.email}', '${escapeHtml(user.name)}')" title="Deactivate">
+                                        <i data-lucide="user-x"></i>
+                                    </button>
+                                ` : `
+                                    <button class="btn btn-sm btn-success" onclick="reactivateUser('${user.email}', '${escapeHtml(user.name)}')" title="Reactivate">
+                                        <i data-lucide="user-check"></i>
+                                    </button>
+                                `}
+                            ` : `
+                                <span class="text-muted">Self</span>
+                            `}
+                        </div>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+
+            // Reinitialize icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('userForm').reset();
+            document.getElementById('userModalTitle').textContent = 'Add Admin User';
+            document.getElementById('saveButtonText').textContent = 'Create User';
+        }
+
+        // ===================================
+        // UTILITY FUNCTIONS
+        // ===================================
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filteredUsers = users.filter(user => 
+                    user.name.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm)
+                );
+                currentPage = 1;
+                renderUsersTable();
+                updatePagination();
+            });
+
+            // Status filter
+            document.getElementById('statusFilter').addEventListener('change', function(e) {
+                applyFilters();
+            });
+
+            // Role filter
+            document.getElementById('roleFilter').addEventListener('change', function(e) {
+                applyFilters();
+            });
+
+            // Modal form submission
+            document.getElementById('userForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveUser();
+            });
+
+            document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                performPasswordReset();
+            });
+
+            // Escape key to close modals
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modals = document.querySelectorAll('.modal[style*="flex"]');
+                    modals.forEach(modal => {
+                        closeModal(modal.id);
+                    });
+                }
+            });
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const roleFilter = document.getElementById('roleFilter').value;
+            
+            filteredUsers = users.filter(user => {
+                const matchesSearch = user.name.toLowerCase().includes(searchTerm) ||
+                                    user.email.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || user.is_active.toString() === statusFilter;
+                const matchesRole = !roleFilter || user.role === roleFilter;
+                return matchesSearch && matchesStatus && matchesRole;
+            });
+            
+            currentPage = 1;
+            renderUsersTable();
+            updatePagination();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('roleFilter').value = '';
+            filteredUsers = [...users];
+            currentPage = 1;
+            renderUsersTable();
+            updatePagination();
+        }
+
+        function exportToCSV() {
+            if (filteredUsers.length === 0) {
+                showNotification('No data to export', 'warning');
+                return;
+            }
+
+            const headers = ['Name', 'Email', 'Role', 'Status', 'Last Login', 'Created At'];
+            const csvData = [
+                headers.join(','),
+                ...filteredUsers.map(user => [
+                    `"${user.name}"`,
+                    `"${user.email}"`,
+                    `"${user.role}"`,
+                    `"${user.is_active ? 'Active' : 'Inactive'}"`,
+                    `"${user.last_login ? formatDate(user.last_login) : 'Never'}"`,
+                    `"${formatDate(user.created_at)}"`
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `admin-users-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            showNotification('Admin users data exported successfully', 'success');
+        }
+
+        // ===================================
+        // SIGN OUT FUNCTIONS
+        // ===================================
+        function confirmSignOut() {
+            document.getElementById('signout-modal').style.display = 'flex';
+        }
+
+        async function performSignOut() {
+            try {
+                showLoading('Signing out...');
+                
+                if (typeof AuthService !== 'undefined') {
+                    const { success } = await AuthService.signOut();
+                    if (!success) {
+                        console.warn('Sign out service failed, but continuing...');
+                    }
+                }
+                
+                // Clear any stored data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Redirect to login
+                window.location.href = 'login.html';
+                
+            } catch (error) {
+                console.error('Sign out error:', error);
+                showNotification('Sign out failed: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+                closeModal('signout-modal');
+            }
+        }
+
+        // ===================================
+        // MODAL FUNCTIONS
+        // ===================================
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                
+                // Focus first input in forms
+                const firstInput = modal.querySelector('input, select, textarea');
+                if (firstInput) {
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                // Reset form if it's the user modal
+                if (modalId === 'user-modal') {
+                    resetForm();
+                }
+            }
+        }
+
+        // ===================================
+        // PAGINATION FUNCTIONS
+        // ===================================
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, filteredUsers.length);
+
+            // Update pagination info
+            document.getElementById('paginationInfo').textContent = 
+                `Showing ${startItem} to ${endItem} of ${filteredUsers.length}`;
+
+            // Update pagination controls
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+
+            // Update page numbers
+            const pageNumbers = document.getElementById('pageNumbers');
+            pageNumbers.innerHTML = '';
+            
+            if (totalPages > 0) {
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                        const pageBtn = document.createElement('button');
+                        pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                        pageBtn.textContent = i;
+                        pageBtn.onclick = () => {
+                            currentPage = i;
+                            renderUsersTable();
+                            updatePagination();
+                        };
+                        pageNumbers.appendChild(pageBtn);
+                    } else if (i === currentPage - 2 || i === currentPage + 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.className = 'pagination-ellipsis';
+                        pageNumbers.appendChild(ellipsis);
+                    }
+                }
+            }
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                renderUsersTable();
+                updatePagination();
+            }
+        }
+
+        // ===================================
+        // UTILITY FUNCTIONS
+        // ===================================
+        function showLoading(message = 'Loading...') {
+            // Remove existing loader
+            hideLoading();
+            
+            const loader = document.createElement('div');
+            loader.id = 'keyquest-loader';
+            loader.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.6);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    backdrop-filter: blur(2px);
+                ">
+                    <div style="
+                        background: white;
+                        padding: 32px;
+                        border-radius: 16px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 16px;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                        min-width: 200px;
+                        text-align: center;
+                    ">
+                        <div style="
+                            width: 40px;
+                            height: 40px;
+                            border: 3px solid #e5e7eb;
+                            border-top: 3px solid #7c3aed;
+                            border-radius: 50%;
+                            animation: keyquest-spin 1s linear infinite;
+                        "></div>
+                        <span style="color: #1f2937; font-weight: 600; font-size: 16px;">${message}</span>
+                    </div>
+                </div>
+                <style>
+                    @keyframes keyquest-spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+            document.body.appendChild(loader);
+        }
+
+        function hideLoading() {
+            const loader = document.getElementById('keyquest-loader');
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existing = document.querySelectorAll('.keyquest-notification');
+            existing.forEach(n => n.remove());
+
+            const colors = {
+                success: { bg: '#f0fdf4', border: '#10b981', text: '#065f46', icon: 'check-circle' },
+                error: { bg: '#fef2f2', border: '#ef4444', text: '#991b1b', icon: 'x-circle' },
+                warning: { bg: '#fffbeb', border: '#f59e0b', text: '#92400e', icon: 'alert-triangle' },
+                info: { bg: '#eff6ff', border: '#3b82f6', text: '#1e40af', icon: 'info' }
+            };
+
+            const color = colors[type] || colors.info;
+
+            const notification = document.createElement('div');
+            notification.className = 'keyquest-notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 24px;
+                right: 24px;
+                background: ${color.bg};
+                border: 1px solid ${color.border};
+                color: ${color.text};
+                padding: 16px 20px;
+                border-radius: 12px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                z-index: 10001;
+                font-size: 14px;
+                font-weight: 500;
+                max-width: 400px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                animation: keyquest-slideIn 0.3s ease-out;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            `;
+
+            notification.innerHTML = `
+                <div style="flex-shrink: 0;">
+                    <i data-lucide="${color.icon}" style="width: 20px; height: 20px; color: ${color.border};"></i>
+                </div>
+                <span style="flex: 1;">${escapeHtml(message)}</span>
+                <button onclick="this.parentElement.remove()" style="
+                    background: none;
+                    border: none;
+                    color: ${color.text};
+                    cursor: pointer;
+                    padding: 4px;
+                    margin: 0;
+                    font-size: 18px;
+                    line-height: 1;
+                    opacity: 0.6;
+                    transition: opacity 0.2s;
+                    border-radius: 4px;
+                    flex-shrink: 0;
+                " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">×</button>
+            `;
+
+            // Add animation keyframes
+            if (!document.querySelector('#keyquest-notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'keyquest-notification-styles';
+                style.textContent = `
+                    @keyframes keyquest-slideIn {
+                        from { 
+                            transform: translateX(100%); 
+                            opacity: 0; 
+                        }
+                        to { 
+                            transform: translateX(0); 
+                            opacity: 1; 
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            document.body.appendChild(notification);
+
+            // Initialize icons for the notification
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
+
+            // Auto remove after 6 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.style.animation = 'keyquest-slideIn 0.3s ease-out reverse';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 6000);
+        }
+
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            if (navMenu) {
+                navMenu.classList.toggle('active');
+            }
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navMenu = document.getElementById('navMenu');
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (navMenu && !navMenu.contains(event.target) && !mobileToggle.contains(event.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-SG', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Initialize everything when page loads
+        window.addEventListener('load', function() {
+            console.log('✅ Admin Users page fully loaded and initialized');
+        });
+    </script>
+
+    <style>
+        /* Additional styles for user management */
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .role-super_admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .role-admin {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .inactive-row {
+            opacity: 0.6;
+            background: #f9fafb;
+        }
+
+        .badge {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .badge-info {
+            background: #e0f2fe;
+            color: #0277bd;
+        }
+
+        .form-static {
+            padding: 8px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .form-help {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .btn-warning {
+            background: #fbbf24;
+            color: #92400e;
+        }
+
+        .btn-warning:hover {
+            background: #f59e0b;
+        }
+
+        .text-muted {
+            color: #9ca3af;
+            font-style: italic;
+        }
+    </style>
+</body>
+</html>

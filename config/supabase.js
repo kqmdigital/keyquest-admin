@@ -131,6 +131,110 @@ class AuthService {
         
         return sessionData && sessionExpires && Date.now() < parseInt(sessionExpires);
     }
+
+    // Admin User Management Functions (Super Admin Only)
+    static async getAllAdminUsers() {
+        try {
+            const { user } = await this.getCurrentUser();
+            if (!user || user.role !== 'super_admin') {
+                return { success: false, error: 'Unauthorized: Super admin access required' };
+            }
+
+            const { data, error } = await supabaseClient.rpc('get_admin_users', {
+                admin_email: user.email
+            });
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Get admin users error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    static async createAdminUser(userData) {
+        try {
+            const { user } = await this.getCurrentUser();
+            if (!user || user.role !== 'super_admin') {
+                return { success: false, error: 'Unauthorized: Super admin access required' };
+            }
+
+            const { data, error } = await supabaseClient.rpc('create_admin_user', {
+                creator_email: user.email,
+                new_name: userData.name,
+                new_email: userData.email,
+                new_password: userData.password,
+                new_role: userData.role || 'admin'
+            });
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Create admin user error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    static async resetUserPassword(targetEmail, newPassword) {
+        try {
+            const { user } = await this.getCurrentUser();
+            if (!user || user.role !== 'super_admin') {
+                return { success: false, error: 'Unauthorized: Super admin access required' };
+            }
+
+            const { data, error } = await supabaseClient.rpc('reset_user_password', {
+                admin_email: user.email,
+                target_email: targetEmail,
+                new_password: newPassword
+            });
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Reset password error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    static async deactivateUser(targetEmail) {
+        try {
+            const { user } = await this.getCurrentUser();
+            if (!user || user.role !== 'super_admin') {
+                return { success: false, error: 'Unauthorized: Super admin access required' };
+            }
+
+            const { data, error } = await supabaseClient.rpc('deactivate_admin_user', {
+                admin_email: user.email,
+                target_email: targetEmail
+            });
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Deactivate user error:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    static async reactivateUser(targetEmail) {
+        try {
+            const { user } = await this.getCurrentUser();
+            if (!user || user.role !== 'super_admin') {
+                return { success: false, error: 'Unauthorized: Super admin access required' };
+            }
+
+            const { data, error } = await supabaseClient.rpc('reactivate_admin_user', {
+                admin_email: user.email,
+                target_email: targetEmail
+            });
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            console.error('Reactivate user error:', error);
+            return { success: false, error: error.message };
+        }
+    }
 }
 
 // Database Helper Functions

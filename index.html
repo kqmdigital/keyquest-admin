@@ -45,9 +45,9 @@
                             <i data-lucide="briefcase"></i>
                             <span>Bankers</span>
                         </a>
-                        <a href="agents.html" class="nav-item">
-                            <i data-lucide="users"></i>
-                            <span>Agents</span>
+                        <a href="admin-users.html" class="nav-item">
+                            <i data-lucide="shield-check"></i>
+                            <span>Admin Users</span>
                         </a>
                         <a href="enquiry.html" class="nav-item">
                             <i data-lucide="help-circle"></i>
@@ -141,15 +141,15 @@
 
                     <div class="stat-card agents-card">
                         <div class="stat-header">
-                            <div class="stat-title">Total Agents</div>
+                            <div class="stat-title">Admin Users</div>
                             <div class="stat-icon agents-icon">
-                                <i data-lucide="users"></i>
+                                <i data-lucide="shield-check"></i>
                             </div>
                         </div>
-                        <div class="stat-value" id="agentsCount">0</div>
+                        <div class="stat-value" id="adminUsersCount">0</div>
                         <div class="stat-change positive">
-                            <i data-lucide="users"></i>
-                            <span>Active agents</span>
+                            <i data-lucide="shield-check"></i>
+                            <span>Active admins</span>
                         </div>
                     </div>
 
@@ -208,13 +208,13 @@
                                 <p>Configure banker access</p>
                             </div>
                         </a>
-                        <a href="agents.html" class="action-card agents-action">
+                        <a href="admin-users.html" class="action-card agents-action">
                             <div class="action-icon agents-icon">
-                                <i data-lucide="users"></i>
+                                <i data-lucide="shield-check"></i>
                             </div>
                             <div class="action-content">
-                                <h4>View Agents</h4>
-                                <p>Check agent status</p>
+                                <h4>Manage Admin Users</h4>
+                                <p>User management (Super Admin)</p>
                             </div>
                         </a>
                         <a href="enquiry.html" class="action-card enquiries-action">
@@ -379,12 +379,12 @@
         // ===================================
         async function loadDashboardData() {
             try {
-                const [packages, rateTypes, banks, bankers, agents, enquiries] = await Promise.all([
+                const [packages, rateTypes, banks, bankers, adminUsers, enquiries] = await Promise.all([
                     countRecords('rate_packages'),
                     countRecords('rate_types'), 
                     countRecords('banks'),
                     countRecords('bankers'),
-                    countRecords('agents'),
+                    countRecords('admin_users'),
                     countRecords('enquiries')
                 ]);
 
@@ -392,7 +392,7 @@
                 updateCounter('rateTypesCount', rateTypes);
                 updateCounter('banksCount', banks);
                 updateCounter('bankersCount', bankers);
-                updateCounter('agentsCount', agents);
+                updateCounter('adminUsersCount', adminUsers);
                 updateCounter('enquiriesCount', enquiries);
                 
                 showNotification('Dashboard data loaded successfully', 'success');
@@ -434,7 +434,7 @@
                     { id: 'rateTypesCount', table: 'rate_types' },
                     { id: 'banksCount', table: 'banks' },
                     { id: 'bankersCount', table: 'bankers' },
-                    { id: 'agentsCount', table: 'agents' },
+                    { id: 'adminUsersCount', table: 'admin_users' },
                     { id: 'enquiriesCount', table: 'enquiries' }
                 ];
 
