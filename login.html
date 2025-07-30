@@ -36,27 +36,21 @@
         }
 
         .login-header {
-            margin-bottom: 32px;
+            margin-bottom: 16px;
         }
 
         .logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 24px;
+            margin-bottom: 8px;
         }
 
         .logo-image {
-            height: 120px;
+            height: 180px;
             width: auto;
         }
 
-        .login-title {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
 
         .login-subtitle {
             font-size: 16px;
@@ -66,7 +60,7 @@
         }
 
         .login-form {
-            margin-top: 32px;
+            margin-top: 16px;
         }
 
         .form-group {
@@ -190,68 +184,6 @@
             text-align: center;
         }
 
-        .demo-credentials {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .demo-credentials h4 {
-            color: #374151;
-            font-size: 14px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-        }
-
-        .demo-credentials p {
-            color: #6b7280;
-            font-size: 13px;
-            margin: 4px 0;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-        }
-
-        .debug-info {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 16px;
-            font-size: 12px;
-            color: #6b7280;
-            text-align: left;
-        }
-
-        .debug-info h5 {
-            color: #374151;
-            margin-bottom: 8px;
-            font-weight: 500;
-            font-size: 13px;
-        }
-
-        .debug-item {
-            margin: 6px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-        }
-
-        .status-success { background: #10b981; }
-        .status-error { background: #ef4444; }
-        .status-warning { background: #f59e0b; }
 
         .forgot-password {
             text-align: center;
@@ -279,12 +211,9 @@
             }
 
             .logo-image {
-                height: 80px;
+                height: 120px;
             }
 
-            .login-title {
-                font-size: 24px;
-            }
         }
     </style>
 </head>
@@ -294,7 +223,6 @@
             <div class="logo">
                 <img src="https://ik.imagekit.io/hst9jooux/KEYQUEST%20LOGO%20(Black%20Text%20Horizontal).png?updatedAt=1753262438682" alt="Company Logo" class="logo-image">
             </div>
-            <h1 class="login-title">Welcome to Keyquest</h1>
             <p class="login-subtitle">Your Gateway to Mortgage Management</p>
         </div>
 
@@ -338,39 +266,6 @@
                 <div id="loadingSpinner" class="loading-spinner"></div>
             </button>
 
-            <div class="demo-credentials">
-                <h4>
-                    <i data-lucide="info" style="width: 16px; height: 16px;"></i>
-                    Demo Credentials
-                </h4>
-                <p><strong>Email:</strong> admin@keyquestmortgage.com.sg</p>
-                <p><strong>Password:</strong> admin123</p>
-            </div>
-
-            <div class="debug-info" id="debugInfo">
-                <h5>Connection Status</h5>
-                <div class="debug-item">
-                    <span>Supabase Client:</span>
-                    <span id="supabaseStatus">
-                        <span class="status-indicator status-warning"></span>
-                        Checking...
-                    </span>
-                </div>
-                <div class="debug-item">
-                    <span>Auth Service:</span>
-                    <span id="authStatus">
-                        <span class="status-indicator status-warning"></span>
-                        Checking...
-                    </span>
-                </div>
-                <div class="debug-item">
-                    <span>Database:</span>
-                    <span id="dbStatus">
-                        <span class="status-indicator status-warning"></span>
-                        Checking...
-                    </span>
-                </div>
-            </div>
 
             <div class="forgot-password">
                 <a href="#" onclick="resetPassword()">Forgot your password?</a>
