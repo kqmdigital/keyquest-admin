@@ -936,38 +936,82 @@ function performLiveFilter() {
             return monthlyPayment;
         }
 
+        // Calculate numeric interest rate for a given year
+        function calculateNumericRate(pkg, year) {
+            let rateType, operator, value;
+            
+            if (year === 'thereafter') {
+                rateType = pkg.thereafter_rate_type;
+                operator = pkg.thereafter_operator;
+                value = pkg.thereafter_value;
+            } else {
+                rateType = pkg[`year${year}_rate_type`];
+                operator = pkg[`year${year}_operator`];
+                value = pkg[`year${year}_value`];
+            }
+            
+            // If no data for this year, use thereafter rate
+            if (!rateType || value === null || value === undefined) {
+                if (pkg.thereafter_rate_type && pkg.thereafter_value !== null && pkg.thereafter_value !== undefined) {
+                    return calculateNumericRate(pkg, 'thereafter');
+                }
+                return 0;
+            }
+            
+            // Calculate numeric rate
+            if (rateType === 'FIXED') {
+                return parseFloat(value) || 0;
+            } else {
+                // Find the reference rate
+                const referenceRate = rateTypes.find(rt => rt.rate_type === rateType);
+                if (!referenceRate) {
+                    console.warn(`❌ Reference rate type not found: ${rateType}`);
+                    return 0;
+                }
+                
+                const referenceRateValue = parseFloat(referenceRate.rate_value) || 0;
+                const spreadValue = parseFloat(value) || 0;
+                
+                return operator === '+' ? 
+                    referenceRateValue + spreadValue : 
+                    referenceRateValue - spreadValue;
+            }
+        }
+
         // Calculate total interest cost over entire loan tenure
         function calculateTotalInterestCost(pkg, loanAmount, tenureYears) {
             if (!pkg || !loanAmount || !tenureYears) return 0;
             
-            let totalInterest = 0;
-            let remainingPrincipal = loanAmount;
+            // Use simplified calculation: average rate over tenure
+            let totalRate = 0;
+            let validYears = 0;
             
-            // Process each year of the loan
-            for (let year = 1; year <= tenureYears; year++) {
-                let annualRate;
-                
-                // Get the appropriate rate for this year
-                if (year <= 5) {
-                    annualRate = calculateYearlyRate(pkg, year);
-                } else {
-                    annualRate = calculateYearlyRate(pkg, 'thereafter');
+            // Calculate average rate for first 5 years
+            for (let year = 1; year <= Math.min(5, tenureYears); year++) {
+                const rate = calculateNumericRate(pkg, year);
+                if (rate > 0) {
+                    totalRate += rate;
+                    validYears++;
                 }
-                
-                if (!annualRate || annualRate <= 0) continue;
-                
-                // Calculate interest for this year (simplified method)
-                const yearlyInterest = remainingPrincipal * (annualRate / 100);
-                const monthlyInstallment = calculateMonthlyInstallment(loanAmount, tenureYears, annualRate);
-                const yearlyPrincipal = Math.min(remainingPrincipal, (monthlyInstallment * 12) - yearlyInterest);
-                
-                totalInterest += yearlyInterest;
-                remainingPrincipal = Math.max(0, remainingPrincipal - yearlyPrincipal);
-                
-                if (remainingPrincipal <= 0) break;
             }
             
-            return totalInterest;
+            // Add thereafter rate for remaining years
+            if (tenureYears > 5) {
+                const thereafterRate = calculateNumericRate(pkg, 'thereafter');
+                if (thereafterRate > 0) {
+                    const remainingYears = tenureYears - 5;
+                    totalRate += thereafterRate * remainingYears;
+                    validYears += remainingYears;
+                }
+            }
+            
+            if (validYears === 0) return 0;
+            
+            const averageRate = totalRate / validYears;
+            const monthlyInstallment = calculateMonthlyInstallment(loanAmount, tenureYears, averageRate);
+            const totalPayments = monthlyInstallment * tenureYears * 12;
+            
+            return totalPayments - loanAmount; // Total interest
         }
 
         // Calculate lifetime savings compared to existing rate
