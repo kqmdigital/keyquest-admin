@@ -45,14 +45,11 @@
                             <i data-lucide="briefcase"></i>
                             <span>Bankers</span>
                         </a>
-                        <a href="agents.html" class="nav-item">
-                            <i data-lucide="users"></i>
-                            <span>Agents</span>
+                         <a href="admin-users.html" class="nav-item">
+                            <i data-lucide="shield-check"></i>
+                            <span>Staff</span>
                         </a>
-                        <a href="enquiry.html" class="nav-item">
-                            <i data-lucide="help-circle"></i>
-                            <span>Enquiry</span>
-                        </a>
+                        
                         <a href="recommended-packages.html" class="nav-item">
                             <i data-lucide="star"></i>
                             <span>Recommended</span>
@@ -174,17 +171,24 @@
             </div>
             <div class="modal-body">
                 <form id="bankerForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="bankerName">Name *</label>
-                            <input type="text" id="bankerName" name="name" required>
+                    <div class="form-section">
+                        <h4>Banker Information</h4>
+                        <div class="form-grid">
+                            <div class="form-group half">
+                                <label class="form-label" for="bankerName">Name *</label>
+                                <input type="text" id="bankerName" name="name" class="form-input" required>
+                            </div>
+                            <div class="form-group half">
+                                <label class="form-label" for="bankerEmail">Email *</label>
+                                <input type="email" id="bankerEmail" name="email" class="form-input" required>
+                            </div>
                         </div>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4>Bank Access Permissions</h4>
                         <div class="form-group">
-                            <label for="bankerEmail">Email *</label>
-                            <input type="email" id="bankerEmail" name="email" required>
-                        </div>
-                        <div class="form-group form-group-full">
-                            <label for="bankAccess">Bank Access</label>
+                            <label class="form-label" for="bankAccess">Bank Access</label>
                             <div class="bank-access-container">
                                 <div class="bank-access-header">
                                     <span>Select banks this banker can access:</span>
@@ -198,9 +202,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group form-group-full">
-                            <label for="bankerNotes">Notes</label>
-                            <textarea id="bankerNotes" name="notes" rows="3" placeholder="Additional notes about the banker..."></textarea>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4>Additional Information</h4>
+                        <div class="form-group">
+                            <label class="form-label" for="bankerNotes">Notes</label>
+                            <textarea id="bankerNotes" name="notes" class="form-input" rows="3" placeholder="Additional notes about the banker..."></textarea>
                         </div>
                     </div>
                 </form>

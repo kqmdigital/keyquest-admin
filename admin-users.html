@@ -47,12 +47,9 @@
                         </a>
                         <a href="admin-users.html" class="nav-item active">
                             <i data-lucide="shield-check"></i>
-                            <span>Admin Users</span>
+                            <span>Staff</span>
                         </a>
-                        <a href="enquiry.html" class="nav-item">
-                            <i data-lucide="help-circle"></i>
-                            <span>Enquiry</span>
-                        </a>
+                      
                         <a href="recommended-packages.html" class="nav-item">
                             <i data-lucide="star"></i>
                             <span>Recommended</span>
@@ -65,7 +62,7 @@
                     </button>
                     <button class="btn btn-primary" onclick="openModal('user-modal')" id="addUserBtn">
                         <i data-lucide="user-plus"></i>
-                        <span>Add Admin User</span>
+                        <span>Add Staff</span>
                     </button>
                     <button class="btn btn-secondary" onclick="confirmSignOut()">
                         <i data-lucide="log-out"></i>
@@ -189,30 +186,34 @@
             </div>
             <div class="modal-body">
                 <form id="userForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="userName">Full Name *</label>
-                            <input type="text" id="userName" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="userEmail">Email Address *</label>
-                            <input type="email" id="userEmail" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="userRole">Role *</label>
-                            <select id="userRole" name="role" required>
-                                <option value="admin">Admin</option>
-                                <option value="super_admin">Super Admin</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="userPassword">Password *</label>
-                            <input type="password" id="userPassword" name="password" required minlength="8">
-                            <small class="form-help">Minimum 8 characters required</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm Password *</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="8">
+                    <div class="form-section">
+                        <h4>User Information</h4>
+                        <div class="form-grid">
+                            <div class="form-group half">
+                                <label class="form-label" for="userName">Full Name *</label>
+                                <input type="text" id="userName" name="name" class="form-input" required>
+                            </div>
+                            <div class="form-group half">
+                                <label class="form-label" for="userEmail">Email Address *</label>
+                                <input type="email" id="userEmail" name="email" class="form-input" required>
+                            </div>
+                            <div class="form-group half">
+                                <label class="form-label" for="userRole">Role *</label>
+                                <select id="userRole" name="role" class="form-select" required>
+                                    <option value="">Select role</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="super_admin">Super Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group half">
+                                <label class="form-label" for="userPassword">Password *</label>
+                                <input type="password" id="userPassword" name="password" class="form-input" required minlength="8">
+                                <small class="form-help">Minimum 8 characters required</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="confirmPassword">Confirm Password *</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required minlength="8">
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -237,19 +238,24 @@
             </div>
             <div class="modal-body">
                 <form id="resetPasswordForm">
-                    <input type="hidden" id="resetUserEmail">
-                    <div class="form-group">
-                        <label>User</label>
-                        <div class="form-static" id="resetUserDisplay"></div>
-                    </div>
-                    <div class="form-group">
-                        <label for="newPassword">New Password *</label>
-                        <input type="password" id="newPassword" name="newPassword" required minlength="8">
-                        <small class="form-help">Minimum 8 characters required</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmNewPassword">Confirm New Password *</label>
-                        <input type="password" id="confirmNewPassword" name="confirmNewPassword" required minlength="8">
+                    <div class="form-section">
+                        <h4>Reset Password</h4>
+                        <input type="hidden" id="resetUserEmail">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">User</label>
+                                <div class="form-static" id="resetUserDisplay"></div>
+                            </div>
+                            <div class="form-group half">
+                                <label class="form-label" for="newPassword">New Password *</label>
+                                <input type="password" id="newPassword" name="newPassword" class="form-input" required minlength="8">
+                                <small class="form-help">Minimum 8 characters required</small>
+                            </div>
+                            <div class="form-group half">
+                                <label class="form-label" for="confirmNewPassword">Confirm New Password *</label>
+                                <input type="password" id="confirmNewPassword" name="confirmNewPassword" class="form-input" required minlength="8">
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -420,6 +426,15 @@
                 // Validation
                 if (!userData.name || !userData.email || !userData.password) {
                     showNotification('Please fill in all required fields', 'error');
+                    return;
+                }
+
+                // Check for duplicate email (case insensitive)
+                const existingUser = users.find(user => 
+                    user.email.toLowerCase() === userData.email.toLowerCase()
+                );
+                if (existingUser) {
+                    showNotification('A user with this email already exists', 'error');
                     return;
                 }
 
@@ -677,6 +692,29 @@
                 performPasswordReset();
             });
 
+            // Real-time password confirmation validation
+            function validatePasswordMatch(passwordId, confirmId, messageId) {
+                const password = document.getElementById(passwordId);
+                const confirm = document.getElementById(confirmId);
+                
+                function checkMatch() {
+                    if (confirm.value && password.value !== confirm.value) {
+                        confirm.setCustomValidity('Passwords do not match');
+                        confirm.classList.add('error');
+                    } else {
+                        confirm.setCustomValidity('');
+                        confirm.classList.remove('error');
+                    }
+                }
+                
+                password.addEventListener('input', checkMatch);
+                confirm.addEventListener('input', checkMatch);
+            }
+            
+            // Initialize password validation for both forms
+            validatePasswordMatch('userPassword', 'confirmPassword');
+            validatePasswordMatch('newPassword', 'confirmNewPassword');
+            
             // Escape key to close modals
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
