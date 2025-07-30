@@ -1628,14 +1628,9 @@ function generateProfessionalReport() {
     console.log('📅 Loan Tenure:', searchCriteria.loanTenure);
     console.log('🏠 Loan Type:', searchCriteria.loanType);
     console.log('📊 Existing Rate:', searchCriteria.existingInterestRate);
-    console.log('📦 Selected Packages:', selectedPackages.map(pkg => ({
-        bank: pkg.bank_name,
-        totalSavings: pkg.totalSavings,
-        lockPeriod: pkg.lock_period
-    })));
 
     // Safeguard: If searchCriteria is empty or missing data, rebuild it from form
-    if (!searchCriteria || !searchCriteria.loanAmount || !searchCriteria.loanTenure) {
+    if (!searchCriteria || Object.keys(searchCriteria).length === 0 || !searchCriteria.loanAmount || !searchCriteria.loanTenure) {
         console.warn('⚠️ searchCriteria missing data, rebuilding from form...');
         searchCriteria = {
             ...searchCriteria,
@@ -1643,7 +1638,7 @@ function generateProfessionalReport() {
             loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
             propertyType: document.getElementById('propertyType').value,
             propertyStatus: document.getElementById('propertyStatus').value,
-            loanType: currentLoanType,
+            loanType: currentLoanType || 'New Home Loan',
             existingInterestRate: parseFloat(document.getElementById('existingInterestRate').value) || 0
         };
         console.log('🔧 Rebuilt searchCriteria:', searchCriteria);
@@ -1667,6 +1662,13 @@ function generateProfessionalReport() {
         selectedPackages = selectedPackages.slice(0, 3); // Limit to top 3
     }
     
+    // Debug: Check selected packages
+    console.log('📦 Selected Packages:', selectedPackages.map(pkg => ({
+        bank: pkg.bank_name,
+        totalSavings: pkg.totalSavings,
+        lockPeriod: pkg.lock_period
+    })));
+
     // Recalculate savings for PDF generation if refinancing
     if (searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate > 0) {
         selectedPackages = selectedPackages.map(pkg => {
