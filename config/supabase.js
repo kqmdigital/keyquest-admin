@@ -6,15 +6,6 @@ function getEnvironmentVariable(name, defaultValue) {
         return window._env_[name];
     }
     
-    // Try to get from import.meta.env (for Vite)
-    try {
-        if (typeof import !== 'undefined' && import.meta && import.meta.env && import.meta.env[name]) {
-            return import.meta.env[name];
-        }
-    } catch (e) {
-        // import.meta not available in this context
-    }
-    
     // Fallback to default
     return defaultValue;
 }
