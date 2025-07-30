@@ -32,13 +32,28 @@ const SECURITY_CONFIG = {
 };
 
 // Initialize Supabase Client
-const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+// Check if supabase is available globally (UMD version)
+let supabaseClient;
+if (typeof supabase !== 'undefined') {
+    const { createClient } = supabase;
+    supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+    console.log('✅ Supabase client initialized successfully');
+} else {
+    console.error('❌ Supabase library not loaded');
+}
 
 // Enhanced Auth Service with improved security
 class AuthService {
     static async signIn(email, password) {
         try {
+            // Check if supabaseClient is available
+            if (!supabaseClient) {
+                return {
+                    success: false,
+                    error: 'Database connection not available. Please refresh the page and try again.'
+                };
+            }
+
             // Rate limiting check (if available)
             if (typeof loginRateLimiter === 'function' && !loginRateLimiter(email)) {
                 return { 
@@ -169,6 +184,11 @@ class AuthService {
 
     static async updateLastLogin(userId) {
         try {
+            if (!supabaseClient) {
+                console.warn('Cannot update last login: Supabase client not available');
+                return;
+            }
+            
             await supabaseClient
                 .from('admin_users')
                 .update({ 
