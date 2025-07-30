@@ -1304,67 +1304,61 @@
 </head>   
 
 <body>
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-    
- <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <a href="index.html" class="logo">
-                    <div class="logo-icon">
-                        <i data-lucide="building-2"></i>
-                    </div>
-                    <span>KEYQUEST</span>
-                </a>
-            </div>
-    
-    <!-- DARK NAVIGATION MENU -->
-    <nav class="nav-menu">
-        <a href="index.html" class="nav-item">
-            <i data-lucide="layout-dashboard"></i>
-            <span>Dashboard</span>
-        </a>
-        <a href="rate-packages.html" class="nav-item">
-            <i data-lucide="package"></i>
-            <span>Rate Package</span>
-        </a>
-        <a href="rate-types.html" class="nav-item">
-            <i data-lucide="percent"></i>
-            <span>Rate Type</span>
-        </a>
-        <a href="banks.html" class="nav-item">
-            <i data-lucide="landmark"></i>
-            <span>Bank</span>
-        </a>
-        <a href="bankers.html" class="nav-item">
-            <i data-lucide="briefcase"></i>
-            <span>Bankers</span>
-        </a>
-        <a href="agents.html" class="nav-item">
-            <i data-lucide="users"></i>
-            <span>Agents</span>
-        </a>
-        <a href="enquiry.html" class="nav-item">
-            <i data-lucide="help-circle"></i>
-            <span>Enquiry</span>
-        </a>
-        <a href="recommended-packages.html" class="nav-item active">
-            <i data-lucide="star"></i>
-            <span>Recommended Packages</span>
-        </a>
-    </nav>
-</div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <header class="header">
-                <div class="header-left">
-                    <button class="menu-toggle" onclick="toggleSidebar()">
+    
+  <body>
+    <div class="admin-container">
+        <!-- Top Navigation -->
+        <nav class="top-nav" id="topNav">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="index.html" class="logo">
+                        <img src="https://ik.imagekit.io/hst9jooux/KEYQUEST%20LOGO%20(Black%20Text%20Horizontal).png?updatedAt=1753262438682" alt="Company Logo" class="logo-image">
+                        
+                    </a>
+                    <div class="nav-menu" id="navMenu">
+                        <a href="index.html" class="nav-item">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="rate-packages.html" class="nav-item">
+                            <i data-lucide="package"></i>
+                            <span>Rate Package</span>
+                        </a>
+                        <a href="rate-types.html" class="nav-item active">
+                            <i data-lucide="percent"></i>
+                            <span>Rate Type</span>
+                        </a>
+                        <a href="banks.html" class="nav-item">
+                            <i data-lucide="landmark"></i>
+                            <span>Bank</span>
+                        </a>
+                        <a href="bankers.html" class="nav-item">
+                            <i data-lucide="briefcase"></i>
+                            <span>Bankers</span>
+                        </a>
+                        <a href="agents.html" class="nav-item">
+                            <i data-lucide="users"></i>
+                            <span>Agents</span>
+                        </a>
+                        <a href="enquiry.html" class="nav-item">
+                            <i data-lucide="help-circle"></i>
+                            <span>Enquiry</span>
+                        </a>
+                        <a href="recommended-packages.html" class="nav-item">
+                            <i data-lucide="star"></i>
+                            <span>Recommended</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <button class="btn btn-primary" onclick="openAddRateTypeModal()">
+                        <i data-lucide="plus"></i>
+                        Add Rate Type
+                    </button>
+                    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
                         <i data-lucide="menu"></i>
                     </button>
-                    <h1 class="header-title">Recommended Packages</h1>
-                </div>
-                <div class="header-actions">
                     <button class="btn btn-secondary" onclick="confirmSignOut()">
                         <i data-lucide="log-out"></i>
                         <span>Sign Out</span>
@@ -1377,8 +1371,11 @@
                         </div>
                     </div>
                 </div>
-            </header>
-            
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">           
             <div class="content-area">
                 
                 <!-- Loan Type Tabs -->
