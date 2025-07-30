@@ -63,7 +63,8 @@ body {
     font-weight: 700;
     color: #1f2937;
     text-decoration: none;
-    padding: 16px 0;
+    padding: 12px 0;
+    height: 64px;
 }
 
 .logo-icon {
@@ -84,13 +85,26 @@ body {
 }
 
 .logo-image {
-    height: 200px;
+    height: 48px;
     width: auto;
-    max-width: 700px;
+    max-width: 250px;
     object-fit: contain;
     transition: all 0.3s ease;
     image-rendering: high-quality;
     image-rendering: -webkit-optimize-contrast;
+}
+
+/* Logo in navigation should be smaller */
+.top-nav .logo-image {
+    height: 48px;
+    max-width: 250px;
+}
+
+/* Logo in other contexts (like test page) should be larger */
+body:not(.admin-container) .logo-image,
+.logo-test .logo-image {
+    height: 200px;
+    max-width: 700px;
 }
 
 .logo:hover .logo-image {
