@@ -1,14 +1,33 @@
 // config/supabase.js
-// Secure Supabase Configuration with Environment Variables
+// Supabase Configuration with browser compatibility
+function getEnvironmentVariable(name, defaultValue) {
+    // Try to get from window._env_ (injected by build process)
+    if (typeof window !== 'undefined' && window._env_ && window._env_[name]) {
+        return window._env_[name];
+    }
+    
+    // Try to get from import.meta.env (for Vite)
+    try {
+        if (typeof import !== 'undefined' && import.meta && import.meta.env && import.meta.env[name]) {
+            return import.meta.env[name];
+        }
+    } catch (e) {
+        // import.meta not available in this context
+    }
+    
+    // Fallback to default
+    return defaultValue;
+}
+
 const SUPABASE_CONFIG = {
-    url: import.meta.env.VITE_SUPABASE_URL || 'https://cuvjbsbvlefirwzngola.supabase.co',
-    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1dmpic2J2bGVmaXJ3em5nb2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MTkwMzQsImV4cCI6MjA2MzI5NTAzNH0.vDA0WrV-Go_EChViXaXF-_0j2EEPJEPTBe7X5tjvLR4'
+    url: getEnvironmentVariable('VITE_SUPABASE_URL', 'https://cuvjbsbvlefirwzngola.supabase.co'),
+    anonKey: getEnvironmentVariable('VITE_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1dmpic2J2bGVmaXJ3em5nb2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MTkwMzQsImV4cCI6MjA2MzI5NTAzNH0.vDA0WrV-Go_EChViXaXF-_0j2EEPJEPTBe7X5tjvLR4')
 };
 
 // Security Configuration
 const SECURITY_CONFIG = {
-    sessionTimeout: parseInt(import.meta.env.VITE_SESSION_TIMEOUT) || 3600000, // 1 hour
-    maxLoginAttempts: parseInt(import.meta.env.VITE_MAX_LOGIN_ATTEMPTS) || 5,
+    sessionTimeout: parseInt(getEnvironmentVariable('VITE_SESSION_TIMEOUT', '3600000')), // 1 hour
+    maxLoginAttempts: parseInt(getEnvironmentVariable('VITE_MAX_LOGIN_ATTEMPTS', '5')),
     tokenRefreshInterval: 300000 // 5 minutes
 };
 
