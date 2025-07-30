@@ -39,8 +39,8 @@ const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey
 class AuthService {
     static async signIn(email, password) {
         try {
-            // Rate limiting check
-            if (!loginRateLimiter(email)) {
+            // Rate limiting check (if available)
+            if (typeof loginRateLimiter === 'function' && !loginRateLimiter(email)) {
                 return { 
                     success: false, 
                     error: 'Too many login attempts. Please try again in 15 minutes.' 
@@ -77,12 +77,18 @@ class AuthService {
                 loginTime: new Date().toISOString()
             };
             
-            // Use secure storage with expiration
-            SecurityUtils.secureStorage.set(
-                'admin_session', 
-                userSession, 
-                SECURITY_CONFIG.sessionTimeout
-            );
+            // Use secure storage with expiration (fallback to localStorage)
+            if (typeof SecurityUtils !== 'undefined' && SecurityUtils.secureStorage) {
+                SecurityUtils.secureStorage.set(
+                    'admin_session', 
+                    userSession, 
+                    SECURITY_CONFIG.sessionTimeout
+                );
+            } else {
+                // Fallback to localStorage with manual expiration
+                localStorage.setItem('admin_session', JSON.stringify(userSession));
+                localStorage.setItem('session_expires', (Date.now() + SECURITY_CONFIG.sessionTimeout).toString());
+            }
 
             // Update last login
             await this.updateLastLogin(adminData.id);
@@ -96,8 +102,14 @@ class AuthService {
 
     static async signOut() {
         try {
-            // Clear secure storage
-            SecurityUtils.secureStorage.clear();
+            // Clear secure storage (with fallback)
+            if (typeof SecurityUtils !== 'undefined' && SecurityUtils.secureStorage) {
+                SecurityUtils.secureStorage.clear();
+            } else {
+                // Fallback: clear localStorage
+                localStorage.removeItem('admin_session');
+                localStorage.removeItem('session_expires');
+            }
             
             return { success: true };
         } catch (error) {
@@ -108,11 +120,29 @@ class AuthService {
 
     static async getCurrentUser() {
         try {
-            // Get user data from secure storage
-            const userData = SecurityUtils.secureStorage.get('admin_session');
+            // Get user data from secure storage (with fallback)
+            let userData = null;
+            
+            if (typeof SecurityUtils !== 'undefined' && SecurityUtils.secureStorage) {
+                userData = SecurityUtils.secureStorage.get('admin_session');
+            } else {
+                // Fallback: use localStorage with manual expiration check
+                const sessionData = localStorage.getItem('admin_session');
+                const sessionExpires = localStorage.getItem('session_expires');
+                
+                if (sessionData && sessionExpires) {
+                    if (Date.now() < parseInt(sessionExpires)) {
+                        userData = JSON.parse(sessionData);
+                    } else {
+                        // Expired, clear it
+                        localStorage.removeItem('admin_session');
+                        localStorage.removeItem('session_expires');
+                    }
+                }
+            }
             
             if (!userData) {
-                console.log('❌ No local session data found');
+                console.log('❌ No local session data found or session expired');
                 return { success: false, user: null };
             }
 
@@ -121,7 +151,18 @@ class AuthService {
         } catch (error) {
             console.error('❌ Get user error:', error);
             console.log('🧹 Clearing corrupted session...');
-            SecurityUtils.secureStorage.clear();
+            
+            // Clear both secure storage and localStorage
+            try {
+                if (typeof SecurityUtils !== 'undefined' && SecurityUtils.secureStorage) {
+                    SecurityUtils.secureStorage.clear();
+                }
+                localStorage.removeItem('admin_session');
+                localStorage.removeItem('session_expires');
+            } catch (clearError) {
+                console.error('Error clearing session:', clearError);
+            }
+            
             return { success: false, error: error.message };
         }
     }
