@@ -250,7 +250,7 @@
         let editingBankerId = null;
 
         // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             console.log('🚀 Initializing Enhanced Bankers page...');
             
             // Initialize Lucide icons
@@ -261,8 +261,8 @@
             // Show page loaded notification
             showNotification('Page loaded successfully', 'success');
             
-            // Check authentication
-            checkAuthentication();
+            // Check authentication first
+            await checkAuthentication();
             
             // Check if Supabase is loaded
             if (typeof supabaseClient === 'undefined') {

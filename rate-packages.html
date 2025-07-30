@@ -1424,6 +1424,9 @@
                 lucide.createIcons();
             }
 
+            // Check authentication first
+            await checkAuthentication();
+
             // Initialize AdminApp
             if (!window.AdminApp) {
                 window.AdminApp = { editingItemId: null };
@@ -1433,6 +1436,40 @@
             await loadRateTypes();
             await loadPackages();
         });
+
+        // ===================================
+        // AUTHENTICATION
+        // ===================================
+        async function checkAuthentication() {
+            try {
+                if (typeof AuthService === 'undefined') {
+                    console.error('AuthService not available');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { success, user } = await AuthService.getCurrentUser();
+                
+                if (!success || !user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Update user info in header if elements exist
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName && user.name) {
+                    userName.textContent = user.name;
+                }
+                if (userAvatar && user.name) {
+                    userAvatar.textContent = user.name.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = 'login.html';
+            }
+        }
     </script>
 </body>
 </html>

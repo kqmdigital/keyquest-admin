@@ -916,11 +916,14 @@
         }
 
         // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // Initialize Lucide icons
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
+
+            // Check authentication first
+            await checkAuthentication();
 
             // Setup event listeners
             document.getElementById('searchInput').addEventListener('input', debounce(filterRateTypes, 300));
@@ -929,6 +932,40 @@
             // Load initial data
             loadRateTypes();
         });
+
+        // ===================================
+        // AUTHENTICATION
+        // ===================================
+        async function checkAuthentication() {
+            try {
+                if (typeof AuthService === 'undefined') {
+                    console.error('AuthService not available');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const { success, user } = await AuthService.getCurrentUser();
+                
+                if (!success || !user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                // Update user info in header if elements exist
+                const userName = document.getElementById('userName');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName && user.name) {
+                    userName.textContent = user.name;
+                }
+                if (userAvatar && user.name) {
+                    userAvatar.textContent = user.name.charAt(0).toUpperCase();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = 'login.html';
+            }
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {

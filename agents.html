@@ -259,8 +259,8 @@
             // Show page loaded notification
             showNotification('Page loaded successfully', 'success');
             
-            // Check authentication
-            checkAuthentication();
+            // Check authentication first
+            await checkAuthentication();
             
             // Check if Supabase is loaded
             if (typeof supabaseClient === 'undefined') {

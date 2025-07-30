@@ -69,20 +69,33 @@ class AuthService {
             const sessionData = localStorage.getItem('admin_session');
             const sessionExpires = localStorage.getItem('session_expires');
             
+            console.log('🔍 getCurrentUser Debug:', {
+                hasSessionData: !!sessionData,
+                hasSessionExpires: !!sessionExpires,
+                sessionData: sessionData ? JSON.parse(sessionData) : null,
+                expiresAt: sessionExpires ? new Date(parseInt(sessionExpires)) : null,
+                currentTime: new Date(),
+                isExpired: sessionExpires ? Date.now() > parseInt(sessionExpires) : 'unknown'
+            });
+            
             if (!sessionData || !sessionExpires) {
+                console.log('❌ No session data found');
                 return { success: false, user: null };
             }
 
             // Check if session is expired
             if (Date.now() > parseInt(sessionExpires)) {
+                console.log('❌ Session expired, clearing...');
                 this.signOut();
                 return { success: false, user: null };
             }
 
             const user = JSON.parse(sessionData);
+            console.log('✅ Session valid, user:', user);
             return { success: true, user };
         } catch (error) {
-            console.error('Get user error:', error);
+            console.error('❌ Get user error:', error);
+            console.log('🧹 Clearing corrupted session...');
             this.signOut(); // Clear corrupted session
             return { success: false, error: error.message };
         }

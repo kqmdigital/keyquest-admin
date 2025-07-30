@@ -361,9 +361,9 @@
         // ===================================
         // INITIALIZATION - PRESERVED FROM ORIGINAL
         // ===================================
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             console.log('🚀 Recommended Packages page loading...');
-            checkAuthentication();
+            await checkAuthentication();
             setupEventListeners();
             loadData();
         });
