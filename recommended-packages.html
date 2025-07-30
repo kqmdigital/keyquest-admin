@@ -1643,9 +1643,16 @@ function generateProfessionalReport() {
             loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
             propertyType: document.getElementById('propertyType').value,
             propertyStatus: document.getElementById('propertyStatus').value,
-            loanType: currentLoanType
+            loanType: currentLoanType,
+            existingInterestRate: parseFloat(document.getElementById('existingInterestRate').value) || 0
         };
         console.log('🔧 Rebuilt searchCriteria:', searchCriteria);
+    }
+    
+    // Ensure existingInterestRate is always captured for refinancing
+    if (!searchCriteria.existingInterestRate && searchCriteria.loanType === 'Refinancing Home Loan') {
+        searchCriteria.existingInterestRate = parseFloat(document.getElementById('existingInterestRate').value) || 0;
+        console.log('🔄 Added missing existingInterestRate:', searchCriteria.existingInterestRate);
     }
 
     // Get report options
@@ -1658,6 +1665,34 @@ function generateProfessionalReport() {
         selectedPackages = currentResults.slice(0, 3);
     } else {
         selectedPackages = selectedPackages.slice(0, 3); // Limit to top 3
+    }
+    
+    // Recalculate savings for PDF generation if refinancing
+    if (searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate > 0) {
+        selectedPackages = selectedPackages.map(pkg => {
+            const avgFirst2Years = pkg.avgFirst2Years || calculateAverageFirst2Years(pkg);
+            const monthlySavings = calculateMonthlySavings(
+                searchCriteria.loanAmount, 
+                searchCriteria.loanTenure, 
+                searchCriteria.existingInterestRate, 
+                avgFirst2Years
+            );
+            const totalSavings = calculateTotalSavings(monthlySavings, pkg.lock_period);
+            
+            console.log(`💰 Recalculated savings for ${pkg.bank_name}:`, {
+                monthlySavings,
+                totalSavings,
+                lockPeriod: pkg.lock_period,
+                avgRate: avgFirst2Years,
+                existingRate: searchCriteria.existingInterestRate
+            });
+            
+            return {
+                ...pkg,
+                totalSavings,
+                monthlySavings
+            };
+        });
     }
 
     if (selectedPackages.length === 0) {
