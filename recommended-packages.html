@@ -693,6 +693,11 @@ async function searchPackages(event) {
 
         searchCriteria = { ...formData, loanType: currentLoanType };
         
+        // Debug: Log search criteria
+        console.log('🔍 searchCriteria set in searchPackages:', searchCriteria);
+        console.log('💰 Loan Amount captured:', searchCriteria.loanAmount);
+        console.log('📅 Loan Tenure captured:', searchCriteria.loanTenure);
+        
         // Enhanced filter logic
         let filteredPackages = allPackages.filter(pkg => {
             // Existing filters
@@ -972,14 +977,6 @@ function formatSavings(savings, lockInPeriod = null) {
         return `Higher by ${formatCurrency(Math.abs(savings))}${periodText}`;
     }
 }
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-SG', {
-                style: 'currency',
-                currency: 'SGD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
-        }
 
         function formatPercentage(rate) {
             return `${rate.toFixed(2)}%`;
@@ -1522,6 +1519,25 @@ function generateProfessionalReport() {
     if (!currentResults.length) {
         showNotification('No results to generate report. Please search for packages first.', 'error');
         return;
+    }
+
+    // Debug: Check searchCriteria content
+    console.log('🔍 searchCriteria in generateProfessionalReport:', searchCriteria);
+    console.log('💰 Loan Amount:', searchCriteria.loanAmount);
+    console.log('📅 Loan Tenure:', searchCriteria.loanTenure);
+
+    // Safeguard: If searchCriteria is empty or missing data, rebuild it from form
+    if (!searchCriteria || !searchCriteria.loanAmount || !searchCriteria.loanTenure) {
+        console.warn('⚠️ searchCriteria missing data, rebuilding from form...');
+        searchCriteria = {
+            ...searchCriteria,
+            loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
+            loanTenure: parseInt(document.getElementById('loanTenure').value) || 25,
+            propertyType: document.getElementById('propertyType').value,
+            propertyStatus: document.getElementById('propertyStatus').value,
+            loanType: currentLoanType
+        };
+        console.log('🔧 Rebuilt searchCriteria:', searchCriteria);
     }
 
     // Get report options
