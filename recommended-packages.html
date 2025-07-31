@@ -1728,7 +1728,7 @@ function generateProfessionalReport() {
                 <div>
                     <img src="https://ik.imagekit.io/hst9jooux/KEYQUEST%20LOGO%20(Black%20Text%20Horizontal).png?updatedAt=1753262438682" 
                          alt="KeyQuest Mortgage Logo" 
-                         style="height: 85px; width: auto; object-fit: contain;"
+                         style="height: 120px; width: auto; object-fit: contain;"
                          onerror="this.style.display='none';" />
                 </div>
                 <div style="text-align: right;">
@@ -1738,35 +1738,34 @@ function generateProfessionalReport() {
                 </div>
             </div>
 
-            <!-- Executive Summary -->
-            <div style="background: #dbeafe; border: 2px solid #1e40af; border-radius: 12px; padding: 25px; margin-bottom: 25px;">
-                <h2 style="margin: 0 0 15px 0; color: #1e40af; font-size: 18px; font-weight: 700;">Executive Summary</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; font-size: 13px;">
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #1e40af;">
-                        <div style="color: #6b7280; margin-bottom: 4px; font-weight: 500;">Loan Amount</div>
-                        <div style="font-size: 20px; font-weight: 700; color: #1e40af;">${formatCurrency(searchCriteria.loanAmount || 0)}</div>
+            <!-- Key Information Single Row -->
+            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #1e40af; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; font-size: 14px;">
+                    <div style="text-align: center; flex: 1;">
+                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Loan Amount</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #1e40af;">${formatCurrency(searchCriteria.loanAmount || 0)}</div>
                     </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #1e40af;">
-                        <div style="color: #6b7280; margin-bottom: 4px; font-weight: 500;">Loan Tenure</div>
-                        <div style="font-size: 20px; font-weight: 700; color: #1e40af;">${searchCriteria.loanTenure || 'N/A'} Years</div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Loan Tenure</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #1e40af;">${searchCriteria.loanTenure || 'N/A'} Years</div>
                     </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #1e40af;">
-                        <div style="color: #6b7280; margin-bottom: 4px; font-weight: 500;">Property Type</div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Property Type</div>
                         <div style="font-size: 16px; font-weight: 700; color: #1e40af;">${searchCriteria.propertyType || 'N/A'}</div>
                     </div>
                     ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #dc2626;">
-                        <div style="color: #6b7280; margin-bottom: 4px; font-weight: 500;">Current Rate</div>
-                        <div style="font-size: 20px; font-weight: 700; color: #dc2626;">${searchCriteria.existingInterestRate}%</div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Current Rate</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #dc2626;">${searchCriteria.existingInterestRate}%</div>
                     </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #15803d;">
-                        <div style="color: #6b7280; margin-bottom: 4px; font-weight: 500;">Best Savings</div>
-                        <div style="font-size: 18px; font-weight: 700; color: #15803d;">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}</div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Best Savings</div>
+                        <div style="font-size: 16px; font-weight: 700; color: #15803d;">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}</div>
                     </div>
                     ` : `
-                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #15803d;">
-                        <div style="color: #6b7280; margin-bottom: 4px; font-weight: 500;">Best Rate</div>
-                        <div style="font-size: 20px; font-weight: 700; color: #15803d;">${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
+                    <div style="text-align: center; flex: 1;">
+                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Best Rate</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #15803d;">${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
                     </div>
                     `}
                 </div>
@@ -1801,14 +1800,14 @@ function generateProfessionalReport() {
 
             <!-- Package Comparison Table -->
             <div style="margin-bottom: 25px;">
-                <h2 style="margin: 0 0 15px 0; color: #1f2937; font-size: 18px; font-weight: 700;">Package Comparison</h2>
+                <h2 style="margin: 0 0 15px 0; color: #1e40af; font-size: 18px; font-weight: 700;">Package Comparison</h2>
                 
-                <table style="width: 100%; border-collapse: collapse; font-size: 12px; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #d1d5db;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px; background: white; border-radius: 8px; overflow: hidden; border: 2px solid #1e40af;">
                     <thead>
-                        <tr style="background: #dc2626;">
+                        <tr style="background: #3b82f6;">
                             <th style="padding: 12px; text-align: left; color: white; font-weight: 600; width: 20%;">Details</th>
                             ${selectedPackages.map((pkg, index) => `
-                                <th style="padding: 12px; text-align: center; color: white; font-weight: 600; width: ${80/selectedPackages.length}%; ${index === 0 ? 'background: #f59e0b;' : ''}">
+                                <th style="padding: 12px; text-align: center; color: white; font-weight: 600; width: ${80/selectedPackages.length}%; ${index === 0 ? 'background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);' : ''}">
                                     ${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}
                                     ${index === 0 ? '<div style="font-size: 10px; margin-top: 3px; opacity: 0.9;">RECOMMENDED</div>' : ''}
                                 </th>
@@ -1819,7 +1818,7 @@ function generateProfessionalReport() {
                         <tr style="background: #f9fafb;">
                             <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Rate Type</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #1f2937; ${index === 0 ? 'background: #fef3c7;' : ''}">
+                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #1f2937; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
                                     ${pkg.rate_type_category || 'Rate Package'}
                                 </td>
                             `).join('')}
@@ -1827,7 +1826,7 @@ function generateProfessionalReport() {
                         <tr style="background: white;">
                             <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Min Loan Amount</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #f59e0b; ${index === 0 ? 'background: #fef3c7;' : ''}">
+                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #f59e0b; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
                                     ${formatCurrency(pkg.minimum_loan_size || 0)}
                                 </td>
                             `).join('')}
@@ -1839,7 +1838,7 @@ function generateProfessionalReport() {
                                 ${selectedPackages.map((pkg, index) => {
                                     const rateDisplay = formatRateDisplay(pkg, year);
                                     return `
-                                    <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #dc2626; ${index === 0 ? 'background: #fef3c7;' : ''}">
+                                    <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #dc2626; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
                                         ${rateDisplay}
                                     </td>
                                 `;
@@ -1862,7 +1861,7 @@ function generateProfessionalReport() {
                         <tr style="background: white;">
                             <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Lock-in Period</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #f59e0b; ${index === 0 ? 'background: #fef3c7;' : ''}">
+                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #f59e0b; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
                                     ${parseLockInPeriod(pkg.lock_period) || 0} Years
                                 </td>
                             `).join('')}
@@ -1871,7 +1870,7 @@ function generateProfessionalReport() {
                         <tr style="background: #f9fafb;">
                             <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Monthly Installment</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 600; color: #1f2937; ${index === 0 ? 'background: #fef3c7;' : ''}">
+                                <td style="padding: 10px 12px; text-align: center; font-weight: 600; color: #1f2937; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
                                     ${formatCurrency(pkg.monthlyInstallment || 0)}
                                 </td>
                             `).join('')}
@@ -1891,7 +1890,7 @@ function generateProfessionalReport() {
                         <tr style="background: white;">
                             <td style="padding: 10px 12px; font-weight: 600; color: #374151; vertical-align: top;">Package Features</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4; ${index === 0 ? 'background: #fef3c7;' : ''}">
+                                <td style="padding: 10px 12px; text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
                                     ${pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true ? 
                                         '<div style="color: #15803d; margin-bottom: 3px;">✓ Legal Fee Subsidy</div>' : ''}
                                     ${pkg.cash_rebate === 'true' || pkg.cash_rebate === true ? 
@@ -1921,7 +1920,7 @@ function generateProfessionalReport() {
                         <tr style="background: #f9fafb;">
                             <td style="padding: 10px 12px; font-weight: 600; color: #374151; vertical-align: top;">Remarks</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4; ${index === 0 ? 'background: #fef3c7;' : ''}">
+                                <td style="padding: 10px 12px; text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
                                     ${(pkg.custom_remarks || pkg.remarks || 'Standard terms and conditions apply').replace(/\n/g, '<br>').substring(0, 150)}${(pkg.custom_remarks || pkg.remarks || '').length > 150 ? '...' : ''}
                                 </td>
                             `).join('')}
