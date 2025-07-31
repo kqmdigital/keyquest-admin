@@ -3,6 +3,7 @@ services:
     name: keyquest-admin
     env: static
     staticPublishPath: ./
+    buildCommand: npm run build
     headers:
       - path: /*
         name: X-Frame-Options

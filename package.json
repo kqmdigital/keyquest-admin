@@ -1,0 +1,26 @@
+{
+  "name": "keyquest-admin",
+  "version": "1.0.0",
+  "description": "KeyQuest Mortgage Admin Panel",
+  "main": "index.html",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "echo 'Development server - serve files directly'",
+    "start": "echo 'Static files ready for serving'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kqmdigital/keyquest-admin"
+  },
+  "keywords": [
+    "mortgage",
+    "admin",
+    "supabase",
+    "frontend"
+  ],
+  "author": "KeyQuest Digital",
+  "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

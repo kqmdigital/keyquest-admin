@@ -1,14 +1,30 @@
 // config/supabase.js
-// Supabase Configuration
-const SUPABASE_CONFIG = {
-    url: 'https://cuvjbsbvlefirwzngola.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1dmpic2J2bGVmaXJ3em5nb2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MTkwMzQsImV4cCI6MjA2MzI5NTAzNH0.vDA0WrV-Go_EChViXaXF-_0j2EEPJEPTBe7X5tjvLR4'
+// Secure Supabase Configuration using Environment Variables
+const getSupabaseConfig = () => {
+    // Get configuration from environment variables (injected by Render at build time)
+    const config = {
+        url: window.VITE_SUPABASE_URL || null,
+        anonKey: window.VITE_SUPABASE_ANON_KEY || null
+    };
+    
+    // Validate configuration
+    if (!config.url || !config.anonKey) {
+        console.error('❌ Supabase configuration missing. Please check environment variables:');
+        console.error('- VITE_SUPABASE_URL:', config.url ? '✅ Set' : '❌ Missing');
+        console.error('- VITE_SUPABASE_ANON_KEY:', config.anonKey ? '✅ Set' : '❌ Missing');
+        throw new Error('Supabase configuration not found. Please contact administrator.');
+    }
+    
+    console.log('✅ Supabase configuration loaded from environment variables');
+    return config;
 };
 
-// Security Configuration
+const SUPABASE_CONFIG = getSupabaseConfig();
+
+// Security Configuration - Now using environment variables
 const SECURITY_CONFIG = {
-    sessionTimeout: 3600000, // 1 hour
-    maxLoginAttempts: 5,
+    sessionTimeout: parseInt(window.VITE_SESSION_TIMEOUT) || 3600000, // 1 hour
+    maxLoginAttempts: parseInt(window.VITE_MAX_LOGIN_ATTEMPTS) || 5,
     tokenRefreshInterval: 300000 // 5 minutes
 };
 
