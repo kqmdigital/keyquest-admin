@@ -545,14 +545,7 @@
             }
         });
 
-        // Auto-fill demo credentials (for development)
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-                document.getElementById('email').value = 'admin@keyquestmortgage.com.sg';
-                document.getElementById('password').value = 'admin123';
-                showSuccess('Demo credentials filled! Press Enter to login.');
-            }
-        });
+        // Development helper removed for security
     </script>
 </body>
 </html>

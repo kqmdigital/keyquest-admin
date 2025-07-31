@@ -384,5 +384,5 @@ ORDER BY table_name;
 -- Next steps:
 -- 1. Go to Supabase Dashboard → Authentication → Users
 -- 2. Create a new user with email: admin@keyquestmortgage.com.sg
--- 3. Set password: admin123 (change this in production!)
+-- 3. Set a secure password for production
 -- 4. Your admin panel is now ready to use!

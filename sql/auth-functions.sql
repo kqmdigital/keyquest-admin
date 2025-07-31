@@ -180,7 +180,7 @@ GRANT EXECUTE ON FUNCTION create_admin_user(text, text, text, text) TO authentic
 GRANT EXECUTE ON FUNCTION change_admin_password(uuid, text, text) TO authenticated;
 
 -- 8. Create initial admin user (run this manually with your desired credentials)
--- SELECT create_admin_user('admin@keyquestmortgage.com.sg', 'Admin User', 'admin123', 'super_admin');
+-- SELECT create_admin_user('your-email@domain.com', 'Admin User', 'secure-password', 'super_admin');
 
 -- 9. Test the authentication (run this manually to test)
--- SELECT authenticate_admin('admin@keyquestmortgage.com.sg', 'admin123');
+-- SELECT authenticate_admin('your-email@domain.com', 'your-password');
