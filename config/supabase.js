@@ -11,8 +11,8 @@ function getEnvironmentVariable(name, defaultValue) {
 }
 
 const SUPABASE_CONFIG = {
-    url: getEnvironmentVariable('VITE_SUPABASE_URL', 'MISSING_SUPABASE_URL'),
-    anonKey: getEnvironmentVariable('VITE_SUPABASE_ANON_KEY', 'MISSING_SUPABASE_ANON_KEY')
+    url: getEnvironmentVariable('VITE_SUPABASE_URL', null),
+    anonKey: getEnvironmentVariable('VITE_SUPABASE_ANON_KEY', null)
 };
 
 // Security Configuration
@@ -25,10 +25,12 @@ const SECURITY_CONFIG = {
 // Initialize Supabase Client
 // Check if supabase is available globally (UMD version)
 let supabaseClient;
-if (typeof supabase !== 'undefined') {
+if (typeof supabase !== 'undefined' && SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
     const { createClient } = supabase;
     supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
     console.log('✅ Supabase client initialized successfully');
+} else if (!SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey) {
+    console.warn('⚠️ Environment variables not loaded. This is expected in local development. Deploy to Render to use real environment variables.');
 } else {
     console.error('❌ Supabase library not loaded');
 }
@@ -41,7 +43,7 @@ class AuthService {
             if (!supabaseClient) {
                 return {
                     success: false,
-                    error: 'Database connection not available. Please refresh the page and try again.'
+                    error: 'Environment variables not configured. This application needs to be deployed to Render to work properly.'
                 };
             }
 
