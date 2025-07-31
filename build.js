@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-// build.js - Create environment configuration file for Render deployment
+// build.js - Clean environment variable injection for Render deployment
 const fs = require('fs');
-const path = require('path');
 
-console.log('🚀 Starting build process...');
+console.log('🚀 Starting secure build process...');
 
 // Get environment variables from Render
 const envVars = {
@@ -27,41 +26,9 @@ if (!envVars.VITE_SUPABASE_URL || !envVars.VITE_SUPABASE_ANON_KEY) {
     process.exit(1);
 }
 
-// Create the environment configuration file
-const configContent = `// config/env.js - Environment configuration generated at build time
-// This file is generated automatically by build.js - DO NOT EDIT MANUALLY
-
-// Environment variables injected by Render build process
-window.ENV_CONFIG = {
-    SUPABASE_URL: ${JSON.stringify(envVars.VITE_SUPABASE_URL)},
-    SUPABASE_ANON_KEY: ${JSON.stringify(envVars.VITE_SUPABASE_ANON_KEY)},
-    APP_NAME: ${JSON.stringify(envVars.VITE_APP_NAME)},
-    MAX_LOGIN_ATTEMPTS: ${parseInt(envVars.VITE_MAX_LOGIN_ATTEMPTS)},
-    SESSION_TIMEOUT: ${parseInt(envVars.VITE_SESSION_TIMEOUT)}
-};
-
-// Debug logging
-console.log('🔧 Environment configuration loaded:', {
-    SUPABASE_URL: window.ENV_CONFIG.SUPABASE_URL ? '✅ Set' : '❌ Missing',
-    SUPABASE_ANON_KEY: window.ENV_CONFIG.SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing',
-    APP_NAME: window.ENV_CONFIG.APP_NAME
-});
-
-console.log('✅ Build-time environment configuration ready');
-`;
-
-// Write the configuration file
+// Replace placeholders directly in supabase.js
 try {
-    fs.writeFileSync('config/env.js', configContent, 'utf8');
-    console.log('✅ Created config/env.js with environment variables');
-} catch (error) {
-    console.error('❌ Failed to create config/env.js:', error.message);
-    process.exit(1);
-}
-
-// EMERGENCY FIX: Also replace placeholders directly in supabase.js
-try {
-    console.log('🔧 Applying emergency fix to config/supabase.js...');
+    console.log('🔧 Injecting environment variables into config/supabase.js...');
     
     let supabaseContent = fs.readFileSync('config/supabase.js', 'utf8');
     
@@ -76,12 +43,12 @@ try {
     );
     
     fs.writeFileSync('config/supabase.js', supabaseContent, 'utf8');
-    console.log('✅ Emergency fix applied to config/supabase.js');
+    console.log('✅ Environment variables injected successfully');
     
 } catch (error) {
-    console.error('❌ Failed to apply emergency fix:', error.message);
+    console.error('❌ Failed to inject environment variables:', error.message);
     process.exit(1);
 }
 
 console.log('✅ Build process completed successfully!');
-console.log('🔒 Environment configuration ready with multiple fallback strategies');
+console.log('🔒 Secure credentials injected at build time');

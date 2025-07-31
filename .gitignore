@@ -10,9 +10,6 @@ yarn-error.log*
 .env.production
 .env.development
 
-# Generated environment config (created by build.js at deploy time)
-config/env.js
-
 # Build outputs
 dist/
 build/
