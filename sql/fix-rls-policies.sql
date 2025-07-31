@@ -51,8 +51,17 @@ CREATE POLICY "Admin users can read all admin_users"
 ON admin_users FOR SELECT 
 USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Admin users can manage admin_users" 
-ON admin_users FOR INSERT, UPDATE, DELETE
+CREATE POLICY "Admin users can insert admin_users" 
+ON admin_users FOR INSERT 
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin users can update admin_users" 
+ON admin_users FOR UPDATE 
+USING (auth.role() = 'authenticated')
+WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin users can delete admin_users" 
+ON admin_users FOR DELETE 
 USING (auth.role() = 'authenticated');
 
 -- Alternative approach: Disable RLS temporarily if issues persist
