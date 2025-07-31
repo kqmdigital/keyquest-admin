@@ -22,7 +22,8 @@
       "Bash(claude-code mcp:*)",
       "mcp__context7__resolve-library-id",
       "Bash(npm info:*)",
-      "Bash(del nul)"
+      "Bash(del nul)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

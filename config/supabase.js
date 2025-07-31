@@ -1,36 +1,24 @@
 // config/supabase.js
-// Supabase Configuration with browser compatibility
-function getEnvironmentVariable(name, defaultValue) {
-    // Try to get from window._env_ (injected by build process)
-    if (typeof window !== 'undefined' && window._env_ && window._env_[name]) {
-        return window._env_[name];
-    }
-    
-    // Fallback to default
-    return defaultValue;
-}
-
+// Supabase Configuration
 const SUPABASE_CONFIG = {
-    url: getEnvironmentVariable('VITE_SUPABASE_URL', null),
-    anonKey: getEnvironmentVariable('VITE_SUPABASE_ANON_KEY', null)
+    url: 'https://cuvjbsbvlefirwzngola.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1dmpic2J2bGVmaXJ3em5nb2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MTkwMzQsImV4cCI6MjA2MzI5NTAzNH0.vDA0WrV-Go_EChViXaXF-_0j2EEPJEPTBe7X5tjvLR4'
 };
 
 // Security Configuration
 const SECURITY_CONFIG = {
-    sessionTimeout: parseInt(getEnvironmentVariable('VITE_SESSION_TIMEOUT', '3600000')), // 1 hour
-    maxLoginAttempts: parseInt(getEnvironmentVariable('VITE_MAX_LOGIN_ATTEMPTS', '5')),
+    sessionTimeout: 3600000, // 1 hour
+    maxLoginAttempts: 5,
     tokenRefreshInterval: 300000 // 5 minutes
 };
 
 // Initialize Supabase Client
 // Check if supabase is available globally (UMD version)
 let supabaseClient;
-if (typeof supabase !== 'undefined' && SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+if (typeof supabase !== 'undefined') {
     const { createClient } = supabase;
     supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
     console.log('✅ Supabase client initialized successfully');
-} else if (!SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey) {
-    console.warn('⚠️ Environment variables not loaded. This is expected in local development. Deploy to Render to use real environment variables.');
 } else {
     console.error('❌ Supabase library not loaded');
 }
@@ -43,7 +31,7 @@ class AuthService {
             if (!supabaseClient) {
                 return {
                     success: false,
-                    error: 'Environment variables not configured. This application needs to be deployed to Render to work properly.'
+                    error: 'Database connection not available. Please refresh the page and try again.'
                 };
             }
 
