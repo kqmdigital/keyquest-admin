@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// build.js - Inject environment variables into HTML files for Render deployment
+// build.js - Create environment configuration file for Render deployment
 const fs = require('fs');
 const path = require('path');
 
@@ -27,57 +27,37 @@ if (!envVars.VITE_SUPABASE_URL || !envVars.VITE_SUPABASE_ANON_KEY) {
     process.exit(1);
 }
 
-// Function to inject environment variables into HTML content
-const injectEnvVars = (content) => {
-    // Create the environment injection script
-    const envScript = `
-    <script>
-        // Environment variables injected at build time by Render
-        ${Object.entries(envVars).map(([key, value]) => 
-            `window.${key} = ${JSON.stringify(value)};`
-        ).join('\n        ')}
-        
-        console.log('🔧 Environment variables loaded:', {
-            VITE_SUPABASE_URL: window.VITE_SUPABASE_URL ? '✅ Set' : '❌ Missing',
-            VITE_SUPABASE_ANON_KEY: window.VITE_SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing',
-            VITE_APP_NAME: window.VITE_APP_NAME
-        });
-    </script>`;
-    
-    // Inject before the first script tag
-    return content.replace(
-        /(<script[^>]*>)/i,
-        `${envScript}\n    $1`
-    );
+// Create the environment configuration file
+const configContent = `// config/env.js - Environment configuration generated at build time
+// This file is generated automatically by build.js - DO NOT EDIT MANUALLY
+
+// Environment variables injected by Render build process
+window.ENV_CONFIG = {
+    SUPABASE_URL: ${JSON.stringify(envVars.VITE_SUPABASE_URL)},
+    SUPABASE_ANON_KEY: ${JSON.stringify(envVars.VITE_SUPABASE_ANON_KEY)},
+    APP_NAME: ${JSON.stringify(envVars.VITE_APP_NAME)},
+    MAX_LOGIN_ATTEMPTS: ${parseInt(envVars.VITE_MAX_LOGIN_ATTEMPTS)},
+    SESSION_TIMEOUT: ${parseInt(envVars.VITE_SESSION_TIMEOUT)}
 };
 
-// Get all HTML files in the current directory
-const htmlFiles = fs.readdirSync('.')
-    .filter(file => file.endsWith('.html'))
-    .filter(file => !file.startsWith('_')); // Exclude any template files
-
-console.log(`📄 Processing ${htmlFiles.length} HTML files...`);
-
-// Process each HTML file
-htmlFiles.forEach(file => {
-    try {
-        console.log(`   Processing: ${file}`);
-        
-        // Read the original file
-        const originalContent = fs.readFileSync(file, 'utf8');
-        
-        // Inject environment variables
-        const processedContent = injectEnvVars(originalContent);
-        
-        // Write back to the same file
-        fs.writeFileSync(file, processedContent, 'utf8');
-        
-        console.log(`   ✅ Updated: ${file}`);
-    } catch (error) {
-        console.error(`   ❌ Error processing ${file}:`, error.message);
-        process.exit(1);
-    }
+// Debug logging
+console.log('🔧 Environment configuration loaded:', {
+    SUPABASE_URL: window.ENV_CONFIG.SUPABASE_URL ? '✅ Set' : '❌ Missing',
+    SUPABASE_ANON_KEY: window.ENV_CONFIG.SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing',
+    APP_NAME: window.ENV_CONFIG.APP_NAME
 });
 
+console.log('✅ Build-time environment configuration ready');
+`;
+
+// Write the configuration file
+try {
+    fs.writeFileSync('config/env.js', configContent, 'utf8');
+    console.log('✅ Created config/env.js with environment variables');
+} catch (error) {
+    console.error('❌ Failed to create config/env.js:', error.message);
+    process.exit(1);
+}
+
 console.log('✅ Build process completed successfully!');
-console.log('🔒 All sensitive credentials are now environment-based');
+console.log('🔒 Environment configuration file created with secure credentials');
