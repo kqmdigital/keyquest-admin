@@ -59,5 +59,29 @@ try {
     process.exit(1);
 }
 
+// EMERGENCY FIX: Also replace placeholders directly in supabase.js
+try {
+    console.log('🔧 Applying emergency fix to config/supabase.js...');
+    
+    let supabaseContent = fs.readFileSync('config/supabase.js', 'utf8');
+    
+    // Replace the placeholders with actual values
+    supabaseContent = supabaseContent.replace(
+        "'{{RENDER_SUPABASE_URL}}'", 
+        JSON.stringify(envVars.VITE_SUPABASE_URL)
+    );
+    supabaseContent = supabaseContent.replace(
+        "'{{RENDER_SUPABASE_ANON_KEY}}'", 
+        JSON.stringify(envVars.VITE_SUPABASE_ANON_KEY)
+    );
+    
+    fs.writeFileSync('config/supabase.js', supabaseContent, 'utf8');
+    console.log('✅ Emergency fix applied to config/supabase.js');
+    
+} catch (error) {
+    console.error('❌ Failed to apply emergency fix:', error.message);
+    process.exit(1);
+}
+
 console.log('✅ Build process completed successfully!');
-console.log('🔒 Environment configuration file created with secure credentials');
+console.log('🔒 Environment configuration ready with multiple fallback strategies');

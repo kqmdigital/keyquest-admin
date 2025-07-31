@@ -17,3 +17,6 @@ services:
       - path: /*
         name: Content-Security-Policy
         value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; font-src 'self'"
+      - path: /config/*.js
+        name: Content-Type
+        value: application/javascript
