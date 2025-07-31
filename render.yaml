@@ -2,19 +2,7 @@ services:
   - type: web
     name: keyquest-admin
     env: static
-    buildCommand: npm run build
-    staticPublishPath: ./dist
-    envVars:
-      - key: VITE_SUPABASE_URL
-        sync: false
-      - key: VITE_SUPABASE_ANON_KEY
-        sync: false
-      - key: VITE_APP_NAME
-        value: Keyquest Mortgage Admin
-      - key: VITE_SESSION_TIMEOUT
-        value: "3600000"
-      - key: VITE_MAX_LOGIN_ATTEMPTS
-        value: "5"
+    staticPublishPath: ./
     headers:
       - path: /*
         name: X-Frame-Options
