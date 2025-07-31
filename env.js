@@ -1,8 +1,9 @@
-// Environment variables for local development
+// Environment variables placeholder file
 // This file will be overwritten during build process on Render
+// DO NOT commit real environment variables to version control
 window._env_ = {
-  "VITE_SUPABASE_URL": "https://cuvjbsbvlefirwzngola.supabase.co",
-  "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1dmpic2J2bGVmaXJ3em5nb2xhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MTkwMzQsImV4cCI6MjA2MzI5NTAzNH0.vDA0WrV-Go_EChViXaXF-_0j2EEPJEPTBe7X5tjvLR4",
+  "VITE_SUPABASE_URL": "YOUR_SUPABASE_URL_HERE",
+  "VITE_SUPABASE_ANON_KEY": "YOUR_SUPABASE_ANON_KEY_HERE",
   "VITE_SESSION_TIMEOUT": "3600000",
   "VITE_MAX_LOGIN_ATTEMPTS": "5"
 };

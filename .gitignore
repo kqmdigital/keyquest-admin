@@ -9,6 +9,7 @@ yarn-error.log*
 .env.local
 .env.production
 .env.development
+# Note: env.js contains placeholders and will be overwritten by Render during build
 
 # Build outputs
 dist/
