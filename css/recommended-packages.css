@@ -1293,11 +1293,390 @@ body {
     font-family: Arial, sans-serif; 
 }
 
+/* Professional PDF Report Styles */
+.pdf-report-container {
+    padding: 40px;
+    background: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    color: #1f2937;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.pdf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 4px solid #dc2626;
+}
+
+.pdf-header .logo-section {
+    flex: 0 0 auto;
+}
+
+.pdf-header .logo-section img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+}
+
+.pdf-header .title-section {
+    text-align: right;
+    flex: 1;
+    margin-left: 20px;
+}
+
+.pdf-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 32px;
+    font-weight: 800;
+    color: #1f2937;
+    letter-spacing: -0.5px;
+}
+
+.pdf-header .client-name {
+    font-size: 18px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.pdf-header .report-date {
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+/* Key Information Cards */
+.pdf-key-info {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border: 2px solid #2563eb;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.pdf-info-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.pdf-info-item {
+    text-align: center;
+    flex: 1;
+    min-width: 120px;
+}
+
+.pdf-info-label {
+    color: #2563eb;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pdf-info-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.pdf-info-value.current-rate {
+    color: #dc2626;
+}
+
+.pdf-info-value.best-rate,
+.pdf-info-value.savings {
+    color: #059669;
+}
+
+.pdf-info-value.property-type {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.pdf-info-value.savings {
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.pdf-info-value .sub-text {
+    font-size: 14px;
+    display: block;
+    margin-top: 2px;
+}
+
+/* Potential Savings Section */
+.pdf-savings-section {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border: 2px solid #059669;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.pdf-savings-section::before {
+    content: '💰';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+}
+
+.pdf-savings-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #059669;
+    margin-bottom: 20px;
+    margin-left: 40px;
+}
+
+.pdf-savings-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.pdf-savings-item {
+    text-align: center;
+    flex: 1;
+    min-width: 150px;
+}
+
+.pdf-savings-item .label {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.pdf-savings-item .value {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.pdf-savings-item .value.current {
+    color: #dc2626;
+}
+
+.pdf-savings-item .value.new {
+    color: #059669;
+}
+
+.pdf-savings-item .value.savings {
+    color: #059669;
+    font-size: 18px;
+}
+
+.pdf-savings-item .sub-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* Package Comparison Table */
+.pdf-comparison-section {
+    margin-bottom: 30px;
+}
+
+.pdf-comparison-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 20px;
+}
+
+.pdf-comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-comparison-table thead {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+
+.pdf-comparison-table th {
+    padding: 16px 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pdf-comparison-table th:first-child {
+    text-align: left;
+    background: #3730a3;
+}
+
+.pdf-comparison-table th.recommended {
+    background: #059669 !important;
+    position: relative;
+}
+
+.pdf-comparison-table th.recommended::after {
+    content: 'RECOMMENDED';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #059669;
+    color: white;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.pdf-comparison-table tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.pdf-comparison-table tbody tr:hover {
+    background: #e0f2fe;
+}
+
+.pdf-comparison-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+}
+
+.pdf-comparison-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+}
+
+.pdf-comparison-table td.recommended {
+    background: rgba(5, 150, 105, 0.1);
+    font-weight: 600;
+    color: #059669;
+}
+
+.pdf-comparison-table td.rate-value {
+    font-weight: 600;
+    color: #dc2626;
+}
+
+.pdf-comparison-table td.amount {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.pdf-comparison-table td.period {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+/* Enhanced Details Section */
+.pdf-details-section {
+    margin-top: 30px;
+}
+
+.pdf-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.pdf-details-table th {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.pdf-details-table td {
+    padding: 10px 12px;
+    text-align: center;
+    border: 1px solid #e2e8f0;
+    font-size: 13px;
+}
+
+.pdf-details-table .savings-cell {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #059669;
+    font-weight: 700;
+}
+
+/* Disclaimer Section */
+.pdf-disclaimer {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 30px;
+}
+
+.pdf-disclaimer-title {
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.pdf-disclaimer-text {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
 @media print {
     body { 
         margin: 0; 
     }
     .no-print { 
         display: none; 
+    }
+    
+    /* Enhanced print styles */
+    .pdf-report-container {
+        padding: 20px;
+        max-width: none;
+    }
+    
+    .pdf-header {
+        page-break-inside: avoid;
+    }
+    
+    .pdf-key-info {
+        page-break-inside: avoid;
+    }
+    
+    .pdf-savings-section {
+        page-break-inside: avoid;
+    }
+    
+    .pdf-comparison-table {
+        page-break-inside: auto;
+    }
+    
+    .pdf-comparison-table thead {
+        display: table-header-group;
+    }
+    
+    /* Ensure colors print correctly */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }

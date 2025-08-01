@@ -1722,123 +1722,118 @@ function generateProfessionalReport() {
     const hasThereafterData = true; // Always show thereafter row
 
     const reportContent = `
-        <div style="padding: 35px; background: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.4; color: #1f2937;">
+        <div class="pdf-report-container">
             <!-- Professional Header -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #dc2626;">
-                <div>
+            <div class="pdf-header">
+                <div class="logo-section">
                     <img src="https://ik.imagekit.io/hst9jooux/KEYQUEST%20LOGO%20(Black%20Text%20Horizontal).png?updatedAt=1753262438682" 
                          alt="KeyQuest Mortgage Logo" 
-                         style="height: 120px; width: auto; object-fit: contain;"
                          onerror="this.style.display='none';" />
                 </div>
-                <div style="text-align: right;">
-                    <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #1f2937; letter-spacing: -0.3px;">Mortgage Package Analysis</h1>
-                    ${clientName ? `<div style="font-size: 16px; color: #6b7280; margin-top: 6px; font-weight: 500;">Prepared for: ${clientName}</div>` : ''}
-                    <div style="font-size: 13px; color: #9ca3af; margin-top: 4px;">${reportDate}</div>
+                <div class="title-section">
+                    <h1>Mortgage Package Analysis</h1>
+                    ${clientName ? `<div class="client-name">Prepared for: ${clientName}</div>` : ''}
+                    <div class="report-date">${reportDate}</div>
                 </div>
             </div>
 
-            <!-- Key Information Single Row -->
-            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #1e40af; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px; font-size: 14px;">
-                    <div style="text-align: center; flex: 1;">
-                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Loan Amount</div>
-                        <div style="font-size: 18px; font-weight: 700; color: #1e40af;">${formatCurrency(searchCriteria.loanAmount || 0)}</div>
+            <!-- Key Information Cards -->
+            <div class="pdf-key-info">
+                <div class="pdf-info-grid">
+                    <div class="pdf-info-item">
+                        <div class="pdf-info-label">Loan Amount</div>
+                        <div class="pdf-info-value">${formatCurrency(searchCriteria.loanAmount || 0)}</div>
                     </div>
-                    <div style="text-align: center; flex: 1;">
-                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Loan Tenure</div>
-                        <div style="font-size: 18px; font-weight: 700; color: #1e40af;">${searchCriteria.loanTenure || 'N/A'} Years</div>
+                    <div class="pdf-info-item">
+                        <div class="pdf-info-label">Loan Tenure</div>
+                        <div class="pdf-info-value">${searchCriteria.loanTenure || 'N/A'} Years</div>
                     </div>
-                    <div style="text-align: center; flex: 1;">
-                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Property Type</div>
-                        <div style="font-size: 16px; font-weight: 700; color: #1e40af;">${searchCriteria.propertyType || 'N/A'}</div>
+                    <div class="pdf-info-item">
+                        <div class="pdf-info-label">Property Type</div>
+                        <div class="pdf-info-value property-type">${(searchCriteria.propertyType || 'Private').split(' ').join('<br>')}<br>Property</div>
                     </div>
                     ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
-                    <div style="text-align: center; flex: 1;">
-                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Current Rate</div>
-                        <div style="font-size: 18px; font-weight: 700; color: #dc2626;">${searchCriteria.existingInterestRate}%</div>
+                    <div class="pdf-info-item">
+                        <div class="pdf-info-label">Current Rate</div>
+                        <div class="pdf-info-value current-rate">${searchCriteria.existingInterestRate}%</div>
                     </div>
-                    <div style="text-align: center; flex: 1;">
-                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Best Savings</div>
-                        <div style="font-size: 16px; font-weight: 700; color: #15803d;">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}</div>
+                    <div class="pdf-info-item">
+                        <div class="pdf-info-label">Best Savings</div>
+                        <div class="pdf-info-value savings">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}<span class="sub-text">Over ${selectedPackages[0]?.lock_period || '2'} Years Lock-in</span></div>
                     </div>
                     ` : `
-                    <div style="text-align: center; flex: 1;">
-                        <div style="color: #1e40af; margin-bottom: 6px; font-weight: 600;">Best Rate</div>
-                        <div style="font-size: 18px; font-weight: 700; color: #15803d;">${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
+                    <div class="pdf-info-item">
+                        <div class="pdf-info-label">Best Rate</div>
+                        <div class="pdf-info-value best-rate">${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
                     </div>
                     `}
                 </div>
             </div>
 
             ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
-            <!-- Refinance Savings Highlight -->
-            <div style="background: #f0fdf4; border: 2px solid #22c55e; border-radius: 12px; padding: 20px; margin-bottom: 25px;">
-                <h2 style="margin: 0 0 15px 0; color: #15803d; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                    <span style="background: #22c55e; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">💰</span>
-                    Potential Savings with Our Recommended Package
-                </h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; font-size: 14px;">
-                    <div style="text-align: center;">
-                        <div style="color: #6b7280; margin-bottom: 6px;">Current Monthly Payment</div>
-                        <div style="font-size: 20px; font-weight: 700; color: #dc2626;">${formatCurrency(calculateMonthlyInstallment(searchCriteria.loanAmount, searchCriteria.loanTenure, searchCriteria.existingInterestRate))}</div>
-                        <div style="font-size: 12px; color: #6b7280;">at ${searchCriteria.existingInterestRate}%</div>
+            <!-- Potential Savings Section -->
+            <div class="pdf-savings-section">
+                <div class="pdf-savings-title">Potential Savings with Our Recommended Package</div>
+                <div class="pdf-savings-grid">
+                    <div class="pdf-savings-item">
+                        <div class="label">Current Monthly Payment</div>
+                        <div class="value current">${formatCurrency(calculateMonthlyInstallment(searchCriteria.loanAmount, searchCriteria.loanTenure, searchCriteria.existingInterestRate))}</div>
+                        <div class="sub-label">at ${searchCriteria.existingInterestRate}%</div>
                     </div>
-                    <div style="text-align: center;">
-                        <div style="color: #6b7280; margin-bottom: 6px;">New Monthly Payment</div>
-                        <div style="font-size: 20px; font-weight: 700; color: #059669;">${formatCurrency(selectedPackages[0]?.monthlyInstallment || 0)}</div>
-                        <div style="font-size: 12px; color: #6b7280;">at ${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
+                    <div class="pdf-savings-item">
+                        <div class="label">New Monthly Payment</div>
+                        <div class="value new">${formatCurrency(selectedPackages[0]?.monthlyInstallment || 0)}</div>
+                        <div class="sub-label">at ${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
                     </div>
-                    <div style="text-align: center;">
-                        <div style="color: #6b7280; margin-bottom: 6px;">Total Savings</div>
-                        <div style="font-size: 20px; font-weight: 700; color: #15803d;">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}</div>
-                        <div style="font-size: 12px; color: #6b7280;">over lock-in period</div>
+                    <div class="pdf-savings-item">
+                        <div class="label">Total Savings</div>
+                        <div class="value savings">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}</div>
+                        <div class="sub-label">over lock-in period</div>
                     </div>
                 </div>
             </div>
             ` : ''}
 
             <!-- Package Comparison Table -->
-            <div style="margin-bottom: 25px;">
-                <h2 style="margin: 0 0 15px 0; color: #1e40af; font-size: 18px; font-weight: 700;">Package Comparison</h2>
+            <div class="pdf-comparison-section">
+                <div class="pdf-comparison-title">Package Comparison</div>
                 
-                <table style="width: 100%; border-collapse: collapse; font-size: 12px; background: white; border-radius: 8px; overflow: hidden; border: 2px solid #1e40af;">
+                <table class="pdf-comparison-table">
                     <thead>
-                        <tr style="background: #3b82f6;">
-                            <th style="padding: 12px; text-align: left; color: white; font-weight: 600; width: 20%;">Details</th>
+                        <tr>
+                            <th>Details</th>
                             ${selectedPackages.map((pkg, index) => `
-                                <th style="padding: 12px; text-align: center; color: white; font-weight: 600; width: ${80/selectedPackages.length}%; ${index === 0 ? 'background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);' : ''}">
+                                <th class="${index === 0 ? 'recommended' : ''}">
                                     ${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}
-                                    ${index === 0 ? '<div style="font-size: 10px; margin-top: 3px; opacity: 0.9;">RECOMMENDED</div>' : ''}
                                 </th>
                             `).join('')}
                         </tr>
                     </thead>
                     <tbody>
-                        <tr style="background: #f9fafb;">
-                            <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Rate Type</td>
+                        <tr>
+                            <td>Rate Type</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #1f2937; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
+                                <td class="${index === 0 ? 'recommended' : ''}">
                                     ${pkg.rate_type_category || 'Rate Package'}
                                 </td>
                             `).join('')}
                         </tr>
-                        <tr style="background: white;">
-                            <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Min Loan Amount</td>
+                        <tr>
+                            <td>Min Loan Amount</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #f59e0b; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
+                                <td class="${index === 0 ? 'recommended amount' : 'amount'}">
                                     ${formatCurrency(pkg.minimum_loan_size || 0)}
                                 </td>
                             `).join('')}
                         </tr>
                         
                         ${yearsToShow.map((year, yearIndex) => `
-                            <tr style="background: ${yearIndex % 2 === 0 ? '#f9fafb' : 'white'};">
-                                <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Year ${year}</td>
+                            <tr>
+                                <td>Year ${year}</td>
                                 ${selectedPackages.map((pkg, index) => {
                                     const rateDisplay = formatRateDisplay(pkg, year);
                                     return `
-                                    <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #dc2626; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
+                                    <td class="${index === 0 ? 'recommended rate-value' : 'rate-value'}">
                                         ${rateDisplay}
                                     </td>
                                 `;
@@ -1846,51 +1841,60 @@ function generateProfessionalReport() {
                             </tr>
                         `).join('')}
                         
-                        <tr style="background: #f0f9ff;">
-                            <td style="padding: 10px 12px; font-weight: 600; color: #1e40af;">Thereafter</td>
+                        <tr>
+                            <td>Thereafter</td>
                             ${selectedPackages.map((pkg, index) => {
                                 const rateDisplay = formatRateDisplay(pkg, 'thereafter');
                                 return `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #1e40af; ${index === 0 ? 'background: #dbeafe;' : ''}">
+                                <td class="${index === 0 ? 'recommended rate-value' : 'rate-value'}">
                                     ${rateDisplay}
                                 </td>
                             `;
                             }).join('')}
                         </tr>
                         
-                        <tr style="background: white;">
-                            <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Lock-in Period</td>
+                        <tr>
+                            <td>Lock-in Period</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 500; color: #f59e0b; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
+                                <td class="${index === 0 ? 'recommended period' : 'period'}">
                                     ${parseLockInPeriod(pkg.lock_period) || 0} Years
                                 </td>
                             `).join('')}
                         </tr>
                         
-                        <tr style="background: #f9fafb;">
-                            <td style="padding: 10px 12px; font-weight: 600; color: #374151;">Monthly Installment</td>
+                        
+                        ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
+                        <tr>
+                            <td>Monthly Installment</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 600; color: #1f2937; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
+                                <td class="${index === 0 ? 'recommended' : ''}">
                                     ${formatCurrency(pkg.monthlyInstallment || 0)}
                                 </td>
                             `).join('')}
                         </tr>
-                        
-                        ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
-                        <tr style="background: #f0fdf4;">
-                            <td style="padding: 10px 12px; font-weight: 600; color: #15803d;">Total Savings</td>
+                        <tr>
+                            <td>Total Savings</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: center; font-weight: 600; color: ${(pkg.totalSavings || 0) > 0 ? '#15803d' : '#dc2626'}; ${index === 0 ? 'background: #dcfce7;' : ''}">
+                                <td class="${index === 0 ? 'recommended savings-cell' : 'savings-cell'}">
                                     ${formatSavings(pkg.totalSavings || 0, pkg.lock_period)}
                                 </td>
                             `).join('')}
                         </tr>
-                        ` : ''}
-                        
-                        <tr style="background: white;">
-                            <td style="padding: 10px 12px; font-weight: 600; color: #374151; vertical-align: top;">Package Features</td>
+                        ` : `
+                        <tr>
+                            <td>Monthly Installment</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
+                                <td class="${index === 0 ? 'recommended' : ''}">
+                                    ${formatCurrency(pkg.monthlyInstallment || 0)}
+                                </td>
+                            `).join('')}
+                        </tr>
+                        `}
+                        
+                        <tr>
+                            <td>Package Features</td>
+                            ${selectedPackages.map((pkg, index) => `
+                                <td class="${index === 0 ? 'recommended' : ''}" style="text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4;">
                                     ${pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true ? 
                                         '<div style="color: #15803d; margin-bottom: 3px;">✓ Legal Fee Subsidy</div>' : ''}
                                     ${pkg.cash_rebate === 'true' || pkg.cash_rebate === true ? 
@@ -1917,11 +1921,11 @@ function generateProfessionalReport() {
                             `).join('')}
                         </tr>
                         
-                        <tr style="background: #f9fafb;">
-                            <td style="padding: 10px 12px; font-weight: 600; color: #374151; vertical-align: top;">Remarks</td>
+                        <tr>
+                            <td>Remarks</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td style="padding: 10px 12px; text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4; ${index === 0 ? 'background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);' : ''}">
-                                    ${(pkg.custom_remarks || pkg.remarks || 'Standard terms and conditions apply').replace(/\n/g, '<br>').substring(0, 150)}${(pkg.custom_remarks || pkg.remarks || '').length > 150 ? '...' : ''}
+                                <td class="${index === 0 ? 'recommended' : ''}" style="text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4;">
+                                    ${(pkg.custom_remarks || pkg.remarks || 'All packages are structured with fixed rates followed by floating rates based on 3M SORA.').replace(/\n/g, '<br>').substring(0, 200)}${(pkg.custom_remarks || pkg.remarks || '').length > 200 ? '...' : ''}
                                 </td>
                             `).join('')}
                         </tr>
@@ -1930,16 +1934,12 @@ function generateProfessionalReport() {
             </div>
 
             <!-- Professional Disclaimer -->
-            <div style="border-top: 2px solid #e5e7eb; padding-top: 15px; margin-top: 20px;">
-                <div style="font-size: 10px; line-height: 1.3; color: #6b7280; text-align: center;">
-                    <div style="margin-bottom: 6px; font-weight: 600; color: #374151;">
-                        Disclaimer:
-                    </div>
-                    <div>
-                        This report is for informational purposes only. Rates and terms are subject to bank approval and may change without notice. 
-                        Please verify all details with lenders and consult qualified professionals before making financial decisions. 
-                        Check for penalties or fees before switching lenders.
-                    </div>
+            <div class="pdf-disclaimer">
+                <div class="pdf-disclaimer-title">Disclaimer:</div>
+                <div class="pdf-disclaimer-text">
+                    This report is for informational purposes only. Rates and terms are subject to bank approval and may change without notice. 
+                    Please verify all details with lenders and consult qualified professionals before making financial decisions. 
+                    Check for penalties or fees before switching lenders.
                 </div>
             </div>
         </div>
