@@ -1644,35 +1644,10 @@ body {
 @media print {
     body { 
         margin: 0; 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
     }
     .no-print { 
         display: none; 
-    }
-    
-    /* Enhanced print styles */
-    .pdf-report-container {
-        padding: 20px;
-        max-width: none;
-    }
-    
-    .pdf-header {
-        page-break-inside: avoid;
-    }
-    
-    .pdf-key-info {
-        page-break-inside: avoid;
-    }
-    
-    .pdf-savings-section {
-        page-break-inside: avoid;
-    }
-    
-    .pdf-comparison-table {
-        page-break-inside: auto;
-    }
-    
-    .pdf-comparison-table thead {
-        display: table-header-group;
     }
     
     /* Ensure colors print correctly */
@@ -1680,5 +1655,329 @@ body {
         -webkit-print-color-adjust: exact !important;
         color-adjust: exact !important;
         print-color-adjust: exact !important;
+    }
+    
+    /* PDF Report Container */
+    .pdf-report-container {
+        padding: 30px !important;
+        background: white !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+        line-height: 1.5 !important;
+        color: #1f2937 !important;
+        max-width: none !important;
+        margin: 0 auto !important;
+        page-break-inside: avoid;
+    }
+
+    /* Header Styles */
+    .pdf-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        margin-bottom: 25px !important;
+        padding-bottom: 15px !important;
+        border-bottom: 4px solid #dc2626 !important;
+        page-break-inside: avoid;
+    }
+
+    .pdf-header .logo-section {
+        flex: 0 0 auto !important;
+    }
+
+    .pdf-header .logo-section img {
+        height: 70px !important;
+        width: auto !important;
+        object-fit: contain !important;
+    }
+
+    .pdf-header .title-section {
+        text-align: right !important;
+        flex: 1 !important;
+        margin-left: 20px !important;
+    }
+
+    .pdf-header h1 {
+        margin: 0 0 8px 0 !important;
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        color: #1f2937 !important;
+        letter-spacing: -0.5px !important;
+    }
+
+    .pdf-header .client-name {
+        font-size: 16px !important;
+        color: #6b7280 !important;
+        margin-bottom: 4px !important;
+        font-weight: 500 !important;
+    }
+
+    .pdf-header .report-date {
+        font-size: 13px !important;
+        color: #9ca3af !important;
+    }
+
+    /* Key Information Cards */
+    .pdf-key-info {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+        border: 2px solid #2563eb !important;
+        border-radius: 16px !important;
+        padding: 18px !important;
+        margin-bottom: 20px !important;
+        page-break-inside: avoid;
+    }
+
+    .pdf-info-grid {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 20px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .pdf-info-item {
+        text-align: center !important;
+        flex: 1 !important;
+        min-width: 100px !important;
+    }
+
+    .pdf-info-label {
+        color: #2563eb !important;
+        margin-bottom: 6px !important;
+        font-weight: 600 !important;
+        font-size: 12px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .pdf-info-value {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: #2563eb !important;
+    }
+
+    .pdf-info-value.current-rate {
+        color: #dc2626 !important;
+    }
+
+    .pdf-info-value.best-rate,
+    .pdf-info-value.savings {
+        color: #2563eb !important;
+    }
+
+    .pdf-info-value.property-type {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+    }
+
+    .pdf-info-value.savings {
+        font-size: 14px !important;
+        line-height: 1.2 !important;
+    }
+
+    .pdf-info-value .sub-text {
+        font-size: 12px !important;
+        display: block !important;
+        margin-top: 2px !important;
+    }
+
+    /* Potential Savings Section */
+    .pdf-savings-section {
+        background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%) !important;
+        border: 2px solid #dc2626 !important;
+        border-radius: 16px !important;
+        padding: 18px !important;
+        margin-bottom: 20px !important;
+        position: relative !important;
+        page-break-inside: avoid;
+    }
+
+    .pdf-savings-section::before {
+        content: '💰' !important;
+        position: absolute !important;
+        top: 15px !important;
+        left: 15px !important;
+        font-size: 20px !important;
+    }
+
+    .pdf-savings-title {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        color: #dc2626 !important;
+        margin-bottom: 15px !important;
+        margin-left: 30px !important;
+    }
+
+    .pdf-savings-grid {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        gap: 20px !important;
+        flex-wrap: wrap !important;
+    }
+
+    .pdf-savings-item {
+        text-align: center !important;
+        flex: 1 !important;
+        min-width: 120px !important;
+    }
+
+    .pdf-savings-item .label {
+        color: #6b7280 !important;
+        font-size: 12px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .pdf-savings-item .value {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+    }
+
+    .pdf-savings-item .value.current {
+        color: #dc2626 !important;
+    }
+
+    .pdf-savings-item .value.new {
+        color: #2563eb !important;
+    }
+
+    .pdf-savings-item .value.savings {
+        color: #dc2626 !important;
+        font-size: 16px !important;
+        font-weight: 800 !important;
+    }
+
+    .pdf-savings-item .sub-label {
+        font-size: 11px !important;
+        color: #6b7280 !important;
+        margin-top: 4px !important;
+    }
+
+    /* Package Comparison Table */
+    .pdf-comparison-section {
+        margin-bottom: 25px !important;
+    }
+
+    .pdf-comparison-title {
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        color: #2563eb !important;
+        margin-bottom: 15px !important;
+    }
+
+    .pdf-comparison-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        background: white !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+        page-break-inside: auto;
+    }
+
+    .pdf-comparison-table thead {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        display: table-header-group;
+    }
+
+    .pdf-comparison-table th {
+        padding: 12px 8px !important;
+        text-align: center !important;
+        font-weight: 600 !important;
+        font-size: 11px !important;
+        color: white !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.3px !important;
+    }
+
+    .pdf-comparison-table th:first-child {
+        text-align: left !important;
+        background: #1e40af !important;
+    }
+
+    .pdf-comparison-table th.recommended {
+        background: #dc2626 !important;
+        position: relative !important;
+    }
+
+    .pdf-comparison-table th.recommended::after {
+        content: 'RECOMMENDED' !important;
+        position: absolute !important;
+        bottom: -6px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        background: #dc2626 !important;
+        color: white !important;
+        font-size: 8px !important;
+        padding: 1px 4px !important;
+        border-radius: 2px !important;
+        font-weight: 700 !important;
+    }
+
+    .pdf-comparison-table tbody tr:nth-child(even) {
+        background: #f8fafc !important;
+    }
+
+    .pdf-comparison-table td {
+        padding: 8px !important;
+        text-align: center !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        font-size: 10px !important;
+        line-height: 1.3 !important;
+    }
+
+    .pdf-comparison-table td:first-child {
+        text-align: left !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+    }
+
+    .pdf-comparison-table td.recommended {
+        background: rgba(37, 99, 235, 0.1) !important;
+        font-weight: 600 !important;
+        color: #1e40af !important;
+    }
+
+    .pdf-comparison-table td.rate-value {
+        font-weight: 600 !important;
+        color: #dc2626 !important;
+    }
+
+    .pdf-comparison-table td.amount {
+        color: #f59e0b !important;
+        font-weight: 600 !important;
+    }
+
+    .pdf-comparison-table td.period {
+        color: #f59e0b !important;
+        font-weight: 600 !important;
+    }
+
+    .pdf-details-table .savings-cell {
+        background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%) !important;
+        color: #dc2626 !important;
+        font-weight: 700 !important;
+    }
+
+    /* Disclaimer Section */
+    .pdf-disclaimer {
+        background: #f9fafb !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 8px !important;
+        padding: 12px !important;
+        margin-top: 20px !important;
+    }
+
+    .pdf-disclaimer-title {
+        font-weight: 700 !important;
+        color: #374151 !important;
+        margin-bottom: 6px !important;
+        font-size: 12px !important;
+    }
+
+    .pdf-disclaimer-text {
+        font-size: 10px !important;
+        color: #6b7280 !important;
+        line-height: 1.5 !important;
     }
 }
