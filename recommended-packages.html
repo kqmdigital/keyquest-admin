@@ -163,12 +163,12 @@
 </div>
 
 <!-- NEW: Existing Interest Rate for Refinancing -->
-<div class="form-group" id="existingRateGroup" style="display: none;">
+<div class="form-group hidden" id="existingRateGroup">
     <label class="form-label">Current Interest Rate (%)</label>
     <input type="number" class="form-input" id="existingInterestRate" placeholder="3.50" min="0" max="20" step="0.01">
     
 </div>
-        <div class="form-group" id="existingBankGroup" style="display: none;">
+        <div class="form-group hidden" id="existingBankGroup">
     <label class="form-label">Current Bank</label>
     <select class="form-select" id="existingBank">
         <option value="">Select Current Bank</option>
@@ -274,7 +274,7 @@
         
         
         <div class="form-group">
-            <button type="button" class="search-button" onclick="clearAllFilters()" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">
+            <button type="button" class="search-button secondary-button" onclick="clearAllFilters()">
                 <i data-lucide="rotate-ccw"></i>
                 Clear All Filters
             </button>
@@ -283,7 +283,7 @@
 </div>
 
                 <!-- Results Section -->
-              <div class="results-section" id="resultsContainer" style="display: none;">
+              <div class="results-section hidden" id="resultsContainer">
     <div class="results-header">
         <div class="results-title">
             <i data-lucide="trending-up"></i>
@@ -309,11 +309,11 @@
                     <i data-lucide="file-text"></i>
                     Generate Report
                 </button>
-                <button class="download-btn" onclick="exportCSV()" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+                <button class="download-btn csv-export" onclick="exportCSV()">
                     <i data-lucide="download"></i>
                     Export CSV
                 </button>
-                <button class="download-btn" onclick="toggleAllSelections()" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">
+                <button class="download-btn secondary-button" onclick="toggleAllSelections()">
                     <i data-lucide="check-square"></i>
                     Toggle All
                 </button>
@@ -326,7 +326,7 @@
                         <!-- Package cards will be dynamically inserted here -->
                     </div>
                     
-                    <div class="no-results" id="noResults" style="display: none;">
+                    <div class="no-results" id="noResults">
                         <i data-lucide="search"></i>
                         <h3>No Matching Packages Found</h3>
                         <p>Try adjusting your search criteria to find more suitable options.</p>
@@ -341,7 +341,7 @@
     </div>
 
     <!-- Loading Overlay -->
-<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+<div class="loading-overlay" id="loadingOverlay">
     <div class="loading-content">
         <div class="loading-spinner"></div>
         <span class="loading-message">Finding the best packages for you...</span>
@@ -476,7 +476,7 @@ function setupEventListeners() {
         if (!event.target.closest('.multi-select-filter')) {
             document.querySelectorAll('.multi-select-filter').forEach(filter => {
                 filter.classList.remove('open');
-                filter.querySelector('.multi-select-dropdown').style.display = 'none';
+                filter.querySelector('.multi-select-dropdown').classList.remove('open');
             });
         }
     });
@@ -537,11 +537,11 @@ function clearAllFilters() {
     const existingBankGroup = document.getElementById('existingBankGroup');
     
     if (loanType === 'Refinancing Home Loan') {
-        if (existingRateGroup) existingRateGroup.style.display = 'block';
-        if (existingBankGroup) existingBankGroup.style.display = 'block';
+        if (existingRateGroup) existingRateGroup.classList.remove('hidden');
+        if (existingBankGroup) existingBankGroup.classList.remove('hidden');
     } else {
-        if (existingRateGroup) existingRateGroup.style.display = 'none';
-        if (existingBankGroup) existingBankGroup.style.display = 'none';
+        if (existingRateGroup) existingRateGroup.classList.add('hidden');
+        if (existingBankGroup) existingBankGroup.classList.add('hidden');
         document.getElementById('existingInterestRate').value = '';
         document.getElementById('existingBank').value = '';
     }
@@ -561,12 +561,12 @@ function toggleMultiSelect(selectId) {
     // Close all other dropdowns first
     document.querySelectorAll('.multi-select-filter').forEach(filter => {
         filter.classList.remove('open');
-        filter.querySelector('.multi-select-dropdown').style.display = 'none';
+        filter.querySelector('.multi-select-dropdown').classList.remove('open');
     });
     
     if (!isOpen) {
         container.classList.add('open');
-        dropdown.style.display = 'block';
+        dropdown.classList.add('open');
         
         // Ensure dropdown is positioned correctly
         const rect = container.getBoundingClientRect();
@@ -924,7 +924,7 @@ function performLiveFilter() {
         function clearResults() {
     const resultsContainer = document.getElementById('resultsContainer');
     if (resultsContainer) {
-        resultsContainer.style.display = 'none';
+        resultsContainer.classList.add('hidden');
     }
     currentResults = [];
 }
@@ -1232,7 +1232,7 @@ function displayResults(packages, shouldScroll = true) {
     }
 
     // Show results container first
-    resultsContainer.style.display = 'block';
+    resultsContainer.classList.remove('hidden');
 
     // Update results count safely
     if (resultsCount) {
@@ -1288,7 +1288,7 @@ function displayResults(packages, shouldScroll = true) {
                 <i data-lucide="trending-up"></i>
                 Recommended Packages
                 <span class="results-count">${packages.length}</span>
-                <small style="font-size: 14px; font-weight: 500; color: #6b7280; margin-left: 12px; opacity: 0.8;">
+                <small class="selection-count">
                     (${selectedCount} selected for report)
                 </small>
             `;
@@ -1569,7 +1569,7 @@ function displayResults(packages, shouldScroll = true) {
                     <i data-lucide="trending-up"></i>
                     Recommended Packages
                     <span class="results-count">${currentResults.length}</span>
-                    <small style="font-size: 14px; font-weight: 500; color: #6b7280; margin-left: 12px; opacity: 0.8;">
+                    <small class="selection-count">
                         (${selectedCount} selected for report)
                     </small>
                 `;
@@ -1894,7 +1894,7 @@ function generateProfessionalReport() {
                         <tr>
                             <td>Package Features</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td class="${index === 0 ? 'recommended' : ''}" style="text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4;">
+                                <td class="${index === 0 ? 'recommended features-cell' : 'features-cell'}">
                                     ${pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true ? 
                                         '<div style="color: #15803d; margin-bottom: 3px;">✓ Legal Fee Subsidy</div>' : ''}
                                     ${pkg.cash_rebate === 'true' || pkg.cash_rebate === true ? 
@@ -1924,7 +1924,7 @@ function generateProfessionalReport() {
                         <tr>
                             <td>Remarks</td>
                             ${selectedPackages.map((pkg, index) => `
-                                <td class="${index === 0 ? 'recommended' : ''}" style="text-align: left; vertical-align: top; font-size: 11px; line-height: 1.4;">
+                                <td class="${index === 0 ? 'recommended features-cell' : 'features-cell'}">
                                     ${(pkg.custom_remarks || pkg.remarks || 'All packages are structured with fixed rates followed by floating rates based on 3M SORA.').replace(/\n/g, '<br>').substring(0, 200)}${(pkg.custom_remarks || pkg.remarks || '').length > 200 ? '...' : ''}
                                 </td>
                             `).join('')}
