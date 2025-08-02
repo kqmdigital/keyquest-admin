@@ -2032,4 +2032,297 @@ body {
         color: #6b7280 !important;
         line-height: 1.5 !important;
     }
+
+    /* Enhanced PDF Report Styling for Modern UI */
+    
+    /* Report Header Enhancement */
+    .report-header {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        color: white !important;
+        padding: 24px !important;
+        margin-bottom: 24px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+    }
+
+    .report-title {
+        font-size: 28px !important;
+        font-weight: 700 !important;
+        margin: 0 0 8px 0 !important;
+        color: white !important;
+    }
+
+    .report-subtitle {
+        font-size: 16px !important;
+        opacity: 0.9 !important;
+        margin: 0 !important;
+        color: white !important;
+    }
+
+    .report-meta {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin-top: 16px !important;
+        padding-top: 16px !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* Search Criteria Enhancement */
+    .search-criteria {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        padding: 20px !important;
+        margin-bottom: 24px !important;
+    }
+
+    .criteria-title {
+        font-size: 18px !important;
+        font-weight: 600 !important;
+        color: #334155 !important;
+        margin: 0 0 12px 0 !important;
+    }
+
+    .criteria-grid {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    .criteria-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .criteria-label {
+        font-weight: 500 !important;
+        color: #64748b !important;
+        font-size: 14px !important;
+    }
+
+    .criteria-value {
+        color: #334155 !important;
+        font-weight: 600 !important;
+        background: #e2e8f0 !important;
+        padding: 4px 8px !important;
+        border-radius: 4px !important;
+        font-size: 14px !important;
+    }
+
+    /* Package Card Enhancement */
+    .package-card {
+        background: white !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        margin-bottom: 20px !important;
+        overflow: hidden !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        page-break-inside: avoid !important;
+    }
+
+    .package-header {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+        color: white !important;
+        padding: 16px 20px !important;
+        position: relative !important;
+    }
+
+    .package-title {
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        margin: 0 0 4px 0 !important;
+        color: white !important;
+    }
+
+    .package-bank {
+        font-size: 14px !important;
+        opacity: 0.9 !important;
+        margin: 0 !important;
+        color: white !important;
+    }
+
+    .package-body {
+        padding: 20px !important;
+    }
+
+    /* Rate Schedule Enhancement */
+    .rate-schedule {
+        background: #fafafa !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 8px !important;
+        padding: 16px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .rate-schedule-title {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        margin: 0 0 12px 0 !important;
+    }
+
+    .rate-item {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 8px 0 !important;
+        border-bottom: 1px solid #e5e7eb !important;
+    }
+
+    .rate-item:last-child {
+        border-bottom: none !important;
+    }
+
+    .rate-period {
+        font-weight: 500 !important;
+        color: #6b7280 !important;
+    }
+
+    .rate-value {
+        font-weight: 700 !important;
+        color: #059669 !important;
+        font-size: 16px !important;
+    }
+
+    /* Features Enhancement */
+    .package-features {
+        margin-bottom: 16px !important;
+    }
+
+    .features-title {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        margin: 0 0 12px 0 !important;
+    }
+
+    .feature-tags {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+    }
+
+    .feature-tag {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+        color: white !important;
+        padding: 6px 12px !important;
+        border-radius: 6px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+
+    /* Package Info Grid Enhancement */
+    .package-info {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        gap: 16px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .info-item {
+        background: #f9fafb !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 6px !important;
+        padding: 12px !important;
+    }
+
+    .info-label {
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        color: #6b7280 !important;
+        margin: 0 0 4px 0 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    .info-value {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        margin: 0 !important;
+    }
+
+    /* Remarks Enhancement */
+    .package-remarks {
+        background: #fffbeb !important;
+        border: 1px solid #f59e0b !important;
+        border-radius: 6px !important;
+        padding: 12px !important;
+        margin-top: 16px !important;
+    }
+
+    .remarks-title {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #92400e !important;
+        margin: 0 0 8px 0 !important;
+    }
+
+    .remarks-content {
+        font-size: 14px !important;
+        color: #78350f !important;
+        line-height: 1.5 !important;
+        margin: 0 !important;
+    }
+
+    /* Summary Enhancement */
+    .report-summary {
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        margin-top: 24px !important;
+        text-align: center !important;
+    }
+
+    .summary-title {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        color: #374151 !important;
+        margin: 0 0 8px 0 !important;
+    }
+
+    .summary-text {
+        font-size: 14px !important;
+        color: #6b7280 !important;
+        margin: 0 !important;
+    }
+
+    /* Print-specific adjustments */
+    .package-card {
+        break-inside: avoid !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .report-header {
+        break-after: avoid !important;
+    }
+    
+    .search-criteria {
+        break-after: avoid !important;
+    }
+
+    /* Table styling enhancement */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-bottom: 16px !important;
+    }
+
+    th, td {
+        padding: 8px 12px !important;
+        text-align: left !important;
+        border-bottom: 1px solid #e5e7eb !important;
+    }
+
+    th {
+        background: #f9fafb !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+    }
 }
