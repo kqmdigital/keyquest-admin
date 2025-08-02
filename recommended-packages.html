@@ -1965,6 +1965,26 @@ function generateProfessionalReport() {
                             size: A4;
                         }
                         
+                        @media print {
+                            @page {
+                                margin: 0.5in;
+                                size: A4;
+                            }
+                            
+                            /* Hide browser-generated headers and footers */
+                            body {
+                                margin: 0 !important;
+                                padding: 0 !important;
+                            }
+                            
+                            /* Remove any browser-generated content */
+                            .no-print,
+                            header,
+                            footer {
+                                display: none !important;
+                            }
+                        }
+                        
                         * {
                             -webkit-print-color-adjust: exact !important;
                             color-adjust: exact !important;
@@ -1997,19 +2017,19 @@ function generateProfessionalReport() {
                             align-items: center !important;
                             margin-bottom: 25px !important;
                             padding-bottom: 15px !important;
-                            border-bottom: 4px solid #059669 !important;
+                            border-bottom: 1px solid #000000 !important;
                         }
 
                         .pdf-key-info {
-                            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
-                            border: 2px solid #059669 !important;
+                            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+                            border: 2px solid #2563eb !important;
                             border-radius: 16px !important;
                             padding: 18px !important;
                             margin-bottom: 20px !important;
                         }
 
                         .pdf-info-label {
-                            color: #059669 !important;
+                            color: #2563eb !important;
                             margin-bottom: 6px !important;
                             font-weight: 600 !important;
                             font-size: 12px !important;
@@ -2020,7 +2040,7 @@ function generateProfessionalReport() {
                         .pdf-info-value {
                             font-size: 18px !important;
                             font-weight: 700 !important;
-                            color: #059669 !important;
+                            color: #2563eb !important;
                         }
 
                         .pdf-info-value.current-rate {
@@ -2030,22 +2050,27 @@ function generateProfessionalReport() {
                         .pdf-comparison-title {
                             font-size: 20px !important;
                             font-weight: 700 !important;
-                            color: #059669 !important;
+                            color: #2563eb !important;
                             margin-bottom: 15px !important;
                         }
 
                         .pdf-comparison-table thead {
-                            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+                            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
                         }
 
                         .pdf-comparison-table th:first-child {
-                            background: #047857 !important;
+                            background: #1d4ed8 !important;
                         }
 
                         .pdf-comparison-table td.recommended {
-                            background: rgba(5, 150, 105, 0.1) !important;
+                            background: rgba(37, 99, 235, 0.15) !important;
                             font-weight: 600 !important;
-                            color: #047857 !important;
+                            color: #1d4ed8 !important;
+                        }
+
+                        .pdf-comparison-table th.recommended {
+                            background: #1e40af !important;
+                            position: relative !important;
                         }
 
                         .pdf-savings-item .value.new {
@@ -2058,7 +2083,7 @@ function generateProfessionalReport() {
                         }
 
                         .pdf-header .logo-section img {
-                            height: 100px !important;
+                            height: 150px !important;
                             width: auto !important;
                             object-fit: contain !important;
                         }
@@ -2105,7 +2130,7 @@ function generateProfessionalReport() {
 
                         .pdf-info-value.best-rate,
                         .pdf-info-value.savings {
-                            color: #059669 !important;
+                            color: #2563eb !important;
                         }
 
                         .pdf-info-value.property-type {
@@ -2127,8 +2152,8 @@ function generateProfessionalReport() {
 
                         /* Potential Savings Section */
                         .pdf-savings-section {
-                            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%) !important;
-                            border: 2px solid #dc2626 !important;
+                            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+                            border: 2px solid #059669 !important;
                             border-radius: 16px !important;
                             padding: 18px !important;
                             margin-bottom: 20px !important;
@@ -2146,7 +2171,7 @@ function generateProfessionalReport() {
                         .pdf-savings-title {
                             font-size: 16px !important;
                             font-weight: 700 !important;
-                            color: #dc2626 !important;
+                            color: #059669 !important;
                             margin-bottom: 15px !important;
                             margin-left: 30px !important;
                         }
@@ -2180,8 +2205,12 @@ function generateProfessionalReport() {
                             color: #dc2626 !important;
                         }
 
+                        .pdf-savings-item .value.new {
+                            color: #059669 !important;
+                        }
+
                         .pdf-savings-item .value.savings {
-                            color: #dc2626 !important;
+                            color: #059669 !important;
                             font-size: 16px !important;
                             font-weight: 800 !important;
                         }
@@ -2217,7 +2246,7 @@ function generateProfessionalReport() {
                         }
 
                         .pdf-comparison-table th.recommended {
-                            background: #dc2626 !important;
+                            background: #1e40af !important;
                             position: relative !important;
                         }
 
@@ -2227,7 +2256,7 @@ function generateProfessionalReport() {
                             bottom: -6px !important;
                             left: 50% !important;
                             transform: translateX(-50%) !important;
-                            background: #dc2626 !important;
+                            background: #1e40af !important;
                             color: white !important;
                             font-size: 8px !important;
                             padding: 1px 4px !important;
