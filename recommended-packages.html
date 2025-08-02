@@ -2088,7 +2088,8 @@ function generateProfessionalReport() {
                             margin: 0 0 15px 0 !important;
                             padding: 5px 0 10px 0 !important;
                             border-bottom: 2px solid #000000 !important;
-                            min-height: auto !important;
+                            height: 85px !important;
+                            overflow: visible !important;
                         }
 
                         .pdf-key-info {
@@ -2160,8 +2161,17 @@ function generateProfessionalReport() {
                             line-height: 0 !important;
                         }
 
+                        .pdf-header .logo-section {
+                            height: 85px !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: flex-start !important;
+                            overflow: visible !important;
+                            flex-shrink: 0 !important;
+                        }
+
                         .pdf-header .logo-section img {
-                            height: 80px !important;
+                            height: 150px !important;
                             width: auto !important;
                             object-fit: contain !important;
                             margin: 0 !important;
@@ -2169,6 +2179,7 @@ function generateProfessionalReport() {
                             border: 0 !important;
                             vertical-align: middle !important;
                             display: block !important;
+                            max-width: 200px !important;
                         }
 
                         .pdf-header .title-section {
