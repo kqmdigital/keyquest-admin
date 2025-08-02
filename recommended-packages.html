@@ -1956,7 +1956,7 @@ function generateProfessionalReport() {
                                       (!pkg.valuation_subsidy || pkg.valuation_subsidy === 'false') &&
                                       (!pkg.partial_repayment || pkg.partial_repayment === 'false') &&
                                       (!pkg.waiver_due_to_sales || pkg.waiver_due_to_sales === 'false') ? 
-                                        '<div style="color: #6b7280;">Standard features</div>' : ''}
+                                        '<div style="color: #6b7280;">Not Specified</div>' : ''}
                                 </td>
                             `).join('')}
                         </tr>
@@ -2425,7 +2425,17 @@ function generateProfessionalReport() {
                             font-weight: 600 !important;
                         }
 
-                        .pdf-comparison-table td.features-cell,
+                        .pdf-comparison-table td.features-cell {
+                            text-align: center !important;
+                            vertical-align: middle !important;
+                            font-size: 8px !important;
+                            line-height: 1.3 !important;
+                            padding: 8px 4px !important;
+                            word-wrap: break-word !important;
+                            overflow-wrap: break-word !important;
+                            hyphens: auto !important;
+                        }
+
                         .pdf-comparison-table td.remarks-cell {
                             text-align: left !important;
                             vertical-align: top !important;
