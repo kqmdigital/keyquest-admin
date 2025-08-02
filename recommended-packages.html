@@ -1750,7 +1750,7 @@ function generateProfessionalReport() {
                     </div>
                     <div class="pdf-info-item">
                         <div class="pdf-info-label">Property Type</div>
-                        <div class="pdf-info-value property-type">${(searchCriteria.propertyType || 'Private').split(' ').join('<br>')}<br>Property</div>
+                        <div class="pdf-info-value property-type">${searchCriteria.propertyType || 'Private Property'}</div>
                     </div>
                     ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
                     <div class="pdf-info-item">
@@ -2004,11 +2004,19 @@ function generateProfessionalReport() {
             
             const reportContent = document.getElementById('report-content').innerHTML;
             const printWindow = window.open('', '_blank');
+            // Get CSS from the current page
+            const cssLink = document.querySelector('link[href*="recommended-packages.css"]');
+            const adminCssLink = document.querySelector('link[href*="admin-styles.css"]');
+            
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
                     <title>Keyquest Mortgage Report</title>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    ${cssLink ? `<link rel="stylesheet" href="${cssLink.href}">` : ''}
+                    ${adminCssLink ? `<link rel="stylesheet" href="${adminCssLink.href}">` : ''}
                     <style>
                         @page {
                             margin: 0.5in;
