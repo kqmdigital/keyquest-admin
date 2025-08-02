@@ -2082,11 +2082,11 @@ function generateProfessionalReport() {
                         .pdf-header {
                             display: flex !important;
                             justify-content: space-between !important;
-                            align-items: end !important;
-                            margin: 0 !important;
-                            padding: 0 !important;
-                            border-bottom: 1px solid #000000 !important;
-                            line-height: 0 !important;
+                            align-items: center !important;
+                            margin: 0 0 20px 0 !important;
+                            padding: 0 0 15px 0 !important;
+                            border-bottom: 2px solid #000000 !important;
+                            min-height: 80px !important;
                         }
 
                         .pdf-key-info {
@@ -2094,23 +2094,26 @@ function generateProfessionalReport() {
                             border: 2px solid #2563eb !important;
                             border-radius: 16px !important;
                             padding: 18px !important;
-                            margin-top: 5px !important;
-                            margin-bottom: 20px !important;
+                            margin-top: 25px !important;
+                            margin-bottom: 30px !important;
                         }
 
                         .pdf-info-label {
                             color: #2563eb !important;
-                            margin-bottom: 6px !important;
+                            margin-bottom: 8px !important;
                             font-weight: 600 !important;
-                            font-size: 12px !important;
+                            font-size: 11px !important;
                             text-transform: uppercase !important;
                             letter-spacing: 0.5px !important;
+                            line-height: 1.2 !important;
                         }
 
                         .pdf-info-value {
-                            font-size: 18px !important;
+                            font-size: 16px !important;
                             font-weight: 700 !important;
                             color: #2563eb !important;
+                            line-height: 1.3 !important;
+                            margin: 0 !important;
                         }
 
                         .pdf-info-value.current-rate {
@@ -2156,22 +2159,24 @@ function generateProfessionalReport() {
                         }
 
                         .pdf-header .logo-section img {
-                            height: 150px !important;
+                            height: 60px !important;
                             width: auto !important;
                             object-fit: contain !important;
                             margin: 0 !important;
                             padding: 0 !important;
                             border: 0 !important;
-                            vertical-align: bottom !important;
+                            vertical-align: middle !important;
                             display: block !important;
                         }
 
                         .pdf-header .title-section {
                             text-align: right !important;
                             flex: 1 !important;
-                            margin-left: 20px !important;
-                            margin-top: 0 !important;
-                            margin-bottom: 0 !important;
+                            margin-left: 30px !important;
+                            display: flex !important;
+                            flex-direction: column !important;
+                            justify-content: center !important;
+                            align-items: flex-end !important;
                         }
 
                         .pdf-header h1 {
@@ -2200,9 +2205,10 @@ function generateProfessionalReport() {
 
                         .pdf-info-grid {
                             display: grid !important;
-                            grid-template-columns: 1fr 1fr 1fr 1fr !important;
-                            gap: 15px !important;
-                            align-items: center !important;
+                            grid-template-columns: repeat(4, 1fr) !important;
+                            gap: 20px !important;
+                            align-items: stretch !important;
+                            padding: 20px !important;
                         }
 
                         .pdf-info-item {
@@ -2211,6 +2217,10 @@ function generateProfessionalReport() {
                             flex-direction: column !important;
                             align-items: center !important;
                             justify-content: center !important;
+                            min-height: 80px !important;
+                            padding: 15px 10px !important;
+                            background: rgba(255, 255, 255, 0.8) !important;
+                            border-radius: 8px !important;
                         }
 
                         .pdf-info-value.best-rate,
