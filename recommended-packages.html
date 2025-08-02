@@ -2070,13 +2070,14 @@ function generateProfessionalReport() {
                         
                         /* Use the same print styles as before but ensure they match our new theme */
                         .pdf-report-container {
-                            padding: 40px !important;
+                            padding: 20px !important;
                             background: white !important;
                             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-                            line-height: 1.5 !important;
+                            line-height: 1.4 !important;
                             color: #1f2937 !important;
                             max-width: none !important;
                             margin: 0 auto !important;
+                            overflow: visible !important;
                         }
 
                         /* Apply our blue-green theme to print styles */
@@ -2084,10 +2085,10 @@ function generateProfessionalReport() {
                             display: flex !important;
                             justify-content: space-between !important;
                             align-items: center !important;
-                            margin: 0 0 20px 0 !important;
-                            padding: 10px 0 15px 0 !important;
+                            margin: 0 0 15px 0 !important;
+                            padding: 5px 0 10px 0 !important;
                             border-bottom: 2px solid #000000 !important;
-                            min-height: 150px !important;
+                            min-height: auto !important;
                         }
 
                         .pdf-key-info {
@@ -2160,7 +2161,7 @@ function generateProfessionalReport() {
                         }
 
                         .pdf-header .logo-section img {
-                            height: 150px !important;
+                            height: 80px !important;
                             width: auto !important;
                             object-fit: contain !important;
                             margin: 0 !important;
@@ -2459,6 +2460,36 @@ function generateProfessionalReport() {
                         /* Better spacing for package comparison section */
                         .pdf-comparison-section {
                             margin-bottom: 20px !important;
+                            page-break-inside: avoid !important;
+                        }
+
+                        /* Page break controls for better PDF layout */
+                        .pdf-header {
+                            page-break-after: avoid !important;
+                        }
+
+                        .pdf-key-info {
+                            page-break-inside: avoid !important;
+                            page-break-after: avoid !important;
+                        }
+
+                        .pdf-savings-section {
+                            page-break-inside: avoid !important;
+                        }
+
+                        .pdf-comparison-table {
+                            page-break-inside: auto !important;
+                        }
+
+                        .pdf-comparison-table thead {
+                            page-break-after: avoid !important;
+                        }
+
+                        .pdf-comparison-table tr {
+                            page-break-inside: avoid !important;
+                        }
+
+                        .pdf-disclaimer {
                             page-break-inside: avoid !important;
                         }
 
