@@ -1733,7 +1733,6 @@ function generateProfessionalReport() {
                 <div class="title-section">
                     <h1>Mortgage Package Analysis</h1>
                     ${clientName ? `<div class="client-name">Prepared for: ${clientName}</div>` : ''}
-                    <div class="report-date">${reportDate}</div>
                 </div>
             </div>
 
@@ -1756,10 +1755,6 @@ function generateProfessionalReport() {
                     <div class="pdf-info-item">
                         <div class="pdf-info-label">Current Rate</div>
                         <div class="pdf-info-value current-rate">${searchCriteria.existingInterestRate}%</div>
-                    </div>
-                    <div class="pdf-info-item">
-                        <div class="pdf-info-label">Best Savings</div>
-                        <div class="pdf-info-value savings">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}<span class="sub-text">Over ${selectedPackages[0]?.lock_period || '2'} Years Lock-in</span></div>
                     </div>
                     ` : `
                     <div class="pdf-info-item">
@@ -2052,10 +2047,10 @@ function generateProfessionalReport() {
                         .pdf-header {
                             display: flex !important;
                             justify-content: space-between !important;
-                            align-items: flex-start !important;
+                            align-items: center !important;
                             margin-bottom: 30px !important;
                             padding-bottom: 20px !important;
-                            border-bottom: 4px solid #dc2626 !important;
+                            border-bottom: 4px solid #059669 !important;
                         }
 
                         .pdf-header .logo-section {
@@ -2063,7 +2058,7 @@ function generateProfessionalReport() {
                         }
 
                         .pdf-header .logo-section img {
-                            height: 80px !important;
+                            height: 120px !important;
                             width: auto !important;
                             object-fit: contain !important;
                         }
@@ -2071,27 +2066,22 @@ function generateProfessionalReport() {
                         .pdf-header .title-section {
                             text-align: right !important;
                             flex: 1 !important;
-                            margin-left: 20px !important;
+                            margin-left: 30px !important;
                         }
 
                         .pdf-header h1 {
-                            margin: 0 0 8px 0 !important;
-                            font-size: 32px !important;
-                            font-weight: 800 !important;
-                            color: #1f2937 !important;
-                            letter-spacing: -0.5px !important;
+                            margin: 0 !important;
+                            font-size: 24px !important;
+                            font-weight: 700 !important;
+                            color: #1e40af !important;
+                            letter-spacing: -0.3px !important;
                         }
 
                         .pdf-header .client-name {
-                            font-size: 18px !important;
-                            color: #6b7280 !important;
-                            margin-bottom: 4px !important;
-                            font-weight: 500 !important;
-                        }
-
-                        .pdf-header .report-date {
-                            font-size: 14px !important;
-                            color: #9ca3af !important;
+                            font-size: 16px !important;
+                            color: #059669 !important;
+                            margin-top: 4px !important;
+                            font-weight: 600 !important;
                         }
 
                         /* Key Information Cards */
