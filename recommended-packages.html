@@ -1391,6 +1391,72 @@ function displayResults(packages, shouldScroll = true) {
 
 
 
+                    <!-- Package Features Selector -->
+                    <div class="package-features-editor">
+                        <div class="features-editor-title">
+                            <i data-lucide="check-square"></i>
+                            Package Features (Editable)
+                        </div>
+                        <div class="features-checkboxes" id="features-${index}">
+                            <label class="feature-checkbox">
+                                <input type="checkbox" 
+                                       value="legal_fee_subsidy" 
+                                       onchange="updatePackageFeature(${index}, 'legal_fee_subsidy', this.checked)"
+                                       ${(pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Legal Fee Subsidy
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" 
+                                       value="cash_rebate" 
+                                       onchange="updatePackageFeature(${index}, 'cash_rebate', this.checked)"
+                                       ${(pkg.cash_rebate === 'true' || pkg.cash_rebate === true) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Cash Rebate
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" 
+                                       value="free_package_conversion_12m" 
+                                       onchange="updatePackageFeature(${index}, 'free_package_conversion_12m', this.checked)"
+                                       ${(pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Free Conversion (12M)
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" 
+                                       value="free_package_conversion_24m" 
+                                       onchange="updatePackageFeature(${index}, 'free_package_conversion_24m', this.checked)"
+                                       ${(pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Free Conversion (24M)
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" 
+                                       value="valuation_subsidy" 
+                                       onchange="updatePackageFeature(${index}, 'valuation_subsidy', this.checked)"
+                                       ${(pkg.valuation_subsidy === 'true' || pkg.valuation_subsidy === true) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Valuation Subsidy
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" 
+                                       value="partial_repayment" 
+                                       onchange="updatePackageFeature(${index}, 'partial_repayment', this.checked)"
+                                       ${(pkg.partial_repayment === 'true' || pkg.partial_repayment === true) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Partial Repayment
+                            </label>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" 
+                                       value="waiver_due_to_sales" 
+                                       onchange="updatePackageFeature(${index}, 'waiver_due_to_sales', this.checked)"
+                                       ${(pkg.waiver_due_to_sales === 'true' || pkg.waiver_due_to_sales === true) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                                Waiver Due to Sales
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="package-remarks-editor">
                         <div class="remarks-editor-title">
                             <i data-lucide="edit"></i>
@@ -1606,6 +1672,60 @@ function displayResults(packages, shouldScroll = true) {
             if (currentResults[packageIndex]) {
                 currentResults[packageIndex].custom_remarks = newRemarks;
                 console.log(`📝 Updated remarks for package ${packageIndex}:`, newRemarks);
+            }
+        }
+
+        // ===================================
+        // PACKAGE FEATURES MANAGEMENT
+        // ===================================
+        function updatePackageFeature(packageIndex, featureName, isChecked) {
+            if (currentResults[packageIndex]) {
+                currentResults[packageIndex][featureName] = isChecked;
+                console.log(`✅ Updated feature "${featureName}" for package ${packageIndex}:`, isChecked);
+                
+                // Update the package features inline display
+                updatePackageCard(packageIndex);
+            }
+        }
+
+        function updatePackageCard(packageIndex) {
+            const packageCard = document.querySelector(`[data-package-index="${packageIndex}"]`);
+            if (packageCard && currentResults[packageIndex]) {
+                const pkg = currentResults[packageIndex];
+                const features = generatePackageFeatures(pkg);
+                
+                // Update the inline features display
+                const featuresInline = packageCard.querySelector('.package-features-inline');
+                if (featuresInline && features) {
+                    featuresInline.innerHTML = `
+                        <span class="features-title-inline">
+                            <i data-lucide="award"></i>
+                            Package Features:
+                        </span>
+                        ${features}
+                    `;
+                } else if (!features && featuresInline) {
+                    featuresInline.remove();
+                } else if (features && !featuresInline) {
+                    // Add features display if it doesn't exist
+                    const featuresEditor = packageCard.querySelector('.package-features-editor');
+                    if (featuresEditor) {
+                        featuresEditor.insertAdjacentHTML('beforebegin', `
+                            <div class="package-features-inline">
+                                <span class="features-title-inline">
+                                    <i data-lucide="award"></i>
+                                    Package Features:
+                                </span>
+                                ${features}
+                            </div>
+                        `);
+                    }
+                }
+                
+                // Re-initialize Lucide icons for updated content
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
             }
         }
 

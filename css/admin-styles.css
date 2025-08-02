@@ -2652,5 +2652,108 @@ body:not(.admin-container) .logo-image,
 }
 
 /* ===================================
+   PACKAGE FEATURES EDITOR STYLES
+   ================================== */
+
+/* Package Features Editor Container */
+.package-features-editor {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+/* Features Editor Title */
+.features-editor-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #4338ca;
+    margin-bottom: 12px;
+}
+
+.features-editor-title i {
+    width: 16px;
+    height: 16px;
+    color: #4338ca;
+}
+
+/* Features Checkboxes Container */
+.features-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* Individual Feature Checkbox */
+.feature-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    color: #475569;
+    position: relative;
+}
+
+.feature-checkbox:hover {
+    background: #e0e7ff;
+    border-color: #c7d2fe;
+    color: #4338ca;
+}
+
+.feature-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #4338ca;
+    margin: 0;
+}
+
+.feature-checkbox input[type="checkbox"]:checked + .checkmark {
+    color: #15803d;
+}
+
+/* Custom Checkmark Styling */
+.checkmark {
+    color: #64748b;
+    transition: color 0.2s ease;
+}
+
+/* Responsive adjustments for features editor */
+@media (max-width: 768px) {
+    .features-checkboxes {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    
+    .feature-checkbox {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .package-features-editor {
+        padding: 12px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .features-editor-title {
+        font-size: 13px;
+    }
+}
+
+/* ===================================
    END OF ENHANCED STYLES
    ================================== */
