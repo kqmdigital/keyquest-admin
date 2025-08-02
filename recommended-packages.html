@@ -1163,7 +1163,7 @@ function formatSavings(savings, lockInPeriod = null) {
                 return `${formatPercentage(rate)} Fixed`;
             } else {
                 const operatorSymbol = thereafterOp === '+' ? '+' : '-';
-                return `${thereafterType} ${operatorSymbol} ${thereafterVal}%`;
+                return `${thereafterType} ${operatorSymbol} ${parseFloat(thereafterVal).toFixed(2)}%`;
             }
         }
         return '-'; // Only show dash if no thereafter rate exists
@@ -1175,7 +1175,7 @@ function formatSavings(savings, lockInPeriod = null) {
         return `${formatPercentage(rate)} Fixed`;
     } else {
         const operatorSymbol = operator === '+' ? '+' : '-';
-        return `${rateType} ${operatorSymbol} ${value}%`;
+        return `${rateType} ${operatorSymbol} ${parseFloat(value).toFixed(2)}%`;
     }
 }
 
@@ -1206,7 +1206,7 @@ function formatDetailedRateDisplay(pkg, year) {
         const operatorSymbol = operator === '+' ? '+' : '-';
         const spreadValue = parseFloat(value) || 0;
         
-        return `${rateType}(${formatPercentage(referenceRateValue)}) ${operatorSymbol} ${spreadValue.toFixed(2)}%`;
+        return `${rateType}(${referenceRateValue.toFixed(2)}%) ${operatorSymbol} ${spreadValue.toFixed(2)}%`;
     }
 }
 
@@ -1822,7 +1822,7 @@ function generateProfessionalReport() {
                     ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
                     <div class="pdf-info-item">
                         <div class="pdf-info-label">Current Rate</div>
-                        <div class="pdf-info-value current-rate">${searchCriteria.existingInterestRate}%</div>
+                        <div class="pdf-info-value current-rate">${parseFloat(searchCriteria.existingInterestRate).toFixed(2)}%</div>
                     </div>
                     ` : `
                     <div class="pdf-info-item">
@@ -1833,29 +1833,6 @@ function generateProfessionalReport() {
                 </div>
             </div>
 
-            ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
-            <!-- Potential Savings Section -->
-            <div class="pdf-savings-section">
-                <div class="pdf-savings-title">Potential Savings with Our Recommended Package</div>
-                <div class="pdf-savings-grid">
-                    <div class="pdf-savings-item">
-                        <div class="label">Current Monthly Payment</div>
-                        <div class="value current">${formatCurrency(calculateMonthlyInstallment(searchCriteria.loanAmount, searchCriteria.loanTenure, searchCriteria.existingInterestRate))}</div>
-                        <div class="sub-label">at ${searchCriteria.existingInterestRate}%</div>
-                    </div>
-                    <div class="pdf-savings-item">
-                        <div class="label">New Monthly Payment</div>
-                        <div class="value new">${formatCurrency(selectedPackages[0]?.monthlyInstallment || 0)}</div>
-                        <div class="sub-label">at ${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
-                    </div>
-                    <div class="pdf-savings-item">
-                        <div class="label">Total Savings</div>
-                        <div class="value savings">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}</div>
-                        <div class="sub-label">over lock-in period</div>
-                    </div>
-                </div>
-            </div>
-            ` : ''}
 
             <!-- Package Comparison Table -->
             <div class="pdf-comparison-section">
@@ -1996,6 +1973,30 @@ function generateProfessionalReport() {
                 </table>
             </div>
 
+            ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
+            <!-- Potential Savings Section -->
+            <div class="pdf-savings-section">
+                <div class="pdf-savings-title">Potential Savings with Our Recommended Package</div>
+                <div class="pdf-savings-grid">
+                    <div class="pdf-savings-item">
+                        <div class="label">Current Monthly Payment</div>
+                        <div class="value current">${formatCurrency(calculateMonthlyInstallment(searchCriteria.loanAmount, searchCriteria.loanTenure, searchCriteria.existingInterestRate))}</div>
+                        <div class="sub-label">at ${parseFloat(searchCriteria.existingInterestRate).toFixed(2)}%</div>
+                    </div>
+                    <div class="pdf-savings-item">
+                        <div class="label">New Monthly Payment</div>
+                        <div class="value new">${formatCurrency(selectedPackages[0]?.monthlyInstallment || 0)}</div>
+                        <div class="sub-label">at ${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
+                    </div>
+                    <div class="pdf-savings-item">
+                        <div class="label">Total Savings</div>
+                        <div class="value savings">${formatSavings(selectedPackages[0]?.totalSavings || 0, selectedPackages[0]?.lock_period)}</div>
+                        <div class="sub-label">over lock-in period</div>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
             <!-- Professional Disclaimer -->
             <div class="pdf-disclaimer">
                 <div class="pdf-disclaimer-title">Disclaimer:</div>
@@ -2093,9 +2094,9 @@ function generateProfessionalReport() {
                             background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
                             border: 2px solid #2563eb !important;
                             border-radius: 16px !important;
-                            padding: 18px !important;
-                            margin-top: 25px !important;
-                            margin-bottom: 30px !important;
+                            padding: 15px !important;
+                            margin-top: 20px !important;
+                            margin-bottom: 20px !important;
                         }
 
                         .pdf-info-label {
@@ -2206,9 +2207,9 @@ function generateProfessionalReport() {
                         .pdf-info-grid {
                             display: grid !important;
                             grid-template-columns: repeat(4, 1fr) !important;
-                            gap: 20px !important;
+                            gap: 15px !important;
                             align-items: stretch !important;
-                            padding: 20px !important;
+                            padding: 10px !important;
                         }
 
                         .pdf-info-item {
@@ -2217,8 +2218,8 @@ function generateProfessionalReport() {
                             flex-direction: column !important;
                             align-items: center !important;
                             justify-content: center !important;
-                            min-height: 80px !important;
-                            padding: 15px 10px !important;
+                            min-height: 60px !important;
+                            padding: 10px 8px !important;
                             background: rgba(255, 255, 255, 0.8) !important;
                             border-radius: 8px !important;
                         }
