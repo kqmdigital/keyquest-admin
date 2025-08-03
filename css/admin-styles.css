@@ -126,7 +126,8 @@ body:not(.admin-container) .logo-image,
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 12px 16px;
+    padding: 14px 16px;
+    min-height: 44px;
     color: #6b7280;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -177,8 +178,13 @@ body:not(.admin-container) .logo-image,
     border: none;
     color: #6b7280;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 12px;
+    border-radius: 8px;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mobile-menu-toggle:hover {
@@ -187,7 +193,7 @@ body:not(.admin-container) .logo-image,
 
 @media (max-width: 768px) {
     .mobile-menu-toggle {
-        display: block;
+        display: flex !important;
     }
     
     .nav-menu {
@@ -211,7 +217,9 @@ body:not(.admin-container) .logo-image,
     .nav-item {
         width: 100%;
         justify-content: flex-start;
-        padding: 12px 16px;
+        padding: 16px 20px;
+        min-height: 48px;
+        font-size: 16px;
     }
     
     .nav-item span {
@@ -495,9 +503,11 @@ body:not(.admin-container) .logo-image,
 }
 
 .btn-sm {
-    padding: 8px 14px;
-    font-size: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
     border-radius: 8px;
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .btn[disabled] {
@@ -1175,9 +1185,14 @@ body:not(.admin-container) .logo-image,
     border-radius: 6px;
     color: white;
     cursor: pointer;
-    padding: 8px;
+    padding: 12px;
+    min-width: 44px;
+    min-height: 44px;
     transition: all 0.2s;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-close:hover {
@@ -2062,8 +2077,8 @@ body:not(.admin-container) .logo-image,
 }
 
 .btn-sm {
-    padding: 6px 8px;
-    font-size: 12px;
+    padding: 10px 12px;
+    font-size: 13px;
     border-radius: 6px;
     border: none;
     cursor: pointer;
@@ -2071,8 +2086,8 @@ body:not(.admin-container) .logo-image,
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    min-width: 32px;
-    height: 32px;
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .btn-sm i {
@@ -2444,6 +2459,71 @@ body:not(.admin-container) .logo-image,
     .table {
         min-width: 800px;
     }
+    
+    /* Responsive Table - Card Layout for Mobile */
+    .table-container {
+        overflow-x: visible;
+    }
+    
+    .table,
+    .table thead,
+    .table tbody,
+    .table tr,
+    .table td,
+    .table th {
+        display: block;
+    }
+    
+    .table thead {
+        display: none;
+    }
+    
+    .table tr {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        padding: 16px;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+    
+    .table tr:hover {
+        transform: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .table td {
+        border-bottom: none;
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f5f9;
+        position: relative;
+        padding-left: 40%;
+        text-align: right;
+    }
+    
+    .table td:last-child {
+        border-bottom: none;
+    }
+    
+    .table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        top: 8px;
+        font-weight: 600;
+        color: #374151;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .table .action-buttons {
+        justify-content: flex-end;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f1f5f9;
+    }
 }
 
 @media (max-width: 480px) {
@@ -2462,9 +2542,10 @@ body:not(.admin-container) .logo-image,
     }
     
     .btn-sm {
-        min-width: 28px;
-        height: 28px;
-        padding: 4px 6px;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 12px 16px;
+        font-size: 13px;
     }
 }
 
