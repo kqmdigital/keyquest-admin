@@ -1928,24 +1928,33 @@ body:not(.admin-container) .logo-image,
     z-index: 2;
 }
 
-.action-icon.create { 
+.action-icon.action-add { 
     background: linear-gradient(135deg, #10b981, #059669);
 }
 
-.action-icon.edit { 
+.action-icon.action-edit { 
     background: linear-gradient(135deg, #3b82f6, #2563eb);
 }
 
-.action-icon.delete { 
+.action-icon.action-delete { 
     background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-.action-icon.view { 
+.action-icon.action-view { 
     background: linear-gradient(135deg, #8b5cf6, #7c3aed);
 }
 
-.action-icon.duplicate { 
+.action-icon.action-duplicate { 
     background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.action-icon.action-export { 
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+}
+
+/* Fallback for unknown action types */
+.action-icon:not([class*="action-"]) { 
+    background: linear-gradient(135deg, #6b7280, #4b5563);
 }
 
 .action-details {
