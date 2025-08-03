@@ -56,22 +56,33 @@ class AuthService {
             }
 
             // Use custom authentication with existing password hashes
-            const { data, error } = await supabaseClient.rpc('authenticate_admin', {
-                user_email: email,
-                user_password: password
-            });
-            
-            if (error) {
-                console.error('Authentication error:', error);
-                return { 
-                    success: false, 
-                    error: 'Invalid email or password' 
-                };
-            }
+  const { data, error } = await supabaseClient.rpc('authenticate_admin', {
+      user_email: email,
+      user_password: password
+  });
 
-            if (!data || !data.success) {
-                return { success: false, error: data?.message || 'Invalid credentials' };
-            }
+  // ADD THIS DEBUGGING BLOCK
+  console.log('🔍 RPC Response:', { data, error });
+  if (data) {
+      console.log('🔍 RPC data.success:', data.success);
+      console.log('🔍 RPC data.message:', data.message);
+      console.log('🔍 RPC data.user:', data.user);
+  } else {
+      console.log('🔍 RPC returned no data');
+  }
+  // END DEBUGGING BLOCK
+
+  if (error) {
+      console.error('Authentication error:', error);
+      return {
+          success: false,
+          error: 'Invalid email or password'
+      };
+  }
+
+  if (!data || !data.success) {
+      return { success: false, error: data?.message || 'Invalid credentials' };
+  }
 
             // Get admin data from the response
             const adminData = data.user;
