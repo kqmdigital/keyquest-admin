@@ -773,19 +773,19 @@ function openDirectPrintReport(reportContent) {
 
                 .pdf-info-label {
                     color: white !important;
-                    margin-bottom: 8px !important;
+                    margin-bottom: 4px !important;
                     font-weight: 600 !important;
-                    font-size: 12px !important;
+                    font-size: 9px !important;
                     text-transform: uppercase !important;
-                    letter-spacing: 0.5px !important;
-                    line-height: 1.2 !important;
+                    letter-spacing: 0.3px !important;
+                    line-height: 1.1 !important;
                 }
 
                 .pdf-info-value {
-                    font-size: 16px !important;
-                    font-weight: 400 !important;
+                    font-size: 12px !important;
+                    font-weight: 600 !important;
                     color: white !important;
-                    line-height: 1.3 !important;
+                    line-height: 1.2 !important;
                     margin: 0 !important;
                 }
 
@@ -890,9 +890,9 @@ function openDirectPrintReport(reportContent) {
                 .pdf-info-grid {
                     display: grid !important;
                     grid-template-columns: repeat(5, 1fr) !important;
-                    gap: 20px !important;
+                    gap: 12px !important;
                     align-items: stretch !important;
-                    padding: 10px !important;
+                    padding: 6px !important;
                 }
 
                 .pdf-info-item {
@@ -901,11 +901,11 @@ function openDirectPrintReport(reportContent) {
                     flex-direction: column !important;
                     align-items: center !important;
                     justify-content: center !important;
-                    min-height: 100px !important;
-                    padding: 16px 12px !important;
+                    min-height: 75px !important;
+                    padding: 10px 8px !important;
                     background: linear-gradient(135deg, #264A82 0%, #1e3a6f 100%) !important;
-                    border-radius: 12px !important;
-                    box-shadow: 0 4px 12px rgba(38, 74, 130, 0.25) !important;
+                    border-radius: 8px !important;
+                    box-shadow: 0 2px 8px rgba(38, 74, 130, 0.25) !important;
                 }
 
                 .pdf-info-value.best-rate,
@@ -914,13 +914,13 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-info-value.property-type {
-                    font-size: 16px !important;
-                    font-weight: 400 !important;
+                    font-size: 12px !important;
+                    font-weight: 600 !important;
                     line-height: 1.2 !important;
                 }
 
                 .pdf-info-value.savings {
-                    font-size: 14px !important;
+                    font-size: 11px !important;
                     line-height: 1.2 !important;
                 }
 
