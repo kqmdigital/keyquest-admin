@@ -612,6 +612,11 @@ function generateProfessionalReport() {
                                 <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">${pkg.avgFirst2Years?.toFixed(2)}%</th>
                             `).join('')}
                         </tr>
+                        <tr>
+                            ${selectedPackages.map((pkg, index) => `
+                                <th class="rate-label-subheader ${index === 0 ? 'recommended' : ''}">Interest Rate</th>
+                            `).join('')}
+                        </tr>
                     </thead>
                     <tbody>
                         ${installmentComparison.yearlyComparison.map(yearData => `
@@ -1089,6 +1094,19 @@ function openDirectPrintReport(reportContent) {
                     background: rgba(30, 58, 111, 0.9) !important;
                 }
 
+                .pdf-monthly-installment-table .rate-label-subheader {
+                    background: rgba(38, 74, 130, 0.6) !important;
+                    font-size: 8px !important;
+                    padding: 3px !important;
+                    font-weight: 500 !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 0.2px !important;
+                }
+
+                .pdf-monthly-installment-table .rate-label-subheader.recommended {
+                    background: rgba(30, 58, 111, 0.7) !important;
+                }
+
                 .pdf-monthly-installment-table td {
                     padding: 8px 6px !important;
                     text-align: center !important;
@@ -1114,7 +1132,7 @@ function openDirectPrintReport(reportContent) {
                     text-align: left !important;
                     padding-left: 16px !important;
                     font-style: italic !important;
-                    font-size: 10px !important;
+                    font-size: 9px !important;
                 }
 
                 .pdf-monthly-installment-table .savings-label {
@@ -1149,6 +1167,7 @@ function openDirectPrintReport(reportContent) {
 
                 .pdf-monthly-installment-table .package-detail {
                     color: #6b7280 !important;
+                    font-size: 11px !important;
                 }
 
                 .pdf-monthly-installment-table .package-detail.recommended {
