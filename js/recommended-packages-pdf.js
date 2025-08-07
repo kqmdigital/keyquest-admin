@@ -1133,7 +1133,7 @@ function openDirectPrintReport(reportContent) {
                     padding: 8px 6px !important;
                     text-align: center !important;
                     border-bottom: 1px solid #e2e8f0 !important;
-                    font-size: 13px !important;
+                    font-size: 11px !important;
                     line-height: 1.4 !important;
                     word-wrap: break-word !important;
                     vertical-align: top !important;
@@ -1157,13 +1157,6 @@ function openDirectPrintReport(reportContent) {
                     font-size: 9px !important;
                 }
 
-                .pdf-monthly-installment-table .savings-label {
-                    background: rgba(38, 74, 130, 0.15) !important;
-                    font-weight: 600 !important;
-                    color: #264A82 !important;
-                    text-align: left !important;
-                    padding-left: 12px !important;
-                }
 
                 .pdf-monthly-installment-table .current-value {
                     background: #fef2f2 !important;
@@ -1188,17 +1181,6 @@ function openDirectPrintReport(reportContent) {
                 }
 
 
-                .pdf-monthly-installment-table .savings-value {
-                    background: transparent !important;
-                    color: #264A82 !important;
-                    font-weight: 600 !important;
-                }
-
-                .pdf-monthly-installment-table .savings-value.recommended {
-                    background: transparent !important;
-                    color: #264A82 !important;
-                    font-weight: 600 !important;
-                }
 
                 .pdf-monthly-installment-table tbody tr:nth-child(even) {
                     background: #f8fafc !important;
