@@ -771,9 +771,9 @@ function openDirectPrintReport(reportContent) {
                     background: transparent !important;
                     border: none !important;
                     border-radius: 16px !important;
-                    padding: 15px !important;
-                    margin-top: 20px !important;
-                    margin-bottom: 20px !important;
+                    padding: 8px !important;
+                    margin-top: 8px !important;
+                    margin-bottom: 8px !important;
                 }
 
                 .pdf-info-label {
@@ -906,11 +906,12 @@ function openDirectPrintReport(reportContent) {
                     flex-direction: column !important;
                     align-items: center !important;
                     justify-content: center !important;
-                    min-height: 75px !important;
-                    padding: 10px 8px !important;
+                    min-height: 65px !important;
+                    padding: 8px 6px !important;
                     background: linear-gradient(135deg, #264A82 0%, #1e3a6f 100%) !important;
                     border-radius: 8px !important;
                     box-shadow: 0 2px 8px rgba(38, 74, 130, 0.25) !important;
+                    margin: 0 !important;
                 }
 
                 .pdf-info-value.best-rate,
