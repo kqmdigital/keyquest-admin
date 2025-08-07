@@ -1176,11 +1176,6 @@ function openDirectPrintReport(reportContent) {
                     font-weight: 600 !important;
                 }
 
-                .pdf-monthly-installment-table .package-value.recommended {
-                    background: rgba(38, 74, 130, 0.15) !important;
-                    font-weight: 600 !important;
-                    color: #264A82 !important;
-                }
 
                 .pdf-monthly-installment-table .current-detail {
                     background: #fef2f2 !important;
@@ -1192,11 +1187,6 @@ function openDirectPrintReport(reportContent) {
                     font-size: 11px !important;
                 }
 
-                .pdf-monthly-installment-table .package-detail.recommended {
-                    background: rgba(38, 74, 130, 0.15) !important;
-                    font-weight: 600 !important;
-                    color: #264A82 !important;
-                }
 
                 .pdf-monthly-installment-table .savings-value {
                     background: transparent !important;
@@ -1212,6 +1202,13 @@ function openDirectPrintReport(reportContent) {
 
                 .pdf-monthly-installment-table tbody tr:nth-child(even) {
                     background: #f8fafc !important;
+                }
+
+                .pdf-monthly-installment-table td.package-value.recommended,
+                .pdf-monthly-installment-table td.package-detail.recommended {
+                    background: rgba(38, 74, 130, 0.15) !important;
+                    font-weight: 600 !important;
+                    color: #264A82 !important;
                 }
 
                 .pdf-monthly-installment-table .package-header {
