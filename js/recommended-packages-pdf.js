@@ -855,10 +855,11 @@ function openDirectPrintReport(reportContent) {
                     justify-content: flex-start !important;
                     overflow: visible !important;
                     flex-shrink: 0 !important;
+                    margin-left: -10px !important;
                 }
 
                 .pdf-header .logo-section img {
-                    height: 260px !important;
+                    height: 200px !important;
                     width: auto !important;
                     object-fit: contain !important;
                     margin: 0 !important;
@@ -866,7 +867,7 @@ function openDirectPrintReport(reportContent) {
                     border: 0 !important;
                     vertical-align: middle !important;
                     display: block !important;
-                    max-width: 350px !important;
+                    max-width: 280px !important;
                 }
 
                 .pdf-header .title-section {
