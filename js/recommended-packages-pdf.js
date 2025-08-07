@@ -468,9 +468,6 @@ function generateProfessionalReport() {
                     <thead>
                         <tr>
                             <th rowspan="2" class="row-header"></th>
-                            ${installmentComparison.currentPackage ? `
-                                <th class="current-package-header">Current Package</th>
-                            ` : ''}
                             ${selectedPackages.map((pkg, index) => `
                                 <th class="${index === 0 ? 'recommended-package-header' : 'package-header'}">
                                     ${hideBankNames ? `Package ${index + 1}` : pkg.bank_name}
@@ -478,9 +475,6 @@ function generateProfessionalReport() {
                             `).join('')}
                         </tr>
                         <tr>
-                            ${installmentComparison.currentPackage ? `
-                                <th class="rate-subheader">${searchCriteria.existingInterestRate?.toFixed(2)}%</th>
-                            ` : ''}
                             ${selectedPackages.map((pkg, index) => `
                                 <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">${pkg.avgFirst2Years?.toFixed(2)}%</th>
                             `).join('')}
@@ -490,9 +484,6 @@ function generateProfessionalReport() {
                         ${installmentComparison.yearlyComparison.map(yearData => `
                             <tr class="year-row">
                                 <td class="year-label">Year ${yearData.year} - MI</td>
-                                ${yearData.current ? `
-                                    <td class="current-value">${formatCurrency(yearData.current.monthlyInstalment)}</td>
-                                ` : ''}
                                 ${yearData.packages.map((pkgData, index) => `
                                     <td class="package-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.monthlyInstalment)}</td>
                                 `).join('')}
@@ -500,27 +491,16 @@ function generateProfessionalReport() {
                             ${yearData.packages.length > 0 && yearData.packages[0].totalPrincipal ? `
                             <tr class="detail-row">
                                 <td class="detail-label">Total Principal</td>
-                                ${yearData.current ? `<td class="current-detail">-</td>` : ''}
                                 ${yearData.packages.map((pkgData, index) => `
                                     <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalPrincipal)}</td>
                                 `).join('')}
                             </tr>
                             <tr class="detail-row">
                                 <td class="detail-label">Total Interest</td>
-                                ${yearData.current ? `<td class="current-detail">-</td>` : ''}
                                 ${yearData.packages.map((pkgData, index) => `
                                     <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalInterest)}</td>
                                 `).join('')}
                             </tr>
-                            ${installmentComparison.currentPackage ? `
-                            <tr class="savings-row">
-                                <td class="savings-label">Total Saving</td>
-                                <td class="current-detail">-</td>
-                                ${yearData.packages.map((pkgData, index) => `
-                                    <td class="savings-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalSavings)}</td>
-                                `).join('')}
-                            </tr>
-                            ` : ''}
                             ` : ''}
                         `).join('')}
                     </tbody>
@@ -634,14 +614,14 @@ function openDirectPrintReport(reportContent) {
                     overflow: visible !important;
                 }
 
-                /* Apply our blue-green theme to print styles */
+                /* Apply professional blue theme to match TDSR report */
                 .pdf-header {
                     display: flex !important;
                     justify-content: space-between !important;
                     align-items: center !important;
                     margin: 0 0 15px 0 !important;
                     padding: 5px 0 10px 0 !important;
-                    border-bottom: 2px solid #000000 !important;
+                    border-bottom: 2px solid #264A82 !important;
                     height: 85px !important;
                     overflow: visible !important;
                 }
@@ -680,31 +660,31 @@ function openDirectPrintReport(reportContent) {
                 .pdf-comparison-title {
                     font-size: 20px !important;
                     font-weight: 700 !important;
-                    color: #2563eb !important;
+                    color: #264A82 !important;
                     margin-bottom: 15px !important;
                 }
 
                 .pdf-comparison-table thead {
-                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                    background: linear-gradient(135deg, #264A82 0%, #1e3a6f 100%) !important;
                 }
 
                 .pdf-comparison-table th:first-child {
-                    background: #1d4ed8 !important;
+                    background: #1e3a6f !important;
                 }
 
                 .pdf-comparison-table td.recommended {
-                    background: rgba(37, 99, 235, 0.15) !important;
+                    background: rgba(38, 74, 130, 0.15) !important;
                     font-weight: 600 !important;
-                    color: #1d4ed8 !important;
+                    color: #264A82 !important;
                 }
 
                 .pdf-comparison-table th.recommended {
-                    background: #1e40af !important;
+                    background: #1e3a6f !important;
                     position: relative !important;
                 }
 
                 .pdf-savings-item .value.new {
-                    color: #1d4ed8 !important;
+                    color: #264A82 !important;
                 }
 
                 /* Complete PDF Report Styles */
@@ -786,9 +766,9 @@ function openDirectPrintReport(reportContent) {
                     justify-content: center !important;
                     min-height: 100px !important;
                     padding: 16px 12px !important;
-                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                    background: linear-gradient(135deg, #264A82 0%, #1e3a6f 100%) !important;
                     border-radius: 12px !important;
-                    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+                    box-shadow: 0 4px 12px rgba(38, 74, 130, 0.25) !important;
                 }
 
                 .pdf-info-value.best-rate,
@@ -815,8 +795,8 @@ function openDirectPrintReport(reportContent) {
 
                 /* Potential Savings Section */
                 .pdf-savings-section {
-                    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
-                    border: 2px solid #2563eb !important;
+                    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+                    border: 2px solid #264A82 !important;
                     border-radius: 16px !important;
                     padding: 20px !important;
                     margin-bottom: 20px !important;
@@ -835,7 +815,7 @@ function openDirectPrintReport(reportContent) {
                 .pdf-savings-title {
                     font-size: 16px !important;
                     font-weight: 700 !important;
-                    color: #2563eb !important;
+                    color: #264A82 !important;
                     margin-bottom: 15px !important;
                     margin-left: 30px !important;
                 }
@@ -879,7 +859,7 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-savings-item .value.savings {
-                    color: #2563eb !important;
+                    color: #264A82 !important;
                     font-size: 18px !important;
                     font-weight: 800 !important;
                     line-height: 1.3 !important;
@@ -905,7 +885,7 @@ function openDirectPrintReport(reportContent) {
                 .pdf-section-title {
                     font-size: 18px !important;
                     font-weight: 700 !important;
-                    color: #2563eb !important;
+                    color: #264A82 !important;
                     margin-bottom: 15px !important;
                     text-align: center !important;
                 }
@@ -921,27 +901,22 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-monthly-installment-table th {
-                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                    background: linear-gradient(135deg, #264A82 0%, #1e3a6f 100%) !important;
                     color: white !important;
                     font-weight: 600 !important;
                     padding: 8px 6px !important;
                     text-align: center !important;
-                    border: 1px solid #1e40af !important;
+                    border: 1px solid #1e3a6f !important;
                     font-size: 10px !important;
                 }
 
                 .pdf-monthly-installment-table .row-header {
-                    background: #1e40af !important;
-                    width: 20% !important;
-                }
-
-                .pdf-monthly-installment-table .current-package-header {
-                    background: #dc2626 !important;
-                    color: white !important;
+                    background: #1e3a6f !important;
+                    width: 25% !important;
                 }
 
                 .pdf-monthly-installment-table .recommended-package-header {
-                    background: #059669 !important;
+                    background: #1e3a6f !important;
                     color: white !important;
                     position: relative !important;
                 }
@@ -952,7 +927,7 @@ function openDirectPrintReport(reportContent) {
                     bottom: -8px !important;
                     left: 50% !important;
                     transform: translateX(-50%) !important;
-                    background: #047857 !important;
+                    background: #0f172a !important;
                     color: white !important;
                     font-size: 6px !important;
                     padding: 2px 6px !important;
@@ -962,13 +937,13 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-monthly-installment-table .rate-subheader {
-                    background: rgba(37, 99, 235, 0.8) !important;
+                    background: rgba(38, 74, 130, 0.8) !important;
                     font-size: 9px !important;
                     padding: 4px !important;
                 }
 
                 .pdf-monthly-installment-table .rate-subheader.recommended {
-                    background: rgba(5, 150, 105, 0.8) !important;
+                    background: rgba(30, 58, 111, 0.9) !important;
                 }
 
                 .pdf-monthly-installment-table td {
@@ -1011,14 +986,14 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-monthly-installment-table .package-value {
-                    background: #eff6ff !important;
-                    color: #2563eb !important;
+                    background: #f1f5f9 !important;
+                    color: #264A82 !important;
                     font-weight: 600 !important;
                 }
 
                 .pdf-monthly-installment-table .package-value.recommended {
-                    background: #ecfdf5 !important;
-                    color: #059669 !important;
+                    background: #eff6ff !important;
+                    color: #1e3a6f !important;
                     font-weight: 700 !important;
                 }
 
@@ -1033,8 +1008,8 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-monthly-installment-table .package-detail.recommended {
-                    background: #f0fdf4 !important;
-                    color: #16a34a !important;
+                    background: #f1f5f9 !important;
+                    color: #1e3a6f !important;
                     font-weight: 600 !important;
                 }
 
