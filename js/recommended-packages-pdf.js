@@ -2,6 +2,36 @@
 // MONTHLY INSTALLMENT CALCULATION FUNCTIONS
 // ===================================
 
+// Enhanced rate display with reference rate values for PDF
+function formatDetailedRateDisplay(pkg, year) {
+    let rateType, operator, value;
+    
+    if (year === 'thereafter') {
+        rateType = pkg.thereafter_rate_type;
+        operator = pkg.thereafter_operator;
+        value = pkg.thereafter_value;
+    } else {
+        rateType = pkg[`year${year}_rate_type`];
+        operator = pkg[`year${year}_operator`];
+        value = pkg[`year${year}_value`];
+    }
+
+    if (!rateType || value === null || value === undefined) return '-';
+
+    if (rateType === 'FIXED') {
+        const rate = calculateInterestRate(pkg, year);
+        return `${rate.toFixed(2)}%<br><small>FIXED</small>`;
+    } else {
+        // Find the reference rate from rateTypes (assuming rateTypes is available)
+        const referenceRateValue = rateType.includes('SORA') ? 3.50 : 3.25; // Default SORA rate
+        const spreadValue = parseFloat(value) || 0;
+        const totalRate = calculateInterestRate(pkg, year);
+        
+        const operatorSymbol = operator === '+' ? '+' : '-';
+        return `${totalRate.toFixed(2)}%<br><small>${rateType}(${referenceRateValue.toFixed(2)}%) ${operatorSymbol} ${spreadValue.toFixed(2)}%</small>`;
+    }
+}
+
 // PMT function for calculating monthly payments
 const calculatePMT = (rate, periods, principal) => {
     if (rate === 0 || !rate) return principal / periods;
@@ -357,7 +387,7 @@ function generateProfessionalReport() {
                             <tr>
                                 <td>Year ${year}</td>
                                 ${selectedPackages.map((pkg, index) => {
-                                    const rateDisplay = formatRateDisplay(pkg, year);
+                                    const rateDisplay = formatDetailedRateDisplay(pkg, year);
                                     return `
                                     <td class="${index === 0 ? 'recommended rate-value' : 'rate-value'}">
                                         ${rateDisplay}
@@ -370,7 +400,7 @@ function generateProfessionalReport() {
                         <tr>
                             <td>Thereafter</td>
                             ${selectedPackages.map((pkg, index) => {
-                                const rateDisplay = formatRateDisplay(pkg, 'thereafter');
+                                const rateDisplay = formatDetailedRateDisplay(pkg, 'thereafter');
                                 return `
                                 <td class="${index === 0 ? 'recommended rate-value' : 'rate-value'}">
                                     ${rateDisplay}
@@ -744,10 +774,11 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-comparison-title {
-                    font-size: 18px !important;
+                    font-size: 16px !important;
                     font-weight: 700 !important;
                     color: #264A82 !important;
                     margin-bottom: 15px !important;
+                    text-align: left !important;
                 }
 
                 .pdf-comparison-table thead {
@@ -973,7 +1004,7 @@ function openDirectPrintReport(reportContent) {
                     font-weight: 700 !important;
                     color: #264A82 !important;
                     margin-bottom: 15px !important;
-                    text-align: center !important;
+                    text-align: left !important;
                 }
 
                 .pdf-monthly-installment-table {
@@ -1361,6 +1392,15 @@ function openDirectPrintReport(reportContent) {
                 .pdf-comparison-table td.rate-value {
                     font-weight: 600 !important;
                     color: #1d4ed8 !important;
+                }
+
+                .pdf-comparison-table td.rate-value small {
+                    display: block !important;
+                    font-size: 8px !important;
+                    color: #6b7280 !important;
+                    font-weight: 400 !important;
+                    line-height: 1.2 !important;
+                    margin-top: 2px !important;
                 }
 
                 .pdf-comparison-table td.amount {
