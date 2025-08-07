@@ -482,8 +482,12 @@ function generateProfessionalReport() {
                             <div class="pdf-bar-rate">${rate}%</div>
                             <div class="pdf-bar-container">
                                 <div class="pdf-bar-stack">
-                                    <div class="pdf-bar-segment interest" style="height: ${interestHeight}px;" title="Interest: ${formatCurrency(totalInterest)}"></div>
-                                    <div class="pdf-bar-segment principal" style="height: ${principalHeight}px;" title="Principal: ${formatCurrency(totalPrincipal)}"></div>
+                                    <div class="pdf-bar-segment interest" style="height: ${interestHeight}px;">
+                                        <span class="pdf-bar-text">Interest<br>${formatCurrency(totalInterest)}</span>
+                                    </div>
+                                    <div class="pdf-bar-segment principal" style="height: ${principalHeight}px;">
+                                        <span class="pdf-bar-text">Principal<br>${formatCurrency(totalPrincipal)}</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="pdf-bar-label">${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}</div>
@@ -1141,7 +1145,7 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-bar-stack {
-                    width: 50px !important;
+                    width: 80px !important;
                     display: flex !important;
                     flex-direction: column-reverse !important;
                     border-radius: 6px 6px 0 0 !important;
@@ -1152,13 +1156,21 @@ function openDirectPrintReport(reportContent) {
                 .pdf-bar-segment.principal {
                     background: #264A82 !important;
                     width: 100% !important;
-                    min-height: 20px !important;
+                    min-height: 40px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    position: relative !important;
                 }
 
                 .pdf-bar-segment.interest {
                     background: #93c5fd !important;
                     width: 100% !important;
-                    min-height: 15px !important;
+                    min-height: 30px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    position: relative !important;
                 }
 
                 .pdf-bar-label {
@@ -1204,6 +1216,17 @@ function openDirectPrintReport(reportContent) {
 
                 .pdf-legend-color.interest {
                     background: #93c5fd !important;
+                }
+
+                .pdf-bar-text {
+                    font-size: 9px !important;
+                    font-weight: 500 !important;
+                    color: white !important;
+                    text-align: center !important;
+                    line-height: 1.2 !important;
+                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+                    white-space: nowrap !important;
+                    display: block !important;
                 }
 
                 .pdf-comparison-table {
