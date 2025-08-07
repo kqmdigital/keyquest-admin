@@ -1446,7 +1446,7 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-comparison-table td.features-cell {
-                    text-align: center !important;
+                    text-align: left !important;
                     vertical-align: middle !important;
                     font-size: 11px !important;
                     line-height: 1.3 !important;
