@@ -1808,24 +1808,34 @@ function generateProfessionalReport() {
             <div class="pdf-key-info">
                 <div class="pdf-info-grid">
                     <div class="pdf-info-item">
+                        <div class="pdf-info-icon">💰</div>
                         <div class="pdf-info-label">Loan Amount</div>
                         <div class="pdf-info-value">${formatCurrency(searchCriteria.loanAmount || 0)}</div>
                     </div>
                     <div class="pdf-info-item">
+                        <div class="pdf-info-icon">📅</div>
                         <div class="pdf-info-label">Loan Tenure</div>
                         <div class="pdf-info-value">${searchCriteria.loanTenure || 'N/A'} Years</div>
                     </div>
                     <div class="pdf-info-item">
+                        <div class="pdf-info-icon">🏠</div>
                         <div class="pdf-info-label">Property Type</div>
                         <div class="pdf-info-value property-type">${searchCriteria.propertyType || 'Private Property'}</div>
                     </div>
+                    <div class="pdf-info-item">
+                        <div class="pdf-info-icon">📋</div>
+                        <div class="pdf-info-label">Property Status</div>
+                        <div class="pdf-info-value property-status">${searchCriteria.propertyStatus || 'Completed'}</div>
+                    </div>
                     ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
                     <div class="pdf-info-item">
+                        <div class="pdf-info-icon">📊</div>
                         <div class="pdf-info-label">Current Rate</div>
                         <div class="pdf-info-value current-rate">${parseFloat(searchCriteria.existingInterestRate).toFixed(2)}%</div>
                     </div>
                     ` : `
                     <div class="pdf-info-item">
+                        <div class="pdf-info-icon">⭐</div>
                         <div class="pdf-info-label">Best Rate</div>
                         <div class="pdf-info-value best-rate">${selectedPackages[0]?.avgFirst2Years?.toFixed(2) || 'N/A'}%</div>
                     </div>
