@@ -609,12 +609,10 @@ function generateProfessionalReport() {
                         </tr>
                         <tr>
                             ${selectedPackages.map((pkg, index) => `
-                                <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">${pkg.avgFirst2Years?.toFixed(2)}%</th>
-                            `).join('')}
-                        </tr>
-                        <tr>
-                            ${selectedPackages.map((pkg, index) => `
-                                <th class="rate-label-subheader ${index === 0 ? 'recommended' : ''}">Interest Rate</th>
+                                <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">
+                                    <div class="rate-percentage">${pkg.avgFirst2Years?.toFixed(2)}%</div>
+                                    <div class="rate-label">Interest Rate</div>
+                                </th>
                             `).join('')}
                         </tr>
                     </thead>
@@ -1087,25 +1085,30 @@ function openDirectPrintReport(reportContent) {
 
                 .pdf-monthly-installment-table .rate-subheader {
                     background: rgba(38, 74, 130, 0.8) !important;
-                    font-size: 9px !important;
-                    padding: 4px !important;
+                    padding: 6px !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    justify-content: center !important;
                 }
 
                 .pdf-monthly-installment-table .rate-subheader.recommended {
                     background: rgba(30, 58, 111, 0.9) !important;
                 }
 
-                .pdf-monthly-installment-table .rate-label-subheader {
-                    background: rgba(38, 74, 130, 0.6) !important;
-                    font-size: 8px !important;
-                    padding: 3px !important;
-                    font-weight: 500 !important;
-                    text-transform: uppercase !important;
-                    letter-spacing: 0.2px !important;
+                .pdf-monthly-installment-table .rate-percentage {
+                    font-size: 12px !important;
+                    font-weight: 700 !important;
+                    color: white !important;
+                    margin-bottom: 2px !important;
                 }
 
-                .pdf-monthly-installment-table .rate-label-subheader.recommended {
-                    background: rgba(30, 58, 111, 0.7) !important;
+                .pdf-monthly-installment-table .rate-label {
+                    font-size: 8px !important;
+                    font-weight: 500 !important;
+                    color: rgba(255, 255, 255, 0.9) !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 0.3px !important;
                 }
 
                 .pdf-monthly-installment-table td {
