@@ -518,7 +518,7 @@ function generateProfessionalReport() {
                 <table class="pdf-monthly-installment-table">
                     <thead>
                         <tr>
-                            <th rowspan="3" class="row-header"></th>
+                            <th rowspan="2" class="row-header"></th>
                             ${selectedPackages.map((pkg, index) => `
                                 <th class="${index === 0 ? 'recommended-package-header' : 'package-header'}">
                                     ${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}
@@ -526,9 +526,10 @@ function generateProfessionalReport() {
                             `).join('')}
                         </tr>
                         <tr>
+                            <th class="rate-header-label">Interest Rate</th>
                             ${selectedPackages.map((pkg, index) => `
                                 <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">
-                                    ${pkg.avgFirst2Years?.toFixed(2)}%<br><span class="rate-label-text">Interest Rate</span>
+                                    ${pkg.avgFirst2Years?.toFixed(2)}%
                                 </th>
                             `).join('')}
                         </tr>
@@ -1073,6 +1074,16 @@ function openDirectPrintReport(reportContent) {
                     padding-left: 12px !important;
                 }
 
+                .pdf-monthly-installment-table .rate-header-label {
+                    background: #1e3a6f !important;
+                    width: 25% !important;
+                    text-align: left !important;
+                    padding-left: 12px !important;
+                    font-size: 12px !important;
+                    font-weight: 600 !important;
+                    color: white !important;
+                }
+
                 .pdf-monthly-installment-table .recommended-package-header {
                     background: #1e40af !important;
                     position: relative !important;
@@ -1148,9 +1159,9 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-monthly-installment-table .savings-label {
-                    background: #ecfdf5 !important;
+                    background: rgba(38, 74, 130, 0.15) !important;
                     font-weight: 600 !important;
-                    color: #059669 !important;
+                    color: #264A82 !important;
                     text-align: left !important;
                     padding-left: 12px !important;
                 }
@@ -1189,13 +1200,13 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-monthly-installment-table .savings-value {
-                    background: #ecfdf5 !important;
-                    color: #059669 !important;
+                    background: rgba(38, 74, 130, 0.2) !important;
+                    color: #264A82 !important;
                     font-weight: 700 !important;
                 }
 
                 .pdf-monthly-installment-table .savings-value.recommended {
-                    background: #064e3b !important;
+                    background: #264A82 !important;
                     color: white !important;
                     font-weight: 800 !important;
                 }
