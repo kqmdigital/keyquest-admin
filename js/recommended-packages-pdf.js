@@ -554,15 +554,15 @@ function generateProfessionalReport() {
                                 `).join('')}
                             </tr>
                             ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate && installmentComparison.currentPackage ? `
-                            <tr class="savings-row">
-                                <td class="savings-label">Total Saving</td>
+                            <tr class="detail-row">
+                                <td class="detail-label">Total Saving</td>
                                 ${yearData.packages.map((pkgData, index) => {
                                     // Use the current package's monthly payment (fixed for all years in refinancing)
                                     const currentMonthlyPayment = installmentComparison.currentPackage.monthlyPayment;
                                     const packageMonthlyPayment = pkgData.monthlyInstalment;
                                     const monthlySavings = currentMonthlyPayment - packageMonthlyPayment;
                                     const yearSavings = monthlySavings * 12; // Yearly savings
-                                    return `<td class="savings-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(yearSavings)}</td>`;
+                                    return `<td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(yearSavings)}</td>`;
                                 }).join('')}
                             </tr>
                             ` : ''}
