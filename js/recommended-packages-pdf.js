@@ -528,8 +528,7 @@ function generateProfessionalReport() {
                         <tr>
                             ${selectedPackages.map((pkg, index) => `
                                 <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">
-                                    <div class="rate-percentage">${pkg.avgFirst2Years?.toFixed(2)}%</div>
-                                    <div class="rate-label">Interest Rate</div>
+                                    ${pkg.avgFirst2Years?.toFixed(2)}%<br><span class="rate-label-text">Interest Rate</span>
                                 </th>
                             `).join('')}
                         </tr>
@@ -555,11 +554,12 @@ function generateProfessionalReport() {
                                     <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalInterest)}</td>
                                 `).join('')}
                             </tr>
-                            ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
+                            ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate && installmentComparison.currentPackage ? `
                             <tr class="savings-row">
                                 <td class="savings-label">Total Saving</td>
                                 ${yearData.packages.map((pkgData, index) => {
-                                    const currentMonthlyPayment = calculateMonthlyInstallment(searchCriteria.loanAmount, searchCriteria.loanTenure, searchCriteria.existingInterestRate);
+                                    // Use the current package's monthly payment (fixed for all years in refinancing)
+                                    const currentMonthlyPayment = installmentComparison.currentPackage.monthlyPayment;
                                     const packageMonthlyPayment = pkgData.monthlyInstalment;
                                     const monthlySavings = currentMonthlyPayment - packageMonthlyPayment;
                                     const yearSavings = monthlySavings * 12; // Yearly savings
@@ -857,7 +857,7 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-header .logo-section img {
-                    height: 220px !important;
+                    height: 260px !important;
                     width: auto !important;
                     object-fit: contain !important;
                     margin: 0 !important;
@@ -865,7 +865,7 @@ function openDirectPrintReport(reportContent) {
                     border: 0 !important;
                     vertical-align: middle !important;
                     display: block !important;
-                    max-width: 300px !important;
+                    max-width: 350px !important;
                 }
 
                 .pdf-header .title-section {
@@ -1098,29 +1098,25 @@ function openDirectPrintReport(reportContent) {
                 .pdf-monthly-installment-table .rate-subheader {
                     background: rgba(38, 74, 130, 0.8) !important;
                     padding: 6px !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    align-items: center !important;
-                    justify-content: center !important;
+                    text-align: center !important;
+                    vertical-align: middle !important;
+                    font-size: 12px !important;
+                    font-weight: 700 !important;
+                    color: white !important;
+                    line-height: 1.2 !important;
                 }
 
                 .pdf-monthly-installment-table .rate-subheader.recommended {
                     background: rgba(30, 58, 111, 0.9) !important;
                 }
 
-                .pdf-monthly-installment-table .rate-percentage {
-                    font-size: 12px !important;
-                    font-weight: 700 !important;
-                    color: white !important;
-                    margin-bottom: 2px !important;
-                }
-
-                .pdf-monthly-installment-table .rate-label {
+                .pdf-monthly-installment-table .rate-label-text {
                     font-size: 8px !important;
                     font-weight: 500 !important;
                     color: rgba(255, 255, 255, 0.9) !important;
                     text-transform: uppercase !important;
                     letter-spacing: 0.3px !important;
+                    display: inline !important;
                 }
 
                 .pdf-monthly-installment-table td {
