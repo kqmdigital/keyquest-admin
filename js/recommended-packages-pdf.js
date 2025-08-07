@@ -459,6 +459,52 @@ function generateProfessionalReport() {
                 </table>
             </div>
 
+            <!-- Monthly Installment Bar Chart -->
+            ${installmentComparison ? `
+            <div class="pdf-chart-section">
+                <div class="pdf-section-title">Monthly Repayment Breakdown</div>
+                
+                <div class="pdf-bar-chart">
+                    ${selectedPackages.map((pkg, index) => {
+                        const yearData = installmentComparison.yearlyComparison[0]; // Year 1 data
+                        const pkgData = yearData.packages[index];
+                        const monthlyPayment = pkgData.monthlyInstalment;
+                        const totalInterest = pkgData.totalInterest / 12; // Monthly interest portion
+                        const totalPrincipal = pkgData.totalPrincipal / 12; // Monthly principal portion
+                        const rate = pkg.avgFirst2Years?.toFixed(2);
+                        const maxPayment = Math.max(...selectedPackages.map((p, i) => yearData.packages[i].monthlyInstalment));
+                        const barHeight = (monthlyPayment / maxPayment) * 200; // Scale to 200px max height
+                        const principalHeight = (totalPrincipal / monthlyPayment) * barHeight;
+                        const interestHeight = (totalInterest / monthlyPayment) * barHeight;
+                        
+                        return `
+                        <div class="pdf-bar-item">
+                            <div class="pdf-bar-rate">${rate}%</div>
+                            <div class="pdf-bar-container">
+                                <div class="pdf-bar-stack">
+                                    <div class="pdf-bar-segment interest" style="height: ${interestHeight}px;" title="Interest: ${formatCurrency(totalInterest)}"></div>
+                                    <div class="pdf-bar-segment principal" style="height: ${principalHeight}px;" title="Principal: ${formatCurrency(totalPrincipal)}"></div>
+                                </div>
+                            </div>
+                            <div class="pdf-bar-label">${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}</div>
+                            <div class="pdf-bar-amount">${formatCurrency(monthlyPayment)}</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+                
+                <div class="pdf-chart-legend">
+                    <div class="pdf-legend-item">
+                        <div class="pdf-legend-color principal"></div>
+                        <span>Principal</span>
+                    </div>
+                    <div class="pdf-legend-item">
+                        <div class="pdf-legend-color interest"></div>
+                        <span>Interest</span>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
             <!-- Monthly Installment Comparison Table -->
             ${installmentComparison ? `
             <div class="pdf-monthly-installment-section">
@@ -1051,6 +1097,113 @@ function openDirectPrintReport(reportContent) {
 
                 .pdf-monthly-installment-table td:not(:first-child) {
                     width: 25% !important;
+                }
+
+                /* Bar Chart Styles */
+                .pdf-chart-section {
+                    margin: 20px 0 !important;
+                    page-break-inside: avoid !important;
+                }
+
+                .pdf-bar-chart {
+                    display: flex !important;
+                    justify-content: space-around !important;
+                    align-items: flex-end !important;
+                    height: 280px !important;
+                    padding: 20px !important;
+                    background: #f8fafc !important;
+                    border-radius: 12px !important;
+                    margin: 15px 0 !important;
+                    border: 1px solid #e2e8f0 !important;
+                }
+
+                .pdf-bar-item {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    position: relative !important;
+                    margin: 0 10px !important;
+                }
+
+                .pdf-bar-rate {
+                    font-size: 12px !important;
+                    font-weight: 600 !important;
+                    color: #264A82 !important;
+                    margin-bottom: 8px !important;
+                    text-align: center !important;
+                }
+
+                .pdf-bar-container {
+                    height: 200px !important;
+                    display: flex !important;
+                    align-items: flex-end !important;
+                    margin-bottom: 8px !important;
+                }
+
+                .pdf-bar-stack {
+                    width: 50px !important;
+                    display: flex !important;
+                    flex-direction: column-reverse !important;
+                    border-radius: 6px 6px 0 0 !important;
+                    overflow: hidden !important;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+                }
+
+                .pdf-bar-segment.principal {
+                    background: #264A82 !important;
+                    width: 100% !important;
+                    min-height: 20px !important;
+                }
+
+                .pdf-bar-segment.interest {
+                    background: #93c5fd !important;
+                    width: 100% !important;
+                    min-height: 15px !important;
+                }
+
+                .pdf-bar-label {
+                    font-size: 11px !important;
+                    font-weight: 600 !important;
+                    color: #374151 !important;
+                    text-align: center !important;
+                    margin-bottom: 4px !important;
+                    white-space: nowrap !important;
+                }
+
+                .pdf-bar-amount {
+                    font-size: 12px !important;
+                    font-weight: 500 !important;
+                    color: #264A82 !important;
+                    text-align: center !important;
+                }
+
+                .pdf-chart-legend {
+                    display: flex !important;
+                    justify-content: center !important;
+                    gap: 20px !important;
+                    margin-top: 15px !important;
+                }
+
+                .pdf-legend-item {
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 6px !important;
+                    font-size: 11px !important;
+                    color: #374151 !important;
+                }
+
+                .pdf-legend-color {
+                    width: 16px !important;
+                    height: 16px !important;
+                    border-radius: 3px !important;
+                }
+
+                .pdf-legend-color.principal {
+                    background: #264A82 !important;
+                }
+
+                .pdf-legend-color.interest {
+                    background: #93c5fd !important;
                 }
 
                 .pdf-comparison-table {
