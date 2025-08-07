@@ -509,8 +509,70 @@ function generateProfessionalReport() {
                 </table>
             </div>
 
-            <!-- Monthly Installment Bar Chart -->
+
+            <!-- Monthly Installment Comparison Table -->
             ${installmentComparison ? `
+            <div class="pdf-monthly-installment-section">
+                <div class="pdf-section-title">Monthly Repayment Comparison</div>
+                
+                <table class="pdf-monthly-installment-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="row-header"></th>
+                            ${selectedPackages.map((pkg, index) => `
+                                <th class="${index === 0 ? 'recommended-package-header' : 'package-header'}">
+                                    ${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}
+                                </th>
+                            `).join('')}
+                        </tr>
+                        <tr>
+                            ${selectedPackages.map((pkg, index) => `
+                                <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">
+                                    <div class="rate-percentage">${pkg.avgFirst2Years?.toFixed(2)}%</div>
+                                    <div class="rate-label">Interest Rate</div>
+                                </th>
+                            `).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${installmentComparison.yearlyComparison.map(yearData => `
+                            <tr class="year-row">
+                                <td class="year-label">Year ${yearData.year} - MI</td>
+                                ${yearData.packages.map((pkgData, index) => `
+                                    <td class="package-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.monthlyInstalment)}</td>
+                                `).join('')}
+                            </tr>
+                            ${yearData.packages.length > 0 && yearData.packages[0].totalPrincipal ? `
+                            <tr class="detail-row">
+                                <td class="detail-label">Total Principal</td>
+                                ${yearData.packages.map((pkgData, index) => `
+                                    <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalPrincipal)}</td>
+                                `).join('')}
+                            </tr>
+                            <tr class="detail-row">
+                                <td class="detail-label">Total Interest</td>
+                                ${yearData.packages.map((pkgData, index) => `
+                                    <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalInterest)}</td>
+                                `).join('')}
+                            </tr>
+                            ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
+                            <tr class="savings-row">
+                                <td class="savings-label">Total Saving</td>
+                                ${yearData.packages.map((pkgData, index) => {
+                                    const currentTotalPayment = calculateMonthlyInstallment(searchCriteria.loanAmount, parseInt(yearData.year), searchCriteria.existingInterestRate) * 12;
+                                    const packageTotalPayment = pkgData.monthlyInstalment * 12;
+                                    const yearSavings = currentTotalPayment - packageTotalPayment;
+                                    return `<td class="savings-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(yearSavings)}</td>`;
+                                }).join('')}
+                            </tr>
+                            ` : ''}
+                            ` : ''}
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Monthly Installment Bar Chart -->
             <div class="pdf-chart-section">
                 <div class="pdf-section-title">Monthly Repayment Breakdown</div>
                 
@@ -589,58 +651,6 @@ function generateProfessionalReport() {
                         <span>Interest</span>
                     </div>
                 </div>
-            </div>
-            ` : ''}
-
-            <!-- Monthly Installment Comparison Table -->
-            ${installmentComparison ? `
-            <div class="pdf-monthly-installment-section">
-                <div class="pdf-section-title">Monthly Repayment Comparison</div>
-                
-                <table class="pdf-monthly-installment-table">
-                    <thead>
-                        <tr>
-                            <th rowspan="2" class="row-header"></th>
-                            ${selectedPackages.map((pkg, index) => `
-                                <th class="${index === 0 ? 'recommended-package-header' : 'package-header'}">
-                                    ${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}
-                                </th>
-                            `).join('')}
-                        </tr>
-                        <tr>
-                            ${selectedPackages.map((pkg, index) => `
-                                <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">
-                                    <div class="rate-percentage">${pkg.avgFirst2Years?.toFixed(2)}%</div>
-                                    <div class="rate-label">Interest Rate</div>
-                                </th>
-                            `).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${installmentComparison.yearlyComparison.map(yearData => `
-                            <tr class="year-row">
-                                <td class="year-label">Year ${yearData.year} - MI</td>
-                                ${yearData.packages.map((pkgData, index) => `
-                                    <td class="package-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.monthlyInstalment)}</td>
-                                `).join('')}
-                            </tr>
-                            ${yearData.packages.length > 0 && yearData.packages[0].totalPrincipal ? `
-                            <tr class="detail-row">
-                                <td class="detail-label">Total Principal</td>
-                                ${yearData.packages.map((pkgData, index) => `
-                                    <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalPrincipal)}</td>
-                                `).join('')}
-                            </tr>
-                            <tr class="detail-row">
-                                <td class="detail-label">Total Interest</td>
-                                ${yearData.packages.map((pkgData, index) => `
-                                    <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalInterest)}</td>
-                                `).join('')}
-                            </tr>
-                            ` : ''}
-                        `).join('')}
-                    </tbody>
-                </table>
             </div>
             ` : ''}
 
