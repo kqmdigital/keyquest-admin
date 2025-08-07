@@ -465,6 +465,36 @@ function generateProfessionalReport() {
                 <div class="pdf-section-title">Monthly Repayment Breakdown</div>
                 
                 <div class="pdf-bar-chart">
+                    ${installmentComparison.currentPackage ? `
+                        <div class="pdf-bar-item current-package">
+                            <div class="pdf-bar-rate">${searchCriteria.existingInterestRate?.toFixed(2)}%</div>
+                            <div class="pdf-bar-container">
+                                <div class="pdf-bar-stack current">
+                                    <div class="pdf-bar-segment interest current" style="height: ${(() => {
+                                        const currentMonthly = installmentComparison.currentPackage.monthlyPayment;
+                                        const currentInterest = currentMonthly * 0.7; // Approximate interest portion
+                                        const currentPrincipal = currentMonthly * 0.3; // Approximate principal portion
+                                        const maxPayment = Math.max(currentMonthly, ...selectedPackages.map((p, i) => installmentComparison.yearlyComparison[0].packages[i].monthlyInstalment));
+                                        const barHeight = (currentMonthly / maxPayment) * 200;
+                                        return (currentInterest / currentMonthly) * barHeight;
+                                    })()}px;">
+                                        <span class="pdf-bar-text">Interest<br>${formatCurrency(installmentComparison.currentPackage.monthlyPayment * 0.7)}</span>
+                                    </div>
+                                    <div class="pdf-bar-segment principal current" style="height: ${(() => {
+                                        const currentMonthly = installmentComparison.currentPackage.monthlyPayment;
+                                        const currentPrincipal = currentMonthly * 0.3;
+                                        const maxPayment = Math.max(currentMonthly, ...selectedPackages.map((p, i) => installmentComparison.yearlyComparison[0].packages[i].monthlyInstalment));
+                                        const barHeight = (currentMonthly / maxPayment) * 200;
+                                        return (currentPrincipal / currentMonthly) * barHeight;
+                                    })()}px;">
+                                        <span class="pdf-bar-text">Principal<br>${formatCurrency(installmentComparison.currentPackage.monthlyPayment * 0.3)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pdf-bar-label">Current Package</div>
+                            <div class="pdf-bar-amount">${formatCurrency(installmentComparison.currentPackage.monthlyPayment)}</div>
+                        </div>
+                    ` : ''}
                     ${selectedPackages.map((pkg, index) => {
                         const yearData = installmentComparison.yearlyComparison[0]; // Year 1 data
                         const pkgData = yearData.packages[index];
@@ -472,7 +502,10 @@ function generateProfessionalReport() {
                         const totalInterest = pkgData.totalInterest / 12; // Monthly interest portion
                         const totalPrincipal = pkgData.totalPrincipal / 12; // Monthly principal portion
                         const rate = pkg.avgFirst2Years?.toFixed(2);
-                        const maxPayment = Math.max(...selectedPackages.map((p, i) => yearData.packages[i].monthlyInstalment));
+                        const allPayments = installmentComparison.currentPackage ? 
+                            [installmentComparison.currentPackage.monthlyPayment, ...selectedPackages.map((p, i) => yearData.packages[i].monthlyInstalment)] :
+                            selectedPackages.map((p, i) => yearData.packages[i].monthlyInstalment);
+                        const maxPayment = Math.max(...allPayments);
                         const barHeight = (monthlyPayment / maxPayment) * 200; // Scale to 200px max height
                         const principalHeight = (totalPrincipal / monthlyPayment) * barHeight;
                         const interestHeight = (totalInterest / monthlyPayment) * barHeight;
@@ -1227,6 +1260,26 @@ function openDirectPrintReport(reportContent) {
                     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
                     white-space: nowrap !important;
                     display: block !important;
+                }
+
+                .pdf-bar-item.current-package .pdf-bar-segment.principal {
+                    background: #6b7280 !important;
+                }
+
+                .pdf-bar-item.current-package .pdf-bar-segment.interest {
+                    background: #d1d5db !important;
+                }
+
+                .pdf-bar-item.current-package .pdf-bar-rate {
+                    color: #6b7280 !important;
+                }
+
+                .pdf-bar-item.current-package .pdf-bar-label {
+                    color: #6b7280 !important;
+                }
+
+                .pdf-bar-item.current-package .pdf-bar-amount {
+                    color: #6b7280 !important;
                 }
 
                 .pdf-comparison-table {
