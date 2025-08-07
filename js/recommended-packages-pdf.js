@@ -1200,15 +1200,15 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-monthly-installment-table .savings-value {
-                    background: rgba(38, 74, 130, 0.2) !important;
+                    background: transparent !important;
                     color: #264A82 !important;
-                    font-weight: 700 !important;
+                    font-weight: 600 !important;
                 }
 
                 .pdf-monthly-installment-table .savings-value.recommended {
-                    background: #264A82 !important;
-                    color: white !important;
-                    font-weight: 800 !important;
+                    background: transparent !important;
+                    color: #264A82 !important;
+                    font-weight: 600 !important;
                 }
 
                 .pdf-monthly-installment-table tbody tr:nth-child(even) {
