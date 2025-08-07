@@ -104,7 +104,7 @@ const calculateMonthlyInstallmentComparison = (packages, loanAmount, tenureYears
         const schedule = calculateDetailedRepaymentSchedule(pkg, loanAmount, tenureYears);
         if (schedule) {
             comparisonData.packages.push({
-                name: `Package ${index + 1}`,
+                name: `PKG(${index + 1})`,
                 bankName: pkg.bank_name,
                 pkg: pkg,
                 schedule: schedule
@@ -470,7 +470,7 @@ function generateProfessionalReport() {
                             <th rowspan="2" class="row-header"></th>
                             ${selectedPackages.map((pkg, index) => `
                                 <th class="${index === 0 ? 'recommended-package-header' : 'package-header'}">
-                                    ${hideBankNames ? `Package ${index + 1}` : pkg.bank_name}
+                                    ${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}
                                 </th>
                             `).join('')}
                         </tr>
@@ -615,6 +615,9 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 /* Apply professional blue theme to match TDSR report */
+                * {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif !important;
+                }
                 .pdf-header {
                     display: flex !important;
                     justify-content: space-between !important;
@@ -639,7 +642,7 @@ function openDirectPrintReport(reportContent) {
                     color: white !important;
                     margin-bottom: 8px !important;
                     font-weight: 600 !important;
-                    font-size: 11px !important;
+                    font-size: 12px !important;
                     text-transform: uppercase !important;
                     letter-spacing: 0.5px !important;
                     line-height: 1.2 !important;
@@ -658,7 +661,7 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-comparison-title {
-                    font-size: 20px !important;
+                    font-size: 18px !important;
                     font-weight: 700 !important;
                     color: #264A82 !important;
                     margin-bottom: 15px !important;
@@ -883,7 +886,7 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-section-title {
-                    font-size: 18px !important;
+                    font-size: 16px !important;
                     font-weight: 700 !important;
                     color: #264A82 !important;
                     margin-bottom: 15px !important;
