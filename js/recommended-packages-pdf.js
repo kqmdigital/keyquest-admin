@@ -16,7 +16,13 @@ function formatDetailedRateDisplay(pkg, year) {
         value = pkg[`year${year}_value`];
     }
 
-    if (!rateType || value === null || value === undefined) return '-';
+    // Auto-populate with thereafter rate if no specific year data
+    if (!rateType || value === null || value === undefined) {
+        if (pkg.thereafter_rate_type && pkg.thereafter_value !== null && pkg.thereafter_value !== undefined) {
+            return formatDetailedRateDisplay(pkg, 'thereafter');
+        }
+        return '-';
+    }
 
     if (rateType === 'FIXED') {
         const rate = calculateInterestRate(pkg, year);
@@ -29,6 +35,20 @@ function formatDetailedRateDisplay(pkg, year) {
         
         const operatorSymbol = operator === '+' ? '+' : '-';
         return `${totalRate.toFixed(2)}%<br><small>${rateType}(${referenceRateValue.toFixed(2)}%) ${operatorSymbol} ${spreadValue.toFixed(2)}%</small>`;
+    }
+}
+
+// Format savings for PDF with line breaks
+function formatPDFSavings(savings, lockInPeriod = null) {
+    if (savings === 0) return 'No savings';
+    
+    const lockInYears = lockInPeriod ? (lockInPeriod.includes('Year') ? parseInt(lockInPeriod) : parseInt(lockInPeriod)) : null;
+    const periodText = lockInYears ? `Over ${lockInYears} Year${lockInYears > 1 ? 's' : ''} Lock-in` : '';
+    
+    if (savings > 0) {
+        return `Save ${formatCurrency(Math.abs(savings))}<br><small>${periodText}</small>`;
+    } else {
+        return `Higher by ${formatCurrency(Math.abs(savings))}<br><small>${periodText}</small>`;
     }
 }
 
@@ -432,7 +452,7 @@ function generateProfessionalReport() {
                             <td>Total Savings</td>
                             ${selectedPackages.map((pkg, index) => `
                                 <td class="${index === 0 ? 'recommended savings-cell' : 'savings-cell'}">
-                                    ${formatSavings(pkg.totalSavings || 0, pkg.lock_period)}
+                                    ${formatPDFSavings(pkg.totalSavings || 0, pkg.lock_period)}
                                 </td>
                             `).join('')}
                         </tr>
@@ -1070,11 +1090,14 @@ function openDirectPrintReport(reportContent) {
                 }
 
                 .pdf-monthly-installment-table td {
-                    padding: 6px 4px !important;
+                    padding: 8px 6px !important;
                     text-align: center !important;
-                    border: 1px solid #e5e7eb !important;
-                    font-size: 9px !important;
-                    vertical-align: middle !important;
+                    border-bottom: 1px solid #e2e8f0 !important;
+                    font-size: 13px !important;
+                    line-height: 1.4 !important;
+                    word-wrap: break-word !important;
+                    vertical-align: top !important;
+                    max-width: 0 !important;
                 }
 
                 .pdf-monthly-installment-table .year-label {
@@ -1403,6 +1426,15 @@ function openDirectPrintReport(reportContent) {
                     margin-top: 2px !important;
                 }
 
+                .pdf-comparison-table td.savings-cell small {
+                    display: block !important;
+                    font-size: 8px !important;
+                    color: #6b7280 !important;
+                    font-weight: 400 !important;
+                    line-height: 1.2 !important;
+                    margin-top: 2px !important;
+                }
+
                 .pdf-comparison-table td.amount {
                     color: #3b82f6 !important;
                     font-weight: 600 !important;
@@ -1427,9 +1459,10 @@ function openDirectPrintReport(reportContent) {
                 .pdf-comparison-table td.remarks-cell {
                     text-align: left !important;
                     vertical-align: top !important;
-                    font-size: 8px !important;
+                    font-size: 9px !important;
                     line-height: 1.3 !important;
-                    padding: 8px 4px !important;
+                    padding: 8px 6px !important;
+                    padding-left: 12px !important;
                     word-wrap: break-word !important;
                     overflow-wrap: break-word !important;
                     hyphens: auto !important;
