@@ -518,23 +518,21 @@ function generateProfessionalReport() {
                 <table class="pdf-monthly-installment-table">
                     <thead>
                         <tr>
-                            <th rowspan="2" class="row-header"></th>
+                            <th class="row-header"></th>
                             ${selectedPackages.map((pkg, index) => `
                                 <th class="${index === 0 ? 'recommended-package-header' : 'package-header'}">
                                     ${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}
                                 </th>
                             `).join('')}
                         </tr>
-                        <tr>
-                            <th class="rate-header-label">Interest Rate</th>
-                            ${selectedPackages.map((pkg, index) => `
-                                <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">
-                                    ${pkg.avgFirst2Years?.toFixed(2)}%
-                                </th>
-                            `).join('')}
-                        </tr>
                     </thead>
                     <tbody>
+                        <tr class="rate-row">
+                            <td class="year-label">Rate</td>
+                            ${selectedPackages.map((pkg, index) => `
+                                <td class="package-value ${index === 0 ? 'recommended' : ''}">${pkg.avgFirst2Years?.toFixed(2)}%</td>
+                            `).join('')}
+                        </tr>
                         ${installmentComparison.yearlyComparison.map(yearData => `
                             <tr class="year-row">
                                 <td class="year-label">Year ${yearData.year} - MI</td>
