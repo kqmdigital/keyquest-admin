@@ -1,4 +1,161 @@
 // ===================================
+// MONTHLY INSTALLMENT CALCULATION FUNCTIONS
+// ===================================
+
+// PMT function for calculating monthly payments
+const calculatePMT = (rate, periods, principal) => {
+    if (rate === 0 || !rate) return principal / periods;
+    const monthlyRate = rate / 100 / 12;
+    const denominator = Math.pow(1 + monthlyRate, periods) - 1;
+    return (principal * monthlyRate * Math.pow(1 + monthlyRate, periods)) / denominator;
+};
+
+// Calculate detailed repayment schedule with year-by-year breakdown
+const calculateDetailedRepaymentSchedule = (pkg, loanAmount, tenureYears) => {
+    if (!pkg || !loanAmount || !tenureYears) return null;
+    
+    const totalMonths = tenureYears * 12;
+    let balance = loanAmount;
+    const yearlyData = [];
+    
+    // Calculate year-by-year data
+    for (let year = 1; year <= tenureYears; year++) {
+        const yearStartBalance = balance;
+        let yearInterestPaid = 0;
+        let yearPrincipalPaid = 0;
+        
+        // Get rate for this year
+        const currentRate = calculateInterestRate(pkg, year <= 5 ? year : 'thereafter');
+        
+        // Calculate monthly payment for this rate (but using full tenure for calculation)
+        const monthlyPayment = calculatePMT(currentRate, totalMonths, loanAmount);
+        
+        // Calculate monthly breakdown for this year
+        for (let month = 1; month <= 12 && balance > 0.01; month++) {
+            const monthlyRate = currentRate / 100 / 12;
+            const interestPayment = balance * monthlyRate;
+            const principalPayment = Math.min(monthlyPayment - interestPayment, balance);
+            
+            yearInterestPaid += interestPayment;
+            yearPrincipalPaid += principalPayment;
+            balance = Math.max(0, balance - principalPayment);
+            
+            if (balance <= 0.01) break;
+        }
+        
+        yearlyData.push({
+            year: year,
+            rate: currentRate,
+            beginningPrincipal: yearStartBalance,
+            monthlyInstalment: monthlyPayment,
+            interestPaid: yearInterestPaid,
+            principalPaid: yearPrincipalPaid,
+            endingPrincipal: balance
+        });
+        
+        if (balance <= 0.01) break;
+    }
+    
+    // Calculate totals
+    const totalInterest = yearlyData.reduce((sum, year) => sum + year.interestPaid, 0);
+    const totalPrincipal = yearlyData.reduce((sum, year) => sum + year.principalPaid, 0);
+    
+    return {
+        yearlyData,
+        totalInterest,
+        totalPrincipal,
+        totalPayable: totalInterest + totalPrincipal
+    };
+};
+
+// Calculate monthly installment comparison data for multiple packages
+const calculateMonthlyInstallmentComparison = (packages, loanAmount, tenureYears, existingRate = null) => {
+    if (!packages || !loanAmount || !tenureYears) return null;
+    
+    const comparisonData = {
+        packages: [],
+        currentPackage: null,
+        yearlyComparison: []
+    };
+    
+    // Add current package data for refinancing
+    if (existingRate && existingRate > 0) {
+        const currentMonthlyPayment = calculateMonthlyInstallment(loanAmount, tenureYears, existingRate);
+        comparisonData.currentPackage = {
+            name: 'Current Package',
+            rate: existingRate,
+            monthlyPayment: currentMonthlyPayment,
+            yearlyData: []
+        };
+        
+        // Calculate year-by-year for current package
+        for (let year = 1; year <= Math.min(5, tenureYears); year++) {
+            comparisonData.currentPackage.yearlyData.push({
+                year,
+                monthlyInstalment: currentMonthlyPayment,
+                totalPrincipal: 0, // Would need full calculation
+                totalInterest: 0   // Would need full calculation
+            });
+        }
+    }
+    
+    // Calculate data for each recommended package
+    packages.forEach((pkg, index) => {
+        const schedule = calculateDetailedRepaymentSchedule(pkg, loanAmount, tenureYears);
+        if (schedule) {
+            comparisonData.packages.push({
+                name: `Package ${index + 1}`,
+                bankName: pkg.bank_name,
+                pkg: pkg,
+                schedule: schedule
+            });
+        }
+    });
+    
+    // Create year-by-year comparison (Years 1-5)
+    for (let year = 1; year <= Math.min(5, tenureYears); year++) {
+        const yearComparison = {
+            year: year,
+            current: null,
+            packages: []
+        };
+        
+        // Add current package data
+        if (comparisonData.currentPackage) {
+            const currentYearData = comparisonData.currentPackage.yearlyData.find(y => y.year === year);
+            if (currentYearData) {
+                yearComparison.current = {
+                    monthlyInstalment: currentYearData.monthlyInstalment,
+                    totalPrincipal: currentYearData.totalPrincipal,
+                    totalInterest: currentYearData.totalInterest
+                };
+            }
+        }
+        
+        // Add package data
+        comparisonData.packages.forEach(pkgData => {
+            const yearData = pkgData.schedule.yearlyData.find(y => y.year === year);
+            if (yearData) {
+                yearComparison.packages.push({
+                    name: pkgData.name,
+                    bankName: pkgData.bankName,
+                    rate: yearData.rate,
+                    monthlyInstalment: yearData.monthlyInstalment,
+                    totalPrincipal: yearData.principalPaid,
+                    totalInterest: yearData.interestPaid,
+                    totalSavings: yearComparison.current ? 
+                        (yearComparison.current.monthlyInstalment - yearData.monthlyInstalment) * 12 : 0
+                });
+            }
+        });
+        
+        comparisonData.yearlyComparison.push(yearComparison);
+    }
+    
+    return comparisonData;
+};
+
+// ===================================
 // PDF REPORT GENERATION FUNCTIONS
 // ===================================
 
@@ -47,6 +204,14 @@ function generateProfessionalReport() {
     } else {
         selectedPackages = selectedPackages.slice(0, 3); // Limit to top 3
     }
+    
+    // Calculate monthly installment comparison data
+    const installmentComparison = calculateMonthlyInstallmentComparison(
+        selectedPackages, 
+        searchCriteria.loanAmount, 
+        searchCriteria.loanTenure, 
+        searchCriteria.existingInterestRate
+    );
     
     // Debug: Check selected packages
     console.log('📦 Selected Packages:', selectedPackages.map(pkg => ({
@@ -293,6 +458,75 @@ function generateProfessionalReport() {
                     </tbody>
                 </table>
             </div>
+
+            <!-- Monthly Installment Comparison Table -->
+            ${installmentComparison ? `
+            <div class="pdf-monthly-installment-section">
+                <div class="pdf-section-title">Monthly Repayment Comparison</div>
+                
+                <table class="pdf-monthly-installment-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="row-header"></th>
+                            ${installmentComparison.currentPackage ? `
+                                <th class="current-package-header">Current Package</th>
+                            ` : ''}
+                            ${selectedPackages.map((pkg, index) => `
+                                <th class="${index === 0 ? 'recommended-package-header' : 'package-header'}">
+                                    ${hideBankNames ? `Package ${index + 1}` : pkg.bank_name}
+                                </th>
+                            `).join('')}
+                        </tr>
+                        <tr>
+                            ${installmentComparison.currentPackage ? `
+                                <th class="rate-subheader">${searchCriteria.existingInterestRate?.toFixed(2)}%</th>
+                            ` : ''}
+                            ${selectedPackages.map((pkg, index) => `
+                                <th class="rate-subheader ${index === 0 ? 'recommended' : ''}">${pkg.avgFirst2Years?.toFixed(2)}%</th>
+                            `).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${installmentComparison.yearlyComparison.map(yearData => `
+                            <tr class="year-row">
+                                <td class="year-label">Year ${yearData.year} - MI</td>
+                                ${yearData.current ? `
+                                    <td class="current-value">${formatCurrency(yearData.current.monthlyInstalment)}</td>
+                                ` : ''}
+                                ${yearData.packages.map((pkgData, index) => `
+                                    <td class="package-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.monthlyInstalment)}</td>
+                                `).join('')}
+                            </tr>
+                            ${yearData.packages.length > 0 && yearData.packages[0].totalPrincipal ? `
+                            <tr class="detail-row">
+                                <td class="detail-label">Total Principal</td>
+                                ${yearData.current ? `<td class="current-detail">-</td>` : ''}
+                                ${yearData.packages.map((pkgData, index) => `
+                                    <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalPrincipal)}</td>
+                                `).join('')}
+                            </tr>
+                            <tr class="detail-row">
+                                <td class="detail-label">Total Interest</td>
+                                ${yearData.current ? `<td class="current-detail">-</td>` : ''}
+                                ${yearData.packages.map((pkgData, index) => `
+                                    <td class="package-detail ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalInterest)}</td>
+                                `).join('')}
+                            </tr>
+                            ${installmentComparison.currentPackage ? `
+                            <tr class="savings-row">
+                                <td class="savings-label">Total Saving</td>
+                                <td class="current-detail">-</td>
+                                ${yearData.packages.map((pkgData, index) => `
+                                    <td class="savings-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(pkgData.totalSavings)}</td>
+                                `).join('')}
+                            </tr>
+                            ` : ''}
+                            ` : ''}
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            ` : ''}
 
             ${searchCriteria.loanType === 'Refinancing Home Loan' && searchCriteria.existingInterestRate ? `
             <!-- Potential Savings Section -->
@@ -660,6 +894,164 @@ function openDirectPrintReport(reportContent) {
                 /* Package Comparison Table */
                 .pdf-comparison-section {
                     margin-bottom: 25px !important;
+                }
+
+                /* Monthly Installment Comparison Table */
+                .pdf-monthly-installment-section {
+                    margin: 25px 0 !important;
+                    page-break-inside: avoid !important;
+                }
+
+                .pdf-section-title {
+                    font-size: 18px !important;
+                    font-weight: 700 !important;
+                    color: #2563eb !important;
+                    margin-bottom: 15px !important;
+                    text-align: center !important;
+                }
+
+                .pdf-monthly-installment-table {
+                    width: 100% !important;
+                    border-collapse: collapse !important;
+                    font-size: 9px !important;
+                    margin: 0 auto !important;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+                    border-radius: 8px !important;
+                    overflow: hidden !important;
+                }
+
+                .pdf-monthly-installment-table th {
+                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                    color: white !important;
+                    font-weight: 600 !important;
+                    padding: 8px 6px !important;
+                    text-align: center !important;
+                    border: 1px solid #1e40af !important;
+                    font-size: 10px !important;
+                }
+
+                .pdf-monthly-installment-table .row-header {
+                    background: #1e40af !important;
+                    width: 20% !important;
+                }
+
+                .pdf-monthly-installment-table .current-package-header {
+                    background: #dc2626 !important;
+                    color: white !important;
+                }
+
+                .pdf-monthly-installment-table .recommended-package-header {
+                    background: #059669 !important;
+                    color: white !important;
+                    position: relative !important;
+                }
+
+                .pdf-monthly-installment-table .recommended-package-header::after {
+                    content: '★ RECOMMENDED' !important;
+                    position: absolute !important;
+                    bottom: -8px !important;
+                    left: 50% !important;
+                    transform: translateX(-50%) !important;
+                    background: #047857 !important;
+                    color: white !important;
+                    font-size: 6px !important;
+                    padding: 2px 6px !important;
+                    border-radius: 3px !important;
+                    font-weight: 700 !important;
+                    white-space: nowrap !important;
+                }
+
+                .pdf-monthly-installment-table .rate-subheader {
+                    background: rgba(37, 99, 235, 0.8) !important;
+                    font-size: 9px !important;
+                    padding: 4px !important;
+                }
+
+                .pdf-monthly-installment-table .rate-subheader.recommended {
+                    background: rgba(5, 150, 105, 0.8) !important;
+                }
+
+                .pdf-monthly-installment-table td {
+                    padding: 6px 4px !important;
+                    text-align: center !important;
+                    border: 1px solid #e5e7eb !important;
+                    font-size: 9px !important;
+                    vertical-align: middle !important;
+                }
+
+                .pdf-monthly-installment-table .year-label {
+                    background: #f3f4f6 !important;
+                    font-weight: 600 !important;
+                    color: #374151 !important;
+                    text-align: left !important;
+                    padding-left: 8px !important;
+                }
+
+                .pdf-monthly-installment-table .detail-label {
+                    background: #f9fafb !important;
+                    font-weight: 500 !important;
+                    color: #6b7280 !important;
+                    text-align: left !important;
+                    padding-left: 12px !important;
+                    font-style: italic !important;
+                }
+
+                .pdf-monthly-installment-table .savings-label {
+                    background: #ecfdf5 !important;
+                    font-weight: 600 !important;
+                    color: #059669 !important;
+                    text-align: left !important;
+                    padding-left: 12px !important;
+                }
+
+                .pdf-monthly-installment-table .current-value {
+                    background: #fef2f2 !important;
+                    color: #dc2626 !important;
+                    font-weight: 600 !important;
+                }
+
+                .pdf-monthly-installment-table .package-value {
+                    background: #eff6ff !important;
+                    color: #2563eb !important;
+                    font-weight: 600 !important;
+                }
+
+                .pdf-monthly-installment-table .package-value.recommended {
+                    background: #ecfdf5 !important;
+                    color: #059669 !important;
+                    font-weight: 700 !important;
+                }
+
+                .pdf-monthly-installment-table .current-detail {
+                    background: #fef2f2 !important;
+                    color: #9ca3af !important;
+                }
+
+                .pdf-monthly-installment-table .package-detail {
+                    background: #f8fafc !important;
+                    color: #6b7280 !important;
+                }
+
+                .pdf-monthly-installment-table .package-detail.recommended {
+                    background: #f0fdf4 !important;
+                    color: #16a34a !important;
+                    font-weight: 600 !important;
+                }
+
+                .pdf-monthly-installment-table .savings-value {
+                    background: #ecfdf5 !important;
+                    color: #059669 !important;
+                    font-weight: 700 !important;
+                }
+
+                .pdf-monthly-installment-table .savings-value.recommended {
+                    background: #064e3b !important;
+                    color: white !important;
+                    font-weight: 800 !important;
+                }
+
+                .pdf-monthly-installment-table tbody tr:hover {
+                    background: rgba(37, 99, 235, 0.05) !important;
                 }
 
                 .pdf-comparison-table {
