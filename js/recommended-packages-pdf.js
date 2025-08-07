@@ -518,7 +518,7 @@ function generateProfessionalReport() {
                 <table class="pdf-monthly-installment-table">
                     <thead>
                         <tr>
-                            <th rowspan="2" class="row-header"></th>
+                            <th rowspan="3" class="row-header"></th>
                             ${selectedPackages.map((pkg, index) => `
                                 <th class="${index === 0 ? 'recommended-package-header' : 'package-header'}">
                                     ${hideBankNames ? `PKG(${index + 1})` : pkg.bank_name}
@@ -559,9 +559,10 @@ function generateProfessionalReport() {
                             <tr class="savings-row">
                                 <td class="savings-label">Total Saving</td>
                                 ${yearData.packages.map((pkgData, index) => {
-                                    const currentTotalPayment = calculateMonthlyInstallment(searchCriteria.loanAmount, parseInt(yearData.year), searchCriteria.existingInterestRate) * 12;
-                                    const packageTotalPayment = pkgData.monthlyInstalment * 12;
-                                    const yearSavings = currentTotalPayment - packageTotalPayment;
+                                    const currentMonthlyPayment = calculateMonthlyInstallment(searchCriteria.loanAmount, searchCriteria.loanTenure, searchCriteria.existingInterestRate);
+                                    const packageMonthlyPayment = pkgData.monthlyInstalment;
+                                    const monthlySavings = currentMonthlyPayment - packageMonthlyPayment;
+                                    const yearSavings = monthlySavings * 12; // Yearly savings
                                     return `<td class="savings-value ${index === 0 ? 'recommended' : ''}">${formatCurrency(yearSavings)}</td>`;
                                 }).join('')}
                             </tr>
