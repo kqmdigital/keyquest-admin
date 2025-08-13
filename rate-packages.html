@@ -1026,6 +1026,8 @@
                             <div class="view-item"><strong>Loan Type:</strong> ${pkg.loan_type || 'N/A'}</div>
                             <div class="view-item"><strong>Property Status:</strong> ${pkg.property_status || 'N/A'}</div>
                             <div class="view-item"><strong>Rate Type:</strong> ${pkg.rate_type_category || 'N/A'}</div>
+                            <div class="view-item"><strong>Created at:</strong> ${pkg.created_at ? new Date(pkg.created_at).toLocaleString() : 'N/A'}</div>
+                            <div class="view-item"><strong>Last Updated at:</strong> ${pkg.updated_at ? new Date(pkg.updated_at).toLocaleString() : 'N/A'}</div>
                         </div>
                     </div>
                     
