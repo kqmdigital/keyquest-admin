@@ -520,6 +520,22 @@
                                     Free conversion (36 months)
                                 </label>
                             </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="claw_back_period_2years">
+                                    <span class="checkmark"></span>
+                                    Clawback 2 Years
+                                </label>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="claw_back_period_3years">
+                                    <span class="checkmark"></span>
+                                    Clawback 3 Years
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -1067,6 +1083,8 @@
                             <div class="view-item"><strong>Free Conversion (12m):</strong> ${pkg.free_package_conversion_12m ? 'Yes' : 'No'}</div>
                             <div class="view-item"><strong>Free Conversion (24m):</strong> ${pkg.free_package_conversion_24m ? 'Yes' : 'No'}</div>
                             <div class="view-item"><strong>Free Conversion (36m):</strong> ${pkg.free_package_conversion_36m ? 'Yes' : 'No'}</div>
+                            <div class="view-item"><strong>Clawback 2 Years:</strong> ${pkg.claw_back_period_2years ? 'Yes' : 'No'}</div>
+                            <div class="view-item"><strong>Clawback 3 Years:</strong> ${pkg.claw_back_period_3years ? 'Yes' : 'No'}</div>
                         </div>
                     </div>
                     
@@ -1117,7 +1135,8 @@
             const booleanFields = [
                 'legal_fee_subsidy', 'valuation_subsidy', 'partial_repayment', 
                 'waiver_due_to_sales', 'free_package_conversion_12m', 
-                'free_package_conversion_24m', 'free_package_conversion_36m'
+                'free_package_conversion_24m', 'free_package_conversion_36m',
+                'claw_back_period_2years', 'claw_back_period_3years'
             ];
             booleanFields.forEach(field => {
                 if (!(field in packageData)) {
