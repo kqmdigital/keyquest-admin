@@ -125,6 +125,12 @@
                         <option value="10 Years">10 Years</option>
                     </select>
 
+                    <select class="filter-select" id="propertyStatusFilter">
+                        <option value="">Select Property Status</option>
+                        <option value="Completed">Completed</option>
+                        <option value="BUC">BUC</option>
+                    </select>
+
                     <select class="filter-select" id="bankFilter">
                         <option value="">Select Bank</option>
                         <option value="CIMB">CIMB</option>
@@ -916,6 +922,7 @@
             const loanType = document.getElementById('loanTypeFilter')?.value || '';
             const rateType = document.getElementById('rateTypeFilter')?.value || '';
             const lockPeriod = document.getElementById('lockPeriodFilter')?.value || '';
+            const propertyStatus = document.getElementById('propertyStatusFilter')?.value || '';
             const bank = document.getElementById('bankFilter')?.value || '';
 
             filteredPackages = packages.filter(pkg => {
@@ -927,6 +934,7 @@
                        (!loanType || pkg.loan_type === loanType) &&
                        (!rateType || pkg.rate_type_category === rateType) &&
                        (!lockPeriod || pkg.lock_period === lockPeriod) &&
+                       (!propertyStatus || pkg.property_status === propertyStatus) &&
                        (!bank || pkg.bank_name === bank);
             });
 
@@ -1378,6 +1386,7 @@
             document.getElementById('loanTypeFilter').value = '';
             document.getElementById('rateTypeFilter').value = '';
             document.getElementById('lockPeriodFilter').value = '';
+            document.getElementById('propertyStatusFilter').value = '';
             document.getElementById('bankFilter').value = '';
             
             filterPackages();
@@ -1389,6 +1398,7 @@
         document.getElementById('loanTypeFilter').addEventListener('change', filterPackages);
         document.getElementById('rateTypeFilter').addEventListener('change', filterPackages);
         document.getElementById('lockPeriodFilter').addEventListener('change', filterPackages);
+        document.getElementById('propertyStatusFilter').addEventListener('change', filterPackages);
         document.getElementById('bankFilter').addEventListener('change', filterPackages);
 
         document.getElementById('packageForm').addEventListener('submit', handleFormSubmit);
