@@ -472,9 +472,7 @@ function generateProfessionalReport() {
                             ${selectedPackages.map((pkg, index) => `
                                 <td class="${index === 0 ? 'recommended features-cell' : 'features-cell'}">
                                     ${pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true ? 
-                                        '<div style="color: #2563eb; margin-bottom: 3px;">✓ Legal Fee Subsidy</div>' : ''}
-                                    ${pkg.cash_rebate === 'true' || pkg.cash_rebate === true ? 
-                                        '<div style="color: #2563eb; margin-bottom: 3px;">✓ Cash Rebate</div>' : ''}
+                                        '<div style="color: #2563eb; margin-bottom: 3px;">✓ Legal fee subsidy/Cash Rebate</div>' : ''}
                                     ${pkg.free_package_conversion_12m === 'true' || pkg.free_package_conversion_12m === true ? 
                                         '<div style="color: #2563eb; margin-bottom: 3px;">✓ Free Conversion (12M)</div>' : ''}
                                     ${pkg.free_package_conversion_24m === 'true' || pkg.free_package_conversion_24m === true ? 

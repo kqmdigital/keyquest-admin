@@ -1038,7 +1038,7 @@ function createPackageCard(pkg, index) {
                                onchange="updatePackageFeature(${index}, 'legal_fee_subsidy', this.checked)"
                                ${(pkg.legal_fee_subsidy === 'true' || pkg.legal_fee_subsidy === true) ? 'checked' : ''}>
                         <span class="checkmark"></span>
-                        Legal Fee Subsidy
+                        Legal fee subsidy/Cash Rebate
                     </label>
                     <label class="feature-checkbox">
                         <input type="checkbox" 
@@ -1170,7 +1170,7 @@ function generatePackageFeatures(pkg) {
         features.push(`
             <div class="feature-tag">
                 <i data-lucide="shield"></i>
-                Legal Fee Subsidy
+                Legal fee subsidy/Cash Rebate
             </div>
         `);
     }
