@@ -107,6 +107,7 @@
                             <thead>
                                 <tr>
                                     <th>BANK NAME</th>
+                                    <th>LOGO</th>
                                     <th>ABBREVIATION</th>
                                     <th>STATUS</th>
                                     <th>RATE TYPES COUNT</th>
@@ -117,7 +118,7 @@
                             </thead>
                             <tbody id="banksTable">
                                 <tr>
-                                    <td colspan="7" style="text-align: center; padding: 40px;">
+                                    <td colspan="8" style="text-align: center; padding: 40px;">
                                         <div class="loading-spinner"></div>
                                         <div style="margin-top: 10px;">Loading banks...</div>
                                     </td>
@@ -298,9 +299,35 @@
             'Citibank': 'Citibank'
         };
 
+        // Bank logo URL mappings
+        const BANK_LOGOS = {
+            'BOC': 'https://ik.imagekit.io/hst9jooux/BOC%20LOGO.png?updatedAt=1755223530214',
+            'SF': 'https://ik.imagekit.io/hst9jooux/SF%20LOGO.png?updatedAt=1755223404411',
+            'UOB': 'https://ik.imagekit.io/hst9jooux/UOB%20LOGO.png?updatedAt=1755223404088',
+            'DBS': 'https://ik.imagekit.io/hst9jooux/DBS%20LOGO.png?updatedAt=1755223401005',
+            'MBB': 'https://ik.imagekit.io/hst9jooux/MBB%20LOGO.png?updatedAt=1755223400971',
+            'SBI': 'https://ik.imagekit.io/hst9jooux/SBI%20LOGO.png?updatedAt=1755223400990',
+            'CITIBANK': 'https://ik.imagekit.io/hst9jooux/Screenshot%202025-08-15%20100042.png?updatedAt=1755223400987',
+            'RHB': 'https://ik.imagekit.io/hst9jooux/RHB%20LOGO.png?updatedAt=1755223400955',
+            'SCB': 'https://ik.imagekit.io/hst9jooux/SCB%20LOGO.png?updatedAt=1755223400950',
+            'OCBC': 'https://ik.imagekit.io/hst9jooux/OCBC%20LOGO.png?updatedAt=1755223400911',
+            'HLF': 'https://ik.imagekit.io/hst9jooux/HLF%20LOGO.png?updatedAt=1755223400633',
+            'CIMB': 'https://ik.imagekit.io/hst9jooux/CIMB%20LOGO.png?updatedAt=1755223400618',
+            'HSBC': 'https://ik.imagekit.io/hst9jooux/HSBC%20LOGO.png?updatedAt=1755223949272',
+            'SIF': 'https://ik.imagekit.io/hst9jooux/SIF%20LOGO.png?updatedAt=1755224044152'
+        };
+
         // Get abbreviation from full bank name
         function getBankAbbreviation(fullName) {
             return BANK_MAPPINGS[fullName] || fullName;
+        }
+
+        // Get bank logo URL from abbreviation
+        function getBankLogoUrl(fullName) {
+            const abbreviation = getBankAbbreviation(fullName);
+            // Handle special case for Citibank
+            const logoKey = abbreviation === 'Citibank' ? 'CITIBANK' : abbreviation;
+            return BANK_LOGOS[logoKey] || null;
         }
 
         // Update abbreviation when bank name is selected
@@ -345,7 +372,7 @@
                 if (tbody) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px; color: #ef4444;">
+                            <td colspan="8" style="text-align: center; padding: 40px; color: #ef4444;">
                                 <div style="margin-bottom: 12px;">Failed to load data</div>
                                 <div style="font-size: 12px; color: #6b7280;">${error.message}</div>
                                 <button onclick="loadBanks()" style="margin-top: 12px; padding: 8px 16px; background: #4338ca; color: white; border: none; border-radius: 6px; cursor: pointer;">
@@ -417,7 +444,7 @@
             if (pageBanks.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #64748b;">
                             ${filteredBanks.length === 0 ? 'No banks found' : 'No banks match your filters'}
                         </td>
                     </tr>
@@ -427,6 +454,7 @@
 
             tbody.innerHTML = pageBanks.map(bank => {
                 const abbreviation = getBankAbbreviation(bank.name);
+                const logoUrl = getBankLogoUrl(bank.name);
                 const rateTypesCount = countRateTypesForBank(bank.name);
                 const packagesCount = countPackagesForBank(bank.name);
                 const isActive = rateTypesCount > 0 || packagesCount > 0;
@@ -434,6 +462,13 @@
                 return `
                     <tr>
                         <td><strong>${bank.name || 'N/A'}</strong></td>
+                        <td>
+                            ${logoUrl ? 
+                                `<img src="${logoUrl}" alt="${bank.name} Logo" style="width: 60px; height: 40px; object-fit: contain; border-radius: 4px; background: #f8f9fa; padding: 4px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                                 <span style="display: none; color: #6b7280; font-size: 12px;">No Logo</span>` 
+                                : '<span style="color: #6b7280; font-size: 12px;">No Logo</span>'
+                            }
+                        </td>
                         <td><span class="bank-abbr">${abbreviation}</span></td>
                         <td>
                             <span class="status-badge ${isActive ? 'status-completed' : 'status-inactive'}">
@@ -690,18 +725,20 @@
                 return;
             }
 
-            const headers = ['Bank Name', 'Abbreviation', 'Status', 'Rate Types Count', 'Packages Count', 'Created Date'];
+            const headers = ['Bank Name', 'Logo URL', 'Abbreviation', 'Status', 'Rate Types Count', 'Packages Count', 'Created Date'];
 
             const csvContent = [
                 headers.join(','),
                 ...filteredBanks.map(bank => {
                     const abbreviation = getBankAbbreviation(bank.name);
+                    const logoUrl = getBankLogoUrl(bank.name);
                     const rateTypesCount = countRateTypesForBank(bank.name);
                     const packagesCount = countPackagesForBank(bank.name);
                     const isActive = rateTypesCount > 0 || packagesCount > 0;
 
                     return [
                         `"${bank.name || ''}"`,
+                        `"${logoUrl || ''}"`,
                         abbreviation,
                         isActive ? 'Active' : 'Inactive',
                         rateTypesCount,
