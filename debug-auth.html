@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Auth Issue</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .debug-panel { background: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .debug-title { font-weight: bold; color: #495057; margin-bottom: 10px; }
+        .debug-result { background: #ffffff; border: 1px solid #ced4da; padding: 10px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+    </style>
+    <script src="https://unpkg.com/@supabase/supabase-js@2.39.7/dist/umd/supabase.js"></script>
+    <script src="js/security-utils.js"></script>
+    <script src="config/supabase.js"></script>
+</head>
+<body>
+    <h1>🔍 Admin User Creation Debug Tool</h1>
+    
+    <div class="debug-panel">
+        <div class="debug-title">1. Current Session Check</div>
+        <button onclick="checkCurrentUser()">Check Current User</button>
+        <div id="currentUserResult" class="debug-result"></div>
+    </div>
+    
+    <div class="debug-panel">
+        <div class="debug-title">2. Database RPC Functions Check</div>
+        <button onclick="checkRPCFunctions()">Check RPC Functions</button>
+        <div id="rpcResult" class="debug-result"></div>
+    </div>
+    
+    <div class="debug-panel">
+        <div class="debug-title">3. Test User Creation</div>
+        <button onclick="testCreateUser()">Test Create User</button>
+        <div id="createUserResult" class="debug-result"></div>
+    </div>
+
+    <div class="debug-panel">
+        <div class="debug-title">4. Direct Database Query Test</div>
+        <button onclick="testDirectQuery()">Test Direct Query</button>
+        <div id="directQueryResult" class="debug-result"></div>
+    </div>
+
+    <script>
+        async function checkCurrentUser() {
+            const result = document.getElementById('currentUserResult');
+            try {
+                const { success, user } = await AuthService.getCurrentUser();
+                result.className = 'debug-result ' + (success ? 'success' : 'error');
+                result.textContent = JSON.stringify({ success, user }, null, 2);
+            } catch (error) {
+                result.className = 'debug-result error';
+                result.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function checkRPCFunctions() {
+            const result = document.getElementById('rpcResult');
+            try {
+                // Try to call the function information from pg_proc
+                const { data, error } = await supabaseClient
+                    .rpc('get_function_list'); // This might not exist, but let's try
+                
+                if (error) {
+                    result.className = 'debug-result error';
+                    result.textContent = 'RPC Check Error: ' + error.message + '\n\nThis might be normal - the function may not exist.';
+                } else {
+                    result.className = 'debug-result success';
+                    result.textContent = 'Available functions:\n' + JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                result.className = 'debug-result error';
+                result.textContent = 'Exception: ' + error.message;
+            }
+        }
+
+        async function testCreateUser() {
+            const result = document.getElementById('createUserResult');
+            try {
+                // Test with dummy data
+                const testData = {
+                    name: 'Test User Debug',
+                    email: 'debug@test.com',
+                    password: 'testpassword123',
+                    role: 'admin'
+                };
+
+                const response = await AuthService.createAdminUser(testData);
+                result.className = 'debug-result ' + (response.success ? 'success' : 'error');
+                result.textContent = JSON.stringify(response, null, 2);
+            } catch (error) {
+                result.className = 'debug-result error';
+                result.textContent = 'Exception: ' + error.message + '\n\nStack: ' + error.stack;
+            }
+        }
+
+        async function testDirectQuery() {
+            const result = document.getElementById('directQueryResult');
+            try {
+                // Try direct access to admin_users table
+                const { data, error } = await supabaseClient
+                    .from('admin_users')
+                    .select('id, email, name, role, is_active')
+                    .limit(1);
+                
+                if (error) {
+                    result.className = 'debug-result error';
+                    result.textContent = 'Direct query error: ' + error.message + '\n\nThis suggests a database permission issue.';
+                } else {
+                    result.className = 'debug-result success';
+                    result.textContent = 'Direct query successful!\nSample data: ' + JSON.stringify(data, null, 2);
+                    
+                    // Also try to check if create_admin_user function exists
+                    try {
+                        const { data: funcData, error: funcError } = await supabaseClient
+                            .rpc('create_admin_user', {
+                                creator_email: 'test@test.com',
+                                new_name: 'Debug Test',
+                                new_email: 'debug@example.com',
+                                new_password: 'testpass',
+                                new_role: 'admin'
+                            });
+                        
+                        result.textContent += '\n\nRPC Function Test Result: ' + JSON.stringify({ funcData, funcError }, null, 2);
+                    } catch (rpcError) {
+                        result.textContent += '\n\nRPC Function Error: ' + rpcError.message;
+                    }
+                }
+            } catch (error) {
+                result.className = 'debug-result error';
+                result.textContent = 'Exception: ' + error.message;
+            }
+        }
+
+        // Auto-check current user on load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkCurrentUser();
+        });
+    </script>
+</body>
+</html>

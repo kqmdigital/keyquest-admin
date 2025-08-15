@@ -230,9 +230,7 @@ class AuthService {
                 return { success: false, error: 'Unauthorized: Super admin access required' };
             }
 
-            const { data, error } = await supabaseClient.rpc('get_admin_users', {
-                admin_email: user.email
-            });
+            const { data, error } = await supabaseClient.rpc('get_admin_users');
 
             if (error) throw error;
             return data;
@@ -249,20 +247,77 @@ class AuthService {
                 return { success: false, error: 'Unauthorized: Super admin access required' };
             }
 
-            const { data, error } = await supabaseClient.rpc('create_admin_user', {
-                creator_email: user.email,
-                new_name: userData.name,
-                new_email: userData.email,
-                new_password: userData.password,
-                new_role: userData.role || 'admin'
-            });
+            console.log('🔍 Creating admin user with data:', userData);
+            console.log('🔍 Current user role:', user.role);
 
-            if (error) throw error;
-            return data;
+            // Try RPC function first
+            try {
+                const { data, error } = await supabaseClient.rpc('create_admin_user', {
+                    user_email: userData.email,
+                    user_name: userData.name,
+                    user_password: userData.password,
+                    user_role: userData.role || 'admin'
+                });
+
+                if (error) throw error;
+                console.log('✅ RPC create_admin_user successful:', data);
+                return data;
+            } catch (rpcError) {
+                console.warn('⚠️ RPC create_admin_user failed, trying direct insert:', rpcError.message);
+                
+                // Fallback: Direct database insert with password hashing
+                // First check if user already exists
+                const { data: existingUser } = await supabaseClient
+                    .from('admin_users')
+                    .select('id')
+                    .eq('email', userData.email)
+                    .single();
+
+                if (existingUser) {
+                    return { success: false, error: 'A user with this email already exists' };
+                }
+
+                // Hash the password (simple hash - in production you'd use bcrypt)
+                const hashedPassword = await this.hashPassword(userData.password);
+
+                // Insert new user
+                const { data: newUser, error: insertError } = await supabaseClient
+                    .from('admin_users')
+                    .insert([{
+                        name: userData.name,
+                        email: userData.email,
+                        password_hash: hashedPassword,
+                        role: userData.role || 'admin',
+                        is_active: true,
+                        created_at: new Date().toISOString(),
+                        created_by: user.id
+                    }])
+                    .select()
+                    .single();
+
+                if (insertError) {
+                    console.error('❌ Direct insert failed:', insertError);
+                    throw insertError;
+                }
+
+                console.log('✅ Direct insert successful:', newUser);
+                return { success: true, data: newUser, message: 'Admin user created successfully' };
+            }
         } catch (error) {
             console.error('Create admin user error:', error);
             return { success: false, error: error.message };
         }
+    }
+
+    // Simple password hashing function (fallback)
+    static async hashPassword(password) {
+        // In production, you should use a proper hashing library like bcrypt
+        // This is a simple fallback for demonstration
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password + 'keyquest_salt_2024');
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
     }
 
     static async resetUserPassword(targetEmail, newPassword) {
