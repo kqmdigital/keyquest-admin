@@ -1081,12 +1081,20 @@ function createPackageCard(pkg, index) {
                         Partial Repayment
                     </label>
                     <label class="feature-checkbox">
-                        <input type="checkbox" 
-                               value="waiver_due_to_sales" 
+                        <input type="checkbox"
+                               value="waiver_due_to_sales"
                                onchange="updatePackageFeature(${index}, 'waiver_due_to_sales', this.checked)"
                                ${(pkg.waiver_due_to_sales === 'true' || pkg.waiver_due_to_sales === true) ? 'checked' : ''}>
                         <span class="checkmark"></span>
                         Waiver Due to Sales
+                    </label>
+                    <label class="feature-checkbox">
+                        <input type="checkbox"
+                               value="cancellation_fee"
+                               onchange="updatePackageFeature(${index}, 'cancellation_fee', this.checked)"
+                               ${(pkg.cancellation_fee === 'true' || pkg.cancellation_fee === true) ? 'checked' : ''}>
+                        <span class="checkmark"></span>
+                        Cancellation Fee
                     </label>
                 </div>
             </div>
