@@ -605,6 +605,74 @@
         let currentPage = 1;
         const itemsPerPage = 10;
 
+        // Filter persistence functions
+        function saveFilterState() {
+            const filterState = {
+                searchInput: document.getElementById('searchInput')?.value || '',
+                propertyTypeFilter: document.getElementById('propertyTypeFilter')?.value || '',
+                loanTypeFilter: document.getElementById('loanTypeFilter')?.value || '',
+                rateTypeFilter: document.getElementById('rateTypeFilter')?.value || '',
+                lockPeriodFilter: document.getElementById('lockPeriodFilter')?.value || '',
+                propertyStatusFilter: document.getElementById('propertyStatusFilter')?.value || '',
+                bankFilter: document.getElementById('bankFilter')?.value || '',
+                currentPage: currentPage
+            };
+
+            try {
+                localStorage.setItem('ratePackagesFilters', JSON.stringify(filterState));
+            } catch (error) {
+                console.warn('Could not save filter state:', error);
+            }
+        }
+
+        function loadFilterState() {
+            try {
+                const saved = localStorage.getItem('ratePackagesFilters');
+                if (saved) {
+                    const filterState = JSON.parse(saved);
+
+                    // Restore filter values
+                    if (document.getElementById('searchInput')) {
+                        document.getElementById('searchInput').value = filterState.searchInput || '';
+                    }
+                    if (document.getElementById('propertyTypeFilter')) {
+                        document.getElementById('propertyTypeFilter').value = filterState.propertyTypeFilter || '';
+                    }
+                    if (document.getElementById('loanTypeFilter')) {
+                        document.getElementById('loanTypeFilter').value = filterState.loanTypeFilter || '';
+                    }
+                    if (document.getElementById('rateTypeFilter')) {
+                        document.getElementById('rateTypeFilter').value = filterState.rateTypeFilter || '';
+                    }
+                    if (document.getElementById('lockPeriodFilter')) {
+                        document.getElementById('lockPeriodFilter').value = filterState.lockPeriodFilter || '';
+                    }
+                    if (document.getElementById('propertyStatusFilter')) {
+                        document.getElementById('propertyStatusFilter').value = filterState.propertyStatusFilter || '';
+                    }
+                    if (document.getElementById('bankFilter')) {
+                        document.getElementById('bankFilter').value = filterState.bankFilter || '';
+                    }
+
+                    // Restore page
+                    currentPage = filterState.currentPage || 1;
+
+                    return true; // Indicate that filters were loaded
+                }
+            } catch (error) {
+                console.warn('Could not load filter state:', error);
+            }
+            return false;
+        }
+
+        function clearFilterState() {
+            try {
+                localStorage.removeItem('ratePackagesFilters');
+            } catch (error) {
+                console.warn('Could not clear filter state:', error);
+            }
+        }
+
         // Bank name mappings
         const BANK_MAPPINGS = {
             'MBB': 'Maybank',
@@ -799,7 +867,7 @@
             return errors;
         }
 
-        // Load rate packages
+        // Load rate packages with filter preservation
         async function loadPackages() {
             try {
                 const { data, error } = await supabaseClient
@@ -810,10 +878,21 @@
                 if (error) throw error;
 
                 packages = data || [];
-                filteredPackages = [...packages];
-                displayPackages();
-                updatePagination();
-                
+
+                // Check if we should restore filters (on page load or after CRUD operations)
+                const shouldRestoreFilters = loadFilterState();
+
+                if (shouldRestoreFilters) {
+                    // Apply the restored filters
+                    filterPackages();
+                } else {
+                    // No saved filters, show all packages
+                    filteredPackages = [...packages];
+                    currentPage = 1;
+                    displayPackages();
+                    updatePagination();
+                }
+
                 showNotification(`Loaded ${packages.length} rate packages successfully`, 'success');
 
             } catch (error) {
@@ -926,7 +1005,7 @@
             const bank = document.getElementById('bankFilter')?.value || '';
 
             filteredPackages = packages.filter(pkg => {
-                return (!searchTerm || 
+                return (!searchTerm ||
                        (pkg.bank_name && pkg.bank_name.toLowerCase().includes(searchTerm)) ||
                        (pkg.property_type && pkg.property_type.toLowerCase().includes(searchTerm)) ||
                        (pkg.buy_under && pkg.buy_under.toLowerCase().includes(searchTerm))) &&
@@ -941,6 +1020,9 @@
             currentPage = 1;
             displayPackages();
             updatePagination();
+
+            // Save filter state after applying filters
+            saveFilterState();
         }
 
         // Update pagination
@@ -998,7 +1080,10 @@
                 currentPage = page;
                 displayPackages();
                 updatePagination();
-                
+
+                // Save page state
+                saveFilterState();
+
                 // Scroll to top of table
                 document.querySelector('.data-table').scrollIntoView({ behavior: 'smooth' });
             }
@@ -1177,7 +1262,7 @@
                 }
 
                 closeModal('package-modal');
-                loadPackages();
+                await loadPackages(); // Reload data while preserving filters
                 
             } catch (error) {
                 console.error('Error saving package:', error);
@@ -1301,7 +1386,7 @@
 
                 addRecentAction('delete', `Deleted package: ${pkg.bank_name} - ${pkg.property_type}`);
                 showNotification('Package deleted successfully', 'success');
-                loadPackages(); // Reload data
+                await loadPackages(); // Reload data while preserving filters
                 
             } catch (error) {
                 console.error('Error deleting package:', error);
@@ -1388,7 +1473,10 @@
             document.getElementById('lockPeriodFilter').value = '';
             document.getElementById('propertyStatusFilter').value = '';
             document.getElementById('bankFilter').value = '';
-            
+
+            // Clear saved filter state
+            clearFilterState();
+
             filterPackages();
         }
 
