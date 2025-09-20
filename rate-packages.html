@@ -656,9 +656,9 @@
         function populateRateTypeSelects(availableRateTypes) {
             const rateTypeSelects = document.querySelectorAll('.rate-type-select');
             
-            const options = availableRateTypes.map(rateType => 
+            const options = availableRateTypes.map(rateType =>
                 `<option value="${rateType.rate_type}" data-rate-value="${rateType.rate_value}">
-                    ${rateType.rate_type} (${rateType.rate_value}%)
+                    ${rateType.rate_type} (${parseFloat(rateType.rate_value).toFixed(2)}%)
                 </option>`
             ).join('');
 
@@ -714,8 +714,8 @@
             const multiplier = operator === '-' ? -1 : 1;
             const finalRate = baseRate + (multiplier * value);
 
-            // Display calculation
-            calculatedDiv.textContent = `= ${finalRate.toFixed(3)}%`;
+            // Display calculation with 2 decimal places
+            calculatedDiv.textContent = `= ${finalRate.toFixed(2)}%`;
             calculatedDiv.style.color = finalRate < 0 ? '#dc2626' : '#059669';
             calculatedDiv.style.fontWeight = 'bold';
         }
@@ -749,7 +749,7 @@
             const multiplier = operator === '-' ? -1 : 1;
             const finalRate = baseRate + (multiplier * value);
 
-            return `${rateType} (${baseRate.toFixed(3)}%) ${operator}${value}% = ${finalRate.toFixed(3)}%`;
+            return `${rateType} (${baseRate.toFixed(2)}%) ${operator}${value.toFixed(2)}% = ${finalRate.toFixed(2)}%`;
         }
 
         // Enhanced form validation
@@ -889,7 +889,7 @@
                     <td>${pkg.loan_type || 'N/A'}</td>
                     <td>${pkg.lock_period || 'N/A'}</td>
                     <td>${formatNumber(pkg.minimum_loan_size)}</td>
-                    <td><strong>${calculateInterestYear(pkg, 1)}</strong></td>
+                    <td><strong style="font-weight: bold;">${calculateInterestYear(pkg, 1)}</strong></td>
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-sm btn-info" onclick="duplicatePackage('${pkg.id}')" title="Duplicate" style="background: #f59e0b; color: white; border: none;">
@@ -1062,7 +1062,7 @@
                             ${interestSchedule.map(item => `
                                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
                                     <strong>${item.period}:</strong>
-                                    <span style="font-family: monospace; color: #059669;">${item.calculation}</span>
+                                    <span style="font-family: monospace; color: #059669; font-weight: bold;">${item.calculation}</span>
                                 </div>
                             `).join('')}
                         </div>

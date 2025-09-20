@@ -247,10 +247,16 @@
                 if (typeof lucide !== 'undefined' && lucide.createIcons) {
                     lucide.createIcons();
                 }
-                
+
                 // Check authentication
                 await checkAuthentication();
-                
+
+                // Initialize session monitoring for auto-logout
+                if (typeof SecurityUtils !== 'undefined' && SecurityUtils.sessionManager) {
+                    SecurityUtils.sessionManager.init();
+                    console.log('✅ Session monitoring initialized on dashboard');
+                }
+
                 // Load dashboard data
                 await loadDashboardData();
                 

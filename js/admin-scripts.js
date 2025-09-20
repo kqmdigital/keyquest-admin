@@ -240,7 +240,7 @@ function calculateRateWithValidation(rateType, operator, value, availableRateTyp
         operator: operator,
         finalRate: baseRate + (multiplier * adjustmentValue),
         rateType: rateType,
-        display: `${rateType} (${baseRate.toFixed(3)}%) ${operator}${adjustmentValue.toFixed(3)}% = ${(baseRate + (multiplier * adjustmentValue)).toFixed(3)}%`
+        display: `${rateType} (${baseRate.toFixed(2)}%) ${operator}${adjustmentValue.toFixed(2)}% = ${(baseRate + (multiplier * adjustmentValue)).toFixed(2)}%`
     };
 }
 
@@ -360,7 +360,7 @@ function validateRateTypeForm(formData, selectedBanks) {
 // Format rate value for display
 function formatRateValue(value) {
     if (value === null || value === undefined) return 'N/A';
-    return parseFloat(value).toFixed(3) + '%';
+    return parseFloat(value).toFixed(2) + '%';
 }
 
 // Format bank names for table display with abbreviations
@@ -996,6 +996,24 @@ loadRecentActions();
 // Add notification styles
 addNotificationStyles();
 
+// Initialize session monitoring on authenticated pages
+function initializeSessionMonitoring() {
+    // Only initialize on authenticated pages (not login page)
+    if (!window.location.pathname.includes('login.html')) {
+        if (typeof SecurityUtils !== 'undefined' && SecurityUtils.sessionManager) {
+            // Check if user is logged in first
+            if (typeof AuthService !== 'undefined') {
+                AuthService.getCurrentUser().then(({ success, user }) => {
+                    if (success && user) {
+                        SecurityUtils.sessionManager.init();
+                        console.log('✅ Session monitoring initialized');
+                    }
+                });
+            }
+        }
+    }
+}
+
 // ===================================
 // EXPORT FOR GLOBAL USE
 // ===================================
@@ -1050,13 +1068,16 @@ console.log('Enhanced Admin JavaScript framework loaded successfully');
 // Auto-initialize page-specific functionality based on current page
 document.addEventListener('DOMContentLoaded', function() {
     const currentPage = window.location.pathname.split('/').pop();
-    
+
     if (currentPage === 'rate-types.html') {
         initRateTypesPage();
     } else if (currentPage === 'rate-packages.html') {
         initRatePackagesPage();
     }
-    
+
+    // Initialize session monitoring for authenticated pages
+    initializeSessionMonitoring();
+
     // Initialize Lucide icons
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();

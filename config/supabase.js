@@ -47,17 +47,22 @@ class AuthService {
                 };
             }
 
+            // Sanitize email for case-insensitive login
+            const sanitizedEmail = (typeof SecurityUtils !== 'undefined' && SecurityUtils.sanitizeEmail)
+                ? SecurityUtils.sanitizeEmail(email)
+                : email.trim().toLowerCase();
+
             // Rate limiting check (if available)
-            if (typeof loginRateLimiter === 'function' && !loginRateLimiter(email)) {
-                return { 
-                    success: false, 
-                    error: 'Too many login attempts. Please try again in 15 minutes.' 
+            if (typeof loginRateLimiter === 'function' && !loginRateLimiter(sanitizedEmail)) {
+                return {
+                    success: false,
+                    error: 'Too many login attempts. Please try again in 15 minutes.'
                 };
             }
 
             // Use custom authentication with existing password hashes
   const { data, error } = await supabaseClient.rpc('authenticate_admin', {
-      user_email: email,
+      user_email: sanitizedEmail,
       user_password: password
   });
 
@@ -95,18 +100,23 @@ class AuthService {
                 role: adminData.role,
                 loginTime: new Date().toISOString()
             };
-            
+
             // Use secure storage with expiration (fallback to localStorage)
             if (typeof SecurityUtils !== 'undefined' && SecurityUtils.secureStorage) {
                 SecurityUtils.secureStorage.set(
-                    'admin_session', 
-                    userSession, 
+                    'admin_session',
+                    userSession,
                     SECURITY_CONFIG.sessionTimeout
                 );
             } else {
                 // Fallback to localStorage with manual expiration
                 localStorage.setItem('admin_session', JSON.stringify(userSession));
                 localStorage.setItem('session_expires', (Date.now() + SECURITY_CONFIG.sessionTimeout).toString());
+            }
+
+            // Initialize session monitoring for auto-logout
+            if (typeof SecurityUtils !== 'undefined' && SecurityUtils.sessionManager) {
+                SecurityUtils.sessionManager.init();
             }
 
             // Update last login
@@ -121,6 +131,11 @@ class AuthService {
 
     static async signOut() {
         try {
+            // Stop session monitoring
+            if (typeof SecurityUtils !== 'undefined' && SecurityUtils.sessionManager) {
+                SecurityUtils.sessionManager.stopMonitoring();
+            }
+
             // Clear secure storage (with fallback)
             if (typeof SecurityUtils !== 'undefined' && SecurityUtils.secureStorage) {
                 SecurityUtils.secureStorage.clear();
@@ -128,8 +143,9 @@ class AuthService {
                 // Fallback: clear localStorage
                 localStorage.removeItem('admin_session');
                 localStorage.removeItem('session_expires');
+                localStorage.removeItem('last_activity');
             }
-            
+
             return { success: true };
         } catch (error) {
             console.error('Sign out error:', error);
@@ -247,13 +263,18 @@ class AuthService {
                 return { success: false, error: 'Unauthorized: Super admin access required' };
             }
 
-            console.log('🔍 Creating admin user with data:', userData);
+            // Sanitize email for consistent storage
+            const sanitizedEmail = (typeof SecurityUtils !== 'undefined' && SecurityUtils.sanitizeEmail)
+                ? SecurityUtils.sanitizeEmail(userData.email)
+                : userData.email.trim().toLowerCase();
+
+            console.log('🔍 Creating admin user with data:', { ...userData, email: sanitizedEmail });
             console.log('🔍 Current user role:', user.role);
 
             // Try RPC function first
             try {
                 const { data, error } = await supabaseClient.rpc('create_admin_user', {
-                    user_email: userData.email,
+                    user_email: sanitizedEmail,
                     user_name: userData.name,
                     user_password: userData.password,
                     user_role: userData.role || 'admin'
@@ -270,7 +291,7 @@ class AuthService {
                 const { data: existingUser } = await supabaseClient
                     .from('admin_users')
                     .select('id')
-                    .eq('email', userData.email)
+                    .eq('email', sanitizedEmail)
                     .single();
 
                 if (existingUser) {
@@ -285,7 +306,7 @@ class AuthService {
                     .from('admin_users')
                     .insert([{
                         name: userData.name,
-                        email: userData.email,
+                        email: sanitizedEmail,
                         password_hash: hashedPassword,
                         role: userData.role || 'admin',
                         is_active: true,

@@ -494,7 +494,7 @@
             hideMessages();
             setLoading(true);
 
-            const email = document.getElementById('email').value.trim();
+            const email = SecurityUtils.sanitizeEmail(document.getElementById('email').value);
             const password = document.getElementById('password').value;
 
             // Enhanced validation using SecurityUtils
