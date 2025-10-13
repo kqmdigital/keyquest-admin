@@ -149,6 +149,8 @@
                         <option value="Citibank">Citibank</option>
                     </select>
 
+                    <input type="number" class="filter-select" id="loanAmountFilter" placeholder="Min Loan Amount (e.g., 200000)" min="0" step="1000">
+
                     <button class="btn btn-secondary" onclick="clearAllFilters()" id="clearFiltersBtn">
                         <i data-lucide="x"></i>
                         <span>Clear</span>
@@ -623,6 +625,7 @@
                 lockPeriodFilter: document.getElementById('lockPeriodFilter')?.value || '',
                 propertyStatusFilter: document.getElementById('propertyStatusFilter')?.value || '',
                 bankFilter: document.getElementById('bankFilter')?.value || '',
+                loanAmountFilter: document.getElementById('loanAmountFilter')?.value || '',
                 currentPage: currentPage
             };
 
@@ -660,6 +663,9 @@
                     }
                     if (document.getElementById('bankFilter')) {
                         document.getElementById('bankFilter').value = filterState.bankFilter || '';
+                    }
+                    if (document.getElementById('loanAmountFilter')) {
+                        document.getElementById('loanAmountFilter').value = filterState.loanAmountFilter || '';
                     }
 
                     // Restore page
@@ -1011,8 +1017,13 @@
             const lockPeriod = document.getElementById('lockPeriodFilter')?.value || '';
             const propertyStatus = document.getElementById('propertyStatusFilter')?.value || '';
             const bank = document.getElementById('bankFilter')?.value || '';
+            const loanAmount = document.getElementById('loanAmountFilter')?.value || '';
 
             filteredPackages = packages.filter(pkg => {
+                // Loan amount filter: show packages with minimum_loan_size >= entered amount
+                const loanAmountMatch = !loanAmount ||
+                    (pkg.minimum_loan_size && pkg.minimum_loan_size >= parseFloat(loanAmount));
+
                 return (!searchTerm ||
                        (pkg.bank_name && pkg.bank_name.toLowerCase().includes(searchTerm)) ||
                        (pkg.property_type && pkg.property_type.toLowerCase().includes(searchTerm)) ||
@@ -1022,7 +1033,8 @@
                        (!rateType || pkg.rate_type_category === rateType) &&
                        (!lockPeriod || pkg.lock_period === lockPeriod) &&
                        (!propertyStatus || pkg.property_status === propertyStatus) &&
-                       (!bank || pkg.bank_name === bank);
+                       (!bank || pkg.bank_name === bank) &&
+                       loanAmountMatch;
             });
 
             currentPage = 1;
@@ -1482,6 +1494,7 @@
             document.getElementById('lockPeriodFilter').value = '';
             document.getElementById('propertyStatusFilter').value = '';
             document.getElementById('bankFilter').value = '';
+            document.getElementById('loanAmountFilter').value = '';
 
             // Clear saved filter state
             clearFilterState();
@@ -1497,6 +1510,7 @@
         document.getElementById('lockPeriodFilter').addEventListener('change', filterPackages);
         document.getElementById('propertyStatusFilter').addEventListener('change', filterPackages);
         document.getElementById('bankFilter').addEventListener('change', filterPackages);
+        document.getElementById('loanAmountFilter').addEventListener('input', debounce(filterPackages, 300));
 
         document.getElementById('packageForm').addEventListener('submit', handleFormSubmit);
 
