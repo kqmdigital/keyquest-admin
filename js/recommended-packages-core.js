@@ -309,7 +309,7 @@ async function loadData() {
         
         // Load packages and rate types in parallel
         const [packagesResult, rateTypesResult] = await Promise.all([
-            supabaseClient.from('rate_packages').select('*'),
+            supabaseClient.from('rate_packages').select('*').limit(5000),
             supabaseClient.from('rate_types').select('*')
         ]);
 

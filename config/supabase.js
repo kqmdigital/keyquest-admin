@@ -659,7 +659,8 @@ class DatabaseService {
             const { data, error } = await supabaseClient
                 .from('rate_packages')
                 .select('*')
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false })
+                .limit(5000);
             
             if (error) throw error;
             return { success: true, data };
