@@ -820,6 +820,17 @@ body:not(.admin-container) .logo-image,
    FORM COMPONENTS
    ================================== */
 
+/* Hide number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .form-control,
 .form-input,
 .form-select {

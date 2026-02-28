@@ -347,7 +347,7 @@
                                     <option value="+">+</option>
                                     <option value="-">-</option>
                                 </select>
-                                <input type="number" class="form-input" name="year1_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(1)">
+                                <input type="number" class="form-input" name="year1_value" step="0.01" placeholder="0.00" style="flex: 1;" oninput="calculateRealTimeRate(1)" onblur="if(this.value)this.value=parseFloat(this.value).toFixed(2)">
                                 <span style="padding: 0 8px;">%</span>
                                 <div class="calculated-rate" id="year1_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
@@ -364,7 +364,7 @@
                                     <option value="+">+</option>
                                     <option value="-">-</option>
                                 </select>
-                                <input type="number" class="form-input" name="year2_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(2)">
+                                <input type="number" class="form-input" name="year2_value" step="0.01" placeholder="0.00" style="flex: 1;" oninput="calculateRealTimeRate(2)" onblur="if(this.value)this.value=parseFloat(this.value).toFixed(2)">
                                 <span style="padding: 0 8px;">%</span>
                                 <div class="calculated-rate" id="year2_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
@@ -381,7 +381,7 @@
                                     <option value="+">+</option>
                                     <option value="-">-</option>
                                 </select>
-                                <input type="number" class="form-input" name="year3_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(3)">
+                                <input type="number" class="form-input" name="year3_value" step="0.01" placeholder="0.00" style="flex: 1;" oninput="calculateRealTimeRate(3)" onblur="if(this.value)this.value=parseFloat(this.value).toFixed(2)">
                                 <span style="padding: 0 8px;">%</span>
                                 <div class="calculated-rate" id="year3_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
@@ -398,7 +398,7 @@
                                     <option value="+">+</option>
                                     <option value="-">-</option>
                                 </select>
-                                <input type="number" class="form-input" name="year4_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(4)">
+                                <input type="number" class="form-input" name="year4_value" step="0.01" placeholder="0.00" style="flex: 1;" oninput="calculateRealTimeRate(4)" onblur="if(this.value)this.value=parseFloat(this.value).toFixed(2)">
                                 <span style="padding: 0 8px;">%</span>
                                 <div class="calculated-rate" id="year4_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
@@ -415,7 +415,7 @@
                                     <option value="+">+</option>
                                     <option value="-">-</option>
                                 </select>
-                                <input type="number" class="form-input" name="year5_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate(5)">
+                                <input type="number" class="form-input" name="year5_value" step="0.01" placeholder="0.00" style="flex: 1;" oninput="calculateRealTimeRate(5)" onblur="if(this.value)this.value=parseFloat(this.value).toFixed(2)">
                                 <span style="padding: 0 8px;">%</span>
                                 <div class="calculated-rate" id="year5_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
@@ -432,7 +432,7 @@
                                     <option value="+">+</option>
                                     <option value="-">-</option>
                                 </select>
-                                <input type="number" class="form-input" name="thereafter_value" step="0.001" placeholder="0.000" style="flex: 1;" oninput="calculateRealTimeRate('thereafter')">
+                                <input type="number" class="form-input" name="thereafter_value" step="0.01" placeholder="0.00" style="flex: 1;" oninput="calculateRealTimeRate('thereafter')" onblur="if(this.value)this.value=parseFloat(this.value).toFixed(2)">
                                 <span style="padding: 0 8px;">%</span>
                                 <div class="calculated-rate" id="thereafter_calculated" style="min-width: 120px; font-weight: bold; color: #059669;"></div>
                             </div>
