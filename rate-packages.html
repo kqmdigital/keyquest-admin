@@ -1361,17 +1361,17 @@
             // Populate form with package data
             const form = document.getElementById('packageForm');
             Object.keys(pkg).forEach(key => {
-                const input = form.querySelector(`[name="${key}"]`);
-                if (input) {
-                    if (input.type === 'checkbox') {
-                        input.checked = pkg[key];
-                    } else if (input.type === 'radio') {
-                        if (input.value === pkg[key]) {
-                            input.checked = true;
-                        }
-                    } else {
-                        input.value = pkg[key] || '';
-                    }
+                const inputs = form.querySelectorAll(`[name="${key}"]`);
+                if (inputs.length === 0) return;
+                const input = inputs[0];
+                if (input.type === 'checkbox') {
+                    input.checked = pkg[key];
+                } else if (input.type === 'radio') {
+                    inputs.forEach(radio => {
+                        radio.checked = radio.value === pkg[key];
+                    });
+                } else {
+                    input.value = pkg[key] || '';
                 }
             });
 
