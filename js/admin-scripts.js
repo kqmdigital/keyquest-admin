@@ -299,7 +299,8 @@ function validateRatePackageForm(formData, availableRateTypes) {
 
     // Validate minimum loan size
     const minLoanSize = formData.get('minimum_loan_size');
-    if (minLoanSize && (isNaN(parseFloat(minLoanSize)) || parseFloat(minLoanSize) < 0)) {
+    const minLoanSizeClean = minLoanSize ? minLoanSize.replace(/,/g, '') : '';
+    if (minLoanSizeClean && (isNaN(parseFloat(minLoanSizeClean)) || parseFloat(minLoanSizeClean) < 0)) {
         errors.push('Minimum loan size must be a positive number');
     }
 

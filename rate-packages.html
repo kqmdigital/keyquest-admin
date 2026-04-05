@@ -308,7 +308,7 @@
                                 <label class="form-label">Minimum loan size</label>
                                 <div class="input-group">
                                     <span class="input-prefix">S$</span>
-                                    <input type="number" class="form-input" name="minimum_loan_size" placeholder="500000" min="0">
+                                    <input type="text" inputmode="numeric" class="form-input" name="minimum_loan_size" placeholder="500,000" oninput="formatLoanSizeInput(this)">
                                 </div>
                             </div>
 
@@ -1248,7 +1248,8 @@
             // Process form data
             for (let [key, value] of formData.entries()) {
                 if (key.includes('_penalty') || key.includes('_value') || key === 'minimum_loan_size') {
-                    packageData[key] = value ? parseFloat(value) : null;
+                    const cleanValue = key === 'minimum_loan_size' ? value.replace(/,/g, '') : value;
+                    packageData[key] = cleanValue ? parseFloat(cleanValue) : null;
                 } else if (key.includes('_subsidy') || key.includes('_repayment') || 
                           key.includes('_conversion') || key === 'waiver_due_to_sales') {
                     // These are checkboxes - they're only in formData if checked
@@ -1370,6 +1371,8 @@
                     inputs.forEach(radio => {
                         radio.checked = radio.value === pkg[key];
                     });
+                } else if (key === 'minimum_loan_size') {
+                    input.value = pkg[key] ? parseInt(pkg[key]).toLocaleString('en-US') : '';
                 } else {
                     input.value = pkg[key] || '';
                 }
@@ -1513,6 +1516,21 @@
             clearFilterState();
 
             filterPackages();
+        }
+
+        // Disable scroll wheel changing number inputs
+        document.addEventListener('wheel', function() {
+            if (document.activeElement.type === 'number') {
+                document.activeElement.blur();
+            }
+        }, { passive: true });
+
+        // Format loan size input with commas
+        function formatLoanSizeInput(input) {
+            const raw = input.value.replace(/,/g, '');
+            if (raw === '') { input.value = ''; return; }
+            const num = parseInt(raw, 10);
+            if (!isNaN(num)) input.value = num.toLocaleString('en-US');
         }
 
         // Format number with commas
